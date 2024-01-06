@@ -1079,6 +1079,12 @@ var beepbox = (function (exports) {
             promptName: "FM Slider 6", promptDesc: ["This setting affects the strength of the sixth FM slider, just like the corresponding slider on your instrument.", "It works in a multiplicative way, so at $HI your slider will sound the same is its default value, and at $LO it will sound like it has been moved all the way to the left.", "For the full range of control with this mod, move your underlying slider all the way to the right.", "[MULTIPLICATIVE] [$LO - $HI] [%]"] },
         { name: "decimal offset", pianoName: "Decimal Offset", maxRawVol: 99, newNoteVol: 0, forSong: false, convertRealFactor: 0, optionalModify: "invert-0to99", associatedEffect: 12,
             promptName: "Decimal Offset", promptDesc: ["This setting controls the decimal offset that is subtracted from the pulse width; use this for creating values like 12.5 or 6.25.", "[$LO - $HI] [%Duty]"] },
+        { name: "dynamism", pianoName: "Dynamism", maxRawVol: Config.supersawDynamismMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
+            promptName: "Supersaw Dynamism", promptDesc: ["This setting controls the dynamism of each saw/wave in your supersaw instrument.", "[OVERWRITING] [$LO - $HI]"] },
+        { name: "spread", pianoName: "Spread", maxRawVol: Config.supersawSpreadMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
+            promptName: "Supersaw Spread", promptDesc: ["This setting controls the spread of each saw/wave in your supersaw instrument.", "[OVERWRITING] [$LO - $HI]"] },
+        { name: "shape", pianoName: "Shape", maxRawVol: Config.supersawShapeMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
+            promptName: "Supersaw Shape", promptDesc: ["This setting controls the shape of each wave in your supersaw instrument.", "At the lowest value, each wave will be a sawtooth. At the highest value, each wave will be fully affected by the pulse width slider.", "[OVERWRITING] [$LO - $HI]"] },
     ]);
     function centerWave(wave) {
         let sum = 0.0;
@@ -1464,12 +1470,12 @@ var beepbox = (function (exports) {
                 { name: TypePresets[2], customType: 2 },
                 { name: TypePresets[3], customType: 3 },
                 { name: TypePresets[4], customType: 4 },
-                { name: TypePresets[11], customType: 11 },
                 { name: TypePresets[5], customType: 5 },
                 { name: TypePresets[6], customType: 6 },
                 { name: TypePresets[7], customType: 7 },
                 { name: TypePresets[8], customType: 8 },
                 { name: TypePresets[10], customType: 10 },
+                { name: TypePresets[11], customType: 11 },
             ])
         },
         {
@@ -5658,33 +5664,6 @@ var beepbox = (function (exports) {
                             }
                         }
                         break;
-                    case 120:
-                        if (fromGoldBox && !beforeFour && beforeSix) {
-                            const chipWaveForCompat = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
-                            if ((chipWaveForCompat + 62) > 85) {
-                                if (document.URL.substring(document.URL.length - 13).toLowerCase() != "legacysamples") {
-                                    if (!willLoadLegacySamplesForOldSongs) {
-                                        willLoadLegacySamplesForOldSongs = true;
-                                        Config.willReloadForCustomSamples = true;
-                                        EditorConfig.customSamples = ["legacySamples"];
-                                        loadBuiltInSamples(0);
-                                    }
-                                }
-                            }
-                            if ((chipWaveForCompat + 62) > 78) {
-                                this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = clamp(0, Config.chipWaves.length, chipWaveForCompat + 63);
-                            }
-                            else if ((chipWaveForCompat + 62) > 67) {
-                                this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = clamp(0, Config.chipWaves.length, chipWaveForCompat + 61);
-                            }
-                            else if ((chipWaveForCompat + 62) == 67) {
-                                this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = 40;
-                            }
-                            else {
-                                this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = clamp(0, Config.chipWaves.length, chipWaveForCompat + 62);
-                            }
-                        }
-                        break;
                     case 102:
                         {
                             if ((beforeNine && fromBeepBox) || (beforeFive && fromJummBox) || (beforeFour && fromGoldBox)) {
@@ -9314,7 +9293,6 @@ var beepbox = (function (exports) {
                         || ((tgtInstrument.type != 1 && tgtInstrument.type != 10) && (str == "fm slider 1" || str == "fm slider 2" || str == "fm slider 3" || str == "fm slider 4" || str == "fm feedback"))
                         || ((tgtInstrument.type != 6 && tgtInstrument.type != 11) && (str == "pulse width"))
                         || tgtInstrument.type != 10 && (str == "fm slider 5" || str == "fm slider 6")
-                        || (tgtInstrument.type != 6 && (str == "pulse width"))
                         || (!tgtInstrument.getChord().arpeggiates && (str == "arp speed" || str == "reset arp"))
                         || (tgtInstrument.eqFilterType && str == "eq filter")
                         || (!tgtInstrument.eqFilterType && (str == "eq filt cut" || str == "eq filt peak"))

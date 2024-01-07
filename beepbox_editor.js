@@ -3137,9 +3137,9 @@ var beepbox = (function (exports) {
 			--box-selection-fill: #1e0915; 		
 			--loop-accent: #003399; 		
 			--link-accent: #003399; 		
-			--ui-widget-background: #f5f3eb; 		
-			--ui-widget-focus: #f5f3eb; 		
-			--pitch-background: #cfcab2; 		
+			--ui-widget-background: #cfcab2; 		
+			--ui-widget-focus: #cfcab2; 		
+			--pitch-background: #827e6b; 		
 			--tonic: #9e9a85; 		
 			--fifth-note: #b0ac96; 		
 			--white-piano-key: #ebe2ca; 		
@@ -3240,6 +3240,14 @@ var beepbox = (function (exports) {
 		cursor: url("xpcursor.png"), auto !important;
 		}
 
+			#text-content > section > h1 > font {
+		display: none;
+		}
+		#text-content > section > h1 {
+		margin: auto;
+		content: url("AbyssBox_XP.png");
+		}
+
 				/* sets background image */
 		body {
 		background-image: url("xphills.png") !important;
@@ -3276,7 +3284,7 @@ var beepbox = (function (exports) {
 
 			html {
  		   font-family: 'tahoma';
-		   font-size: 200%
+		   font-size: 125%
 			}
 
 			`,

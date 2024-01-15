@@ -22,7 +22,7 @@ var beepbox = (function (exports) {
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
     */
-    const TypePresets = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "chip (custom)", "mod", "FM (6-op)", "supersaw"];
+    const TypePresets = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "chip (custom)", "mod", "FM (6-op)", "supersaw",];
     class SampleLoadingState {
         constructor() {
             this.statusTable = {};
@@ -478,7 +478,7 @@ var beepbox = (function (exports) {
         { name: "÷12 (twelfth notes)", stepsPerBeat: 12, roundUpThresholds: null },
         { name: "freehand", stepsPerBeat: 24, roundUpThresholds: null },
     ]);
-    Config.instrumentTypeNames = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "custom chip", "mod", "FM6op", "supersaw"];
+    Config.instrumentTypeNames = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "custom chip", "mod", "FM6op", "supersaw",];
     Config.instrumentTypeHasSpecialInterval = [true, true, false, false, false, true, false, false, false, false];
     Config.chipBaseExpression = 0.03375;
     Config.fmBaseExpression = 0.03;
@@ -1967,6 +1967,14 @@ var beepbox = (function (exports) {
                 }
             }
         }
+        static setThemeProperty(name, value) {
+            var _a;
+            ((_a = this._styleElement.sheet) === null || _a === void 0 ? void 0 : _a.cssRules[0]).style.setProperty(name, value);
+        }
+        static getThemeProperties() {
+            var _a;
+            return (_a = this._styleElement.sheet) === null || _a === void 0 ? void 0 : _a.cssRules[0].cssText;
+        }
         static setTheme(name) {
             let theme = this.themes[name];
             if (theme == undefined)
@@ -3364,25 +3372,25 @@ var beepbox = (function (exports) {
 					--mod-label-secondary-text: rgb(87, 86, 120);
 					--mod-label-primary-text: white;
 					--pitch-secondary-channel-hue: 0;
-					--pitch-secondary-channel-hue-scale: 6.1;
+					--pitch-secondary-channel-hue-scale: 6.5;
 					--pitch-secondary-channel-sat: 83.3;
 					--pitch-secondary-channel-sat-scale: 0.1;
 					--pitch-secondary-channel-lum: 40;
 					--pitch-secondary-channel-lum-scale: 0.05;
 					--pitch-primary-channel-hue: 0;
-					--pitch-primary-channel-hue-scale: 6.1;
+					--pitch-primary-channel-hue-scale: 6.5;
 					--pitch-primary-channel-sat: 100;
 					--pitch-primary-channel-sat-scale: 0.1;
 					--pitch-primary-channel-lum: 67.5;
 					--pitch-primary-channel-lum-scale: 0.05;
 					--pitch-secondary-note-hue: 0;
-					--pitch-secondary-note-hue-scale: 6.1;
+					--pitch-secondary-note-hue-scale: 6.5;
 					--pitch-secondary-note-sat: 93.9;
 					--pitch-secondary-note-sat-scale: 0.1;
 					--pitch-secondary-note-lum: 25;
 					--pitch-secondary-note-lum-scale: 0.05;
 					--pitch-primary-note-hue: 0;
-					--pitch-primary-note-hue-scale: 6.1;
+					--pitch-primary-note-hue-scale: 6.5;
 					--pitch-primary-note-sat: 100;
 					--pitch-primary-note-sat-scale: 0.05;
 					--pitch-primary-note-lum: 85.6;
@@ -8812,6 +8820,411 @@ var beepbox = (function (exports) {
 		content: url("UltraBoxALThemeLogo.png");
 		}
 	}`,
+        "Protanopia": `
+:root { 
+--page-margin: #000000; 
+--editor-background: #000000; 
+--hover-preview: white; 
+--playhead: rgba(255, 255, 255, 0.9); 
+--primary-text: #ffffff; 
+--secondary-text: #e5e5e5; 
+--inverted-text: #000000; 
+--text-selection: rgba(119,68,255,0.99); 
+--box-selection-fill: #044b94; 
+--loop-accent: #ffffff; 
+--link-accent: #8915c8; 
+--ui-widget-background: #676767; 
+--ui-widget-focus: #696969; 
+--pitch-background: #7a7887; 
+--tonic: #313036; 
+--fifth-note: #c3c1db; 
+--white-piano-key: #a6a6a6; 
+--black-piano-key: #484848; 
+--use-color-formula: false; 
+--track-editor-bg-pitch: #666666; 
+--track-editor-bg-pitch-dim: #383838; 
+--track-editor-bg-noise: #438240; 
+--track-editor-bg-noise-dim: #1e361d; 
+--track-editor-bg-mod: #5f419c; 
+--track-editor-bg-mod-dim: #3e2b66; 
+--multiplicative-mod-slider: #b62326; 
+--overwriting-mod-slider: #5f1214; 
+--indicator-primary: #ccffdb; 
+--indicator-secondary: #55dee6; 
+--select2-opt-group: #595959; 
+--input-box-outline: #ffffff; 
+--mute-button-normal: #f11d22; 
+--mute-button-mod: #4b57c2; 
+--mod-label-primary: #0909ff; 
+--mod-label-secondary-text: #ffffff; 
+--mod-label-primary-text: #c8ecfd; 
+				--pitch1-secondary-channel: #0e0429;
+				--pitch1-primary-channel:   #310b8f;
+
+				--pitch1-secondary-note:    #0e0429;
+				--pitch1-primary-note:      #310b8f;
+
+				--pitch2-secondary-channel: #0b555e;
+				--pitch2-primary-channel:   #126e7a;
+
+				--pitch2-secondary-note:    #0b555e;
+				--pitch2-primary-note:      #126e7a;
+
+				--pitch3-secondary-channel: #1d898c;
+				--pitch3-primary-channel:   #2fa9ad;
+
+				--pitch3-secondary-note:    #1d898c;
+				--pitch3-primary-note:      #2fa9ad;
+
+				--pitch4-secondary-channel: #3f9160;
+				--pitch4-primary-channel:   #55ad78;
+
+				--pitch4-secondary-note:    #3f9160;
+				--pitch4-primary-note:      #55ad78;
+
+				--pitch5-secondary-channel: #69b051;
+				--pitch5-primary-channel:   #97e07e;
+
+				--pitch5-secondary-note:    #69b051;
+				--pitch5-primary-note:      #97e07e;
+
+				--pitch6-secondary-channel: #bbcc8f;
+				--pitch6-primary-channel:   #d4e3ac;
+
+				--pitch6-secondary-note:    #bbcc8f;
+				--pitch6-primary-note:      #d4e3ac;
+
+				--pitch7-secondary-channel: #8f7657;
+				--pitch7-primary-channel:   #b5a28a;
+
+				--pitch7-secondary-note:    #8f7657;
+				--pitch7-primary-note:      #b5a28a;
+
+				--pitch8-secondary-channel: #804d3c;
+				--pitch8-primary-channel:   #a16a58;
+
+				--pitch8-secondary-note:    #804d3c;
+				--pitch8-primary-note:      #a16a58;
+
+				--pitch9-secondary-channel: #a62b2b;
+				--pitch9-primary-channel:   #ba3c3c;
+
+				--pitch9-secondary-note:    #a62b2b;
+				--pitch9-primary-note:      #ba3c3c;
+
+				--pitch10-secondary-channel:#ba497c;
+				--pitch10-primary-channel:  #d46195;
+
+				--pitch10-secondary-note:   #ba497c;
+				--pitch10-primary-note:     #d46195;
+
+				--noise1-secondary-channel: #6F6F6F;
+				--noise1-primary-channel:   #AAAAAA;
+
+				--noise1-secondary-note:    #A7A7A7;
+				--noise1-primary-note:      #E0E0E0;
+
+				--noise2-secondary-channel: #996633;
+				--noise2-primary-channel:   #DDAA77;
+				--noise2-secondary-note:    #CC9966;
+				--noise2-primary-note:      #F0D0BB;
+				--noise3-secondary-channel: #4A6D8F;
+				--noise3-primary-channel:   #77AADD;
+				--noise3-secondary-note:    #6F9FCF;
+				--noise3-primary-note:      #BBD7FF;
+				--noise4-secondary-channel: #7A4F9A;
+				--noise4-primary-channel:   #AF82D2;
+				--noise4-secondary-note:    #9E71C1;
+				--noise4-primary-note:      #D4C1EA;
+				--noise5-secondary-channel: #607837;
+				--noise5-primary-channel:   #A2BB77;
+				--noise5-secondary-note:    #91AA66;
+				--noise5-primary-note:      #C5E2B2;
+          				--mod1-secondary-channel:   #339955;
+					--mod1-primary-channel:     #77fc55;
+					--mod1-secondary-note:      #77ff8a;
+					--mod1-primary-note:        #cdffee;
+					--mod2-secondary-channel:   #993355;
+					--mod2-primary-channel:     #f04960;
+					--mod2-secondary-note:      #f057a0;
+					--mod2-primary-note:        #ffb8de;
+					--mod3-secondary-channel:   #553399;
+					--mod3-primary-channel:     #8855fc;
+					--mod3-secondary-note:      #aa64ff;
+					--mod3-primary-note:	    #f8ddff;
+					--mod4-secondary-channel:   #a86436;
+					--mod4-primary-channel:     #c8a825;
+					--mod4-secondary-note:      #e8ba46;
+					--mod4-primary-note:        #fff6d3;
+					--mod-label-primary:        #999;
+					--mod-label-secondary-text: #333;
+					--mod-label-primary-text:   black;
+					--disabled-note-primary:    #999;
+					--disabled-note-secondary:  #666;
+}
+
+			`,
+        "Tritanopia": `
+:root { 
+--page-margin: #000000; 
+--editor-background: #000000; 
+--hover-preview: white; 
+--playhead: rgba(255, 255, 255, 0.9); 
+--primary-text: #ffffff; 
+--secondary-text: #e5e5e5; 
+--inverted-text: #000000; 
+--text-selection: rgba(119,68,255,0.99); 
+--box-selection-fill: #044b94; 
+--loop-accent: #ffffff; 
+--link-accent: #8915c8; 
+--ui-widget-background: #676767; 
+--ui-widget-focus: #696969; 
+--pitch-background: #7a7887; 
+--tonic: #313036; 
+--fifth-note: #c3c1db; 
+--white-piano-key: #a6a6a6; 
+--black-piano-key: #484848; 
+--use-color-formula: false; 
+--track-editor-bg-pitch: #666666; 
+--track-editor-bg-pitch-dim: #383838; 
+--track-editor-bg-noise: #438240; 
+--track-editor-bg-noise-dim: #1e361d; 
+--track-editor-bg-mod: #5f419c; 
+--track-editor-bg-mod-dim: #3e2b66; 
+--multiplicative-mod-slider: #b62326; 
+--overwriting-mod-slider: #5f1214; 
+--indicator-primary: #ccffdb; 
+--indicator-secondary: #55dee6; 
+--select2-opt-group: #595959; 
+--input-box-outline: #ffffff; 
+--mute-button-normal: #f11d22; 
+--mute-button-mod: #4b57c2; 
+--mod-label-primary: #0909ff; 
+--mod-label-secondary-text: #ffffff; 
+--mod-label-primary-text: #c8ecfd; 
+				--pitch1-secondary-channel: #9C0000;
+				--pitch1-primary-channel:   #FF0000;
+
+				--pitch1-secondary-note:    #9C0000;
+				--pitch1-primary-note:      #FF0000;
+
+				--pitch2-secondary-channel: #8E009C;
+				--pitch2-primary-channel:   #EB25FF;
+
+				--pitch2-secondary-note:    #8E009C;
+				--pitch2-primary-note:      #EB25FF;
+
+				--pitch3-secondary-channel: #00069C;
+				--pitch3-primary-channel:   #3D45FF;
+
+				--pitch3-secondary-note:    #00069C;
+				--pitch3-primary-note:      #3D45FF;
+
+				--pitch4-secondary-channel: #00829C;
+				--pitch4-primary-channel:   #24DBFF;
+
+				--pitch4-secondary-note:    #00829C;
+				--pitch4-primary-note:      #24DBFF;
+
+				--pitch5-secondary-channel: #009C18;
+				--pitch5-primary-channel:   #70FF86;
+
+				--pitch5-secondary-note:    #009C18;
+				--pitch5-primary-note:      #70FF86;
+
+				--pitch6-secondary-channel: #8E9C00;
+				--pitch6-primary-channel:   #DBEF16;
+
+				--pitch6-secondary-note:    #8E9C00;
+				--pitch6-primary-note:      #DBEF16;
+
+				--pitch7-secondary-channel: #9C6A00;
+				--pitch7-primary-channel:   #F7AC0E;
+
+				--pitch7-secondary-note:    #9C6A00;
+				--pitch7-primary-note:      #F7AC0E;
+
+				--pitch8-secondary-channel: #9C2300;
+				--pitch8-primary-channel:   #F53700;
+
+				--pitch8-secondary-note:    #9C2300;
+				--pitch8-primary-note:      #F53700;
+
+				--pitch9-secondary-channel: #441A0D;
+				--pitch9-primary-channel:   #9E3F22;
+
+				--pitch9-secondary-note:    #441A0D;
+				--pitch9-primary-note:      #9E3F22;
+
+				--pitch10-secondary-channel:#2C0D44;
+				--pitch10-primary-channel:  #7436A4;
+
+				--pitch10-secondary-note:   #2C0D44;
+				--pitch10-primary-note:     #7436A4;
+
+				--noise1-secondary-channel: #6F6F6F;
+				--noise1-primary-channel:   #AAAAAA;
+
+				--noise1-secondary-note:    #A7A7A7;
+				--noise1-primary-note:      #E0E0E0;
+
+				--noise2-secondary-channel: #996633;
+				--noise2-primary-channel:   #DDAA77;
+				--noise2-secondary-note:    #CC9966;
+				--noise2-primary-note:      #F0D0BB;
+				--noise3-secondary-channel: #4A6D8F;
+				--noise3-primary-channel:   #77AADD;
+				--noise3-secondary-note:    #6F9FCF;
+				--noise3-primary-note:      #BBD7FF;
+				--noise4-secondary-channel: #7A4F9A;
+				--noise4-primary-channel:   #AF82D2;
+				--noise4-secondary-note:    #9E71C1;
+				--noise4-primary-note:      #D4C1EA;
+				--noise5-secondary-channel: #607837;
+				--noise5-primary-channel:   #A2BB77;
+				--noise5-secondary-note:    #91AA66;
+				--noise5-primary-note:      #C5E2B2;
+          				--mod1-secondary-channel:   #339955;
+					--mod1-primary-channel:     #77fc55;
+					--mod1-secondary-note:      #77ff8a;
+					--mod1-primary-note:        #cdffee;
+					--mod2-secondary-channel:   #993355;
+					--mod2-primary-channel:     #f04960;
+					--mod2-secondary-note:      #f057a0;
+					--mod2-primary-note:        #ffb8de;
+					--mod3-secondary-channel:   #553399;
+					--mod3-primary-channel:     #8855fc;
+					--mod3-secondary-note:      #aa64ff;
+					--mod3-primary-note:	    #f8ddff;
+					--mod4-secondary-channel:   #a86436;
+					--mod4-primary-channel:     #c8a825;
+					--mod4-secondary-note:      #e8ba46;
+					--mod4-primary-note:        #fff6d3;
+					--mod-label-primary:        #999;
+					--mod-label-secondary-text: #333;
+					--mod-label-primary-text:   black;
+					--disabled-note-primary:    #999;
+					--disabled-note-secondary:  #666;
+}
+
+			`,
+        "Deuteranopia": `
+    :root {
+    --page-margin: #000;
+    --editor-background: #060606;
+    --hover-preview: #fff;
+    --playhead: rgb(255, 255, 255);
+    --primary-text: #fff;
+    --secondary-text: #fff;
+    --inverted-text: #000;
+    --text-selection: rgba(126, 126, 126, .99);
+    --box-selection-fill: #b74a4a;
+    --loop-accent: #7744FF;
+    --link-accent: #7744FF;
+    --ui-widget-background: #484848;
+    --ui-widget-focus: #3e3e3e;
+    --pitch-background: #3e3e3e;
+    --tonic: #861057;
+    --fifth-note: #7e7e7e;
+    --use-color-formula: false;
+    --track-editor-bg-pitch: #666161;
+    --track-editor-bg-pitch-dim: #3e3e3e;
+    --track-editor-bg-noise: #474747;
+    --track-editor-bg-noise-dim: #1a1a1a;
+    --track-editor-bg-mod: #474747;
+    --track-editor-bg-mod-dim: #1a1a1a;
+    --multiplicative-mod-slider: #868686;
+    --overwriting-mod-slider: #fff;
+    --indicator-primary: #fff;
+    --indicator-secondary: #535353;
+    --select2-opt-group: #5d576f;
+    --input-box-outline: #626262;
+    --mute-button-normal: #ffdc00;
+    --mute-button-mod: #0027ff;
+    --mod-label-primary: #2b2b2b;
+    --track-font: sans-serif;
+
+    --pitch1-secondary-channel: #0082BB;
+  --pitch1-primary-channel: #B1E8FF;
+  --pitch1-secondary-note: #0082BB;
+  --pitch1-primary-note: #B1E8FF;
+  --pitch2-secondary-channel: #005F88;
+  --pitch2-primary-channel: #00B2FF;
+  --pitch2-secondary-note: #005F88;
+  --pitch2-primary-note: #00B2FF;
+  --pitch3-secondary-channel: #0E0090;
+  --pitch3-primary-channel: #5196ff;
+  --pitch3-secondary-note: #0E0090;
+  --pitch3-primary-note: #5196ff;
+  --pitch4-secondary-channel: #001540;
+  --pitch4-primary-channel: #0041CA;
+  --pitch4-secondary-note: #001b55;
+  --pitch4-primary-note: #0041CA;
+  --pitch5-secondary-channel: #936e21;
+  --pitch5-primary-channel: #ffb300;
+  --pitch5-secondary-note: #936e21;
+  --pitch5-primary-note: #ffbe23;
+  --pitch6-secondary-channel: #ca5b00;
+  --pitch6-primary-channel: #faff52;
+  --pitch6-secondary-note: #ca5b00;
+  --pitch6-primary-note: #faff52;
+  --pitch7-secondary-channel: #75714a;
+  --pitch7-primary-channel: #fff3b8;
+  --pitch7-secondary-note: #75714a;
+  --pitch7-primary-note: #fff3b8;
+  --pitch8-secondary-channel: #9c4100;
+  --pitch8-primary-channel: #fc0;
+  --pitch8-secondary-note: #9c4100;
+  --pitch8-primary-note: #fc0;
+  --pitch9-secondary-channel: #8d4d00;
+  --pitch9-primary-channel: #ff9b20;
+  --pitch9-secondary-note: #8d4d00;
+  --pitch9-primary-note: #ff9b20;
+  --pitch10-secondary-channel: #a28f00;
+  --pitch10-primary-channel: #ffac55;
+  --pitch10-secondary-note: #a28f00;
+  --pitch10-primary-note: #ffac55;
+  --noise1-secondary-channel: #868686;
+  --noise1-primary-channel: #fff;
+  --noise1-secondary-note: #868686;
+  --noise1-primary-note: #fff;
+  --noise2-secondary-channel: #ad5600;
+  --noise2-primary-channel: #ffd300;
+  --noise2-secondary-note: #ad5600;
+  --noise2-primary-note: #ffd300;
+  --noise3-secondary-channel: #4f2f00;
+  --noise3-primary-channel: #fff3bc;
+  --noise3-secondary-note: #4f2f00;
+  --noise3-primary-note: #fff3bc;
+  --noise4-secondary-channel: #0070ff;
+  --noise4-primary-channel: #84f1ff;
+  --noise4-secondary-note: #0070ff;
+  --noise4-primary-note: #84f1ff;
+  --noise5-secondary-channel: #00c4b2;
+  --noise5-primary-channel: #4198ff;
+  --noise5-secondary-note: #00c4b2;
+  --noise5-primary-note: #4198ff;
+  --mod1-secondary-channel: #00046c;
+  --mod1-primary-channel: #00faff;
+  --mod1-secondary-note: #00046c;
+  --mod1-primary-note: #00faff;
+  --mod2-secondary-channel: #d25a00;
+  --mod2-primary-channel: #fdff00;
+  --mod2-secondary-note: #d25a00;
+  --mod2-primary-note: #fdff00;
+  --mod3-secondary-channel: #5a5a5a;
+  --mod3-primary-channel: #fff;
+  --mod3-secondary-note: #5a5a5a;
+  --mod3-primary-note: #fff;
+  --mod4-secondary-channel: #006dfb;
+  --mod4-primary-channel: #0ce7ff;
+  --mod4-secondary-note: #006dfb;
+  --mod4-primary-note: #0ce7ff;
+  --disabled-note-primary: #8d8d8d;
+  --disabled-note-secondary: #363636;
+    }
+
+			`,
         "custom": `${localStorage.getItem("customColors") || `:root {
 				--page-margin: #040410;
 				--editor-background: #040410;
@@ -9197,7 +9610,7 @@ var beepbox = (function (exports) {
             return (_a = EditorConfig.presetCategories[0].presets.dictionary) === null || _a === void 0 ? void 0 : _a[TypePresets === null || TypePresets === void 0 ? void 0 : TypePresets[instrument]];
         }
     }
-    EditorConfig.version = "0.9.0";
+    EditorConfig.version = "1.0";
     EditorConfig.versionDisplayName = "AbyssBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
@@ -9238,11 +9651,13 @@ var beepbox = (function (exports) {
                 { name: "Atari Bass", midiProgram: 36, settings: { "type": "custom chip", "effects": ["aliasing"], "transition": "interrupt", "fadeInSeconds": 0, "fadeOutTicks": -3, "chord": "arpeggio", "eqFilter": [{ "type": "low-pass", "cutoffHz": 4000, "linearGain": 0.5 }], "unison": "none", "envelopes": [], "customChipWave": [-24, -24, -24, -24, -24, -24, -24, -24, -24, 24, 24, 24, 24, 24, 24, -24, -24, -24, 24, 24, 24, -24, -24, -24, 24, 24, 24, -24, -24, -24, 24, 24, -24, -24, -24, -24, -24, -24, -24, -24, -24, 24, 24, 24, 24, 24, 24, -24, -24, 24, 24, 24, 24, 24, -24, -24, -24, -24, 24, 24, -24, -24, 24, 24] } },
                 { name: "Sunsoft Bass", midiProgram: 36, settings: { "type": "custom chip", "effects": ["aliasing"], "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": -3, "chord": "arpeggio", "eqFilter": [{ "type": "low-pass", "cutoffHz": 4000, "linearGain": 0.5 }], "unison": "none", "envelopes": [], "customChipWave": [24, 24, 15, 15, 9, 9, -4, -4, 0, 0, -13, -13, -19, -19, -24, -24, -24, -24, -10, -10, 0, 0, -7, -7, -7, -7, 0, 0, 6, 6, -4, -4, 3, 3, -4, -4, 3, 3, 3, 3, 9, 9, 15, 15, 15, 15, 6, 6, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, 3, 3, 12, 12, 24, 24] } },
                 { name: "FM sine", midiProgram: 55, settings: { "type": "FM", "transition": "seemless", "effects": "none", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "steady", "vibrato": "none", "algorithm": "1←(2 3 4)", "feedbackType": "1⟲", "feedbackAmplitude": 0, "feedbackEnvelope": "steady", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "steady" }, { "frequency": "1×", "amplitude": 0, "envelope": "steady" }, { "frequency": "1×", "amplitude": 0, "envelope": "steady" }, { "frequency": "1×", "amplitude": 0, "envelope": "steady" }] } },
-            ])
+            ]),
         },
         {
             name: "Keyboard Presets", presets: toNameMap([
-                { name: "grand piano 1", midiProgram: 0, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.125 }], "reverb": 67, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "harmonics": [100, 100, 86, 86, 86, 71, 71, 71, 0, 86, 71, 71, 71, 57, 57, 71, 57, 14, 57, 57, 57, 57, 57, 57, 57, 57, 29, 57], "unison": "piano", "stringSustain": 79, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
+                { name: "grand piano 1", midiProgram: 0, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "effects": ["note filter", "reverb"], "noteFilterType": false, "noteSimpleCut": 10, "noteSimplePeak": 0, "noteFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.125 }], "panDelay": 10, "reverb": 68, "fadeInSeconds": 0, "fadeOutTicks": 48, "harmonics": [100, 100, 86, 86, 86, 71, 71, 71, 0, 86, 71, 71, 71, 57, 57, 71, 57, 14, 57, 57, 57, 57, 57, 57, 57, 57, 29, 57], "unison": "piano", "stringSustain": 79, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
+                { name: "grand piano 2", midiProgram: 0, generalMidi: true, settings: { "type": "harmonics", "eqFilter": [{ "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.125 }], "reverb": 67, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "harmonics": [100, 86, 86, 86, 86, 71, 71, 57, 0, 57, 29, 43, 57, 57, 57, 43, 43, 0, 29, 43, 43, 43, 43, 43, 43, 29, 0, 29], "unison": "piano", "stringSustain": 79, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
+                { name: "grand piano 3", midiProgram: 0, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1681.79, "linearGain": 4 }, { "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.1768 }, { "type": "peak", "cutoffHz": 3363.59, "linearGain": 4 }, { "type": "peak", "cutoffHz": 2378.41, "linearGain": 0.25 }], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 4756.83, "linearGain": 0.3536 }, { "type": "high-pass", "cutoffHz": 125, "linearGain": 0.0884 }], "reverb": 67, "fadeInSeconds": 0, "fadeOutTicks": 48, "harmonics": [100, 100, 86, 86, 86, 71, 71, 71, 0, 71, 71, 71, 71, 57, 57, 71, 57, 14, 57, 57, 57, 57, 57, 57, 57, 57, 29, 57], "unison": "piano", "stringSustain": 86, "envelopes": [{ "target": "noteFilterFreq", "envelope": "note size", "index": 0 }, { "target": "noteFilterFreq", "envelope": "twang 1", "index": 1 }, { "target": "noteFilterFreq", "envelope": "twang 1", "index": 1 }] } },
                 { name: "bright piano", midiProgram: 1, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 1681.79, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.5 }, { "type": "peak", "cutoffHz": 3363.59, "linearGain": 1.4142 }], "effects": ["reverb"], "reverb": 33, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 24, "chord": "simultaneous", "harmonics": [100, 100, 86, 86, 71, 71, 0, 71, 71, 71, 71, 71, 71, 14, 57, 57, 57, 57, 57, 57, 29, 57, 57, 57, 57, 57, 57, 57], "unison": "piano", "stringSustain": 86, "envelopes": [] } },
                 { name: "electric grand", midiProgram: 2, generalMidi: true, settings: { "type": "chip", "eqFilter": [], "effects": ["note filter"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 2378.41, "linearGain": 0.5 }], "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "wave": "1/8 pulse", "unison": "shimmer", "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 3" }] } },
                 { name: "honky-tonk piano", midiProgram: 3, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }], "effects": ["reverb"], "reverb": 33, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "harmonics": [100, 100, 86, 71, 86, 71, 43, 71, 43, 43, 57, 57, 57, 29, 57, 57, 57, 57, 57, 57, 43, 57, 57, 57, 43, 43, 43, 43], "unison": "honky tonk", "stringSustain": 71, "envelopes": [] } },
@@ -9251,7 +9666,6 @@ var beepbox = (function (exports) {
                 { name: "harpsichord", midiProgram: 6, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "high-pass", "cutoffHz": 250, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 11313.71, "linearGain": 2.8284 }], "effects": ["reverb"], "reverb": 33, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 24, "chord": "simultaneous", "harmonics": [100, 100, 100, 86, 57, 86, 86, 86, 86, 57, 57, 71, 71, 86, 86, 71, 71, 86, 86, 71, 71, 71, 71, 71, 71, 71, 71, 71], "unison": "none", "stringSustain": 79, "envelopes": [] } },
                 { name: "clavinet", midiProgram: 7, generalMidi: true, settings: { "type": "FM", "eqFilter": [], "effects": ["note filter"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 0.3536 }], "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": -3, "chord": "simultaneous", "algorithm": "1←(2 3 4)", "feedbackType": "3⟲", "feedbackAmplitude": 6, "operators": [{ "frequency": "3×", "amplitude": 15 }, { "frequency": "~1×", "amplitude": 6 }, { "frequency": "8×", "amplitude": 4 }, { "frequency": "1×", "amplitude": 0 }], "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 2" }, { "target": "feedbackAmplitude", "envelope": "twang 2" }] } },
                 { name: "dulcimer", midiProgram: 15, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.3536 }], "effects": ["reverb"], "reverb": 33, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "strum", "harmonics": [100, 100, 100, 86, 100, 86, 57, 100, 100, 86, 100, 86, 100, 86, 100, 71, 57, 71, 71, 100, 86, 71, 86, 86, 100, 86, 86, 86], "unison": "piano", "stringSustain": 79, "envelopes": [] } },
-                { name: "grand piano 2", midiProgram: 0, generalMidi: true, settings: { "type": "harmonics", "eqFilter": [{ "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.125 }], "reverb": 67, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "harmonics": [100, 86, 86, 86, 86, 71, 71, 57, 0, 57, 29, 43, 57, 57, 57, 43, 43, 0, 29, 43, 43, 43, 43, 43, 43, 29, 0, 29], "unison": "piano", "stringSustain": 79, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
             ])
         },
         {
@@ -9533,6 +9947,8 @@ var beepbox = (function (exports) {
         { name: "Le choptop84's presets", presets: toNameMap([
                 { name: "Demonic Bell", generalMidi: false, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "effects": ["detune", "distortion", "bitcrusher", "echo", "reverb"], "detuneCents": -52, "distortion": 29, "aliases": false, "bitcrusherOctave": 4.5, "bitcrusherQuantization": 29, "panDelay": 10, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 68, "fadeInSeconds": 0, "fadeOutTicks": 96, "harmonics": [43, 71, 71, 100, 86, 100, 43, 86, 71, 57, 86, 29, 14, 71, 14, 14, 57, 14, 14, 43, 14, 14, 43, 14, 14, 43, 14, 14], "unison": "shimmer", "stringSustain": 64, "envelopes": [] } },
                 { name: "Spacey Triangle", generalMidi: false, settings: { "type": "chip", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "effects": ["transition type", "vibrato", "distortion", "bitcrusher", "chorus", "echo", "reverb"], "transition": "normal", "clicklessTransition": false, "vibrato": "shaky", "vibratoDepth": 0.1, "vibratoDelay": 0, "vibratoSpeed": 10, "vibratoType": 1, "distortion": 29, "aliases": false, "bitcrusherOctave": 5.5, "bitcrusherQuantization": 14, "panDelay": 10, "chorus": 86, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 26, "fadeInSeconds": 0, "fadeOutTicks": 96, "wave": "triangle", "unison": "dirty", "isUsingAdvancedLoopControls": false, "chipWaveLoopStart": 0, "chipWaveLoopEnd": 32, "chipWaveLoopMode": 0, "chipWavePlayBackwards": false, "chipWaveStartOffset": 0, "envelopes": [] } },
+                { name: "Harmonic Piano", generalMidi: false, settings: { "type": "harmonics", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "effects": ["transition type"], "transition": "interrupt", "clicklessTransition": false, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -1, "harmonics": [100, 57, 57, 57, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "unison": "none", "envelopes": [] } },
+                { name: "Organic Synth", generalMidi: false, settings: { "type": "FM", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "effects": ["chord type", "reverb"], "chord": "simultaneous", "fastTwoNoteArp": false, "arpeggioSpeed": 12, "panDelay": 10, "reverb": 71, "fadeInSeconds": 0.0263, "fadeOutTicks": 96, "algorithm": "(1 2 3)←4", "feedbackType": "1⟲ 2⟲ 3⟲", "feedbackAmplitude": 2, "operators": [{ "frequency": "1×", "amplitude": 15, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "5×", "amplitude": 3, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "8×", "amplitude": 7, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }], "envelopes": [{ "target": "operatorAmplitude", "envelope": "twang 1", "index": 3 }, { "target": "noteVolume", "envelope": "twang 2" }] } },
             ]) },
     ]);
 

@@ -22,7 +22,7 @@ var beepbox = (function (exports) {
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
     */
-    const TypePresets = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "chip (custom)", "mod", "FM (6-op)", "supersaw"];
+    const TypePresets = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "chip (custom)", "mod", "FM (6-op)", "supersaw",];
     function getSampleLoadingStatusName(status) {
         switch (status) {
             case 0: return "loading";
@@ -492,7 +492,7 @@ var beepbox = (function (exports) {
         { name: "÷12 (twelfth notes)", stepsPerBeat: 12, roundUpThresholds: null },
         { name: "freehand", stepsPerBeat: 24, roundUpThresholds: null },
     ]);
-    Config.instrumentTypeNames = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "custom chip", "mod", "FM6op", "supersaw"];
+    Config.instrumentTypeNames = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "custom chip", "mod", "FM6op", "supersaw",];
     Config.instrumentTypeHasSpecialInterval = [true, true, false, false, false, true, false, false, false, false];
     Config.chipBaseExpression = 0.03375;
     Config.fmBaseExpression = 0.03;
@@ -1473,7 +1473,7 @@ var beepbox = (function (exports) {
             return (_a = EditorConfig.presetCategories[0].presets.dictionary) === null || _a === void 0 ? void 0 : _a[TypePresets === null || TypePresets === void 0 ? void 0 : TypePresets[instrument]];
         }
     }
-    EditorConfig.version = "0.9.0";
+    EditorConfig.version = "1.0";
     EditorConfig.versionDisplayName = "AbyssBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
@@ -1514,11 +1514,13 @@ var beepbox = (function (exports) {
                 { name: "Atari Bass", midiProgram: 36, settings: { "type": "custom chip", "effects": ["aliasing"], "transition": "interrupt", "fadeInSeconds": 0, "fadeOutTicks": -3, "chord": "arpeggio", "eqFilter": [{ "type": "low-pass", "cutoffHz": 4000, "linearGain": 0.5 }], "unison": "none", "envelopes": [], "customChipWave": [-24, -24, -24, -24, -24, -24, -24, -24, -24, 24, 24, 24, 24, 24, 24, -24, -24, -24, 24, 24, 24, -24, -24, -24, 24, 24, 24, -24, -24, -24, 24, 24, -24, -24, -24, -24, -24, -24, -24, -24, -24, 24, 24, 24, 24, 24, 24, -24, -24, 24, 24, 24, 24, 24, -24, -24, -24, -24, 24, 24, -24, -24, 24, 24] } },
                 { name: "Sunsoft Bass", midiProgram: 36, settings: { "type": "custom chip", "effects": ["aliasing"], "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": -3, "chord": "arpeggio", "eqFilter": [{ "type": "low-pass", "cutoffHz": 4000, "linearGain": 0.5 }], "unison": "none", "envelopes": [], "customChipWave": [24, 24, 15, 15, 9, 9, -4, -4, 0, 0, -13, -13, -19, -19, -24, -24, -24, -24, -10, -10, 0, 0, -7, -7, -7, -7, 0, 0, 6, 6, -4, -4, 3, 3, -4, -4, 3, 3, 3, 3, 9, 9, 15, 15, 15, 15, 6, 6, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, 3, 3, 12, 12, 24, 24] } },
                 { name: "FM sine", midiProgram: 55, settings: { "type": "FM", "transition": "seemless", "effects": "none", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "steady", "vibrato": "none", "algorithm": "1←(2 3 4)", "feedbackType": "1⟲", "feedbackAmplitude": 0, "feedbackEnvelope": "steady", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "steady" }, { "frequency": "1×", "amplitude": 0, "envelope": "steady" }, { "frequency": "1×", "amplitude": 0, "envelope": "steady" }, { "frequency": "1×", "amplitude": 0, "envelope": "steady" }] } },
-            ])
+            ]),
         },
         {
             name: "Keyboard Presets", presets: toNameMap([
-                { name: "grand piano 1", midiProgram: 0, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.125 }], "reverb": 67, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "harmonics": [100, 100, 86, 86, 86, 71, 71, 71, 0, 86, 71, 71, 71, 57, 57, 71, 57, 14, 57, 57, 57, 57, 57, 57, 57, 57, 29, 57], "unison": "piano", "stringSustain": 79, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
+                { name: "grand piano 1", midiProgram: 0, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "effects": ["note filter", "reverb"], "noteFilterType": false, "noteSimpleCut": 10, "noteSimplePeak": 0, "noteFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.125 }], "panDelay": 10, "reverb": 68, "fadeInSeconds": 0, "fadeOutTicks": 48, "harmonics": [100, 100, 86, 86, 86, 71, 71, 71, 0, 86, 71, 71, 71, 57, 57, 71, 57, 14, 57, 57, 57, 57, 57, 57, 57, 57, 29, 57], "unison": "piano", "stringSustain": 79, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
+                { name: "grand piano 2", midiProgram: 0, generalMidi: true, settings: { "type": "harmonics", "eqFilter": [{ "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.125 }], "reverb": 67, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "harmonics": [100, 86, 86, 86, 86, 71, 71, 57, 0, 57, 29, 43, 57, 57, 57, 43, 43, 0, 29, 43, 43, 43, 43, 43, 43, 29, 0, 29], "unison": "piano", "stringSustain": 79, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
+                { name: "grand piano 3", midiProgram: 0, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1681.79, "linearGain": 4 }, { "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.1768 }, { "type": "peak", "cutoffHz": 3363.59, "linearGain": 4 }, { "type": "peak", "cutoffHz": 2378.41, "linearGain": 0.25 }], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 4756.83, "linearGain": 0.3536 }, { "type": "high-pass", "cutoffHz": 125, "linearGain": 0.0884 }], "reverb": 67, "fadeInSeconds": 0, "fadeOutTicks": 48, "harmonics": [100, 100, 86, 86, 86, 71, 71, 71, 0, 71, 71, 71, 71, 57, 57, 71, 57, 14, 57, 57, 57, 57, 57, 57, 57, 57, 29, 57], "unison": "piano", "stringSustain": 86, "envelopes": [{ "target": "noteFilterFreq", "envelope": "note size", "index": 0 }, { "target": "noteFilterFreq", "envelope": "twang 1", "index": 1 }, { "target": "noteFilterFreq", "envelope": "twang 1", "index": 1 }] } },
                 { name: "bright piano", midiProgram: 1, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 1681.79, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.5 }, { "type": "peak", "cutoffHz": 3363.59, "linearGain": 1.4142 }], "effects": ["reverb"], "reverb": 33, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 24, "chord": "simultaneous", "harmonics": [100, 100, 86, 86, 71, 71, 0, 71, 71, 71, 71, 71, 71, 14, 57, 57, 57, 57, 57, 57, 29, 57, 57, 57, 57, 57, 57, 57], "unison": "piano", "stringSustain": 86, "envelopes": [] } },
                 { name: "electric grand", midiProgram: 2, generalMidi: true, settings: { "type": "chip", "eqFilter": [], "effects": ["note filter"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 2378.41, "linearGain": 0.5 }], "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "wave": "1/8 pulse", "unison": "shimmer", "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 3" }] } },
                 { name: "honky-tonk piano", midiProgram: 3, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }], "effects": ["reverb"], "reverb": 33, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "harmonics": [100, 100, 86, 71, 86, 71, 43, 71, 43, 43, 57, 57, 57, 29, 57, 57, 57, 57, 57, 57, 43, 57, 57, 57, 43, 43, 43, 43], "unison": "honky tonk", "stringSustain": 71, "envelopes": [] } },
@@ -1527,7 +1529,6 @@ var beepbox = (function (exports) {
                 { name: "harpsichord", midiProgram: 6, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "high-pass", "cutoffHz": 250, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 11313.71, "linearGain": 2.8284 }], "effects": ["reverb"], "reverb": 33, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 24, "chord": "simultaneous", "harmonics": [100, 100, 100, 86, 57, 86, 86, 86, 86, 57, 57, 71, 71, 86, 86, 71, 71, 86, 86, 71, 71, 71, 71, 71, 71, 71, 71, 71], "unison": "none", "stringSustain": 79, "envelopes": [] } },
                 { name: "clavinet", midiProgram: 7, generalMidi: true, settings: { "type": "FM", "eqFilter": [], "effects": ["note filter"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 0.3536 }], "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": -3, "chord": "simultaneous", "algorithm": "1←(2 3 4)", "feedbackType": "3⟲", "feedbackAmplitude": 6, "operators": [{ "frequency": "3×", "amplitude": 15 }, { "frequency": "~1×", "amplitude": 6 }, { "frequency": "8×", "amplitude": 4 }, { "frequency": "1×", "amplitude": 0 }], "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 2" }, { "target": "feedbackAmplitude", "envelope": "twang 2" }] } },
                 { name: "dulcimer", midiProgram: 15, generalMidi: true, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.3536 }], "effects": ["reverb"], "reverb": 33, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "strum", "harmonics": [100, 100, 100, 86, 100, 86, 57, 100, 100, 86, 100, 86, 100, 86, 100, 71, 57, 71, 71, 100, 86, 71, 86, 86, 100, 86, 86, 86], "unison": "piano", "stringSustain": 79, "envelopes": [] } },
-                { name: "grand piano 2", midiProgram: 0, generalMidi: true, settings: { "type": "harmonics", "eqFilter": [{ "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.125 }], "reverb": 67, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "harmonics": [100, 86, 86, 86, 86, 71, 71, 57, 0, 57, 29, 43, 57, 57, 57, 43, 43, 0, 29, 43, 43, 43, 43, 43, 43, 29, 0, 29], "unison": "piano", "stringSustain": 79, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
             ])
         },
         {
@@ -1809,6 +1810,8 @@ var beepbox = (function (exports) {
         { name: "Le choptop84's presets", presets: toNameMap([
                 { name: "Demonic Bell", generalMidi: false, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "effects": ["detune", "distortion", "bitcrusher", "echo", "reverb"], "detuneCents": -52, "distortion": 29, "aliases": false, "bitcrusherOctave": 4.5, "bitcrusherQuantization": 29, "panDelay": 10, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 68, "fadeInSeconds": 0, "fadeOutTicks": 96, "harmonics": [43, 71, 71, 100, 86, 100, 43, 86, 71, 57, 86, 29, 14, 71, 14, 14, 57, 14, 14, 43, 14, 14, 43, 14, 14, 43, 14, 14], "unison": "shimmer", "stringSustain": 64, "envelopes": [] } },
                 { name: "Spacey Triangle", generalMidi: false, settings: { "type": "chip", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "effects": ["transition type", "vibrato", "distortion", "bitcrusher", "chorus", "echo", "reverb"], "transition": "normal", "clicklessTransition": false, "vibrato": "shaky", "vibratoDepth": 0.1, "vibratoDelay": 0, "vibratoSpeed": 10, "vibratoType": 1, "distortion": 29, "aliases": false, "bitcrusherOctave": 5.5, "bitcrusherQuantization": 14, "panDelay": 10, "chorus": 86, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 26, "fadeInSeconds": 0, "fadeOutTicks": 96, "wave": "triangle", "unison": "dirty", "isUsingAdvancedLoopControls": false, "chipWaveLoopStart": 0, "chipWaveLoopEnd": 32, "chipWaveLoopMode": 0, "chipWavePlayBackwards": false, "chipWaveStartOffset": 0, "envelopes": [] } },
+                { name: "Harmonic Piano", generalMidi: false, settings: { "type": "harmonics", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "effects": ["transition type"], "transition": "interrupt", "clicklessTransition": false, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -1, "harmonics": [100, 57, 57, 57, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "unison": "none", "envelopes": [] } },
+                { name: "Organic Synth", generalMidi: false, settings: { "type": "FM", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "effects": ["chord type", "reverb"], "chord": "simultaneous", "fastTwoNoteArp": false, "arpeggioSpeed": 12, "panDelay": 10, "reverb": 71, "fadeInSeconds": 0.0263, "fadeOutTicks": 96, "algorithm": "(1 2 3)←4", "feedbackType": "1⟲ 2⟲ 3⟲", "feedbackAmplitude": 2, "operators": [{ "frequency": "1×", "amplitude": 15, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "5×", "amplitude": 3, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "8×", "amplitude": 7, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }], "envelopes": [{ "target": "operatorAmplitude", "envelope": "twang 1", "index": 3 }, { "target": "noteVolume", "envelope": "twang 2" }] } },
             ]) },
     ]);
 
@@ -2356,6 +2359,14 @@ var beepbox = (function (exports) {
                     }
                 }
             }
+        }
+        static setThemeProperty(name, value) {
+            var _a;
+            ((_a = this._styleElement.sheet) === null || _a === void 0 ? void 0 : _a.cssRules[0]).style.setProperty(name, value);
+        }
+        static getThemeProperties() {
+            var _a;
+            return (_a = this._styleElement.sheet) === null || _a === void 0 ? void 0 : _a.cssRules[0].cssText;
         }
         static setTheme(name) {
             let theme = this.themes[name];
@@ -3754,25 +3765,25 @@ var beepbox = (function (exports) {
 					--mod-label-secondary-text: rgb(87, 86, 120);
 					--mod-label-primary-text: white;
 					--pitch-secondary-channel-hue: 0;
-					--pitch-secondary-channel-hue-scale: 6.1;
+					--pitch-secondary-channel-hue-scale: 6.5;
 					--pitch-secondary-channel-sat: 83.3;
 					--pitch-secondary-channel-sat-scale: 0.1;
 					--pitch-secondary-channel-lum: 40;
 					--pitch-secondary-channel-lum-scale: 0.05;
 					--pitch-primary-channel-hue: 0;
-					--pitch-primary-channel-hue-scale: 6.1;
+					--pitch-primary-channel-hue-scale: 6.5;
 					--pitch-primary-channel-sat: 100;
 					--pitch-primary-channel-sat-scale: 0.1;
 					--pitch-primary-channel-lum: 67.5;
 					--pitch-primary-channel-lum-scale: 0.05;
 					--pitch-secondary-note-hue: 0;
-					--pitch-secondary-note-hue-scale: 6.1;
+					--pitch-secondary-note-hue-scale: 6.5;
 					--pitch-secondary-note-sat: 93.9;
 					--pitch-secondary-note-sat-scale: 0.1;
 					--pitch-secondary-note-lum: 25;
 					--pitch-secondary-note-lum-scale: 0.05;
 					--pitch-primary-note-hue: 0;
-					--pitch-primary-note-hue-scale: 6.1;
+					--pitch-primary-note-hue-scale: 6.5;
 					--pitch-primary-note-sat: 100;
 					--pitch-primary-note-sat-scale: 0.05;
 					--pitch-primary-note-lum: 85.6;
@@ -9202,6 +9213,411 @@ var beepbox = (function (exports) {
 		content: url("UltraBoxALThemeLogo.png");
 		}
 	}`,
+        "Protanopia": `
+:root { 
+--page-margin: #000000; 
+--editor-background: #000000; 
+--hover-preview: white; 
+--playhead: rgba(255, 255, 255, 0.9); 
+--primary-text: #ffffff; 
+--secondary-text: #e5e5e5; 
+--inverted-text: #000000; 
+--text-selection: rgba(119,68,255,0.99); 
+--box-selection-fill: #044b94; 
+--loop-accent: #ffffff; 
+--link-accent: #8915c8; 
+--ui-widget-background: #676767; 
+--ui-widget-focus: #696969; 
+--pitch-background: #7a7887; 
+--tonic: #313036; 
+--fifth-note: #c3c1db; 
+--white-piano-key: #a6a6a6; 
+--black-piano-key: #484848; 
+--use-color-formula: false; 
+--track-editor-bg-pitch: #666666; 
+--track-editor-bg-pitch-dim: #383838; 
+--track-editor-bg-noise: #438240; 
+--track-editor-bg-noise-dim: #1e361d; 
+--track-editor-bg-mod: #5f419c; 
+--track-editor-bg-mod-dim: #3e2b66; 
+--multiplicative-mod-slider: #b62326; 
+--overwriting-mod-slider: #5f1214; 
+--indicator-primary: #ccffdb; 
+--indicator-secondary: #55dee6; 
+--select2-opt-group: #595959; 
+--input-box-outline: #ffffff; 
+--mute-button-normal: #f11d22; 
+--mute-button-mod: #4b57c2; 
+--mod-label-primary: #0909ff; 
+--mod-label-secondary-text: #ffffff; 
+--mod-label-primary-text: #c8ecfd; 
+				--pitch1-secondary-channel: #0e0429;
+				--pitch1-primary-channel:   #310b8f;
+
+				--pitch1-secondary-note:    #0e0429;
+				--pitch1-primary-note:      #310b8f;
+
+				--pitch2-secondary-channel: #0b555e;
+				--pitch2-primary-channel:   #126e7a;
+
+				--pitch2-secondary-note:    #0b555e;
+				--pitch2-primary-note:      #126e7a;
+
+				--pitch3-secondary-channel: #1d898c;
+				--pitch3-primary-channel:   #2fa9ad;
+
+				--pitch3-secondary-note:    #1d898c;
+				--pitch3-primary-note:      #2fa9ad;
+
+				--pitch4-secondary-channel: #3f9160;
+				--pitch4-primary-channel:   #55ad78;
+
+				--pitch4-secondary-note:    #3f9160;
+				--pitch4-primary-note:      #55ad78;
+
+				--pitch5-secondary-channel: #69b051;
+				--pitch5-primary-channel:   #97e07e;
+
+				--pitch5-secondary-note:    #69b051;
+				--pitch5-primary-note:      #97e07e;
+
+				--pitch6-secondary-channel: #bbcc8f;
+				--pitch6-primary-channel:   #d4e3ac;
+
+				--pitch6-secondary-note:    #bbcc8f;
+				--pitch6-primary-note:      #d4e3ac;
+
+				--pitch7-secondary-channel: #8f7657;
+				--pitch7-primary-channel:   #b5a28a;
+
+				--pitch7-secondary-note:    #8f7657;
+				--pitch7-primary-note:      #b5a28a;
+
+				--pitch8-secondary-channel: #804d3c;
+				--pitch8-primary-channel:   #a16a58;
+
+				--pitch8-secondary-note:    #804d3c;
+				--pitch8-primary-note:      #a16a58;
+
+				--pitch9-secondary-channel: #a62b2b;
+				--pitch9-primary-channel:   #ba3c3c;
+
+				--pitch9-secondary-note:    #a62b2b;
+				--pitch9-primary-note:      #ba3c3c;
+
+				--pitch10-secondary-channel:#ba497c;
+				--pitch10-primary-channel:  #d46195;
+
+				--pitch10-secondary-note:   #ba497c;
+				--pitch10-primary-note:     #d46195;
+
+				--noise1-secondary-channel: #6F6F6F;
+				--noise1-primary-channel:   #AAAAAA;
+
+				--noise1-secondary-note:    #A7A7A7;
+				--noise1-primary-note:      #E0E0E0;
+
+				--noise2-secondary-channel: #996633;
+				--noise2-primary-channel:   #DDAA77;
+				--noise2-secondary-note:    #CC9966;
+				--noise2-primary-note:      #F0D0BB;
+				--noise3-secondary-channel: #4A6D8F;
+				--noise3-primary-channel:   #77AADD;
+				--noise3-secondary-note:    #6F9FCF;
+				--noise3-primary-note:      #BBD7FF;
+				--noise4-secondary-channel: #7A4F9A;
+				--noise4-primary-channel:   #AF82D2;
+				--noise4-secondary-note:    #9E71C1;
+				--noise4-primary-note:      #D4C1EA;
+				--noise5-secondary-channel: #607837;
+				--noise5-primary-channel:   #A2BB77;
+				--noise5-secondary-note:    #91AA66;
+				--noise5-primary-note:      #C5E2B2;
+          				--mod1-secondary-channel:   #339955;
+					--mod1-primary-channel:     #77fc55;
+					--mod1-secondary-note:      #77ff8a;
+					--mod1-primary-note:        #cdffee;
+					--mod2-secondary-channel:   #993355;
+					--mod2-primary-channel:     #f04960;
+					--mod2-secondary-note:      #f057a0;
+					--mod2-primary-note:        #ffb8de;
+					--mod3-secondary-channel:   #553399;
+					--mod3-primary-channel:     #8855fc;
+					--mod3-secondary-note:      #aa64ff;
+					--mod3-primary-note:	    #f8ddff;
+					--mod4-secondary-channel:   #a86436;
+					--mod4-primary-channel:     #c8a825;
+					--mod4-secondary-note:      #e8ba46;
+					--mod4-primary-note:        #fff6d3;
+					--mod-label-primary:        #999;
+					--mod-label-secondary-text: #333;
+					--mod-label-primary-text:   black;
+					--disabled-note-primary:    #999;
+					--disabled-note-secondary:  #666;
+}
+
+			`,
+        "Tritanopia": `
+:root { 
+--page-margin: #000000; 
+--editor-background: #000000; 
+--hover-preview: white; 
+--playhead: rgba(255, 255, 255, 0.9); 
+--primary-text: #ffffff; 
+--secondary-text: #e5e5e5; 
+--inverted-text: #000000; 
+--text-selection: rgba(119,68,255,0.99); 
+--box-selection-fill: #044b94; 
+--loop-accent: #ffffff; 
+--link-accent: #8915c8; 
+--ui-widget-background: #676767; 
+--ui-widget-focus: #696969; 
+--pitch-background: #7a7887; 
+--tonic: #313036; 
+--fifth-note: #c3c1db; 
+--white-piano-key: #a6a6a6; 
+--black-piano-key: #484848; 
+--use-color-formula: false; 
+--track-editor-bg-pitch: #666666; 
+--track-editor-bg-pitch-dim: #383838; 
+--track-editor-bg-noise: #438240; 
+--track-editor-bg-noise-dim: #1e361d; 
+--track-editor-bg-mod: #5f419c; 
+--track-editor-bg-mod-dim: #3e2b66; 
+--multiplicative-mod-slider: #b62326; 
+--overwriting-mod-slider: #5f1214; 
+--indicator-primary: #ccffdb; 
+--indicator-secondary: #55dee6; 
+--select2-opt-group: #595959; 
+--input-box-outline: #ffffff; 
+--mute-button-normal: #f11d22; 
+--mute-button-mod: #4b57c2; 
+--mod-label-primary: #0909ff; 
+--mod-label-secondary-text: #ffffff; 
+--mod-label-primary-text: #c8ecfd; 
+				--pitch1-secondary-channel: #9C0000;
+				--pitch1-primary-channel:   #FF0000;
+
+				--pitch1-secondary-note:    #9C0000;
+				--pitch1-primary-note:      #FF0000;
+
+				--pitch2-secondary-channel: #8E009C;
+				--pitch2-primary-channel:   #EB25FF;
+
+				--pitch2-secondary-note:    #8E009C;
+				--pitch2-primary-note:      #EB25FF;
+
+				--pitch3-secondary-channel: #00069C;
+				--pitch3-primary-channel:   #3D45FF;
+
+				--pitch3-secondary-note:    #00069C;
+				--pitch3-primary-note:      #3D45FF;
+
+				--pitch4-secondary-channel: #00829C;
+				--pitch4-primary-channel:   #24DBFF;
+
+				--pitch4-secondary-note:    #00829C;
+				--pitch4-primary-note:      #24DBFF;
+
+				--pitch5-secondary-channel: #009C18;
+				--pitch5-primary-channel:   #70FF86;
+
+				--pitch5-secondary-note:    #009C18;
+				--pitch5-primary-note:      #70FF86;
+
+				--pitch6-secondary-channel: #8E9C00;
+				--pitch6-primary-channel:   #DBEF16;
+
+				--pitch6-secondary-note:    #8E9C00;
+				--pitch6-primary-note:      #DBEF16;
+
+				--pitch7-secondary-channel: #9C6A00;
+				--pitch7-primary-channel:   #F7AC0E;
+
+				--pitch7-secondary-note:    #9C6A00;
+				--pitch7-primary-note:      #F7AC0E;
+
+				--pitch8-secondary-channel: #9C2300;
+				--pitch8-primary-channel:   #F53700;
+
+				--pitch8-secondary-note:    #9C2300;
+				--pitch8-primary-note:      #F53700;
+
+				--pitch9-secondary-channel: #441A0D;
+				--pitch9-primary-channel:   #9E3F22;
+
+				--pitch9-secondary-note:    #441A0D;
+				--pitch9-primary-note:      #9E3F22;
+
+				--pitch10-secondary-channel:#2C0D44;
+				--pitch10-primary-channel:  #7436A4;
+
+				--pitch10-secondary-note:   #2C0D44;
+				--pitch10-primary-note:     #7436A4;
+
+				--noise1-secondary-channel: #6F6F6F;
+				--noise1-primary-channel:   #AAAAAA;
+
+				--noise1-secondary-note:    #A7A7A7;
+				--noise1-primary-note:      #E0E0E0;
+
+				--noise2-secondary-channel: #996633;
+				--noise2-primary-channel:   #DDAA77;
+				--noise2-secondary-note:    #CC9966;
+				--noise2-primary-note:      #F0D0BB;
+				--noise3-secondary-channel: #4A6D8F;
+				--noise3-primary-channel:   #77AADD;
+				--noise3-secondary-note:    #6F9FCF;
+				--noise3-primary-note:      #BBD7FF;
+				--noise4-secondary-channel: #7A4F9A;
+				--noise4-primary-channel:   #AF82D2;
+				--noise4-secondary-note:    #9E71C1;
+				--noise4-primary-note:      #D4C1EA;
+				--noise5-secondary-channel: #607837;
+				--noise5-primary-channel:   #A2BB77;
+				--noise5-secondary-note:    #91AA66;
+				--noise5-primary-note:      #C5E2B2;
+          				--mod1-secondary-channel:   #339955;
+					--mod1-primary-channel:     #77fc55;
+					--mod1-secondary-note:      #77ff8a;
+					--mod1-primary-note:        #cdffee;
+					--mod2-secondary-channel:   #993355;
+					--mod2-primary-channel:     #f04960;
+					--mod2-secondary-note:      #f057a0;
+					--mod2-primary-note:        #ffb8de;
+					--mod3-secondary-channel:   #553399;
+					--mod3-primary-channel:     #8855fc;
+					--mod3-secondary-note:      #aa64ff;
+					--mod3-primary-note:	    #f8ddff;
+					--mod4-secondary-channel:   #a86436;
+					--mod4-primary-channel:     #c8a825;
+					--mod4-secondary-note:      #e8ba46;
+					--mod4-primary-note:        #fff6d3;
+					--mod-label-primary:        #999;
+					--mod-label-secondary-text: #333;
+					--mod-label-primary-text:   black;
+					--disabled-note-primary:    #999;
+					--disabled-note-secondary:  #666;
+}
+
+			`,
+        "Deuteranopia": `
+    :root {
+    --page-margin: #000;
+    --editor-background: #060606;
+    --hover-preview: #fff;
+    --playhead: rgb(255, 255, 255);
+    --primary-text: #fff;
+    --secondary-text: #fff;
+    --inverted-text: #000;
+    --text-selection: rgba(126, 126, 126, .99);
+    --box-selection-fill: #b74a4a;
+    --loop-accent: #7744FF;
+    --link-accent: #7744FF;
+    --ui-widget-background: #484848;
+    --ui-widget-focus: #3e3e3e;
+    --pitch-background: #3e3e3e;
+    --tonic: #861057;
+    --fifth-note: #7e7e7e;
+    --use-color-formula: false;
+    --track-editor-bg-pitch: #666161;
+    --track-editor-bg-pitch-dim: #3e3e3e;
+    --track-editor-bg-noise: #474747;
+    --track-editor-bg-noise-dim: #1a1a1a;
+    --track-editor-bg-mod: #474747;
+    --track-editor-bg-mod-dim: #1a1a1a;
+    --multiplicative-mod-slider: #868686;
+    --overwriting-mod-slider: #fff;
+    --indicator-primary: #fff;
+    --indicator-secondary: #535353;
+    --select2-opt-group: #5d576f;
+    --input-box-outline: #626262;
+    --mute-button-normal: #ffdc00;
+    --mute-button-mod: #0027ff;
+    --mod-label-primary: #2b2b2b;
+    --track-font: sans-serif;
+
+    --pitch1-secondary-channel: #0082BB;
+  --pitch1-primary-channel: #B1E8FF;
+  --pitch1-secondary-note: #0082BB;
+  --pitch1-primary-note: #B1E8FF;
+  --pitch2-secondary-channel: #005F88;
+  --pitch2-primary-channel: #00B2FF;
+  --pitch2-secondary-note: #005F88;
+  --pitch2-primary-note: #00B2FF;
+  --pitch3-secondary-channel: #0E0090;
+  --pitch3-primary-channel: #5196ff;
+  --pitch3-secondary-note: #0E0090;
+  --pitch3-primary-note: #5196ff;
+  --pitch4-secondary-channel: #001540;
+  --pitch4-primary-channel: #0041CA;
+  --pitch4-secondary-note: #001b55;
+  --pitch4-primary-note: #0041CA;
+  --pitch5-secondary-channel: #936e21;
+  --pitch5-primary-channel: #ffb300;
+  --pitch5-secondary-note: #936e21;
+  --pitch5-primary-note: #ffbe23;
+  --pitch6-secondary-channel: #ca5b00;
+  --pitch6-primary-channel: #faff52;
+  --pitch6-secondary-note: #ca5b00;
+  --pitch6-primary-note: #faff52;
+  --pitch7-secondary-channel: #75714a;
+  --pitch7-primary-channel: #fff3b8;
+  --pitch7-secondary-note: #75714a;
+  --pitch7-primary-note: #fff3b8;
+  --pitch8-secondary-channel: #9c4100;
+  --pitch8-primary-channel: #fc0;
+  --pitch8-secondary-note: #9c4100;
+  --pitch8-primary-note: #fc0;
+  --pitch9-secondary-channel: #8d4d00;
+  --pitch9-primary-channel: #ff9b20;
+  --pitch9-secondary-note: #8d4d00;
+  --pitch9-primary-note: #ff9b20;
+  --pitch10-secondary-channel: #a28f00;
+  --pitch10-primary-channel: #ffac55;
+  --pitch10-secondary-note: #a28f00;
+  --pitch10-primary-note: #ffac55;
+  --noise1-secondary-channel: #868686;
+  --noise1-primary-channel: #fff;
+  --noise1-secondary-note: #868686;
+  --noise1-primary-note: #fff;
+  --noise2-secondary-channel: #ad5600;
+  --noise2-primary-channel: #ffd300;
+  --noise2-secondary-note: #ad5600;
+  --noise2-primary-note: #ffd300;
+  --noise3-secondary-channel: #4f2f00;
+  --noise3-primary-channel: #fff3bc;
+  --noise3-secondary-note: #4f2f00;
+  --noise3-primary-note: #fff3bc;
+  --noise4-secondary-channel: #0070ff;
+  --noise4-primary-channel: #84f1ff;
+  --noise4-secondary-note: #0070ff;
+  --noise4-primary-note: #84f1ff;
+  --noise5-secondary-channel: #00c4b2;
+  --noise5-primary-channel: #4198ff;
+  --noise5-secondary-note: #00c4b2;
+  --noise5-primary-note: #4198ff;
+  --mod1-secondary-channel: #00046c;
+  --mod1-primary-channel: #00faff;
+  --mod1-secondary-note: #00046c;
+  --mod1-primary-note: #00faff;
+  --mod2-secondary-channel: #d25a00;
+  --mod2-primary-channel: #fdff00;
+  --mod2-secondary-note: #d25a00;
+  --mod2-primary-note: #fdff00;
+  --mod3-secondary-channel: #5a5a5a;
+  --mod3-primary-channel: #fff;
+  --mod3-secondary-note: #5a5a5a;
+  --mod3-primary-note: #fff;
+  --mod4-secondary-channel: #006dfb;
+  --mod4-primary-channel: #0ce7ff;
+  --mod4-secondary-note: #006dfb;
+  --mod4-primary-note: #0ce7ff;
+  --disabled-note-primary: #8d8d8d;
+  --disabled-note-secondary: #363636;
+    }
+
+			`,
         "custom": `${localStorage.getItem("customColors") || `:root {
 				--page-margin: #040410;
 				--editor-background: #040410;
@@ -10311,9 +10727,9 @@ var beepbox = (function (exports) {
 .beepboxEditor .layout-option {
 	display: flex;
 	flex-direction: column;
-	flex: 1;
 	cursor: pointer;
 	color: ${ColorConfig.secondaryText};
+	width: 25%;
 }
 
 .beepboxEditor .layout-option input {
@@ -27283,12 +27699,12 @@ li.select2-results__option[role=group] > strong:hover {
         }
     }
 
-    const { button: button$k, div: div$k, span: span$6, h2: h2$j, input: input$f, br: br$3, select: select$9, option: option$9 } = HTML;
+    const { button: button$k, div: div$k, span: span$6, h2: h2$j, input: input$f, br: br$3, select: select$a, option: option$a } = HTML;
     class BeatsPerBarPrompt {
         constructor(_doc) {
             this._doc = _doc;
             this._beatsStepper = input$f({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
-            this._conversionStrategySelect = select$9({ style: "width: 100%;" }, option$9({ value: "splice" }, "Splice beats at end of bars."), option$9({ value: "stretch" }, "Stretch notes to fit in bars."), option$9({ value: "overflow" }, "Overflow notes across bars."));
+            this._conversionStrategySelect = select$a({ style: "width: 100%;" }, option$a({ value: "splice" }, "Splice beats at end of bars."), option$a({ value: "stretch" }, "Stretch notes to fit in bars."), option$a({ value: "overflow" }, "Overflow notes across bars."));
             this._cancelButton = button$k({ class: "cancelButton" });
             this._okayButton = button$k({ class: "okayButton", style: "width:45%;" }, "Okay");
             this.container = div$k({ class: "prompt noSelection", style: "width: 250px;" }, h2$j("Beats Per Bar"), div$k({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$k({ style: "text-align: right;" }, "Beats per bar:", br$3(), span$6({ style: "font-size: smaller; color: ${ColorConfig.secondaryText};" }, "(Multiples of 3 or 4 are recommended)")), this._beatsStepper), div$k({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$k({ class: "selectContainer", style: "width: 100%;" }, this._conversionStrategySelect)), div$k({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
@@ -29625,7 +30041,7 @@ li.select2-results__option[role=group] > strong:hover {
         return Math.pow(volumeMult, 0.25) * 127;
     }
 
-    const { button: button$f, div: div$f, h2: h2$e, input: input$c, select: select$8, option: option$8 } = HTML;
+    const { button: button$f, div: div$f, h2: h2$e, input: input$c, select: select$9, option: option$9 } = HTML;
     function lerp(low, high, t) {
         return low + t * (high - low);
     }
@@ -29658,7 +30074,7 @@ li.select2-results__option[role=group] > strong:hover {
             this._enableIntro = input$c({ type: "checkbox" });
             this._loopDropDown = input$c({ style: "width: 2em;", type: "number", min: "1", max: "4", step: "1" });
             this._enableOutro = input$c({ type: "checkbox" });
-            this._formatSelect = select$8({ style: "width: 100%;" }, option$8({ value: "wav" }, "Export to .wav file."), option$8({ value: "mp3" }, "Export to .mp3 file."), option$8({ value: "midi" }, "Export to .mid file."), option$8({ value: "json" }, "Export to .json file."), option$8({ value: "html" }, "Export to .html file."));
+            this._formatSelect = select$9({ style: "width: 100%;" }, option$9({ value: "wav" }, "Export to .wav file."), option$9({ value: "mp3" }, "Export to .mp3 file."), option$9({ value: "midi" }, "Export to .mid file."), option$9({ value: "json" }, "Export to .json file."), option$9({ value: "html" }, "Export to .html file."));
             this._cancelButton = button$f({ class: "cancelButton" });
             this._exportButton = button$f({ class: "exportButton", style: "width:45%;" }, "Export");
             this._outputProgressBar = div$f({ style: `width: 0%; background: ${ColorConfig.loopAccent}; height: 100%; position: absolute; z-index: 2;` });
@@ -32004,7 +32420,7 @@ You should be redirected to the song at:<br /><br />
             this._fileInput = input$a({ type: "file", accept: ".json,application/json,.mid,.midi,audio/midi,audio/x-midi" });
             this._okayButton = button$d({ class: "okayButton", style: "width:45%;" }, "Okay");
             this._cancelButton = button$d({ class: "cancelButton" });
-            this._form = form({ style: "display: flex; gap: 10px;" }, label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "small" }), SVG(`\
+            this._form = form({ style: "display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;" }, label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "small" }), SVG(`\
 					<svg viewBox="-4 -1 28 22">
 						<rect x="0" y="0" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
 						<rect x="2" y="2" width="11" height="10" fill="currentColor"/>
@@ -32045,16 +32461,16 @@ You should be redirected to the song at:<br /><br />
 				`), div$d("Flipped (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "focus" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
-						<rect x="2" y="2" width="19" height="10" fill="currentColor"/>
+						<rect x="2" y="2" width="17" height="10" fill="currentColor"/>
 						<rect x="20" y="2" width="4" height="16" fill="currentColor"/>
-						<rect x="2" y="13" width="19" height="5" fill="currentColor"/>
+						<rect x="2" y="13" width="17" height="5" fill="currentColor"/>
 					</svg>
 				`), div$d("Focus (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "long (AB)" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
 						<rect x="2" y="2" width="12" height="10" fill="currentColor"/>
-						<rect x="15" y="2" width="4" height="18" fill="currentColor"/>
-						<rect x="20" y="2" width="4" height="18" fill="currentColor"/>
+						<rect x="15" y="2" width="4" height="16" fill="currentColor"/>
+						<rect x="20" y="2" width="4" height="16" fill="currentColor"/>
 						<rect x="2" y="13" width="12" height="5" fill="currentColor"/>
 					</svg>
 				`), div$d("Long (AB)")));
@@ -32936,12 +33352,12 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$a, div: div$a, span: span$4, h2: h2$9, input: input$7, br: br$1, select: select$7, option: option$7 } = HTML;
+    const { button: button$a, div: div$a, span: span$4, h2: h2$9, input: input$7, br: br$1, select: select$8, option: option$8 } = HTML;
     class MoveNotesSidewaysPrompt {
         constructor(_doc) {
             this._doc = _doc;
             this._beatsStepper = input$7({ style: "width: 3em; margin-left: 1em;", type: "number", step: "0.01", value: "0" });
-            this._conversionStrategySelect = select$7({ style: "width: 100%;" }, option$7({ value: "overflow" }, "Overflow notes across bars."), option$7({ value: "wrapAround" }, "Wrap notes around within bars."));
+            this._conversionStrategySelect = select$8({ style: "width: 100%;" }, option$8({ value: "overflow" }, "Overflow notes across bars."), option$8({ value: "wrapAround" }, "Wrap notes around within bars."));
             this._cancelButton = button$a({ class: "cancelButton" });
             this._okayButton = button$a({ class: "okayButton", style: "width:45%;" }, "Okay");
             this.container = div$a({ class: "prompt noSelection", style: "width: 250px;" }, h2$9("Move Notes Sideways"), div$a({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$a({ style: "text-align: right;" }, "Beats to move:", br$1(), span$4({ style: `font-size: smaller; color: ${ColorConfig.secondaryText};` }, "(Negative is left, positive is right)")), this._beatsStepper), div$a({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$a({ class: "selectContainer", style: "width: 100%;" }, this._conversionStrategySelect)), div$a({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
@@ -35859,12 +36275,12 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$9, div: div$9, span: span$3, h2: h2$8, input: input$6, br, select: select$6, option: option$6 } = HTML;
+    const { button: button$9, div: div$9, span: span$3, h2: h2$8, input: input$6, br, select: select$7, option: option$7 } = HTML;
     class SongDurationPrompt {
         constructor(_doc) {
             this._doc = _doc;
             this._barsStepper = input$6({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
-            this._positionSelect = select$6({ style: "width: 100%;" }, option$6({ value: "end" }, "Apply change at end of song."), option$6({ value: "beginning" }, "Apply change at beginning of song."));
+            this._positionSelect = select$7({ style: "width: 100%;" }, option$7({ value: "end" }, "Apply change at end of song."), option$7({ value: "beginning" }, "Apply change at beginning of song."));
             this._cancelButton = button$9({ class: "cancelButton" });
             this._okayButton = button$9({ class: "okayButton", style: "width:45%;" }, "Okay");
             this.container = div$9({ class: "prompt noSelection", style: "width: 250px;" }, h2$8("Song Length"), div$9({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$9({ style: "display: inline-block; text-align: right;" }, "Bars per song:", br(), span$3({ style: `font-size: smaller; color: ${ColorConfig.secondaryText};` }, "(Multiples of 4 are recommended)")), this._barsStepper), div$9({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$9({ class: "selectContainer", style: "width: 100%;" }, this._positionSelect)), div$9({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
@@ -36047,7 +36463,7 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$8, div: div$8, h2: h2$7, p: p$3, select: select$5, option: option$5, iframe } = HTML;
+    const { button: button$8, div: div$8, h2: h2$7, p: p$3, select: select$6, option: option$6, iframe } = HTML;
     class SongRecoveryPrompt {
         constructor(_doc) {
             this._doc = _doc;
@@ -36066,9 +36482,9 @@ You should be redirected to the song at:<br /><br />
                 this._songContainer.appendChild(p$3("There are no recovered songs available yet. Try making a song!"));
             }
             for (const song of songs) {
-                const versionMenu = select$5({ style: "width: 100%;" });
+                const versionMenu = select$6({ style: "width: 100%;" });
                 for (const version of song.versions) {
-                    versionMenu.appendChild(option$5({ value: version.time }, version.name + ": " + new Date(version.time).toLocaleString()));
+                    versionMenu.appendChild(option$6({ value: version.time }, version.name + ": " + new Date(version.time).toLocaleString()));
                 }
                 const player = iframe({ style: "width: 100%; height: 60px; border: none; display: block;" });
                 player.src = "player/#song=" + window.localStorage.getItem(versionToKey(song.versions[0]));
@@ -36083,12 +36499,12 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$7, label, div: div$7, p: p$2, a: a$1, h2: h2$6, input: input$5, select: select$4, option: option$4 } = HTML;
+    const { button: button$7, label, div: div$7, p: p$2, a: a$1, h2: h2$6, input: input$5, select: select$5, option: option$5 } = HTML;
     class RecordingSetupPrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._keyboardMode = select$4({ style: "width: 100%;" }, option$4({ value: "useCapsLockForNotes" }, "simple shortcuts, use caps lock to play notes"), option$4({ value: "pressControlForShortcuts" }, "simple notes, press " + EditorConfig.ctrlName + " for shortcuts"));
-            this._keyboardLayout = select$4({ style: "width: 100%;" }, option$4({ value: "wickiHayden" }, "Wicki-Hayden"), option$4({ value: "songScale" }, "selected song scale"), option$4({ value: "pianoAtC" }, "piano starting at C :)"), option$4({ value: "pianoAtA" }, "piano starting at A :("), option$4({ value: "pianoTransposingC" }, "piano transposing C :) to song key"), option$4({ value: "pianoTransposingA" }, "piano transposing A :( to song key"));
+            this._keyboardMode = select$5({ style: "width: 100%;" }, option$5({ value: "useCapsLockForNotes" }, "simple shortcuts, use caps lock to play notes"), option$5({ value: "pressControlForShortcuts" }, "simple notes, press " + EditorConfig.ctrlName + " for shortcuts"));
+            this._keyboardLayout = select$5({ style: "width: 100%;" }, option$5({ value: "wickiHayden" }, "Wicki-Hayden"), option$5({ value: "songScale" }, "selected song scale"), option$5({ value: "pianoAtC" }, "piano starting at C :)"), option$5({ value: "pianoAtA" }, "piano starting at A :("), option$5({ value: "pianoTransposingC" }, "piano transposing C :) to song key"), option$5({ value: "pianoTransposingA" }, "piano transposing A :( to song key"));
             this._keyboardLayoutPreview = div$7({ style: "display: grid; row-gap: 4px; margin: 4px auto; font-size: 10px;" });
             this._enableMidi = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._showRecordButton = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
@@ -36342,7 +36758,8 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$6, div: div$6, h2: h2$5, input: input$4, p: p$1 } = HTML;
+    const { button: button$6, div: div$6, h2: h2$5, input: input$4, p: p$1, option: option$4, select: select$4 } = HTML;
+    const _pageMarginTest = ColorConfig.getComputed("--page-margin");
     let doReload = false;
     class CustomPrompt {
         constructor(_doc, _pattern, _pattern2, _pattern3) {
@@ -36352,6 +36769,9 @@ You should be redirected to the song at:<br /><br />
             this._pattern3 = _pattern3;
             this._fileInput = input$4({ type: "file", accept: ".png,.jpg,.jpeg", text: "choose editor background image" });
             this._fileInput2 = input$4({ type: "file", accept: ".png,.jpg,.jpeg", text: "choose website background image" });
+            this._colorpicker = input$4({ type: "color", id: "colorPicker", value: (_pageMarginTest), style: "width: 100%; height: 30px;" });
+            this._currentThemeProperty = "--page-margin";
+            this._colorMenu = select$4({ style: "width: 100%;" }, option$4({ selected: true, disabled: true, hidden: false }, "Select an asset to change"), option$4({ value: "--page-margin" }, "Page Margin"), option$4({ value: "--editor-background" }, "Editor Background"), option$4({ value: "--primary-text" }, "Primary Text"), option$4({ value: "--secondary-text" }, "Secondary Text"), option$4({ value: "--inverted-text" }, "Inverted Text"), option$4({ value: "--loop-accent" }, "Loop Accent"), option$4({ value: "--link-accent" }, "Link Accent"), option$4({ value: "--ui-widget-background" }, "UI Widget Background"), option$4({ value: "--ui-widget-focus" }, "UI Widget Focus"), option$4({ value: "--pitch-background" }, "Pitch Background"), option$4({ value: "--tonic" }, "Tonic"), option$4({ value: "--fifth-note" }, "Fifth note"), option$4({ value: "--white-piano-key" }, "White Piano Key"), option$4({ value: "--black-piano-key" }, "Black Piano Key"), option$4({ value: "--track-editor-bg-pitch" }, "Track Editor Pitch BG"), option$4({ value: "--track-editor-bg-pitch-dim" }, "Empty Track Editor Pitch BG"), option$4({ value: "--track-editor-bg-noise" }, "Track Editor Noise BG"), option$4({ value: "--track-editor-bg-noise-dim" }, "Empty Track Editor Noise BG"), option$4({ value: "--track-editor-bg-mod" }, "Track Editor Mod BG"), option$4({ value: "--track-editor-bg-mod-dim" }, "Empty Track Editor Mod BG"), option$4({ value: "--multiplicative-mod-slider" }, "Multiplicative Mod Slider"), option$4({ value: "--overwriting-mod-slider" }, "Overwriting Mod Slider"), option$4({ value: "--indicator-primary" }, "Primary Indicator"), option$4({ value: "--indicator-secondary" }, "Secondary Indicator"), option$4({ value: "--select2-opt-group" }, "Preset Catagory Background"), option$4({ value: "--input-box-outline" }, "Input Box Outline"), option$4({ value: "--mute-button-normal" }, "Mute Button (Normal)"), option$4({ value: "--mute-button-mod" }, "Mute Button (Mod)"), option$4({ value: "--mod-label-primary" }, "Mod Label Primary"), option$4({ value: "--mod-label-secondary-text" }, "Mod Label Secondary"), option$4({ value: "--mod-label-primary-text" }, "Mod Label Primary Text"));
             this._colorInput = input$4({ type: "text", value: localStorage.getItem("customColors") || `:root {
 		--page-margin: #040410;
 		--editor-background: #040410;
@@ -36465,7 +36885,7 @@ You should be redirected to the song at:<br /><br />
             this._cancelButton = button$6({ class: "cancelButton" });
             this._okayButton = button$6({ class: "okayButton", style: "width:45%;" }, "Okay");
             this._resetButton = button$6({ style: "height: auto; min-height: var(--button-size);" }, "Reset to defaults");
-            this.container = div$6({ class: "prompt noSelection", style: "width: 300px;" }, h2$5("Import"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "You can upload images to create a custom theme."), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "The first image will become the editor background, and the second image will be tiled across the webpage."), div$6(), p$1({ style: "text-align: left; margin: 0;" }, "Editor Background Image:", this._fileInput), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Website Background Image:", this._fileInput2), div$6(), p$1({ style: "text-align: left; margin: 0;" }, "If you want to mess with custom color schemes, mess with the hexcodes yourself, I dare you:"), this._colorInput, div$6({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._resetButton), div$6({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this.container = div$6({ class: "prompt noSelection", style: "width: 500px; left: 4;" }, h2$5("Custom Theme Editor"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Thank you to leoV on discord for basically writing the whole system on how this works, without him this wouldn't be possible!"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "To create your custom theme, click the dropdown menu labeled 'Select an asset to change.' After choosing the asset, modify its color by clicking the colored square. All adjustments occur once you press Okay, allowing you to instantly see the effects of color changes."), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "The website and editor background images are being updated. Soon, you'll only need to copy and paste the theme to automatically include the backgrounds!"), p$1({ style: "text-align: center; margin: 1em 0;" }, this._colorMenu), p$1({ style: "text-align: center; margin: 1em 0;" }, "Pick a color: ", this._colorpicker), this._colorInput, div$6({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._resetButton), div$6({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.prompt = null;
                 this._doc.undo();
@@ -36515,6 +36935,14 @@ You should be redirected to the song at:<br /><br />
                 });
                 reader.readAsDataURL(file);
             };
+            this._whenColorsPicked = () => {
+                ColorConfig.setThemeProperty(this._currentThemeProperty, this._colorpicker.value);
+                this._colorInput.value = ColorConfig.getThemeProperties();
+                this._colorInput.dispatchEvent(new Event("change"));
+            };
+            this._whenMenuChanged = () => {
+                this._currentThemeProperty = this._colorMenu.value;
+            };
             this._whenFileSelected2 = () => {
                 const file = this._fileInput2.files[0];
                 if (!file)
@@ -36540,6 +36968,8 @@ You should be redirected to the song at:<br /><br />
             this._okayButton.addEventListener("click", this._close);
             this._cancelButton.addEventListener("click", this._close);
             this._resetButton.addEventListener("click", this._reset);
+            this._colorpicker.addEventListener("change", this._whenColorsPicked);
+            this._colorMenu.addEventListener("change", this._whenMenuChanged);
         }
     }
 
@@ -36547,7 +36977,7 @@ You should be redirected to the song at:<br /><br />
     class ThemePrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._themeSelect = select$3({ style: "width: 100%;" }, option$3({ value: "AbyssBox Classic" }, "AbyssBox Classic"), option$3({ value: "AbyssBox Competative" }, "AbyssBox Competative"), option$3({ value: "AbyssBox Light" }, "AbyssBox Light"), option$3({ value: "Half-Life" }, "Half-Life"), option$3({ value: "Doom 1993" }, "Doom 1993"), option$3({ value: "Windows Xp" }, "Windows Xp"), option$3({ value: "dark classic" }, "BeepBox Dark"), option$3({ value: "light classic" }, "BeepBox Light"), option$3({ value: "dark competition" }, "BeepBox Competition Dark"), option$3({ value: "jummbox classic" }, "JummBox Dark"), option$3({ value: "jummbox light" }, "Gold Light"), option$3({ value: "forest" }, "Forest"), option$3({ value: "canyon" }, "Canyon"), option$3({ value: "midnight" }, "Midnight"), option$3({ value: "beachcombing" }, "Beachcombing"), option$3({ value: "violet verdant" }, "Violet Verdant"), option$3({ value: "sunset" }, "Sunset"), option$3({ value: "autumn" }, "Autumn"), option$3({ value: "fruit" }, "Shadowfruit"), option$3({ value: "toxic" }, "Toxic"), option$3({ value: "roe" }, "Roe"), option$3({ value: "moonlight" }, "Moonlight"), option$3({ value: "portal" }, "Portal"), option$3({ value: "fusion" }, "Fusion"), option$3({ value: "inverse" }, "Inverse"), option$3({ value: "nebula" }, "Nebula"), option$3({ value: "roe light" }, "Roe Light"), option$3({ value: "amoled dark" }, "High Contrast Dark"), option$3({ value: "energized" }, "Energized"), option$3({ value: "neapolitan" }, "Neapolitan"), option$3({ value: "mono" }, "Mono"), option$3({ value: "slushie" }, "Slushie"), option$3({ value: "azur lane" }, "Azur Lane"), option$3({ value: "modbox classic" }, "Modbox"), option$3({ value: "sandbox classic" }, "Sandbox"), option$3({ value: "harrybox" }, "Haileybox"), option$3({ value: "brucebox" }, "Brucebox"), option$3({ value: "shitbox 3.0" }, "Shitbox 1.0/3.0"), option$3({ value: "shitbox 2.0" }, "Shitbox 2.0"), option$3({ value: "nerdbox" }, "NerdBox"), option$3({ value: "zefbox" }, "Zefbox"), option$3({ value: "cardboardbox classic" }, "Cardboardbox"), option$3({ value: "blubox classic" }, "Blubox"), option$3({ value: "dogebox classic" }, "Dogebox"), option$3({ value: "wackybox" }, "Wackybox"), option$3({ value: "todbox dark mode" }, "Todbox Dark Mode"), option$3({ value: "mainbox 1.0" }, "Mainbox"), option$3({ value: "microbox" }, "MicroBox"), option$3({ value: "paandorasbox" }, "PaandorasBox"), option$3({ value: "foxbox" }, "FoxBox"), option$3({ value: "midbox" }, "Midbox"), option$3({ value: "dogebox2" }, "Dogebox2"), option$3({ value: "custom" }, "Custom"));
+            this._themeSelect = select$3({ style: "width: 100%;" }, option$3({ value: "AbyssBox Classic" }, "AbyssBox Classic"), option$3({ value: "AbyssBox Competative" }, "AbyssBox Competative"), option$3({ value: "AbyssBox Light" }, "AbyssBox Light"), option$3({ value: "Half-Life" }, "Half-Life"), option$3({ value: "Doom 1993" }, "Doom 1993"), option$3({ value: "Windows Xp" }, "Windows Xp"), option$3({ value: "dark classic" }, "BeepBox Dark"), option$3({ value: "light classic" }, "BeepBox Light"), option$3({ value: "dark competition" }, "BeepBox Competition Dark"), option$3({ value: "jummbox classic" }, "JummBox Dark"), option$3({ value: "jummbox light" }, "Gold Light"), option$3({ value: "forest" }, "Forest"), option$3({ value: "canyon" }, "Canyon"), option$3({ value: "midnight" }, "Midnight"), option$3({ value: "beachcombing" }, "Beachcombing"), option$3({ value: "violet verdant" }, "Violet Verdant"), option$3({ value: "sunset" }, "Sunset"), option$3({ value: "autumn" }, "Autumn"), option$3({ value: "fruit" }, "Shadowfruit"), option$3({ value: "toxic" }, "Toxic"), option$3({ value: "roe" }, "Roe"), option$3({ value: "moonlight" }, "Moonlight"), option$3({ value: "portal" }, "Portal"), option$3({ value: "fusion" }, "Fusion"), option$3({ value: "inverse" }, "Inverse"), option$3({ value: "nebula" }, "Nebula"), option$3({ value: "roe light" }, "Roe Light"), option$3({ value: "amoled dark" }, "High Contrast Dark"), option$3({ value: "energized" }, "Energized"), option$3({ value: "neapolitan" }, "Neapolitan"), option$3({ value: "mono" }, "Mono"), option$3({ value: "slushie" }, "Slushie"), option$3({ value: "azur lane" }, "Azur Lane"), option$3({ value: "modbox classic" }, "Modbox"), option$3({ value: "sandbox classic" }, "Sandbox"), option$3({ value: "harrybox" }, "Haileybox"), option$3({ value: "brucebox" }, "Brucebox"), option$3({ value: "shitbox 3.0" }, "Shitbox 1.0/3.0"), option$3({ value: "shitbox 2.0" }, "Shitbox 2.0"), option$3({ value: "nerdbox" }, "NerdBox"), option$3({ value: "zefbox" }, "Zefbox"), option$3({ value: "cardboardbox classic" }, "Cardboardbox"), option$3({ value: "blubox classic" }, "Blubox"), option$3({ value: "dogebox classic" }, "Dogebox"), option$3({ value: "wackybox" }, "Wackybox"), option$3({ value: "todbox dark mode" }, "Todbox Dark Mode"), option$3({ value: "mainbox 1.0" }, "Mainbox"), option$3({ value: "microbox" }, "MicroBox"), option$3({ value: "paandorasbox" }, "PaandorasBox"), option$3({ value: "foxbox" }, "FoxBox"), option$3({ value: "midbox" }, "Midbox"), option$3({ value: "dogebox2" }, "Dogebox2"), option$3({ value: "Deuteranopia" }, "Deuteranopia"), option$3({ value: "Protanopia" }, "Protanopia"), option$3({ value: "Tritanopia" }, "Tritanopia"), option$3({ value: "custom" }, "Custom"));
             this._cancelButton = button$5({ class: "cancelButton" });
             this._okayButton = button$5({ class: "okayButton", style: "width:45%;" }, "Okay");
             this.container = div$5({ class: "prompt noSelection", style: "width: 220px;" }, h2$4("Set Theme"), div$5({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$5({ class: "selectContainer", style: "width: 100%;" }, this._themeSelect)), div$5({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
@@ -39534,7 +39964,7 @@ You should be redirected to the song at:<br /><br />
             this._volumeBarBox = div({ class: "playback-volume-bar", style: "height: 12px; align-self: center;" }, this._volumeBarContainer);
             this._fileMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "File"), option({ value: "new" }, "+ New Blank Song"), option({ value: "import" }, "↑ Import Song... (" + EditorConfig.ctrlSymbol + "O)"), option({ value: "export" }, "↓ Export Song... (" + EditorConfig.ctrlSymbol + "S)"), option({ value: "copyUrl" }, "⎘ Copy Song URL"), option({ value: "shareUrl" }, "⤳ Share Song URL"), option({ value: "shortenUrl" }, "… Shorten Song URL"), option({ value: "viewPlayer" }, "▶ View in Song Player"), option({ value: "copyEmbed" }, "⎘ Copy HTML Embed Code"), option({ value: "songRecovery" }, "⚠ Recover Recent Song..."));
             this._editMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Edit"), option({ value: "undo" }, "Undo (Z)"), option({ value: "redo" }, "Redo (Y)"), option({ value: "copy" }, "Copy Pattern (C)"), option({ value: "pasteNotes" }, "Paste Pattern Notes (V)"), option({ value: "pasteNumbers" }, "Paste Pattern Numbers (" + EditorConfig.ctrlSymbol + "⇧V)"), option({ value: "insertBars" }, "Insert Bar (⏎)"), option({ value: "deleteBars" }, "Delete Selected Bars (⌫)"), option({ value: "insertChannel" }, "Insert Channel (" + EditorConfig.ctrlSymbol + "⏎)"), option({ value: "deleteChannel" }, "Delete Selected Channels (" + EditorConfig.ctrlSymbol + "⌫)"), option({ value: "selectChannel" }, "Select Channel (⇧A)"), option({ value: "selectAll" }, "Select All (A)"), option({ value: "duplicatePatterns" }, "Duplicate Reused Patterns (D)"), option({ value: "transposeUp" }, "Move Notes Up (+ or ⇧+)"), option({ value: "transposeDown" }, "Move Notes Down (- or ⇧-)"), option({ value: "moveNotesSideways" }, "Move All Notes Sideways... (W)"), option({ value: "generateEuclideanRhythm" }, "Generate Euclidean Rhythm... (E)"), option({ value: "beatsPerBar" }, "Change Beats Per Bar... (B)"), option({ value: "barCount" }, "Change Song Length... (L)"), option({ value: "channelSettings" }, "Channel Settings... (Q)"), option({ value: "limiterSettings" }, "Limiter Settings... (⇧L)"), option({ value: "addExternal" }, "Add Custom Samples... (⇧Q)"));
-            this._optionsMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Preferences"), option({ value: "autoPlay" }, "Auto Play on Load"), option({ value: "autoFollow" }, "Keep Current Pattern Selected"), option({ value: "enableNotePreview" }, "Hear Preview of Added Notes"), option({ value: "showLetters" }, "Show Piano Keys"), option({ value: "showFifth" }, 'Highlight "Fifth" of Song Key'), option({ value: "notesOutsideScale" }, "Allow Adding Notes Not in Scale"), option({ value: "setDefaultScale" }, "Use Current Scale as Default"), option({ value: "showChannels" }, "Show Notes From All Channels"), option({ value: "showScrollBar" }, "Show Octave Scroll Bar"), option({ value: "alwaysFineNoteVol" }, "Always Fine Note Volume"), option({ value: "enableChannelMuting" }, "Enable Channel Muting"), option({ value: "displayBrowserUrl" }, "Display Song Data in URL"), option({ value: "displayVolumeBar" }, "Show Playback Volume"), option({ value: "showOscilloscope" }, "Show Oscilloscope"), option({ value: "showSampleLoadingStatus" }, "Show Sample Loading Status"), option({ value: "layout" }, "Set Layout..."), option({ value: "colorTheme" }, "Set Theme..."), option({ value: "customTheme" }, "Custom Theme..."), option({ value: "recordingSetup" }, "Set Up Note Recording..."));
+            this._optionsMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Preferences"), option({ value: "autoPlay" }, "Auto Play on Load"), option({ value: "autoFollow" }, "Keep Current Pattern Selected"), option({ value: "enableNotePreview" }, "Hear Preview of Added Notes"), option({ value: "showLetters" }, "Show Piano Keys"), option({ value: "showFifth" }, 'Highlight "Fifth" of Song Key'), option({ value: "notesOutsideScale" }, "Allow Adding Notes Not in Scale"), option({ value: "setDefaultScale" }, "Use Current Scale as Default"), option({ value: "showChannels" }, "Show Notes From All Channels"), option({ value: "showScrollBar" }, "Show Octave Scroll Bar"), option({ value: "alwaysFineNoteVol" }, "Always Fine Note Volume"), option({ value: "enableChannelMuting" }, "Enable Channel Muting"), option({ value: "displayBrowserUrl" }, "Display Song Data in URL"), option({ value: "displayVolumeBar" }, "Show Playback Volume"), option({ value: "showOscilloscope" }, "Show Oscilloscope"), option({ value: "showSampleLoadingStatus" }, "Show Sample Loading Status"), option({ value: "closePromptByClickoff" }, "Close prompts on click off"), option({ value: "layout" }, "Set Layout..."), option({ value: "colorTheme" }, "Set Theme..."), option({ value: "customTheme" }, "Custom Theme..."), option({ value: "recordingSetup" }, "Set Up Note Recording..."));
             this._scaleSelect = buildOptions(select(), Config.scales.map(scale => scale.name));
             this._keySelect = buildOptions(select(), Config.keys.map(key => key.name).reverse());
             this._octaveStepper = input({ type: "number", min: Config.octaveMin, max: Config.octaveMax, value: "0" });
@@ -39876,6 +40306,7 @@ You should be redirected to the song at:<br /><br />
                     (prefs.displayVolumeBar ? "✓ " : "　") + "Show Playback Volume",
                     (prefs.showOscilloscope ? "✓ " : "　") + "Show Oscilloscope",
                     (prefs.showSampleLoadingStatus ? "✓ " : "　") + "Show Sample Loading Status",
+                    (prefs.closePromptByClickoff ? "✓ " : "　") + "Close prompts on click off",
                     "　Set Layout...",
                     "　Set Theme...",
                     "　Custom Theme...",
@@ -40164,6 +40595,7 @@ You should be redirected to the song at:<br /><br />
                     }
                     if (instrument.type == 11) {
                         this._chipWaveSelectRow.style.display = "none";
+                        this._useChipWaveAdvancedLoopControlsRow.style.display = "none";
                         this._supersawDynamismRow.style.display = "";
                         this._supersawSpreadRow.style.display = "";
                         this._supersawShapeRow.style.display = "";
@@ -42026,6 +42458,9 @@ You should be redirected to the song at:<br /><br />
                     case "showSampleLoadingStatus":
                         this._doc.prefs.showSampleLoadingStatus = !this._doc.prefs.showSampleLoadingStatus;
                         break;
+                    case "closePromptByClickoff":
+                        this._doc.prefs.closePromptByClickoff = !this._doc.prefs.closePromptByClickoff;
+                        break;
                 }
                 this._optionsMenu.selectedIndex = 0;
                 this._doc.notifier.changed();
@@ -42264,10 +42699,12 @@ You should be redirected to the song at:<br /><br />
             this._clicklessTransitionBox.addEventListener("input", () => { this._doc.record(new ChangeClicklessTransition(this._doc, this._clicklessTransitionBox.checked)); });
             this._aliasingBox.addEventListener("input", () => { this._doc.record(new ChangeAliasing(this._doc, this._aliasingBox.checked)); });
             this._promptContainer.addEventListener("click", (event) => {
-                if (this.prompt != null && this.prompt.gotMouseUp === true)
-                    return;
-                if (event.target == this._promptContainer) {
-                    this._doc.undo();
+                if (this._doc.prefs.closePromptByClickoff === true) {
+                    if (this.prompt != null && this.prompt.gotMouseUp === true)
+                        return;
+                    if (event.target == this._promptContainer) {
+                        this._doc.undo();
+                    }
                 }
             });
             if (isMobile) {
@@ -43913,6 +44350,7 @@ You should be redirected to the song at:<br /><br />
                     this.layout = "long";
                 window.localStorage.removeItem("fullScreen");
             }
+            this.closePromptByClickoff = window.localStorage.getItem("closePromptByClickoff") != "false";
         }
         save() {
             window.localStorage.setItem("autoPlay", this.autoPlay ? "true" : "false");
@@ -43945,6 +44383,7 @@ You should be redirected to the song at:<br /><br />
             window.localStorage.setItem("customTheme2", this.customTheme2);
             window.localStorage.setItem("volume", String(this.volume));
             window.localStorage.setItem("visibleOctaves", String(this.visibleOctaves));
+            window.localStorage.setItem("closePromptByClickoff", this.closePromptByClickoff ? "true" : "false");
         }
     }
     Preferences.defaultVisibleOctaves = 3;

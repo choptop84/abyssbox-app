@@ -22,7 +22,7 @@ var beepbox = (function (exports) {
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
     */
-    const TypePresets = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "chip (custom)", "mod", "FM (6-op)", "supersaw",];
+    const TypePresets = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "supersaw", "chip (custom)", "mod", "FM (6-op)"];
     function getSampleLoadingStatusName(status) {
         switch (status) {
             case 0: return "loading";
@@ -492,8 +492,8 @@ var beepbox = (function (exports) {
         { name: "÷12 (twelfth notes)", stepsPerBeat: 12, roundUpThresholds: null },
         { name: "freehand", stepsPerBeat: 24, roundUpThresholds: null },
     ]);
-    Config.instrumentTypeNames = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "custom chip", "mod", "FM6op", "supersaw",];
-    Config.instrumentTypeHasSpecialInterval = [true, true, false, false, false, true, false, false, false, false];
+    Config.instrumentTypeNames = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "supersaw", "custom chip", "mod", "FM6op"];
+    Config.instrumentTypeHasSpecialInterval = [true, true, false, false, false, true, false, false, false, false, false];
     Config.chipBaseExpression = 0.03375;
     Config.fmBaseExpression = 0.03;
     Config.noiseBaseExpression = 0.19;
@@ -852,6 +852,9 @@ var beepbox = (function (exports) {
         { name: "flutter 1", type: 6, speed: 14.0 },
         { name: "flutter 2", type: 7, speed: 11.0 },
         { name: "water-y flutter", type: 6, speed: 9.0 },
+        { name: "blip 1", type: 13, speed: 6.0 },
+        { name: "blip 2", type: 13, speed: 16.0 },
+        { name: "blip 3", type: 13, speed: 32.0 },
     ]);
     Config.feedbacks = toNameMap([
         { name: "1⟲", indices: [[1], [], [], []] },
@@ -963,6 +966,8 @@ var beepbox = (function (exports) {
     Config.distortionRange = 8;
     Config.stringSustainRange = 15;
     Config.stringDecayRate = 0.12;
+    Config.enableAcousticSustain = false;
+    Config.sustainTypeNames = ["bright", "acoustic"];
     Config.bitcrusherFreqRange = 14;
     Config.bitcrusherOctaveStep = 0.5;
     Config.bitcrusherQuantizationRange = 8;
@@ -971,21 +976,21 @@ var beepbox = (function (exports) {
     Config.instrumentAutomationTargets = toNameMap([
         { name: "none", computeIndex: null, displayName: "none", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: null },
         { name: "noteVolume", computeIndex: 0, displayName: "note volume", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: null },
-        { name: "pulseWidth", computeIndex: 2, displayName: "pulse width", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 11] },
+        { name: "pulseWidth", computeIndex: 2, displayName: "pulse width", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 8] },
         { name: "stringSustain", computeIndex: 3, displayName: "sustain", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [7] },
-        { name: "unison", computeIndex: 4, displayName: "unison", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [0, 5, 7, 8] },
-        { name: "operatorFrequency", computeIndex: 5, displayName: "fm# freq", interleave: true, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 10] },
-        { name: "operatorAmplitude", computeIndex: 11, displayName: "fm# volume", interleave: false, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 10] },
-        { name: "feedbackAmplitude", computeIndex: 17, displayName: "fm feedback", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [1, 10] },
+        { name: "unison", computeIndex: 4, displayName: "unison", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [0, 5, 7, 9] },
+        { name: "operatorFrequency", computeIndex: 5, displayName: "fm# freq", interleave: true, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 11] },
+        { name: "operatorAmplitude", computeIndex: 11, displayName: "fm# volume", interleave: false, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 11] },
+        { name: "feedbackAmplitude", computeIndex: 17, displayName: "fm feedback", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [1, 11] },
         { name: "pitchShift", computeIndex: 18, displayName: "pitch shift", interleave: false, isFilter: false, maxCount: 1, effect: 7, compatibleInstruments: null },
         { name: "detune", computeIndex: 19, displayName: "detune", interleave: false, isFilter: false, maxCount: 1, effect: 8, compatibleInstruments: null },
         { name: "vibratoDepth", computeIndex: 20, displayName: "vibrato range", interleave: false, isFilter: false, maxCount: 1, effect: 9, compatibleInstruments: null },
         { name: "noteFilterAllFreqs", computeIndex: 1, displayName: "n. filter freqs", interleave: false, isFilter: true, maxCount: 1, effect: 5, compatibleInstruments: null },
         { name: "noteFilterFreq", computeIndex: 21, displayName: "n. filter # freq", interleave: false, isFilter: true, maxCount: Config.filterMaxPoints, effect: 5, compatibleInstruments: null },
-        { name: "decimalOffset", computeIndex: 37, displayName: "decimal offset", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6] },
-        { name: "supersawDynamism", computeIndex: 38, displayName: "dynamism", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [11] },
-        { name: "supersawSpread", computeIndex: 39, displayName: "spread", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [11] },
-        { name: "supersawShape", computeIndex: 40, displayName: "saw↔pulse", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [11] },
+        { name: "decimalOffset", computeIndex: 37, displayName: "decimal offset", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 8] },
+        { name: "supersawDynamism", computeIndex: 38, displayName: "dynamism", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
+        { name: "supersawSpread", computeIndex: 39, displayName: "spread", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
+        { name: "supersawShape", computeIndex: 40, displayName: "saw↔pulse", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
     ]);
     Config.operatorWaves = toNameMap([
         { name: "sine", samples: Config.sineWave },
@@ -1051,7 +1056,7 @@ var beepbox = (function (exports) {
             promptName: "Vibrato Speed", promptDesc: ["This setting controls the speed your instrument will vibrato at, just like the slider.", "A setting of $LO means there will be no oscillation, and vibrato will be disabled. Higher settings will increase the speed, up to a dramatic trill at the max value, $HI.", "[OVERWRITING] [$LO - $HI]"] },
         { name: "vibrato delay", pianoName: "Vibrato Delay", maxRawVol: 50, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 9,
             promptName: "Vibrato Delay", promptDesc: ["This setting controls the amount of time vibrato will be held off for before triggering for every new note, just like the slider.", "A setting of $LO means there will be no delay. A setting of 24 corresponds to one full beat of delay. As a sole exception to this scale, setting delay to $HI will completely disable vibrato (as if it had infinite delay).", "[OVERWRITING] [$LO - $HI] [beats ÷24]"] },
-        { name: "arp speed", pianoName: "Arp Speed", maxRawVol: 50, newNoteVol: 10, forSong: false, convertRealFactor: 0, associatedEffect: 11,
+        { name: "arp speed", pianoName: "Arp Speed", maxRawVol: 50, newNoteVol: 12, forSong: false, convertRealFactor: 0, associatedEffect: 11,
             promptName: "Arpeggio Speed", promptDesc: ["This setting controls the speed at which your instrument's chords arpeggiate, just like the arpeggio speed slider.", "Each setting corresponds to a different speed, from the slowest to the fastest. The speeds are listed below.",
                 "[0-4]: x0, x1/16, x⅛, x⅕, x¼,", "[5-9]: x⅓, x⅖, x½, x⅔, x¾,", "[10-14]: x⅘, x0.9, x1, x1.1, x1.2,", "[15-19]: x1.3, x1.4, x1.5, x1.6, x1.7,", "[20-24]: x1.8, x1.9, x2, x2.1, x2.2,", "[25-29]: x2.3, x2.4, x2.5, x2.6, x2.7,", "[30-34]: x2.8, x2.9, x3, x3.1, x3.2,", "[35-39]: x3.3, x3.4, x3.5, x3.6, x3.7,", "[40-44]: x3.8, x3.9, x4, x4.15, x4.3,", "[45-50]: x4.5, x4.8, x5, x5.5, x6, x8", "[OVERWRITING] [$LO - $HI]"] },
         { name: "pan delay", pianoName: "Pan Delay", maxRawVol: 20, newNoteVol: 10, forSong: false, convertRealFactor: 0, associatedEffect: 2,
@@ -1092,13 +1097,16 @@ var beepbox = (function (exports) {
         { name: "fm slider 6", pianoName: "FM 6", maxRawVol: 15, newNoteVol: 15, forSong: false, convertRealFactor: 0, associatedEffect: 12,
             promptName: "FM Slider 6", promptDesc: ["This setting affects the strength of the sixth FM slider, just like the corresponding slider on your instrument.", "It works in a multiplicative way, so at $HI your slider will sound the same is its default value, and at $LO it will sound like it has been moved all the way to the left.", "For the full range of control with this mod, move your underlying slider all the way to the right.", "[MULTIPLICATIVE] [$LO - $HI] [%]"] },
         { name: "decimal offset", pianoName: "Decimal Offset", maxRawVol: 99, newNoteVol: 0, forSong: false, convertRealFactor: 0, optionalModify: "invert-0to99", associatedEffect: 12,
-            promptName: "Decimal Offset", promptDesc: ["This setting controls the decimal offset that is subtracted from the pulse width; use this for creating values like 12.5 or 6.25.", "[$LO - $HI] [%Duty]"] },
+            promptName: "Decimal Offset", promptDesc: ["This setting controls the decimal offset that is subtracted from the pulse width; use this for creating values like 12.5 or 6.25.", "[$LO - $HI]"] },
+        { name: "envelope speed", pianoName: "EnvelopeSpd", maxRawVol: 50, newNoteVol: 12, forSong: false, convertRealFactor: 0, associatedEffect: 12,
+            promptName: "Envelope Speed", promptDesc: ["This setting controls how fast all of the envelopes for the instrument play.", "At $LO, your instrument's envelopes will be frozen, and at values near there they will change very slowly. At 12, the envelopes will work as usual, performing at normal speed. This increases up to $HI, where the envelopes will change very quickly. The speeds are given below:",
+                "[0-4]: x0, x1/16, x⅛, x⅕, x¼,", "[5-9]: x⅓, x⅖, x½, x⅔, x¾,", "[10-14]: x⅘, x0.9, x1, x1.1, x1.2,", "[15-19]: x1.3, x1.4, x1.5, x1.6, x1.7,", "[20-24]: x1.8, x1.9, x2, x2.1, x2.2,", "[25-29]: x2.3, x2.4, x2.5, x2.6, x2.7,", "[30-34]: x2.8, x2.9, x3, x3.1, x3.2,", "[35-39]: x3.3, x3.4, x3.5, x3.6, x3.7,", "[40-44]: x3.8, x3.9, x4, x4.15, x4.3,", "[45-50]: x4.5, x4.8, x5, x5.5, x6, x8", "[OVERWRITING] [$LO - $HI]"] },
         { name: "dynamism", pianoName: "Dynamism", maxRawVol: Config.supersawDynamismMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
-            promptName: "Supersaw Dynamism", promptDesc: ["This setting controls the dynamism of each saw/wave in your supersaw instrument.", "[OVERWRITING] [$LO - $HI]"] },
+            promptName: "Supersaw Dynamism", promptDesc: ["This setting controls the supersaw dynamism of your instrument, just like the dynamism slider.", "At $LO, your instrument will have only a single pulse contributing. Increasing this will raise the contribution of other waves which is similar to a chorus effect. The effect gets more noticeable up to the max value, $HI.", "[OVERWRITING] [$LO - $HI]"] },
         { name: "spread", pianoName: "Spread", maxRawVol: Config.supersawSpreadMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
-            promptName: "Supersaw Spread", promptDesc: ["This setting controls the spread of each saw/wave in your supersaw instrument.", "[OVERWRITING] [$LO - $HI]"] },
-        { name: "shape", pianoName: "Shape", maxRawVol: Config.supersawShapeMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
-            promptName: "Supersaw Shape", promptDesc: ["This setting controls the shape of each wave in your supersaw instrument.", "At the lowest value, each wave will be a sawtooth. At the highest value, each wave will be fully affected by the pulse width slider.", "[OVERWRITING] [$LO - $HI]"] },
+            promptName: "Supersaw Spread", promptDesc: ["This setting controls the supersaw spread of your instrument, just like the spread slider.", "At $LO, all the pulses in your supersaw will be at the same frequency. Increasing this value raises the frequency spread of the contributing waves, up to a dissonant spread at the max value, $HI.", "[OVERWRITING] [$LO - $HI]"] },
+        { name: "saw shape", pianoName: "Saw Shape", maxRawVol: Config.supersawShapeMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
+            promptName: "Supersaw Shape", promptDesc: ["This setting controls the supersaw shape of your instrument, just like the Saw↔Pulse slider.", "As the slider's name implies, this effect will give you a sawtooth wave at $LO, and a full pulse width wave at $HI. Values in between will be a blend of the two.", "[OVERWRITING] [$LO - $HI] [%]"] },
     ]);
     function centerWave(wave) {
         let sum = 0.0;
@@ -1212,7 +1220,7 @@ var beepbox = (function (exports) {
             else if (index == 7) {
                 var drumBuffer = 1;
                 for (var i = 0; i < Config.chipNoiseLength; i++) {
-                    wave[i] = (drumBuffer & 1) * 4.0 * (Math.random() * 14 + 1);
+                    wave[i] = (drumBuffer & 1) * 4.0 * (Math.random() * 14 + 1) - 8.0;
                     var newBuffer = drumBuffer >> 1;
                     if (((drumBuffer + newBuffer) & 1) == 1) {
                         newBuffer += 15 << 2;
@@ -1223,7 +1231,7 @@ var beepbox = (function (exports) {
             else if (index == 8) {
                 var drumBuffer = 1;
                 for (var i = 0; i < 32768; i++) {
-                    wave[i] = (drumBuffer & 1) / 2.0 + 0.5;
+                    wave[i] = (drumBuffer & 1) / 2.0 - 0.5;
                     var newBuffer = drumBuffer >> 1;
                     if (((drumBuffer + newBuffer) & 1) == 1) {
                         newBuffer -= 10 << 2;
@@ -1473,7 +1481,7 @@ var beepbox = (function (exports) {
             return (_a = EditorConfig.presetCategories[0].presets.dictionary) === null || _a === void 0 ? void 0 : _a[TypePresets === null || TypePresets === void 0 ? void 0 : TypePresets[instrument]];
         }
     }
-    EditorConfig.version = "1.0";
+    EditorConfig.version = "1.1";
     EditorConfig.versionDisplayName = "AbyssBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
@@ -1491,7 +1499,7 @@ var beepbox = (function (exports) {
                 { name: TypePresets[6], customType: 6 },
                 { name: TypePresets[7], customType: 7 },
                 { name: TypePresets[8], customType: 8 },
-                { name: TypePresets[10], customType: 10 },
+                { name: TypePresets[9], customType: 9 },
                 { name: TypePresets[11], customType: 11 },
             ])
         },
@@ -1623,6 +1631,8 @@ var beepbox = (function (exports) {
                 { name: "orchestra hit 1", midiProgram: 55, generalMidi: true, midiSubharmonicOctaves: 1, settings: { "type": "FM", "effects": "chorus & reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 14, "filterEnvelope": "custom", "vibrato": "none", "algorithm": "1 2 3 4", "feedbackType": "1⟲ 2⟲ 3⟲ 4⟲", "feedbackAmplitude": 14, "feedbackEnvelope": "twang 3", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "twang 3" }, { "frequency": "2×", "amplitude": 15, "envelope": "flare 3" }, { "frequency": "4×", "amplitude": 15, "envelope": "flare 2" }, { "frequency": "8×", "amplitude": 15, "envelope": "flare 1" }] } },
                 { name: "violin 2", midiProgram: 40, generalMidi: true, settings: { "type": "FM", "eqFilter": [{ "type": "low-pass", "cutoffHz": 2828, "linearGain": 1.4142 }, { "type": "high-pass", "cutoffHz": 105.11, "linearGain": 0.3536 }], "effects": ["vibrato", "reverb"], "vibrato": "light", "reverb": 67, "transition": "normal", "fadeInSeconds": 0.0413, "fadeOutTicks": 6, "chord": "simultaneous", "algorithm": "(1 2)←(3 4)", "feedbackType": "4⟲", "feedbackAmplitude": 5, "feedbackEnvelope": "twang 3", "operators": [{ "frequency": "4×", "amplitude": 15, "envelope": "custom" }, { "frequency": "3×", "amplitude": 13, "envelope": "custom" }, { "frequency": "2×", "amplitude": 7, "envelope": "steady" }, { "frequency": "7×", "amplitude": 8, "envelope": "swell 1" }] } },
                 { name: "orchestra hit 2", midiProgram: 55, midiSubharmonicOctaves: 1, settings: { "type": "FM", "effects": "chorus & reverb", "transition": "medium fade", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "decay 1", "vibrato": "delayed", "algorithm": "1 2 3 4", "feedbackType": "1⟲ 2⟲ 3⟲ 4⟲", "feedbackAmplitude": 14, "feedbackEnvelope": "steady", "operators": [{ "frequency": "1×", "amplitude": 12, "envelope": "custom" }, { "frequency": "2×", "amplitude": 14, "envelope": "custom" }, { "frequency": "3×", "amplitude": 12, "envelope": "custom" }, { "frequency": "4×", "amplitude": 14, "envelope": "custom" }] } },
+                { name: "supersaw string", midiProgram: 41, settings: { "type": "supersaw", "eqFilter": [{ "type": "low-pass", "cutoffHz": 2828.43, "linearGain": 1.4142 }, { "type": "low-pass", "cutoffHz": 3363.59, "linearGain": 0.1768 }], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "high-pass", "cutoffHz": 500, "linearGain": 0.1768 }], "reverb": 33, "fadeInSeconds": 0.0263, "fadeOutTicks": 6, "pulseWidth": 35.35534, "dynamism": 83, "spread": 8, "shape": 50, "envelopes": [{ "target": "noteFilterFreq", "envelope": "twang 1", "index": 0 }] } },
+                { name: "supersaw string 2", midiProgram: 41, settings: { "type": "supersaw", "eqFilter": [{ "type": "low-pass", "cutoffHz": 2378.41, "linearGain": 0.5 }, { "type": "high-pass", "cutoffHz": 594.6, "linearGain": 0.25 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }, { "type": "peak", "cutoffHz": 4756.83, "linearGain": 2 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "envelopeSpeed": 12, "discreteEnvelope": false, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 2378.41, "linearGain": 0.5 }, { "type": "high-pass", "cutoffHz": 594.6, "linearGain": 0.25 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }, { "type": "peak", "cutoffHz": 4756.83, "linearGain": 2 }], "effects": ["note filter", "chorus", "reverb"], "noteFilterType": false, "noteSimpleCut": 10, "noteSimplePeak": 0, "noteFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 1 }], "noteSubFilters0": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 1 }], "chorus": 57, "reverb": 42, "fadeInSeconds": 0.0575, "fadeOutTicks": -6, "pulseWidth": 50, "dynamism": 67, "spread": 58, "shape": 0, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "punch" }, { "target": "pulseWidth", "envelope": "flare 2" }] } },
             ])
         },
         {
@@ -1703,6 +1713,7 @@ var beepbox = (function (exports) {
                 { name: "sci-fi", midiProgram: 103, generalMidi: true, settings: { "type": "FM", "eqFilter": [{ "type": "peak", "cutoffHz": 9513.66, "linearGain": 2.8284 }], "effects": ["note filter", "chorus"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.5 }], "chorus": 100, "transition": "normal", "fadeInSeconds": 0.0125, "fadeOutTicks": 48, "chord": "simultaneous", "algorithm": "(1 2)←3←4", "feedbackType": "1⟲ 2⟲ 3⟲ 4⟲", "feedbackAmplitude": 8, "operators": [{ "frequency": "~1×", "amplitude": 13 }, { "frequency": "2×", "amplitude": 10 }, { "frequency": "5×", "amplitude": 5 }, { "frequency": "11×", "amplitude": 8 }], "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 3" }, { "target": "operatorAmplitude", "envelope": "twang 3", "index": 2 }, { "target": "operatorAmplitude", "envelope": "tremolo5", "index": 3 }, { "target": "feedbackAmplitude", "envelope": "twang 3" }] } },
                 { name: "flutter pad", midiProgram: 90, settings: { "type": "FM", "eqFilter": [], "effects": ["vibrato", "note filter", "chorus"], "vibrato": "delayed", "noteFilter": [{ "type": "low-pass", "cutoffHz": 4000, "linearGain": 4 }], "chorus": 100, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "algorithm": "(1 2)←(3 4)", "feedbackType": "1⟲ 2⟲ 3⟲", "feedbackAmplitude": 9, "operators": [{ "frequency": "1×", "amplitude": 13 }, { "frequency": "5×", "amplitude": 7 }, { "frequency": "7×", "amplitude": 5 }, { "frequency": "~1×", "amplitude": 6 }], "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 3" }, { "target": "operatorAmplitude", "envelope": "tremolo1", "index": 2 }, { "target": "operatorAmplitude", "envelope": "punch", "index": 3 }] } },
                 { name: "feedback pad", midiProgram: 89, settings: { "type": "FM", "eqFilter": [{ "type": "peak", "cutoffHz": 2378.41, "linearGain": 8 }], "effects": [], "transition": "normal", "fadeInSeconds": 0.0575, "fadeOutTicks": 96, "chord": "custom interval", "algorithm": "1 2 3 4", "feedbackType": "1⟲ 2⟲ 3⟲ 4⟲", "feedbackAmplitude": 8, "operators": [{ "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "~1×", "amplitude": 15 }], "envelopes": [{ "target": "feedbackAmplitude", "envelope": "swell 2" }] } },
+                { name: "supersaw pad", midiProgram: 93, settings: { "type": "supersaw", "eqFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.1768 }], "effects": ["reverb"], "reverb": 100, "fadeInSeconds": 0.0263, "fadeOutTicks": 24, "pulseWidth": 50, "dynamism": 100, "spread": 58, "shape": 0, "envelopes": [] } },
             ])
         },
         {
@@ -1743,56 +1754,7 @@ var beepbox = (function (exports) {
                 { name: "sonar ping", midiProgram: 121, settings: { "type": "spectrum", "eqFilter": [], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 1681.79, "linearGain": 0.5 }], "reverb": 33, "transition": "normal", "fadeInSeconds": 0.0125, "fadeOutTicks": 72, "chord": "simultaneous", "spectrum": [100, 43, 29, 29, 14, 14, 14, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 2" }] } },
             ])
         },
-        { name: "Modbox Presets", presets: toNameMap([
-                { name: "modbox theepsynth", settings: { "type": "FM", "effects": "none", "transition": "hard", "chord": "arpeggio", "filterCutoffHz": 4000, "filterResonance": 14, "filterEnvelope": "custom", "vibrato": "none", "algorithm": "1←3 2←4", "feedbackType": "1⟲ 2⟲", "feedbackAmplitude": 11, "feedbackEnvelope": "steady", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "custom" }, { "frequency": "1×", "amplitude": 15, "envelope": "custom" }, { "frequency": "2×", "amplitude": 7, "envelope": "steady" }, { "frequency": "1×", "amplitude": 11, "envelope": "steady" }] } },
-            ]) },
-        { name: "Sandbox Presets", presets: toNameMap([
-                { name: "sandbox netsky hollow", generalMidi: false, isNoise: true, midiSubharmonicOctaves: -1, settings: { "type": "spectrum", "effects": "reverb", "transition": "hard", "chord": "arpeggio", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "steady", "spectrum": [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45] } },
-                { name: "sandbox abnormality", generalMidi: false, midiSubharmonicOctaves: 1, settings: { "type": "chip", "effects": "none", "transition": "seamless", "chord": "arpeggio", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "steady", "wave": "spiky", "interval": "fifth", "vibrato": "none" } },
-                { name: "sandbox playstation", generalMidi: false, midiSubharmonicOctaves: 1, settings: { "type": "chip", "effects": "chorus", "transition": "seamless", "chord": "harmony", "filterCutoffHz": 1414, "filterResonance": 29, "filterEnvelope": "steady", "wave": "glitch", "interval": "shimmer", "vibrato": "none" } },
-                { name: "sandbox harmony pulse", generalMidi: false, midiSubharmonicOctaves: 1, settings: { "type": "chip", "effects": "chorus", "transition": "soft", "chord": "harmony", "filterCutoffHz": 4000, "filterResonance": 29, "filterEnvelope": "punch", "wave": "double pulse", "interval": "union", "vibrato": "none" } },
-                { name: "sandbox pink ping", generalMidi: false, midiSubharmonicOctaves: -1, settings: { "type": "spectrum", "effects": "reverb", "transition": "soft", "chord": "harmony", "filterCutoffHz": 3000, "filterResonance": 0, "filterEnvelope": "tripolo6", "spectrum": [0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } },
-                { name: "sandbox tv static", generalMidi: false, isNoise: true, midiSubharmonicOctaves: 1, settings: { "type": "noise", "effects": "reverb", "transition": "medium fade", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 40, "filterEnvelope": "steady", "wave": "static" } },
-                { name: "sandbox clean pulse", generalMidi: false, settings: { "type": "custom chip", "transition": "hard", "effects": "none", "chord": "arpeggio", "filterCutoffHz": 4000, "filterResonance": 0, "filterEnvelope": "steady", "interval": "union", "vibrato": "none", "customChipWave": [-24, -24, -24, -24, -24, -24, -24, -24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -24, -24, -24, -24, -24, -24, -24, -24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] } },
-                { name: "sandbox snp chorus", generalMidi: false, settings: { "type": "FM", "transition": "hard", "effects": "chorus & reverb", "chord": "strum", "filterCutoffHz": 2000, "filterResonance": 0, "filterEnvelope": "twang 2", "vibrato": "none", "algorithm": "1←(2 3 4)", "feedbackType": "1→2→3→4", "feedbackAmplitude": 1, "feedbackEnvelope": "flare 1", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "custom" }, { "frequency": "2×", "amplitude": 15, "envelope": "custom" }, { "frequency": "4×", "amplitude": 10, "envelope": "custom" }, { "frequency": "3×", "amplitude": 6, "envelope": "custom" }] } },
-                { name: "sandbox snp echo", generalMidi: false, settings: { "type": "FM", "transition": "hard fade", "effects": "chorus", "chord": "strum", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "steady", "vibrato": "none", "algorithm": "1←(2 3←4)", "feedbackType": "3⟲ 4⟲", "feedbackAmplitude": 5, "feedbackEnvelope": "decay 2", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "custom" }, { "frequency": "2×", "amplitude": 15, "envelope": "custom" }, { "frequency": "20×", "amplitude": 9, "envelope": "twang 1" }, { "frequency": "20×", "amplitude": 5, "envelope": "twang 2" }] } },
-                { name: "sandbox tori synth lead", generalMidi: false, settings: { "type": "harmonics", "effects": "chorus", "transition": "seamless", "chord": "harmony", "filterCutoffHz": 2000, "filterResonance": 0, "filterEnvelope": "steady", "interval": "union", "vibrato": "none", "harmonics": [100, 100, 100, 100, 71, 71, 43, 43, 43, 29, 29, 43, 43, 43, 43, 43, 43, 43, 43, 43, 43, 43, 29, 14, 0, 0, 0, 86] } },
-                { name: "sandbox glorious piano 1", generalMidi: false, settings: { "type": "custom chip", "transition": "hard fade", "effects": "chorus & reverb", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 14, "filterEnvelope": "steady", "interval": "union", "vibrato": "none", "customChipWave": [24, 24, -16, -15, -15, -14, -13, -13, -12, -11, -11, -10, -9, -8, -8, -7, -6, -5, -5, -4, -3, -2, -2, 23, 22, 22, 21, 20, 20, 19, 19, 18, 18, 17, 16, 15, 15, 14, 13, 12, 12, 11, 0, -1, -1, -2, -3, -3, -4, -5, -5, -6, -20, -19, -17, -17, -14, -11, -8, -5, -2, -23, -24, -24] } },
-                { name: "sandbox glorious piano 2", generalMidi: false, settings: { "type": "custom chip", "transition": "hard fade", "effects": "chorus & reverb", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 14, "filterEnvelope": "punch", "interval": "shimmer", "vibrato": "light", "customChipWave": [24, 24, -16, -15, -15, -14, -13, -13, -12, 12, 9, 5, 2, -3, -7, -10, -6, -5, -5, -4, -3, -2, -2, 23, 22, 22, 21, 20, 20, 19, 19, 18, 18, 17, 16, 15, 15, 0, 4, 8, 15, 21, 0, -1, -1, -2, -3, -3, -4, -5, -5, -6, -20, -19, -17, -17, -2, -2, -8, 2, -2, -5, -24, -24] } },
-                { name: "sandbox muffled katrumpet", generalMidi: false, settings: { "type": "custom chip", "transition": "cross fade", "effects": "reverb", "chord": "strum", "filterCutoffHz": 5657, "filterResonance": 29, "filterEnvelope": "steady", "interval": "union", "vibrato": "light", "customChipWave": [24, 23, 22, 22, 22, 22, 22, 21, 21, 19, 19, 15, 11, 7, 5, -2, -5, -11, -13, -14, -16, -17, -17, -17, -17, -17, -17, -17, -17, -13, -10, -1, 4, 6, 8, 10, 11, 14, 15, 15, 16, 16, 16, 16, 16, 16, 16, 16, 15, 15, 14, 11, 8, 4, 2, -4, -7, -11, -12, -13, -14, -15, -15, -15] } },
-                { name: "sandbox ehruthing", generalMidi: false, settings: { "type": "custom chip", "hard fade": "seamless", "effects": "reverb", "chord": "strum", "filterCutoffHz": 5657, "filterResonance": 14, "filterEnvelope": "twang 2", "interval": "union", "vibrato": "none", "customChipWave": [24, 24, 23, 22, 21, 21, 20, 19, 18, 18, 17, 16, 15, -22, -20, -18, -16, -14, -13, -11, -10, -7, -6, -4, -3, -2, 0, 2, 4, 17, 16, 15, 13, 12, 11, 9, 8, 6, 5, 4, 3, 2, 1, -1, -1, -2, -3, -4, -6, -6, -7, -8, -8, -9, -10, -10, -11, -13, -15, -16, -17, -3, -4, -5] } },
-                { name: "sandbox wurtz organ", generalMidi: false, settings: { "type": "FM", "transition": "seamless", "effects": "chorus", "chord": "harmony", "filterCutoffHz": 1414, "filterResonance": 0, "filterEnvelope": "punch", "vibrato": "none", "algorithm": "1 2 3 4", "feedbackType": "1⟲ 2⟲ 3⟲ 4⟲", "feedbackAmplitude": 3, "feedbackEnvelope": "decay 2", "operators": [{ "frequency": "1×", "amplitude": 14, "envelope": "tremolo6" }, { "frequency": "2×", "amplitude": 9, "envelope": "tripolo3" }, { "frequency": "4×", "amplitude": 5, "envelope": "pentolo3" }, { "frequency": "8×", "amplitude": 2, "envelope": "pentolo6" }] } },
-            ]) },
-        { name: "Blackbox Presets", presets: toNameMap([
-                { name: "blackbox deep key", midiProgram: 9, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 32, "filterEnvelope": "twang 1", "interval": "shimmer", "vibrato": "light", "harmonics": [100, 86, 86, 86, 86, 71, 71, 57, 0, 57, 29, 43, 57, 57, 57, 43, 43, 0, 29, 43, 43, 43, 43, 43, 43, 29, 0, 30] } },
-                { name: "blackbox ring ding", midiProgram: 78, generalMidi: true, settings: { "type": "FM", "effects": "reverb", "transition": "hard", "chord": "strum", "filterCutoffHz": 1500, "filterResonance": 16, "filterEnvelope": "twang 2", "vibrato": "none", "algorithm": "1 2 3 4", "feedbackType": "1⟲ 2⟲", "feedbackAmplitude": 0, "feedbackEnvelope": "steady", "operators": [{ "frequency": "1×", "amplitude": 9, "envelope": "custom" }, { "frequency": "4×", "amplitude": 8, "envelope": "custom" }, { "frequency": "12×", "amplitude": 9, "envelope": "custom" }, { "frequency": "22×", "amplitude": 4, "envelope": "twang 2" }] } },
-            ]) },
-        { name: "Todbox Presets", presets: toNameMap([
-                { name: "todbox accordion", midiProgram: 21, generalMidi: true, settings: { "type": "chip", "effects": "reverb", "transition": "cross fade", "chord": "harmony", "filterCutoffHz": 5657, "filterResonance": 0, "filterEnvelope": "swell 1", "wave": "todbox accordian", "interval": "honky tonk", "vibrato": "none" } },
-                { name: "todbox wind", generalMidi: false, settings: { "type": "FM", "effects": "reverb", "transition": "seamless", "chord": "harmony", "filterCutoffHz": 200, "filterResonance": 2950, "filterEnvelope": "steady", "vibrato": "none", "algorithm": "1→3 2→4", "feedbackType": "1→3 2→4", "feedbackAmplitude": 15, "feedbackEnvelope": "steady", "operators": [{ "frequency": "16×", "amplitude": 15, "envelope": "steady" }, { "frequency": "16×", "amplitude": 0, "envelope": "custom" }, { "frequency": "16×", "amplitude": 15, "envelope": "steady" }, { "frequency": "16×", "amplitude": 0, "envelope": "flare 2" }] } },
-            ]) },
-        { name: "Old Beepbox Presets", presets: toNameMap([
-                { name: "old grand piano", midiProgram: 0, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 1414, "filterResonance": 14, "filterEnvelope": "twang 3", "interval": "piano", "vibrato": "none", "harmonics": [100, 100, 86, 86, 86, 71, 71, 71, 0, 86, 71, 71, 71, 57, 57, 71, 57, 14, 57, 57, 57, 57, 57, 57, 57, 57, 29, 57] } },
-                { name: "old bright piano", midiProgram: 1, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 2000, "filterResonance": 14, "filterEnvelope": "twang 3", "interval": "piano", "vibrato": "none", "harmonics": [100, 100, 86, 86, 71, 71, 0, 71, 86, 86, 71, 71, 71, 14, 57, 57, 57, 57, 57, 57, 29, 57, 57, 57, 57, 57, 57, 57] } },
-                { name: "old honky-tonk piano", midiProgram: 3, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 5657, "filterResonance": 29, "filterEnvelope": "twang 2", "interval": "honky tonk", "vibrato": "none", "harmonics": [100, 100, 86, 71, 86, 71, 43, 71, 43, 43, 57, 57, 57, 29, 57, 43, 43, 43, 43, 43, 29, 43, 43, 43, 29, 29, 29, 29] } },
-                { name: "old harpsichord", midiProgram: 6, generalMidi: true, settings: { "type": "FM", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "twang 2", "vibrato": "none", "algorithm": "1←(2 3←4)", "feedbackType": "4⟲", "feedbackAmplitude": 9, "feedbackEnvelope": "twang 2", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "custom" }, { "frequency": "4×", "amplitude": 8, "envelope": "steady" }, { "frequency": "3×", "amplitude": 6, "envelope": "steady" }, { "frequency": "5×", "amplitude": 7, "envelope": "steady" }] } },
-                { name: "old dulcimer", midiProgram: 15, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "strum", "filterCutoffHz": 5657, "filterResonance": 14, "filterEnvelope": "twang 2", "interval": "piano", "vibrato": "none", "harmonics": [100, 100, 100, 86, 100, 86, 57, 100, 100, 86, 100, 86, 100, 86, 100, 71, 57, 71, 71, 100, 86, 71, 86, 86, 100, 86, 86, 86] } },
-                { name: "old music box 1", midiProgram: 10, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "strum", "filterCutoffHz": 4000, "filterResonance": 14, "filterEnvelope": "twang 2", "interval": "union", "vibrato": "none", "harmonics": [100, 0, 0, 100, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 86, 0, 0, 0, 0, 0, 0, 71, 0] } },
-                { name: "old music box 2", midiProgram: 10, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "strum", "filterCutoffHz": 2828, "filterResonance": 14, "filterEnvelope": "twang 1", "interval": "union", "vibrato": "none", "harmonics": [100, 57, 57, 0, 0, 0, 0, 0, 0, 57, 0, 0, 0, 14, 14, 14, 14, 14, 14, 43, 14, 14, 14, 14, 14, 14, 14, 14] } },
-                { name: "old tubular bell", midiProgram: 14, generalMidi: true, midiSubharmonicOctaves: 1, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "strum", "filterCutoffHz": 4000, "filterResonance": 14, "filterEnvelope": "twang 3", "interval": "hum", "vibrato": "none", "harmonics": [43, 71, 0, 100, 0, 100, 0, 86, 0, 0, 86, 0, 14, 71, 14, 14, 57, 14, 14, 43, 14, 14, 43, 14, 14, 43, 14, 14] } },
-                { name: "old steel guitar", midiProgram: 25, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "strum", "filterCutoffHz": 5657, "filterResonance": 14, "filterEnvelope": "twang 2", "interval": "union", "vibrato": "none", "harmonics": [100, 100, 86, 71, 71, 71, 86, 86, 71, 57, 43, 43, 43, 57, 57, 57, 57, 57, 43, 43, 43, 43, 43, 43, 43, 43, 43, 43] } },
-                { name: "old cello", midiProgram: 42, generalMidi: true, settings: { "type": "FM", "effects": "reverb", "transition": "cross fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 29, "filterEnvelope": "steady", "vibrato": "delayed", "algorithm": "(1 2 3)←4", "feedbackType": "1⟲ 2⟲ 3⟲", "feedbackAmplitude": 6, "feedbackEnvelope": "swell 1", "operators": [{ "frequency": "1×", "amplitude": 11, "envelope": "custom" }, { "frequency": "3×", "amplitude": 9, "envelope": "custom" }, { "frequency": "8×", "amplitude": 7, "envelope": "custom" }, { "frequency": "1×", "amplitude": 6, "envelope": "steady" }] } },
-                { name: "old choir soprano", midiProgram: 94, generalMidi: true, settings: { "type": "harmonics", "effects": "chorus & reverb", "transition": "soft fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 57, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [86, 100, 86, 43, 14, 14, 57, 71, 57, 14, 14, 14, 14, 14, 43, 57, 43, 14, 14, 14, 14, 14, 14, 14, 0, 0, 0, 0] } },
-                { name: "old choir tenor", midiProgram: 52, generalMidi: true, settings: { "type": "harmonics", "effects": "chorus & reverb", "transition": "soft fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 86, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [86, 100, 100, 86, 71, 57, 29, 14, 14, 14, 29, 43, 43, 43, 29, 14, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } },
-                { name: "old choir bass", midiProgram: 52, settings: { "type": "harmonics", "effects": "chorus & reverb", "transition": "soft fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 86, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [71, 86, 86, 100, 86, 100, 57, 43, 14, 14, 14, 14, 29, 29, 43, 43, 43, 43, 43, 29, 29, 29, 29, 14, 14, 14, 0, 0] } },
-                { name: "old solo soprano", midiProgram: 85, settings: { "type": "harmonics", "effects": "reverb", "transition": "cross fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 71, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [86, 100, 86, 43, 14, 14, 57, 71, 57, 14, 14, 14, 14, 14, 43, 57, 43, 14, 14, 14, 14, 14, 14, 14, 0, 0, 0, 0] } },
-                { name: "old solo tenor", midiProgram: 85, settings: { "type": "harmonics", "effects": "reverb", "transition": "cross fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 86, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [86, 100, 100, 86, 71, 57, 29, 14, 14, 14, 29, 43, 43, 43, 29, 14, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } },
-                { name: "old solo bass", midiProgram: 85, settings: { "type": "harmonics", "effects": "reverb", "transition": "cross fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 86, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [71, 86, 86, 100, 86, 100, 57, 43, 14, 14, 14, 14, 29, 29, 43, 43, 43, 43, 43, 29, 29, 29, 29, 14, 14, 14, 0, 0] } },
-                { name: "old pan flute", midiProgram: 75, generalMidi: true, settings: { "type": "spectrum", "effects": "reverb", "transition": "soft", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 43, "filterEnvelope": "steady", "spectrum": [100, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 71, 0, 0, 14, 0, 57, 0, 29, 14, 29, 14, 14, 29, 14, 29, 14, 14, 29, 14] } },
-                { name: "old timpani", midiProgram: 47, generalMidi: true, settings: { "type": "spectrum", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 4000, "filterResonance": 29, "filterEnvelope": "twang 2", "spectrum": [100, 0, 0, 0, 86, 0, 0, 71, 0, 14, 43, 14, 43, 43, 0, 29, 43, 29, 29, 29, 43, 29, 43, 29, 43, 43, 43, 43, 43, 43] } },
-            ]) },
         { name: "UltraBox Presets", presets: toNameMap([
-                { name: "vrc6 sawtooth", generalMidi: false, settings: { "type": "custom chip", "volume": 0, "eqFilter": [{ "type": "high-pass", "cutoffHz": 62.5, "linearGain": 0.5 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "high-pass", "cutoffHz": 62.5, "linearGain": 0.5 }], "effects": ["panning", "transition type", "chord type", "detune", "vibrato"], "transition": "normal", "clicklessTransition": true, "chord": "arpeggio", "fastTwoNoteArp": true, "arpeggioSpeed": 12, "detuneCents": 0, "vibrato": "none", "vibratoDepth": 0, "vibratoDelay": 0, "vibratoSpeed": 10, "vibratoType": 0, "pan": 0, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -1, "wave": "square", "unison": "none", "customChipWave": { "0": -1, "1": -1, "2": -1, "3": -1, "4": -1, "5": -1, "6": -1, "7": -1, "8": -1, "9": -5, "10": -5, "11": -5, "12": -4, "13": -4, "14": -4, "15": -3, "16": -3, "17": -3, "18": -7, "19": -7, "20": -6, "21": -6, "22": -5, "23": -5, "24": -4, "25": -4, "26": -4, "27": -7, "28": -7, "29": -6, "30": -6, "31": -5, "32": -5, "33": -4, "34": -4, "35": -4, "36": -8, "37": -8, "38": -7, "39": -7, "40": -6, "41": -6, "42": -5, "43": -5, "44": -4, "45": -4, "46": 21, "47": 20, "48": 18, "49": 17, "50": 16, "51": 14, "52": 13, "53": 12, "54": 11, "55": 7, "56": 6, "57": 6, "58": 5, "59": 5, "60": 5, "61": 4, "62": 4, "63": 4 }, "customChipWaveIntegral": { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0, "24": 0, "25": 0, "26": 0, "27": 0, "28": 0, "29": 0, "30": 0, "31": 0, "32": 0, "33": 0, "34": 0, "35": 0, "36": 0, "37": 0, "38": 0, "39": 0, "40": 0, "41": 0, "42": 0, "43": 0, "44": 0, "45": 0, "46": 0, "47": 0, "48": 0, "49": 0, "50": 0, "51": 0, "52": 0, "53": 0, "54": 0, "55": 0, "56": 0, "57": 0, "58": 0, "59": 0, "60": 0, "61": 0, "62": 0, "63": 0, "64": 0 }, "envelopes": [] } },
                 { name: "nes white", midiProgram: 116, generalMidi: true, isNoise: true, settings: { "type": "noise", "volume": 0, "eqFilter": [], "eqFilterType": false, "eqSimpleCut": 8, "eqSimplePeak": 0, "eqSubFilters1": [], "effects": ["panning"], "pan": 0, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": 0, "wave": "1-bit white", "envelopes": [] } },
                 { name: "nes ping", midiProgram: 116, generalMidi: true, isNoise: true, settings: { "type": "noise", "volume": 0, "eqFilter": [], "eqFilterType": false, "eqSimpleCut": 8, "eqSimplePeak": 0, "eqSubFilters1": [], "effects": ["panning"], "pan": 0, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": 0, "wave": "1-bit metallic", "envelopes": [] } },
                 { name: "distorted pulse vocal", generalMidi: false, settings: { "type": "chip", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 0.0884 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 0.0884 }], "effects": ["panning", "transition type", "pitch shift", "vibrato", "note filter", "bitcrusher", "echo", "reverb"], "transition": "normal", "clicklessTransition": false, "pitchShiftSemitones": 0, "vibrato": "delayed", "vibratoDepth": 0.3, "vibratoDelay": 18.5, "vibratoSpeed": 10, "vibratoType": 0, "noteFilterType": false, "noteSimpleCut": 10, "noteSimplePeak": 0, "noteFilter": [{ "type": "high-pass", "cutoffHz": 840.9, "linearGain": 11.3137 }, { "type": "low-pass", "cutoffHz": 297.3, "linearGain": 8 }, { "type": "peak", "cutoffHz": 500, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 62.5, "linearGain": 1.4142 }, { "type": "peak", "cutoffHz": 176.78, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 250, "linearGain": 11.3137 }], "noteSubFilters0": [{ "type": "high-pass", "cutoffHz": 840.9, "linearGain": 11.3137 }, { "type": "low-pass", "cutoffHz": 297.3, "linearGain": 8 }, { "type": "peak", "cutoffHz": 500, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 62.5, "linearGain": 1.4142 }, { "type": "peak", "cutoffHz": 176.78, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 250, "linearGain": 11.3137 }], "bitcrusherOctave": 6.5, "bitcrusherQuantization": 71, "pan": 0, "panDelay": 10, "echoSustain": 14, "echoDelayBeats": 0.167, "reverb": 0, "fadeInSeconds": 0, "fadeOutTicks": -3, "wave": "1/8 pulse", "unison": "none", "envelopes": [] } },
@@ -1803,15 +1765,16 @@ var beepbox = (function (exports) {
                 { name: "talking bass", generalMidi: false, settings: { "type": "FM", "volume": 0, "eqFilter": [], "effects": ["chord type"], "chord": "custom interval", "fadeInSeconds": 0, "fadeOutTicks": -3, "algorithm": "1←(2 3)←4", "feedbackType": "1⟲", "feedbackAmplitude": 15, "operators": [{ "frequency": "1×", "amplitude": 15 }, { "frequency": "2×", "amplitude": 8 }, { "frequency": "2×", "amplitude": 5 }, { "frequency": "1×", "amplitude": 12 }], "envelopes": [{ "target": "operatorAmplitude", "envelope": "note size", "index": 2 }, { "target": "operatorAmplitude", "envelope": "note size", "index": 3 }, { "target": "feedbackAmplitude", "envelope": "note size" }] } },
                 { name: "synth marimba", generalMidi: false, settings: { "type": "Picked String", "volume": 0, "eqFilter": [{ "type": "high-pass", "cutoffHz": 176.78, "linearGain": 1 }, { "type": "peak", "cutoffHz": 4000, "linearGain": 0.5 }], "effects": ["note filter", "echo"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 1.4142 }], "echoSustain": 71, "echoDelayBeats": 0.5, "fadeInSeconds": 0, "fadeOutTicks": -1, "harmonics": [86, 100, 29, 29, 0, 0, 0, 100, 0, 0, 0, 86, 29, 0, 14, 100, 0, 0, 0, 0, 0, 14, 0, 0, 14, 0, 0, 86], "unison": "fifth", "stringSustain": 7, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "punch" }] } },
                 { name: "italian accordian", generalMidi: false, settings: { "type": "custom chip", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 6000, "linearGain": 0.5 }], "eqFilterType": true, "eqSimpleCut": 8, "eqSimplePeak": 1, "eqSubFilters1": [], "effects": ["panning", "chorus", "reverb"], "pan": 0, "panDelay": 10, "chorus": 71, "reverb": 45, "fadeInSeconds": 0.0263, "fadeOutTicks": -3, "wave": "square", "unison": "honky tonk", "customChipWave": { "0": -24, "1": -24, "2": -24, "3": -24, "4": -24, "5": -24, "6": -24, "7": -24, "8": -24, "9": -24, "10": -24, "11": -24, "12": -24, "13": -24, "14": -24, "15": -24, "16": 24, "17": 24, "18": 24, "19": 24, "20": 24, "21": 24, "22": 24, "23": 24, "24": -24, "25": -24, "26": -24, "27": -24, "28": -24, "29": -24, "30": -24, "31": -24, "32": -24, "33": -24, "34": -24, "35": -24, "36": -24, "37": -24, "38": -24, "39": -24, "40": 24, "41": 24, "42": 24, "43": 24, "44": 24, "45": 24, "46": 24, "47": 24, "48": -24, "49": -24, "50": -24, "51": -24, "52": -24, "53": -24, "54": -24, "55": -24, "56": -24, "57": -24, "58": -24, "59": -24, "60": -24, "61": -24, "62": -24, "63": -24 }, "customChipWaveIntegral": { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0, "24": 0, "25": 0, "26": 0, "27": 0, "28": 0, "29": 0, "30": 0, "31": 0, "32": 0, "33": 0, "34": 0, "35": 0, "36": 0, "37": 0, "38": 0, "39": 0, "40": 0, "41": 0, "42": 0, "43": 0, "44": 0, "45": 0, "46": 0, "47": 0, "48": 0, "49": 0, "50": 0, "51": 0, "52": 0, "53": 0, "54": 0, "55": 0, "56": 0, "57": 0, "58": 0, "59": 0, "60": 0, "61": 0, "62": 0, "63": 0, "64": 0 }, "envelopes": [] } },
-                { name: "custom chip supersaw", generalMidi: false, settings: { "type": "custom chip", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 0.7071 }], "eqFilterType": true, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters1": [], "effects": ["panning", "transition type", "vibrato", "chorus", "reverb"], "transition": "interrupt", "clicklessTransition": false, "vibrato": "delayed", "vibratoDepth": 0.3, "vibratoDelay": 18.5, "vibratoSpeed": 10, "vibratoType": 0, "pan": 0, "panDelay": 10, "chorus": 29, "reverb": 29, "fadeInSeconds": 0, "fadeOutTicks": -1, "wave": "square", "unison": "dissonant", "customChipWave": { "0": 22, "1": 22, "2": 16, "3": 6, "4": 0, "5": -3, "6": -8, "7": -10, "8": -13, "9": -16, "10": -19, "11": -19, "12": -20, "13": -22, "14": -22, "15": -24, "16": -24, "17": -24, "18": -24, "19": -24, "20": -24, "21": -24, "22": -24, "23": -24, "24": -24, "25": -24, "26": -24, "27": -24, "28": -24, "29": -24, "30": -24, "31": 24, "32": 24, "33": 16, "34": 9, "35": 6, "36": 4, "37": 2, "38": 0, "39": -1, "40": -3, "41": -4, "42": -4, "43": -6, "44": -6, "45": -6, "46": -6, "47": -5, "48": -5, "49": -4, "50": -2, "51": -2, "52": 1, "53": 4, "54": 6, "55": 8, "56": 10, "57": 12, "58": 14, "59": 16, "60": 18, "61": 19, "62": 22, "63": 24 }, "customChipWaveIntegral": { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0, "24": 0, "25": 0, "26": 0, "27": 0, "28": 0, "29": 0, "30": 0, "31": 0, "32": 0, "33": 0, "34": 0, "35": 0, "36": 0, "37": 0, "38": 0, "39": 0, "40": 0, "41": 0, "42": 0, "43": 0, "44": 0, "45": 0, "46": 0, "47": 0, "48": 0, "49": 0, "50": 0, "51": 0, "52": 0, "53": 0, "54": 0, "55": 0, "56": 0, "57": 0, "58": 0, "59": 0, "60": 0, "61": 0, "62": 0, "63": 0, "64": 0 }, "envelopes": [] } },
+                { name: "chip supersaw", generalMidi: false, settings: { "type": "custom chip", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 0.7071 }], "eqFilterType": true, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters1": [], "effects": ["panning", "transition type", "vibrato", "chorus", "reverb"], "transition": "interrupt", "clicklessTransition": false, "vibrato": "delayed", "vibratoDepth": 0.3, "vibratoDelay": 18.5, "vibratoSpeed": 10, "vibratoType": 0, "pan": 0, "panDelay": 10, "chorus": 29, "reverb": 29, "fadeInSeconds": 0, "fadeOutTicks": -1, "wave": "square", "unison": "dissonant", "customChipWave": { "0": 22, "1": 22, "2": 16, "3": 6, "4": 0, "5": -3, "6": -8, "7": -10, "8": -13, "9": -16, "10": -19, "11": -19, "12": -20, "13": -22, "14": -22, "15": -24, "16": -24, "17": -24, "18": -24, "19": -24, "20": -24, "21": -24, "22": -24, "23": -24, "24": -24, "25": -24, "26": -24, "27": -24, "28": -24, "29": -24, "30": -24, "31": 24, "32": 24, "33": 16, "34": 9, "35": 6, "36": 4, "37": 2, "38": 0, "39": -1, "40": -3, "41": -4, "42": -4, "43": -6, "44": -6, "45": -6, "46": -6, "47": -5, "48": -5, "49": -4, "50": -2, "51": -2, "52": 1, "53": 4, "54": 6, "55": 8, "56": 10, "57": 12, "58": 14, "59": 16, "60": 18, "61": 19, "62": 22, "63": 24 }, "customChipWaveIntegral": { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0, "24": 0, "25": 0, "26": 0, "27": 0, "28": 0, "29": 0, "30": 0, "31": 0, "32": 0, "33": 0, "34": 0, "35": 0, "36": 0, "37": 0, "38": 0, "39": 0, "40": 0, "41": 0, "42": 0, "43": 0, "44": 0, "45": 0, "46": 0, "47": 0, "48": 0, "49": 0, "50": 0, "51": 0, "52": 0, "53": 0, "54": 0, "55": 0, "56": 0, "57": 0, "58": 0, "59": 0, "60": 0, "61": 0, "62": 0, "63": 0, "64": 0 }, "envelopes": [] } },
                 { name: "fm supersaw", generalMidi: false, settings: { "type": "FM6op", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 1.4142 }, { "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 1.4142 }, { "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }], "effects": ["panning", "transition type", "pitch shift", "note filter", "chorus", "reverb"], "transition": "continue", "clicklessTransition": false, "pitchShiftSemitones": 0, "noteFilterType": false, "noteSimpleCut": 10, "noteSimplePeak": 0, "noteFilter": [], "noteSubFilters0": [], "noteSubFilters1": [{ "type": "low-pass", "cutoffHz": 4756.83, "linearGain": 1 }], "pan": 0, "panDelay": 10, "chorus": 71, "reverb": 0, "fadeInSeconds": 0, "fadeOutTicks": -1, "algorithm": "1 2 3 4 5 6", "feedbackType": "1⟲", "feedbackAmplitude": 0, "operators": [{ "frequency": "1×", "amplitude": 13, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "~1×", "amplitude": 15, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "2×", "amplitude": 10, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "3×", "amplitude": 7, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "4×", "amplitude": 9, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "8×", "amplitude": 6, "waveform": "sawtooth", "pulseWidth": 5 }], "envelopes": [] } },
                 { name: "obama why", generalMidi: false, settings: { "type": "harmonics", "volume": 0, "eqFilter": [], "effects": ["note filter", "panning", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 840.9, "linearGain": 11.3137 }], "pan": 0, "reverb": 0, "fadeInSeconds": 0.0263, "fadeOutTicks": -3, "harmonics": [100, 86, 29, 29, 14, 14, 0, 14, 14, 43, 71, 100, 100, 86, 71, 71, 57, 57, 43, 43, 43, 43, 43, 0, 0, 0, 0, 0], "unison": "octave", "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
             ]) },
-        { name: "Le choptop84's presets", presets: toNameMap([
+        { name: "AbyssBox presets", presets: toNameMap([
                 { name: "Demonic Bell", generalMidi: false, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "effects": ["detune", "distortion", "bitcrusher", "echo", "reverb"], "detuneCents": -52, "distortion": 29, "aliases": false, "bitcrusherOctave": 4.5, "bitcrusherQuantization": 29, "panDelay": 10, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 68, "fadeInSeconds": 0, "fadeOutTicks": 96, "harmonics": [43, 71, 71, 100, 86, 100, 43, 86, 71, 57, 86, 29, 14, 71, 14, 14, 57, 14, 14, 43, 14, 14, 43, 14, 14, 43, 14, 14], "unison": "shimmer", "stringSustain": 64, "envelopes": [] } },
                 { name: "Spacey Triangle", generalMidi: false, settings: { "type": "chip", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "effects": ["transition type", "vibrato", "distortion", "bitcrusher", "chorus", "echo", "reverb"], "transition": "normal", "clicklessTransition": false, "vibrato": "shaky", "vibratoDepth": 0.1, "vibratoDelay": 0, "vibratoSpeed": 10, "vibratoType": 1, "distortion": 29, "aliases": false, "bitcrusherOctave": 5.5, "bitcrusherQuantization": 14, "panDelay": 10, "chorus": 86, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 26, "fadeInSeconds": 0, "fadeOutTicks": 96, "wave": "triangle", "unison": "dirty", "isUsingAdvancedLoopControls": false, "chipWaveLoopStart": 0, "chipWaveLoopEnd": 32, "chipWaveLoopMode": 0, "chipWavePlayBackwards": false, "chipWaveStartOffset": 0, "envelopes": [] } },
                 { name: "Harmonic Piano", generalMidi: false, settings: { "type": "harmonics", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "effects": ["transition type"], "transition": "interrupt", "clicklessTransition": false, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -1, "harmonics": [100, 57, 57, 57, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "unison": "none", "envelopes": [] } },
                 { name: "Organic Synth", generalMidi: false, settings: { "type": "FM", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "effects": ["chord type", "reverb"], "chord": "simultaneous", "fastTwoNoteArp": false, "arpeggioSpeed": 12, "panDelay": 10, "reverb": 71, "fadeInSeconds": 0.0263, "fadeOutTicks": 96, "algorithm": "(1 2 3)←4", "feedbackType": "1⟲ 2⟲ 3⟲", "feedbackAmplitude": 2, "operators": [{ "frequency": "1×", "amplitude": 15, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "5×", "amplitude": 3, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "8×", "amplitude": 7, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }], "envelopes": [{ "target": "operatorAmplitude", "envelope": "twang 1", "index": 3 }, { "target": "noteVolume", "envelope": "twang 2" }] } },
+                { name: "Nokia Ringtone", generalMidi: false, settings: { "type": "FM", "eqFilter": [], "effects": ["transition type", "chord type"], "transition": "interrupt", "chord": "custom interval", "fadeInSeconds": 0, "fadeOutTicks": -1, "algorithm": "(1 2)←(3 4)", "feedbackType": "1→2", "feedbackAmplitude": 0, "operators": [{ "frequency": "1×", "amplitude": 2 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }], "envelopes": [] } },
             ]) },
     ]);
 
@@ -2039,7 +2002,7 @@ var beepbox = (function (exports) {
             this.colorLookup.clear();
         }
         static getArbitaryChannelColor(type, channel) {
-            if (getComputedStyle(this._styleElement).getPropertyValue("--use-color-formula").trim() == "false") {
+            if (!this.usesColorFormula) {
                 let base;
                 switch (type) {
                     case ("noise"): {
@@ -2197,7 +2160,7 @@ var beepbox = (function (exports) {
             }
         }
         static getComputedChannelColor(song, channel) {
-            if (getComputedStyle(this._styleElement).getPropertyValue("--use-color-formula").trim() == "false") {
+            if (!this.usesColorFormula) {
                 let base = ColorConfig.getChannelColor(song, channel);
                 var regex = /\(([^)]+)\)/;
                 let newChannelSecondary = ColorConfig.getComputed(regex.exec(base.secondaryChannel)[1]);
@@ -2212,7 +2175,7 @@ var beepbox = (function (exports) {
         }
         ;
         static getChannelColor(song, channel) {
-            if (getComputedStyle(this._styleElement).getPropertyValue("--use-color-formula").trim() == "false") {
+            if (!this.usesColorFormula) {
                 if (channel < song.pitchChannelCount) {
                     return ColorConfig.getComputed("--pitch-channel-limit") == ""
                         ? ColorConfig.pitchChannels[channel % ColorConfig.pitchChannels.length]
@@ -2235,124 +2198,52 @@ var beepbox = (function (exports) {
                 }
                 else {
                     if (channel < song.pitchChannelCount) {
-                        const pitchSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-hue");
-                        const pitchSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-hue-scale");
-                        const pitchSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-sat");
-                        const pitchSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-sat-scale");
-                        const pitchSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-lum");
-                        const pitchSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-lum-scale");
-                        const pitchPrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-hue");
-                        const pitchPrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-hue-scale");
-                        const pitchPrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-sat");
-                        const pitchPrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-sat-scale");
-                        const pitchPrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-lum");
-                        const pitchPrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-lum-scale");
-                        const pitchSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-hue");
-                        const pitchSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-hue-scale");
-                        const pitchSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-sat");
-                        const pitchSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-sat-scale");
-                        const pitchSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-lum");
-                        const pitchSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-lum-scale");
-                        const pitchPrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-hue");
-                        const pitchPrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-hue-scale");
-                        const pitchPrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-sat");
-                        const pitchPrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-sat-scale");
-                        const pitchPrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-lum");
-                        const pitchPrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-lum-scale");
-                        let newChannelSecondary = "hsl(" + ((+pitchSecondaryChannelHue + (channel * +pitchSecondaryChannelHueScale / Config.pitchChannelCountMax) * 256) % 256) + ","
-                            + (+pitchSecondaryChannelSat * (1 - (+pitchSecondaryChannelSatScale * Math.floor(channel / 7)))) + "%,"
-                            + (+pitchSecondaryChannelLum * (1 - (+pitchSecondaryChannelLumScale * Math.floor(channel / 7)))) + "%)";
-                        let newChannelPrimary = "hsl(" + ((+pitchPrimaryChannelHue + (channel * +pitchPrimaryChannelHueScale / Config.pitchChannelCountMax) * 256) % 256) + ","
-                            + (+pitchPrimaryChannelSat * (1 - (+pitchPrimaryChannelSatScale * Math.floor(channel / 7)))) + "%,"
-                            + (+pitchPrimaryChannelLum * (1 - (+pitchPrimaryChannelLumScale * Math.floor(channel / 7)))) + "%)";
-                        let newNoteSecondary = "hsl(" + ((+pitchSecondaryNoteHue + (channel * +pitchSecondaryNoteHueScale / Config.pitchChannelCountMax) * 256) % 256) + ","
-                            + (+pitchSecondaryNoteSat * (1 - (+pitchSecondaryNoteSatScale * Math.floor(channel / 7)))) + "%,"
-                            + (+pitchSecondaryNoteLum * (1 - (+pitchSecondaryNoteLumScale * Math.floor(channel / 7)))) + "%)";
-                        let newNotePrimary = "hsl(" + ((+pitchPrimaryNoteHue + (channel * +pitchPrimaryNoteHueScale / Config.pitchChannelCountMax) * 256) % 256) + ","
-                            + (+pitchPrimaryNoteSat * (1 - (+pitchPrimaryNoteSatScale * Math.floor(channel / 7)))) + "%,"
-                            + (+pitchPrimaryNoteLum * (1 - (+pitchPrimaryNoteLumScale * Math.floor(channel / 7)))) + "%)";
+                        let newChannelSecondary = "hsl(" + ((this.c_pitchSecondaryChannelHue + (channel * this.c_pitchSecondaryChannelHueScale / Config.pitchChannelCountMax) * 256) % 360) + ","
+                            + (this.c_pitchSecondaryChannelSat * (1 - (this.c_pitchSecondaryChannelSatScale * Math.floor(channel / 9)))) + "%,"
+                            + (this.c_pitchSecondaryChannelLum * (1 - (this.c_pitchSecondaryChannelLumScale * Math.floor(channel / 9)))) + "%)";
+                        let newChannelPrimary = "hsl(" + ((this.c_pitchPrimaryChannelHue + (channel * this.c_pitchPrimaryChannelHueScale / Config.pitchChannelCountMax) * 256) % 360) + ","
+                            + (this.c_pitchPrimaryChannelSat * (1 - (this.c_pitchPrimaryChannelSatScale * Math.floor(channel / 9)))) + "%,"
+                            + (this.c_pitchPrimaryChannelLum * (1 - (this.c_pitchPrimaryChannelLumScale * Math.floor(channel / 9)))) + "%)";
+                        let newNoteSecondary = "hsl(" + ((this.c_pitchSecondaryNoteHue + (channel * this.c_pitchSecondaryNoteHueScale / Config.pitchChannelCountMax) * 256) % 360) + ","
+                            + (this.c_pitchSecondaryNoteSat * (1 - (this.c_pitchSecondaryNoteSatScale * Math.floor(channel / 9)))) + "%,"
+                            + (this.c_pitchSecondaryNoteLum * (1 - (this.c_pitchSecondaryNoteLumScale * Math.floor(channel / 9)))) + "%)";
+                        let newNotePrimary = "hsl(" + ((this.c_pitchPrimaryNoteHue + (channel * this.c_pitchPrimaryNoteHueScale / Config.pitchChannelCountMax) * 256) % 360) + ","
+                            + (this.c_pitchPrimaryNoteSat * (1 - (this.c_pitchPrimaryNoteSatScale * Math.floor(channel / 9)))) + "%,"
+                            + (this.c_pitchPrimaryNoteLum * (1 - (this.c_pitchPrimaryNoteLumScale * Math.floor(channel / 9)))) + "%)";
                         let newChannelColors = { secondaryChannel: newChannelSecondary, primaryChannel: newChannelPrimary, secondaryNote: newNoteSecondary, primaryNote: newNotePrimary };
                         ColorConfig.colorLookup.set(channel, newChannelColors);
                         return newChannelColors;
                     }
                     else if (channel < song.pitchChannelCount + song.noiseChannelCount) {
-                        const noiseSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-hue");
-                        const noiseSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-hue-scale");
-                        const noiseSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-sat");
-                        const noiseSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-sat-scale");
-                        const noiseSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-lum");
-                        const noiseSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-lum-scale");
-                        const noisePrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-hue");
-                        const noisePrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-hue-scale");
-                        const noisePrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-sat");
-                        const noisePrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-sat-scale");
-                        const noisePrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-lum");
-                        const noisePrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-lum-scale");
-                        const noiseSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-hue");
-                        const noiseSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-hue-scale");
-                        const noiseSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-sat");
-                        const noiseSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-sat-scale");
-                        const noiseSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-lum");
-                        const noiseSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-lum-scale");
-                        const noisePrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-hue");
-                        const noisePrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-hue-scale");
-                        const noisePrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-sat");
-                        const noisePrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-sat-scale");
-                        const noisePrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-lum");
-                        const noisePrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-lum-scale");
-                        let newChannelSecondary = "hsl(" + ((+noiseSecondaryChannelHue + (((channel - song.pitchChannelCount) * +noiseSecondaryChannelHueScale) / Config.noiseChannelCountMax) * 256) % 256) + ","
-                            + (+noiseSecondaryChannelSat + channel * +noiseSecondaryChannelSatScale) + "%,"
-                            + (+noiseSecondaryChannelLum + channel * +noiseSecondaryChannelLumScale) + "%)";
-                        let newChannelPrimary = "hsl(" + ((+noisePrimaryChannelHue + (((channel - song.pitchChannelCount) * +noisePrimaryChannelHueScale) / Config.noiseChannelCountMax) * 256) % 256) + ","
-                            + (+noisePrimaryChannelSat + channel * +noisePrimaryChannelSatScale) + "%,"
-                            + (+noisePrimaryChannelLum + channel * +noisePrimaryChannelLumScale) + "%)";
-                        let newNoteSecondary = "hsl(" + ((+noiseSecondaryNoteHue + (((channel - song.pitchChannelCount) * +noiseSecondaryNoteHueScale) / Config.noiseChannelCountMax) * 256) % 256) + ","
-                            + (+noiseSecondaryNoteSat + channel * +noiseSecondaryNoteSatScale) + "%,"
-                            + (+noiseSecondaryNoteLum + channel * +noiseSecondaryNoteLumScale) + "%)";
-                        let newNotePrimary = "hsl(" + ((+noisePrimaryNoteHue + (((channel - song.pitchChannelCount) * +noisePrimaryNoteHueScale) / Config.noiseChannelCountMax) * 256) % 256) + ","
-                            + (+noisePrimaryNoteSat + channel * +noisePrimaryNoteSatScale) + "%,"
-                            + (+noisePrimaryNoteLum + channel * +noisePrimaryNoteLumScale) + "%)";
+                        let newChannelSecondary = "hsl(" + ((this.c_noiseSecondaryChannelHue + (((channel - song.pitchChannelCount) * this.c_noiseSecondaryChannelHueScale) / Config.noiseChannelCountMax) * 256) % 360) + ","
+                            + (this.c_noiseSecondaryChannelSat + channel * this.c_noiseSecondaryChannelSatScale) + "%,"
+                            + (this.c_noiseSecondaryChannelLum + channel * this.c_noiseSecondaryChannelLumScale) + "%)";
+                        let newChannelPrimary = "hsl(" + ((this.c_noisePrimaryChannelHue + (((channel - song.pitchChannelCount) * this.c_noisePrimaryChannelHueScale) / Config.noiseChannelCountMax) * 256) % 360) + ","
+                            + (this.c_noisePrimaryChannelSat + channel * this.c_noisePrimaryChannelSatScale) + "%,"
+                            + (this.c_noisePrimaryChannelLum + channel * this.c_noisePrimaryChannelLumScale) + "%)";
+                        let newNoteSecondary = "hsl(" + ((this.c_noiseSecondaryNoteHue + (((channel - song.pitchChannelCount) * this.c_noiseSecondaryNoteHueScale) / Config.noiseChannelCountMax) * 256) % 360) + ","
+                            + (this.c_noiseSecondaryNoteSat + channel * this.c_noiseSecondaryNoteSatScale) + "%,"
+                            + (this.c_noiseSecondaryNoteLum + channel * this.c_noiseSecondaryNoteLumScale) + "%)";
+                        let newNotePrimary = "hsl(" + ((this.c_noisePrimaryNoteHue + (((channel - song.pitchChannelCount) * this.c_noisePrimaryNoteHueScale) / Config.noiseChannelCountMax) * 256) % 360) + ","
+                            + (this.c_noisePrimaryNoteSat + channel * this.c_noisePrimaryNoteSatScale) + "%,"
+                            + (this.c_noisePrimaryNoteLum + channel * this.c_noisePrimaryNoteLumScale) + "%)";
                         let newChannelColors = { secondaryChannel: newChannelSecondary, primaryChannel: newChannelPrimary, secondaryNote: newNoteSecondary, primaryNote: newNotePrimary };
                         ColorConfig.colorLookup.set(channel, newChannelColors);
                         return newChannelColors;
                     }
                     else {
-                        const modSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-hue");
-                        const modSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-hue-scale");
-                        const modSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-sat");
-                        const modSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-sat-scale");
-                        const modSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-lum");
-                        const modSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-lum-scale");
-                        const modPrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-hue");
-                        const modPrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-hue-scale");
-                        const modPrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-sat");
-                        const modPrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-sat-scale");
-                        const modPrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-lum");
-                        const modPrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-lum-scale");
-                        const modSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-hue");
-                        const modSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-hue-scale");
-                        const modSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-sat");
-                        const modSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-sat-scale");
-                        const modSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-lum");
-                        const modSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-lum-scale");
-                        const modPrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-hue");
-                        const modPrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-hue-scale");
-                        const modPrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-sat");
-                        const modPrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-sat-scale");
-                        const modPrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-lum");
-                        const modPrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-lum-scale");
-                        let newChannelSecondary = "hsl(" + ((+modSecondaryChannelHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * +modSecondaryChannelHueScale) / Config.modChannelCountMax) * 256) % 256) + ","
-                            + (+modSecondaryChannelSat + channel * +modSecondaryChannelSatScale) + "%,"
-                            + (+modSecondaryChannelLum + channel * +modSecondaryChannelLumScale) + "%)";
-                        let newChannelPrimary = "hsl(" + ((+modPrimaryChannelHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * +modPrimaryChannelHueScale) / Config.modChannelCountMax) * 256) % 256) + ","
-                            + (+modPrimaryChannelSat + channel * +modPrimaryChannelSatScale) + "%,"
-                            + (+modPrimaryChannelLum + channel * +modPrimaryChannelLumScale) + "%)";
-                        let newNoteSecondary = "hsl(" + ((+modSecondaryNoteHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * +modSecondaryNoteHueScale) / Config.modChannelCountMax) * 256) % 256) + ","
-                            + (+modSecondaryNoteSat + channel * +modSecondaryNoteSatScale) + "%,"
-                            + (+modSecondaryNoteLum + channel * +modSecondaryNoteLumScale) + "%)";
-                        let newNotePrimary = "hsl(" + ((+modPrimaryNoteHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * +modPrimaryNoteHueScale) / Config.modChannelCountMax) * 256) % 256) + ","
-                            + (+modPrimaryNoteSat + channel * +modPrimaryNoteSatScale) + "%,"
-                            + (+modPrimaryNoteLum + channel * +modPrimaryNoteLumScale) + "%)";
+                        let newChannelSecondary = "hsl(" + ((this.c_modSecondaryChannelHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * this.c_modSecondaryChannelHueScale) / Config.modChannelCountMax) * 256) % 360) + ","
+                            + (this.c_modSecondaryChannelSat + channel * this.c_modSecondaryChannelSatScale) + "%,"
+                            + (this.c_modSecondaryChannelLum + channel * this.c_modSecondaryChannelLumScale) + "%)";
+                        let newChannelPrimary = "hsl(" + ((this.c_modPrimaryChannelHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * this.c_modPrimaryChannelHueScale) / Config.modChannelCountMax) * 256) % 360) + ","
+                            + (this.c_modPrimaryChannelSat + channel * this.c_modPrimaryChannelSatScale) + "%,"
+                            + (this.c_modPrimaryChannelLum + channel * this.c_modPrimaryChannelLumScale) + "%)";
+                        let newNoteSecondary = "hsl(" + ((this.c_modSecondaryNoteHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * this.c_modSecondaryNoteHueScale) / Config.modChannelCountMax) * 256) % 360) + ","
+                            + (this.c_modSecondaryNoteSat + channel * this.c_modSecondaryNoteSatScale) + "%,"
+                            + (this.c_modSecondaryNoteLum + channel * this.c_modSecondaryNoteLumScale) + "%)";
+                        let newNotePrimary = "hsl(" + ((this.c_modPrimaryNoteHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * this.c_modPrimaryNoteHueScale) / Config.modChannelCountMax) * 256) % 360) + ","
+                            + (this.c_modPrimaryNoteSat + channel * this.c_modPrimaryNoteSatScale) + "%,"
+                            + (this.c_modPrimaryNoteLum + channel * this.c_modPrimaryNoteLumScale) + "%)";
                         let newChannelColors = { secondaryChannel: newChannelSecondary, primaryChannel: newChannelPrimary, secondaryNote: newNoteSecondary, primaryNote: newNotePrimary };
                         ColorConfig.colorLookup.set(channel, newChannelColors);
                         return newChannelColors;
@@ -2371,19 +2262,102 @@ var beepbox = (function (exports) {
         static setTheme(name) {
             let theme = this.themes[name];
             if (theme == undefined)
-                theme = this.themes["dark classic"];
+                theme = this.themes["AbyssBox Classic"];
             this._styleElement.textContent = theme;
             const themeColor = document.querySelector("meta[name='theme-color']");
             if (themeColor != null) {
                 themeColor.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue('--ui-widget-background'));
             }
             this.resetColors();
+            this.usesColorFormula = (getComputedStyle(this._styleElement).getPropertyValue("--use-color-formula").trim() == "true");
+            this.c_invertedText = getComputedStyle(this._styleElement).getPropertyValue("--inverted-text");
+            this.c_trackEditorBgNoiseDim = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-noise-dim");
+            this.c_trackEditorBgNoise = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-noise");
+            this.c_trackEditorBgModDim = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-mod-dim");
+            this.c_trackEditorBgMod = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-mod");
+            this.c_trackEditorBgPitchDim = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-pitch-dim");
+            this.c_trackEditorBgPitch = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-pitch");
+            if (this.usesColorFormula) {
+                this.c_pitchSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-hue");
+                this.c_pitchSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-hue-scale");
+                this.c_pitchSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-sat");
+                this.c_pitchSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-sat-scale");
+                this.c_pitchSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-lum");
+                this.c_pitchSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-lum-scale");
+                this.c_pitchPrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-hue");
+                this.c_pitchPrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-hue-scale");
+                this.c_pitchPrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-sat");
+                this.c_pitchPrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-sat-scale");
+                this.c_pitchPrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-lum");
+                this.c_pitchPrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-lum-scale");
+                this.c_pitchSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-hue");
+                this.c_pitchSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-hue-scale");
+                this.c_pitchSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-sat");
+                this.c_pitchSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-sat-scale");
+                this.c_pitchSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-lum");
+                this.c_pitchSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-lum-scale");
+                this.c_pitchPrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-hue");
+                this.c_pitchPrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-hue-scale");
+                this.c_pitchPrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-sat");
+                this.c_pitchPrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-sat-scale");
+                this.c_pitchPrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-lum");
+                this.c_pitchPrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-lum-scale");
+                this.c_noiseSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-hue");
+                this.c_noiseSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-hue-scale");
+                this.c_noiseSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-sat");
+                this.c_noiseSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-sat-scale");
+                this.c_noiseSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-lum");
+                this.c_noiseSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-lum-scale");
+                this.c_noisePrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-hue");
+                this.c_noisePrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-hue-scale");
+                this.c_noisePrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-sat");
+                this.c_noisePrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-sat-scale");
+                this.c_noisePrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-lum");
+                this.c_noisePrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-lum-scale");
+                this.c_noiseSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-hue");
+                this.c_noiseSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-hue-scale");
+                this.c_noiseSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-sat");
+                this.c_noiseSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-sat-scale");
+                this.c_noiseSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-lum");
+                this.c_noiseSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-lum-scale");
+                this.c_noisePrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-hue");
+                this.c_noisePrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-hue-scale");
+                this.c_noisePrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-sat");
+                this.c_noisePrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-sat-scale");
+                this.c_noisePrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-lum");
+                this.c_noisePrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-lum-scale");
+                this.c_modSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-hue");
+                this.c_modSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-hue-scale");
+                this.c_modSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-sat");
+                this.c_modSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-sat-scale");
+                this.c_modSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-lum");
+                this.c_modSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-lum-scale");
+                this.c_modPrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-hue");
+                this.c_modPrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-hue-scale");
+                this.c_modPrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-sat");
+                this.c_modPrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-sat-scale");
+                this.c_modPrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-lum");
+                this.c_modPrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-lum-scale");
+                this.c_modSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-hue");
+                this.c_modSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-hue-scale");
+                this.c_modSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-sat");
+                this.c_modSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-sat-scale");
+                this.c_modSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-lum");
+                this.c_modSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-lum-scale");
+                this.c_modPrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-hue");
+                this.c_modPrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-hue-scale");
+                this.c_modPrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-sat");
+                this.c_modPrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-sat-scale");
+                this.c_modPrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-lum");
+                this.c_modPrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-lum-scale");
+            }
         }
         static getComputed(name) {
             return getComputedStyle(this._styleElement).getPropertyValue(name);
         }
     }
     ColorConfig.colorLookup = new Map();
+    ColorConfig.usesColorFormula = false;
     ColorConfig.themes = {
         "AbyssBox Classic": `
 			:root {		
@@ -2401,6 +2375,1643 @@ var beepbox = (function (exports) {
 			--ui-widget-background: #581b3e; 		
 			--ui-widget-focus: #762b4c; 		
 			--pitch-background: #381d24; 		
+			--tonic: #873a51; 		
+			--fifth-note: #75001e; 		
+			--white-piano-key: #cca5c7; 		
+			--black-piano-key: #402f2f;
+			--white-piano-key-text: #131200;		
+			--black-piano-key-text: #fff;		 		
+			--use-color-formula: true; 		
+			--track-editor-bg-pitch: #571c40; 		
+			--track-editor-bg-pitch-dim: #290d0d; 		
+			--track-editor-bg-noise: #571131; 		
+			--track-editor-bg-noise-dim: #330a28; 		
+			--track-editor-bg-mod: #54083c; 		
+			--track-editor-bg-mod-dim: #360426; 		
+			--multiplicative-mod-slider: #9f6082; 		
+			--overwriting-mod-slider: #9e3470; 		
+			--indicator-primary: #b3498f; 		
+			--indicator-secondary: #541d40; 		
+			--select2-opt-group: #4f191e; 		
+			--input-box-outline: #18041a; 		
+			--mute-button-normal: #dd5d94;	 		
+			--mute-button-mod: #ba364c; 		
+			--mod-label-primary: #541625; 		
+			--mod-label-secondary-text: rgb(120, 87, 86); 
+			--mod-label-primary-text: gray; 
+		
+			--pitch-secondary-channel-hue: -80; 		
+			--pitch-secondary-channel-hue-scale 0; 		
+			--pitch-secondary-channel-sat: 43; 		
+			--pitch-secondary-channel-sat-scale: 0.1; 		
+			--pitch-secondary-channel-lum: 40; 		
+			--pitch-secondary-channel-lum-scale: 0.05; 
+		
+			--pitch-primary-channel-hue: -53; 		
+			--pitch-primary-channel-hue-scale: 6.1; 		
+			--pitch-primary-channel-sat: 75; 		
+			--pitch-primary-channel-sat-scale: 0.1; 		
+			--pitch-primary-channel-lum: 67.5; 		
+			--pitch-primary-channel-lum-scale: 0.05; 	
+	
+			--pitch-secondary-note-hue: -34; 		
+			--pitch-secondary-note-hue-scale: 6.1; 		
+			--pitch-secondary-note-sat: 93.9; 		
+			--pitch-secondary-note-sat-scale: 0.1; 		
+			--pitch-secondary-note-lum: 25; 		
+			--pitch-secondary-note-lum-scale: 0.05; 
+		
+			--pitch-primary-note-hue: -53; 		
+			--pitch-primary-note-hue-scale: 6.1; 		
+			--pitch-primary-note-sat: 100; 		
+			--pitch-primary-note-sat-scale: 0.05; 		
+			--pitch-primary-note-lum: 85.6; 		
+			--pitch-primary-note-lum-scale: 0.025; 
+		
+			--noise-secondary-channel-hue: 0; 		
+			--noise-secondary-channel-hue-scale: 2; 		
+			--noise-secondary-channel-sat: 65; 		
+			--noise-secondary-channel-sat-scale: 0; 		
+			--noise-secondary-channel-lum: 42; 		
+			--noise-secondary-channel-lum-scale: 0; 
+		
+			--noise-primary-channel-hue: 0; 		
+			--noise-primary-channel-hue-scale: 1; 		
+			--noise-primary-channel-sat: 100; 		
+			--noise-primary-channel-sat-scale: 1; 		
+			--noise-primary-channel-lum: 63.5; 		
+			--noise-primary-channel-lum-scale: 0; 
+		
+			--noise-secondary-note-hue: 24; 		
+			--noise-secondary-note-hue-scale: 2; 		
+			--noise-secondary-note-sat: 100; 		
+			--noise-secondary-note-sat-scale: 0; 		
+			--noise-secondary-note-lum: 35; 		
+			--noise-secondary-note-lum-scale: 0; 	
+	
+			--noise-primary-note-hue: 24; 		
+			--noise-primary-note-hue-scale: 2; 		
+			--noise-primary-note-sat: 100; 		
+			--noise-primary-note-sat-scale: 1; 		
+			--noise-primary-note-lum: 60; 		
+			--noise-primary-note-lum-scale: 1; 	
+	
+			--mod-secondary-channel-hue: 55; 		
+			--mod-secondary-channel-hue-scale: 1.5; 		
+			--mod-secondary-channel-sat: 100; 		
+			--mod-secondary-channel-sat-scale: 0; 		
+			--mod-secondary-channel-lum: 20; 		
+			--mod-secondary-channel-lum-scale: 0; 
+		
+			--mod-primary-channel-hue: 55; 		
+			--mod-primary-channel-hue-scale: 1.5; 		
+			--mod-primary-channel-sat: 96; 		
+			--mod-primary-channel-sat-scale: 0; 		
+			--mod-primary-channel-lum: 50; 		
+			--mod-primary-channel-lum-scale: 0; 
+		
+			--mod-secondary-note-hue: 55; 		
+			--mod-secondary-note-hue-scale: 1.5; 		
+			--mod-secondary-note-sat: 92; 		
+			--mod-secondary-note-sat-scale: 0; 		
+			--mod-secondary-note-lum: 45; 		
+			--mod-secondary-note-lum-scale: 0; 
+		
+			--mod-primary-note-hue: 55; 		
+			--mod-primary-note-hue-scale: 1.5; 		
+			--mod-primary-note-sat: 96; 		
+			--mod-primary-note-sat-scale: 0; 		
+			--mod-primary-note-lum: 85; 		
+			--mod-primary-note-lum-scale: 0; 	
+
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;
+				}
+		* {
+		cursor: url("abyssbox_cursor.png"), auto;
+		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+		--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+		--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+		--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+		--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+		--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		}
+		
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+ 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			/* sets background image */
+			body {
+			background-image: url("https://choptop84.github.io/abyssbox-source/website/stripesbg.gif") !important;
+			background-position: center;
+			background-repeat: repeat;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+				}
+
+			/*#Hotdog {
+				content: url("https://choptop84.github.io/choptop84s-image-repository/abclassic_hotdog.png");
+			} */
+
+			#text-content {
+    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png");
+    				border-image-slice: 4 fill; 
+   				border-image-width: 8px; 
+				border-image-repeat: stretch; 
+    				padding: 12px; 
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */
+				}
+			#beepboxEditorContainer {
+    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png");
+    				border-image-slice: 4 fill; 
+   				border-image-width: 8px; 
+				border-image-repeat: stretch;
+    				padding: 12px;
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */ 
+				}
+			.beepboxEditor button,
+			button.playButton,
+			button.pauseButton, 
+			button.recordButton, 
+			button.stopButton,
+			button.nextBarButton, 
+			button.prevBarButton, 
+			button.copyButton, 
+			button.pasteButton, 
+			button.exportInstrumentButton, 
+			button.importInstrumentButton, 
+			.beepboxEditor select, 
+			.beepboxEditor .select2-selection__rendered {
+    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png") !important;
+    				border-image-slice: 4 fill !important; 
+   				border-image-width: 4px !important; 
+				border-image-repeat: stretch !important;
+    				padding: 4px !important; 
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */
+
+					cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				}
+
+			div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+				--ui-widget-background: #1e0915 !important;
+				border-image-source:none !important;
+			}
+
+				select.trackSelectBox {
+					border-image: none !important;
+				}
+				
+			@font-face {
+		   font-family: "AbyssType_small";
+		   src:
+ 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			html {
+ 		   	font-family: 'AbyssType';
+			}
+
+			div.channelBoxLabel {
+				font-family: 'AbyssType_small' !important;
+			}
+
+			.beepboxEditor input[type="range"]::-webkit-slider-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="text"],
+			.beepboxEditor input[type="number"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked:after
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			div.selectRow span {
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			`,
+        "AbyssBox Competitive": `
+			:root { 		
+			--page-margin: #000000; 		
+			--editor-background: #000000; 		
+			--hover-preview: white; 		
+			--playhead: rgba(255, 255, 255, 0.9); 		
+			--primary-text: white; 		
+			--secondary-text: #ffcedd; 		
+			--inverted-text: black;	 		
+			--text-selection: rgba(119,68,255,0.99); 		
+			--box-selection-fill: #bf2c5d; 		
+			--loop-accent: #873a51; 		
+			--link-accent: #df88ff; 		
+			--ui-widget-background: #581b3e; 		
+			--ui-widget-focus: #000000; 		
+			--pitch-background: #240f15; 		
+			--tonic: #a34b65; 		
+			--fifth-note: #75001e; 		
+			--white-piano-key: #cca5c7; 		
+			--black-piano-key: #402f2f;
+			--white-piano-key-text: #131200;		
+			--black-piano-key-text: #fff;		 		
+			--use-color-formula: true; 		
+			--track-editor-bg-pitch: #571c40; 		
+			--track-editor-bg-pitch-dim: #290d0d; 		
+			--track-editor-bg-noise: #571131; 		
+			--track-editor-bg-noise-dim: #330a28; 		
+			--track-editor-bg-mod: #54083c; 		
+			--track-editor-bg-mod-dim: #360426; 		
+			--multiplicative-mod-slider: #9f6082; 		
+			--overwriting-mod-slider: #9e3470; 		
+			--indicator-primary: #b3498f; 		
+			--indicator-secondary: #541d40; 		
+			--select2-opt-group: #4f191e; 		
+			--input-box-outline: #18041a; 		
+			--mute-button-normal: #dd5d94;	 		
+			--mute-button-mod: #ba364c; 		
+			--mod-label-primary: #541625; 		
+			--mod-label-secondary-text: rgb(120, 87, 86); 
+			--mod-label-primary-text: gray; 
+		
+			--pitch-secondary-channel-hue: -80; 		
+			--pitch-secondary-channel-hue-scale 0; 		
+			--pitch-secondary-channel-sat: 43; 		
+			--pitch-secondary-channel-sat-scale: 0.1; 		
+			--pitch-secondary-channel-lum: 40; 		
+			--pitch-secondary-channel-lum-scale: 0.05; 
+		
+			--pitch-primary-channel-hue: -53; 		
+			--pitch-primary-channel-hue-scale: 6.1; 		
+			--pitch-primary-channel-sat: 75; 		
+			--pitch-primary-channel-sat-scale: 0.1; 		
+			--pitch-primary-channel-lum: 67.5; 		
+			--pitch-primary-channel-lum-scale: 0.05; 	
+	
+			--pitch-secondary-note-hue: -34; 		
+			--pitch-secondary-note-hue-scale: 6.1; 		
+			--pitch-secondary-note-sat: 93.9; 		
+			--pitch-secondary-note-sat-scale: 0.1; 		
+			--pitch-secondary-note-lum: 25; 		
+			--pitch-secondary-note-lum-scale: 0.05; 
+		
+			--pitch-primary-note-hue: -53; 		
+			--pitch-primary-note-hue-scale: 6.1; 		
+			--pitch-primary-note-sat: 100; 		
+			--pitch-primary-note-sat-scale: 0.05; 		
+			--pitch-primary-note-lum: 85.6; 		
+			--pitch-primary-note-lum-scale: 0.025; 
+		
+			--noise-secondary-channel-hue: 0; 		
+			--noise-secondary-channel-hue-scale: 2; 		
+			--noise-secondary-channel-sat: 65; 		
+			--noise-secondary-channel-sat-scale: 0; 		
+			--noise-secondary-channel-lum: 42; 		
+			--noise-secondary-channel-lum-scale: 0; 
+		
+			--noise-primary-channel-hue: 0; 		
+			--noise-primary-channel-hue-scale: 1; 		
+			--noise-primary-channel-sat: 100; 		
+			--noise-primary-channel-sat-scale: 1; 		
+			--noise-primary-channel-lum: 63.5; 		
+			--noise-primary-channel-lum-scale: 0; 
+		
+			--noise-secondary-note-hue: 24; 		
+			--noise-secondary-note-hue-scale: 2; 		
+			--noise-secondary-note-sat: 100; 		
+			--noise-secondary-note-sat-scale: 0; 		
+			--noise-secondary-note-lum: 35; 		
+			--noise-secondary-note-lum-scale: 0; 	
+	
+			--noise-primary-note-hue: 24; 		
+			--noise-primary-note-hue-scale: 2; 		
+			--noise-primary-note-sat: 100; 		
+			--noise-primary-note-sat-scale: 1; 		
+			--noise-primary-note-lum: 60; 		
+			--noise-primary-note-lum-scale: 1; 	
+	
+			--mod-secondary-channel-hue: 55; 		
+			--mod-secondary-channel-hue-scale: 1.5; 		
+			--mod-secondary-channel-sat: 100; 		
+			--mod-secondary-channel-sat-scale: 0; 		
+			--mod-secondary-channel-lum: 20; 		
+			--mod-secondary-channel-lum-scale: 0; 
+		
+			--mod-primary-channel-hue: 55; 		
+			--mod-primary-channel-hue-scale: 1.5; 		
+			--mod-primary-channel-sat: 96; 		
+			--mod-primary-channel-sat-scale: 0; 		
+			--mod-primary-channel-lum: 50; 		
+			--mod-primary-channel-lum-scale: 0; 
+		
+			--mod-secondary-note-hue: 55; 		
+			--mod-secondary-note-hue-scale: 1.5; 		
+			--mod-secondary-note-sat: 92; 		
+			--mod-secondary-note-sat-scale: 0; 		
+			--mod-secondary-note-lum: 45; 		
+			--mod-secondary-note-lum-scale: 0; 
+		
+			--mod-primary-note-hue: 55; 		
+			--mod-primary-note-hue-scale: 1.5; 		
+			--mod-primary-note-sat: 96; 		
+			--mod-primary-note-sat-scale: 0; 		
+			--mod-primary-note-lum: 85; 		
+			--mod-primary-note-lum-scale: 0; 
+
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;
+				}		
+		/* sets cursor */ 
+		* {
+		cursor: url("abyssbox_cursor.png"), auto !important;
+		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+		--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+		--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+		--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+		--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+		--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		}
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+ 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			@font-face {
+		   font-family: "AbyssType_small";
+		   src:
+ 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			.beepboxEditor button,
+			button.playButton,
+			button.pauseButton, 
+			button.recordButton, 
+			button.stopButton,
+			button.nextBarButton,
+			button.prevBarButton,
+			button.copyButton, 
+			button.pasteButton, 
+			button.exportInstrumentButton, 
+			button.importInstrumentButton, 
+			.beepboxEditor select, 
+			.beepboxEditor .select2-selection__rendered {
+					border-style: double !important;
+					border-radius: 0px !important;
+					--ui-widget-background: black;
+			}
+
+			button.add-envelope::before,
+			button.notesDownButton::before,
+			button.notesUpButton::before,
+			button.copyPatternButton::before,
+			button.pastePatternButton::before,
+			button.undoButton::before,
+			button.redoButton::before,
+			button.loopBarButton::before,
+			button.duplicateButton::before,
+			button.selectAllButton::before,
+			button.deleteChannelButton::before, 
+			button.insertRowButton::before,
+			.delete-envelope::before {
+				left: -3px !important;
+				top: -3px !important;
+			}
+
+			div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+				--ui-widget-background: black !important;
+				border-image-source:none !important;
+				border-style: none !important;
+			}
+
+				select.trackSelectBox {
+					border-image: none !important;
+					border-style: none !important;
+				}
+
+			html {
+ 		   font-family: 'AbyssType';
+			}
+			div.channelBoxLabel {
+				font-family: 'AbyssType_small' !important;
+			}
+
+			.beepboxEditor input[type="range"]::-webkit-slider-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="text"],
+			.beepboxEditor input[type="number"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked:after
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			div.selectRow span {
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			`,
+        "AbyssBox Light": `
+			:root { 		
+			--page-margin: #e0adbc; 		
+			--editor-background: #e0adbc; 		
+			--hover-preview: white; 		
+			--playhead: rgba(255, 255, 255, 0.9); 		
+			--primary-text: #f5f0f1; 		
+			--secondary-text: #eddadf; 		
+			--inverted-text:  #e8bcc9;	 		
+			--text-selection: rgba(119,68,255,0.99); 		
+			--box-selection-fill: #bf2c5d; 		
+			--loop-accent: #8c346a; 		
+			--link-accent: #8c346a; 		
+			--ui-widget-background: #f5e9f0;		
+			--ui-widget-focus: #8c346a; 		
+			--pitch-background: #eddadf; 		
+			--tonic: #f5f0f1; 		
+			--fifth-note: #ffb5c9; 		
+			--white-piano-key: #cca5c7; 		
+			--black-piano-key: #402f2f;
+			--white-piano-key-text: #131200;		
+			--black-piano-key-text: #fff;	 		
+			--use-color-formula: true; 		
+			--track-editor-bg-pitch: #decad8; 		
+			--track-editor-bg-pitch-dim: #bfb0bb; 		
+			--track-editor-bg-noise: #d6a3ca; 		
+			--track-editor-bg-noise-dim: #b389a9; 		
+			--track-editor-bg-mod: #b0649e; 		
+			--track-editor-bg-mod-dim: #915683; 		
+			--multiplicative-mod-slider: #9f6082; 		
+			--overwriting-mod-slider: #9e3470; 		
+			--indicator-primary: #b3498f; 		
+			--indicator-secondary: #541d40; 		
+			--select2-opt-group: #4f191e; 		
+			--input-box-outline: #18041a; 		
+			--mute-button-normal: #dd5d94;	 		
+			--mute-button-mod: #ba364c; 		
+			--mod-label-primary: #541625; 		
+			--mod-label-secondary-text: rgb(120, 87, 86); 
+			--mod-label-primary-text: gray; 
+		
+			--pitch-secondary-channel-hue: -80; 		
+			--pitch-secondary-channel-hue-scale 0; 		
+			--pitch-secondary-channel-sat: 255; 		
+			--pitch-secondary-channel-sat-scale: 0.1; 		
+			--pitch-secondary-channel-lum: 30; 		
+			--pitch-secondary-channel-lum-scale: 0.05; 
+		
+			--pitch-primary-channel-hue: -53; 		
+			--pitch-primary-channel-hue-scale: 6.1; 		
+			--pitch-primary-channel-sat: 255; 		
+			--pitch-primary-channel-sat-scale: 0.1; 		
+			--pitch-primary-channel-lum: 60; 		
+			--pitch-primary-channel-lum-scale: 0.05; 	
+	
+			--pitch-secondary-note-hue: -34; 		
+			--pitch-secondary-note-hue-scale: 6.1; 		
+			--pitch-secondary-note-sat: 255; 		
+			--pitch-secondary-note-sat-scale: 0.1; 		
+			--pitch-secondary-note-lum: 30; 		
+			--pitch-secondary-note-lum-scale: 0.05; 
+		
+			--pitch-primary-note-hue: -53; 		
+			--pitch-primary-note-hue-scale: 6.1; 		
+			--pitch-primary-note-sat: 255; 		
+			--pitch-primary-note-sat-scale: 0.05; 		
+			--pitch-primary-note-lum: 60; 		
+			--pitch-primary-note-lum-scale: 0.025; 
+		
+			--noise-secondary-channel-hue: 0; 		
+			--noise-secondary-channel-hue-scale: 2; 		
+			--noise-secondary-channel-sat: 255; 		
+			--noise-secondary-channel-sat-scale: 0; 		
+			--noise-secondary-channel-lum: 30; 		
+			--noise-secondary-channel-lum-scale: 0; 
+		
+			--noise-primary-channel-hue: 0; 		
+			--noise-primary-channel-hue-scale: 1; 		
+			--noise-primary-channel-sat: 255; 		
+			--noise-primary-channel-sat-scale: 1; 		
+			--noise-primary-channel-lum: 60; 		
+			--noise-primary-channel-lum-scale: 0; 
+		
+			--noise-secondary-note-hue: 24; 		
+			--noise-secondary-note-hue-scale: 2; 		
+			--noise-secondary-note-sat: 255; 		
+			--noise-secondary-note-sat-scale: 0; 		
+			--noise-secondary-note-lum: 30; 		
+			--noise-secondary-note-lum-scale: 0; 	
+	
+			--noise-primary-note-hue: 24; 		
+			--noise-primary-note-hue-scale: 2; 		
+			--noise-primary-note-sat: 255; 		
+			--noise-primary-note-sat-scale: 1; 		
+			--noise-primary-note-lum: 60; 		
+			--noise-primary-note-lum-scale: 1; 	
+	
+			--mod-secondary-channel-hue: 55; 		
+			--mod-secondary-channel-hue-scale: 1.5; 		
+			--mod-secondary-channel-sat: 255; 		
+			--mod-secondary-channel-sat-scale: 0; 		
+			--mod-secondary-channel-lum: 30; 		
+			--mod-secondary-channel-lum-scale: 0; 
+		
+			--mod-primary-channel-hue: 55; 		
+			--mod-primary-channel-hue-scale: 1.5; 		
+			--mod-primary-channel-sat: 255; 		
+			--mod-primary-channel-sat-scale: 0; 		
+			--mod-primary-channel-lum: 60; 		
+			--mod-primary-channel-lum-scale: 0; 
+		
+			--mod-secondary-note-hue: 55; 		
+			--mod-secondary-note-hue-scale: 1.5; 		
+			--mod-secondary-note-sat: 255; 		
+			--mod-secondary-note-sat-scale: 0; 		
+			--mod-secondary-note-lum: 30; 		
+			--mod-secondary-note-lum-scale: 0; 
+		
+			--mod-primary-note-hue: 55; 		
+			--mod-primary-note-hue-scale: 1.5; 		
+			--mod-primary-note-sat: 255; 		
+			--mod-primary-note-sat-scale: 0; 		
+			--mod-primary-note-lum: 60; 		
+			--mod-primary-note-lum-scale: 0; 	
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;
+				}
+				/* sets background image */
+				body {
+				background-image: url("https://choptop84.github.io/abyssbox-source/website/stripesbg_light.gif") !important;
+				background-position: center;
+				background-repeat: repeat;
+	
+				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+				image-rendering: -o-crisp-edges !important;            /* Opera */
+				image-rendering: pixelated !important;                 /* Future browsers */
+				image-rendering: optimizeSpeed !important;             /* IE */
+					}		
+			#text-content {
+    				border-image-source: url("https://choptop84.github.io/abyssbox-source/website/abyssbox_border_light.png");
+    				border-image-slice: 4 fill; 
+   				border-image-width: 8px; 
+				border-image-repeat: stretch; 
+    				padding: 12px; 
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */
+				}
+			#beepboxEditorContainer {
+    				border-image-source: url("https://choptop84.github.io/abyssbox-source/website/abyssbox_border_light.png");
+    				border-image-slice: 4 fill; 
+   				border-image-width: 8px; 
+				border-image-repeat: stretch;
+    				padding: 12px;
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */ 
+				}
+				.beepboxEditor button,
+				button.playButton,
+				button.pauseButton, 
+				button.recordButton, 
+				button.stopButton,
+				button.nextBarButton, 
+				button.prevBarButton, 
+				button.copyButton, 
+				button.pasteButton, 
+				button.exportInstrumentButton, 
+				button.importInstrumentButton, 
+				.beepboxEditor select, 
+				.beepboxEditor .select2-selection__rendered {
+						border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border_light.png") !important;
+						border-image-slice: 4 fill !important; 
+					   border-image-width: 4px !important; 
+					border-image-repeat: stretch !important;
+						padding: 4px !important; 
+	
+						image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						image-rendering: -o-crisp-edges !important;            /* Opera */
+						image-rendering: pixelated !important;                 /* Future browsers */
+						image-rendering: optimizeSpeed !important;             /* IE */
+	
+						cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+					}
+	
+				div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+					--ui-widget-background: var(--editor-background) !important;
+					border-image-source:none !important;
+				}
+
+				select.trackSelectBox {
+					border-image: none !important;
+				}
+
+		/* sets cursor */ 
+		* {
+		cursor: url("abyssbox_cursor.png"), auto !important;
+		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+		--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+		--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+		--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+		--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+		--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		}
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+ 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			@font-face {
+		   font-family: "AbyssType_small";
+		   src:
+ 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			html {
+ 		   font-family: 'AbyssType';
+			}
+			div.channelBoxLabel {
+				font-family: 'AbyssType_small' !important;
+			}
+
+			.beepboxEditor input[type="range"]::-webkit-slider-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="text"],
+			.beepboxEditor input[type="number"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked:after
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			div.selectRow span {
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			`,
+        "Frutiger Aero": `
+			:root {		
+			--page-margin: #fff; 		
+			--editor-background: #2e538c;		
+			--hover-preview: white; 		
+			--playhead: rgba(255, 255, 255, 0.9); 		
+			--primary-text: white; 		
+			--secondary-text: #ceddff;		
+			--inverted-text: white;	 		
+			--text-selection: rgba(119,68,255,0.99); 		
+			--box-selection-fill: #0a091e; 		
+			--loop-accent: #6fafe8; 		
+			--link-accent: #a2b0ff; 		
+			--ui-widget-background: #84aef0; 		
+			--ui-widget-focus: #2b5376; 		
+			--pitch-background: #4671b5; 		
+			--tonic: #fff; 		
+			--fifth-note: #620297; 		
+			--white-piano-key: #dbe5ec;		
+			--black-piano-key: #2f3a40;
+			--white-piano-key-text: #131200;		
+			--black-piano-key-text: #fff;					
+			--use-color-formula: true; 		
+			--track-editor-bg-pitch: linear-gradient(#2782b0,#0c2b3e); 		
+			--track-editor-bg-pitch-dim: linear-gradient(#0c2b3e70,#05151fc4); 		
+			--track-editor-bg-noise: linear-gradient(#2d4aa1,#08204f); 		
+			--track-editor-bg-noise-dim: linear-gradient(#08204f70, #031029c4); 		
+			--track-editor-bg-mod: linear-gradient(#46299e, #26145e); 		
+			--track-editor-bg-mod-dim: linear-gradient(#26145e70,#110630c4); 		
+			--multiplicative-mod-slider: #60769f; 		
+			--overwriting-mod-slider: #343b9e; 		
+			--indicator-primary: #499ab3; 		
+			--indicator-secondary: #9db9c4; 		
+			--select2-opt-group: #185f8a; 		
+			--input-box-outline: #18041a; 		
+			--mute-button-normal: #97d4f9; 		
+			--mute-button-mod: #8a5fff;		
+			--mod-label-primary: #341a7b; 		
+			--mod-label-secondary-text: rgb(86, 93, 120);
+			--mod-label-primary-text: gray; 
+		
+			--pitch-secondary-channel-hue: 110; 		
+			--pitch-secondary-channel-hue-scale 0; 		
+			--pitch-secondary-channel-sat: 63; 		
+			--pitch-secondary-channel-sat-scale: 0.1; 		
+			--pitch-secondary-channel-lum: 50; 		
+			--pitch-secondary-channel-lum-scale: 0.05; 
+		
+			--pitch-primary-channel-hue: 120; 		
+			--pitch-primary-channel-hue-scale: 6.1; 		
+			--pitch-primary-channel-sat: 75; 		
+			--pitch-primary-channel-sat-scale: 0.1; 		
+			--pitch-primary-channel-lum: 67.5; 		
+			--pitch-primary-channel-lum-scale: 0.05; 	
+	
+			--pitch-secondary-note-hue: 110; 		
+			--pitch-secondary-note-hue-scale: 6.1; 		
+			--pitch-secondary-note-sat: 63.9; 		
+			--pitch-secondary-note-sat-scale: 0.1; 		
+			--pitch-secondary-note-lum: 55; 		
+			--pitch-secondary-note-lum-scale: 0.05; 
+		
+			--pitch-primary-note-hue: 120; 		
+			--pitch-primary-note-hue-scale: 6.1; 		
+			--pitch-primary-note-sat: 100; 		
+			--pitch-primary-note-sat-scale: 0.05; 		
+			--pitch-primary-note-lum: 85.6; 		
+			--pitch-primary-note-lum-scale: 0.025; 
+		
+			--noise-secondary-channel-hue: 90; 		
+			--noise-secondary-channel-hue-scale: 2; 		
+			--noise-secondary-channel-sat: 65; 		
+			--noise-secondary-channel-sat-scale: 0; 		
+			--noise-secondary-channel-lum: 42; 		
+			--noise-secondary-channel-lum-scale: 0; 
+		
+			--noise-primary-channel-hue: 80; 		
+			--noise-primary-channel-hue-scale: 1; 		
+			--noise-primary-channel-sat: 100; 		
+			--noise-primary-channel-sat-scale: 1; 		
+			--noise-primary-channel-lum: 63.5; 		
+			--noise-primary-channel-lum-scale: 0; 
+		
+			--noise-secondary-note-hue: 90; 		
+			--noise-secondary-note-hue-scale: 2; 		
+			--noise-secondary-note-sat: 60; 		
+			--noise-secondary-note-sat-scale: 0; 		
+			--noise-secondary-note-lum: 35; 		
+			--noise-secondary-note-lum-scale: 0; 	
+	
+			--noise-primary-note-hue: 80; 		
+			--noise-primary-note-hue-scale: 2; 		
+			--noise-primary-note-sat: 100; 		
+			--noise-primary-note-sat-scale: 1; 		
+			--noise-primary-note-lum: 60; 		
+			--noise-primary-note-lum-scale: 1; 	
+	
+			--mod-secondary-channel-hue: 55; 		
+			--mod-secondary-channel-hue-scale: 1.5; 		
+			--mod-secondary-channel-sat: 100; 		
+			--mod-secondary-channel-sat-scale: 0; 		
+			--mod-secondary-channel-lum: 20; 		
+			--mod-secondary-channel-lum-scale: 0; 
+		
+			--mod-primary-channel-hue: 55; 		
+			--mod-primary-channel-hue-scale: 1.5; 		
+			--mod-primary-channel-sat: 96; 		
+			--mod-primary-channel-sat-scale: 0; 		
+			--mod-primary-channel-lum: 50; 		
+			--mod-primary-channel-lum-scale: 0; 
+		
+			--mod-secondary-note-hue: 55; 		
+			--mod-secondary-note-hue-scale: 1.5; 		
+			--mod-secondary-note-sat: 62; 		
+			--mod-secondary-note-sat-scale: 0; 		
+			--mod-secondary-note-lum: 45; 		
+			--mod-secondary-note-lum-scale: 0; 
+		
+			--mod-primary-note-hue: 55; 		
+			--mod-primary-note-hue-scale: 1.5; 		
+			--mod-primary-note-sat: 96; 		
+			--mod-primary-note-sat-scale: 0; 		
+			--mod-primary-note-lum: 85; 		
+			--mod-primary-note-lum-scale: 0; 	
+
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;
+
+		}
+
+		* {
+		/*cursor: url("abyssbox_cursor.png"), auto !important;*/
+		--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/vistaSpeakerIconMuted.png");
+		--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/vistaSpeakerIcon.png");
+		}
+	
+
+		/* Frutiger Aero Icons */
+
+		div.mute-button::before {
+			background: #fff0 !important;
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/vistaSpeakerIcon.png") !important;
+			background-size: 18px !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+			mask-size: 800px !important;
+			color: #fff0;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		div.mute-button.muted::before {
+			background: #fff0 !important;
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/vistaSpeakerIconMuted.png") !important;
+			background-size: 18px !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+			mask-size: 800px !important;
+			color: #fff0;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		#text-content > section > h1 > font {
+			display: none;
+			}
+			#text-content > section > h1 {
+			margin: auto;
+			content: url("https://choptop84.github.io/choptop84s-image-repository/AbyssBoxFrutigerAeroThemeLogo.png");
+			}
+
+		select.trackSelectBox {
+			border-image: none !important;
+		}
+
+			@font-face {
+		   font-family: "Frutiger";
+		   src:
+ 		   url("https://choptop84.github.io/choptop84s-image-repository/FrutigerLight.ttf") format("truetype") tech(color-COLRv1),
+			}
+
+			canvas#oscilascopeAll {
+				background: #2e538c !important; 
+				border: 2px solid #84aef000 !important;
+			}
+
+			.beepboxEditor .play-pause-area div:last-child {
+				position: relative;
+				width: 144px;
+				height: 32px;
+			  }
+			  .beepboxEditor .play-pause-area div:last-child::before {
+				content: "";
+				display: block;
+				width: calc(144px + 4px);
+				height: calc(32px + 4px);
+				box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.5), inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5), inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+				position: absolute;
+				z-index: 1;
+			  }
+
+			div.prompt.noSelection{
+				background: linear-gradient(#84aef080, #2a3d6a80) !important; 
+				opacity: 77;
+			}  
+
+			svg#firstImage {
+				opacity: 50%;
+				--editor-background: #84aef0;
+			}
+
+			/* sets background image */
+			body {
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/frutigerbg3.jpg") !important;
+			background-position: top;
+			background-attachment: fixed;
+			background-repeat: no-repeat;
+			background-size: cover;
+			image-rendering: optimizeQuality !important;             /* IE */ 
+				}
+
+			#beepboxEditorContainer {
+				background: linear-gradient(#eef3ff80, #395eb380) !important;
+				border-style: solid;
+  				border-color: lightblue;
+				padding-bottom: 5px;
+				--inverted-text: black;
+				backdrop-filter: blur(10px);
+			}
+			#text-content {
+				background: linear-gradient(#395eb380, #03112f80);
+				border-style: solid;
+  				border-color: lightblue;
+				  backdrop-filter: blur(10px);
+			}
+
+				.beepboxEditor select
+				{
+					box-shadow: 0px 1px 3px 0px rgb(0, 0, 0), inset 0px -12px 14px 0px rgba(0, 0, 0, 0.3), inset 0px -15px 0px 0px rgba(0, 0, 0, 0.2);
+
+					--ui-widget-background: linear-gradient(#84aef0, #4f6db3) !important;
+					border-image-source:url("https://choptop84.github.io/choptop84s-image-repository/buttonshading.png") !important;
+					border-image-slice: 40 fill !important; 
+   					border-image-width: 4px !important; 
+					border-image-repeat: stretch; 
+				
+
+				}
+
+				div.playback-bar-controls button.playButton, 
+				div.playback-bar-controls button.pauseButton, 
+				div.playback-bar-controls button.recordButton, 
+				div.playback-bar-controls button.stopButton, 
+				div.playback-bar-controls button.prevBarButton, 
+				div.playback-bar-controls button.nextBarButton, 
+				div.selectRow button.copyButton, 
+				div.selectRow button.pasteButton, 
+				div.editor-controls button.exportInstrumentButton, 
+				div.editor-controls button.importInstrumentButton,
+				div.editor-controls div button.add-envelope,
+				div.editor-controls div button.delete-envelope  { 
+					box-shadow: 0px 1px 3px 0px rgb(0, 0, 0), inset 0px -12px 14px 0px rgba(0, 0, 0, 0.3), inset 0px -15px 0px 0px rgba(0, 0, 0, 0.2);
+
+					--ui-widget-background: linear-gradient(#84aef0, #4f6db3) !important;
+					border-image-source:url("https://choptop84.github.io/choptop84s-image-repository/buttonshading.png") !important;
+					border-image-slice: 40 fill !important; 
+   					border-image-width: 4px !important; 
+					border-image-repeat: stretch; 
+				}
+
+				.beepboxEditor select:focus
+				{
+					border-image-source: none;
+					
+					--ui-widget-background: linear-gradient(#2a3d6a, #2a3d6a) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+						inset 0px 10px 20px 1px rgba(0, 0, 0, 0.4),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+
+				.beepboxEditor .select2-selection__rendered,
+				.beepboxEditor .instrument-bar button,
+				.beepboxEditor .eq-filter-type-bar button .deactivated,
+				.beepboxEditor .note-filter-type-bar button .deactivated
+				{
+					box-shadow: 0px 1px 3px 0px rgb(0, 0, 0), inset 0px -12px 14px 0px rgba(0, 0, 0, 0.3), inset 0px -15px 0px 0px rgba(0, 0, 0, 0.2);
+					--ui-widget-background: linear-gradient(#84aef0, #4f6db3) !important;
+
+					border-image-source:url("https://choptop84.github.io/choptop84s-image-repository/buttonshading.png") !important;
+					border-image-slice: 40 fill !important; 
+   					border-image-width: 4px !important; 
+					border-image-repeat: stretch; 
+				}
+				.beepboxEditor button
+				{
+					--ui-widget-background: linear-gradient(#84aef0, #2a3d6a) !important;
+					box-shadow:
+						0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				.beepboxEditor .select2-container--open .select2-selection__rendered,
+				.beepboxEditor button:focus,
+				.beepboxEditor .instrument-bar .selected-instrument,
+				.beepboxEditor .eq-filter-type-bar button:not(.deactivated),
+				.beepboxEditor .note-filter-type-bar button:not(.deactivated)
+				{
+					--ui-widget-background: linear-gradient(#333, #444) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor .filterEditor svg,
+				.beepboxEditor .fadeInOut svg,
+				.beepboxEditor .harmonics svg,
+				.beepboxEditor .spectrum svg
+				{
+					background: rgba(0, 0, 0, 0.3) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-webkit-slider-thumb
+				{
+					box-shadow:
+						0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+						inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+				{
+					background: rgba(0, 0, 0, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+					border-radius: 4px;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+				{
+					background: rgba(255, 255, 255, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-ms-thumb
+				{
+					box-shadow:
+						0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+						inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-ms-track
+				{
+					background: rgba(0, 0, 0, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+					border-radius: 4px;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-ms-track
+				{
+					background: rgba(255, 255, 255, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-moz-range-thumb
+				{
+					height: 16px !important;
+					width: 16px !important;
+					border-radius: 40px !important;
+					box-shadow:
+						0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+						inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-moz-range-track
+				{
+					background: rgba(0, 0, 0, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+					border-radius: 4px;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-moz-range-track
+				{
+					background: rgba(255, 255, 255, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="text"],
+				.beepboxEditor input[type="number"]
+				{
+					border: none !important;
+					background: rgba(0, 0, 0, 0.2) !important;
+					box-shadow:
+						0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]
+				{
+					appearance: none;
+					background: rgba(0, 0, 0, 0.3);
+					color: currentColor;
+					border-radius: 1px;
+					width: 1em !important;
+					height: 1em !important;
+					box-shadow:
+						inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]:checked
+				{
+					display: flex;
+					justify-content: center;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]:checked:after
+				{
+					width: 1em;
+					height: 1em;
+					text-align: center;
+					font-size: 0.8em;
+					content: "✓";
+					color: currentColor;
+					text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.5);
+				}
+
+			html {
+ 		   	font-family: 'Frutiger';
+			}
+
+			div.channelBoxLabel {
+				font-family: 'Frutiger' !important;
+			}
+
+				/* Use this code down here when you have transparent backgrounds!!! */
+
+		   div.beepboxEditor.load {
+			background: none !important;
+		   }
+
+		   div.noSelection {
+			background: none !important;
+		   }
+
+		   .beepboxEditor .loopEditor {
+			background: none !important;
+		   }
+
+		   .beepboxEditor .muteEditor {
+			background: linear-gradient(#c4f0d1, #83c139) !important;
+			border-radius: 5px;
+			box-shadow: 0px 1px 1px 0px rgb(0, 0, 0), inset 0px 3px 14px 0px rgba(0, 0, 0, 0.1), inset 0px -4px 0px 0px rgba(0, 0, 0, 0.1);
+			opacity: 65%;
+		   }
+
+		   div.muteEditor div {
+			background: none !important;
+			--track-editor-bg-pitch: #1b4079;
+			--track-editor-bg-noise: #213779;
+			--track-editor-bg-mod: #46299e;
+	
+			--track-editor-bg-pitch-dim: #0c2b3e; 		
+			--track-editor-bg-noise-dim: #08204f; 			
+			--track-editor-bg-mod-dim: #26145e; 
+
+		   }
+
+		   div.channelBox {
+			border-radius: 5px;
+		  }
+
+			`,
+        "Glyde": `
+	  :root { 
+		--page-margin: #000000; 
+		--editor-background: #472434a8; 
+		--hover-preview: white; 
+		--playhead: rgba(255, 255, 255, 0.9); 
+		--primary-text: #ffe5c2; 
+		--secondary-text: #ffcedd; 
+		--inverted-text: black; 
+		--text-selection: rgba(119,68,255,0.99); 
+		--box-selection-fill: #1e0915; 
+		--loop-accent: #ffdeaf; 
+		--link-accent: #df88ff; 
+		--ui-widget-background: #8a516e9e; 
+		--ui-widget-focus: #4f152b; 
+		--pitch-background: #00000038; 
+		--tonic: #ff9db9; 
+		--fifth-note: #ffe1b88c; 
+		--white-piano-key: #ffb6ce; 
+		--black-piano-key: #ff7ba7; 
+		--use-color-formula: true; 
+		--track-editor-bg-pitch: #751e40; 
+		--track-editor-bg-pitch-dim: #4f152b; 
+		--track-editor-bg-noise: #751e30; 
+		--track-editor-bg-noise-dim: #4f152b; 
+		--track-editor-bg-mod: #751e29; 
+		--track-editor-bg-mod-dim: #4f152b; 
+		--multiplicative-mod-slider: #ea7d7d; 
+		--overwriting-mod-slider: #ffebd5; 
+		--indicator-primary: #ffebd5; 
+		--indicator-secondary: #4f152b; 
+		--select2-opt-group: #ffebd5; 
+		--input-box-outline: #a33e67; 
+		--mute-button-normal: #b63448; 
+		--mute-button-mod: #6d0f1d; 
+		--mod-label-primary: #2b080d; 
+		--mod-label-secondary-text: #421a20; 
+		--mod-label-primary-text: #ffc6cf; 
+		--pitch-secondary-channel-hue: 60; 
+		--pitch-secondary-channel-sat: 23; 
+		--pitch-secondary-channel-sat-scale: 0.1; 
+		--pitch-secondary-channel-lum: 50; 
+		--pitch-secondary-channel-lum-scale: 0.05; 
+		--pitch-primary-channel-hue: 60; 
+		--pitch-primary-channel-hue-scale: 6.1; 
+		--pitch-primary-channel-sat: 75; 
+		--pitch-primary-channel-sat-scale: 0.1; 
+		--pitch-primary-channel-lum: 87.5; 
+		--pitch-primary-channel-lum-scale: 0.05; 
+		--pitch-secondary-note-hue: 60; 
+		--pitch-secondary-note-hue-scale: 6.1; 
+		--pitch-secondary-note-sat: 53.9; 
+		--pitch-secondary-note-sat-scale: 0.1; 
+		--pitch-secondary-note-lum: 65; 
+		--pitch-secondary-note-lum-scale: 0.05; 
+		--pitch-primary-note-hue: 60; 
+		--pitch-primary-note-hue-scale: 6.1; 
+		--pitch-primary-note-sat: 100; 
+		--pitch-primary-note-sat-scale: 0.05; 
+		--pitch-primary-note-lum: 95.6; 
+		--pitch-primary-note-lum-scale: 0.025; 
+		--noise-secondary-channel-hue: 0; 
+		--noise-secondary-channel-hue-scale: 2; 
+		--noise-secondary-channel-sat: 65; 
+		--noise-secondary-channel-sat-scale: 0; 
+		--noise-secondary-channel-lum: 72; 
+		--noise-secondary-channel-lum-scale: 0; 
+		--noise-primary-channel-hue: 0; 
+		--noise-primary-channel-hue-scale: 1; 
+		--noise-primary-channel-sat: 100; 
+		--noise-primary-channel-sat-scale: 1; 
+		--noise-primary-channel-lum: 93.5; 
+		--noise-primary-channel-lum-scale: 0; 
+		--noise-secondary-note-hue: 24; 
+		--noise-secondary-note-hue-scale: 2; 
+		--noise-secondary-note-sat: 100; 
+		--noise-secondary-note-sat-scale: 0; 
+		--noise-secondary-note-lum: 75; 
+		--noise-secondary-note-lum-scale: 0; 
+		--noise-primary-note-hue: 24; 
+		--noise-primary-note-hue-scale: 2; 
+		--noise-primary-note-sat: 100; 
+		--noise-primary-note-sat-scale: 1; 
+		--noise-primary-note-lum: 90; 
+		--noise-primary-note-lum-scale: 1; 
+		--mod-secondary-channel-hue: 55; 
+		--mod-secondary-channel-hue-scale: 1.5; 
+		--mod-secondary-channel-sat: 100; 
+		--mod-secondary-channel-sat-scale: 0; 
+		--mod-secondary-channel-lum: 70; 
+		--mod-secondary-channel-lum-scale: 0; 
+		--mod-primary-channel-hue: 55; 
+		--mod-primary-channel-hue-scale: 1.5; 
+		--mod-primary-channel-sat: 96; 
+		--mod-primary-channel-sat-scale: 0; 
+		--mod-primary-channel-lum: 95; 
+		--mod-primary-channel-lum-scale: 0; 
+		--mod-secondary-note-hue: 55; 
+		--mod-secondary-note-hue-scale: 1.5; 
+		--mod-secondary-note-sat: 92; 
+		--mod-secondary-note-sat-scale: 0; 
+		--mod-secondary-note-lum: 75; 
+		--mod-secondary-note-lum-scale: 0; 
+		--mod-primary-note-hue: 55; 
+		--mod-primary-note-hue-scale: 1.5; 
+		--mod-primary-note-sat: 96; 
+		--mod-primary-note-sat-scale: 0; 
+		--mod-primary-note-lum: 95; 
+		--mod-primary-note-lum-scale: 0; 
+		--note-flash: #fff; 
+		--note-flash-secondary: #ffffff54; }
+		* {
+		cursor: url("abyssbox_cursor.png"), auto !important;
+		}
+		
+			@font-face {
+		   font-family: "Varela";
+		   src:
+ 		   url("https://choptop84.github.io/abyssbox-app/Varela.ttf") format("truetype") tech(color-COLRv1),
+			}
+
+			/* sets background image */
+			body {
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/glydebg.png") !important;
+			background-position: top right;
+			background-repeat: no-repeat;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+				}
+
+			div#beepboxEditorContainer {
+				border-style: solid;
+				border-width: 8px;
+				border-color: #4f152b;
+				padding-bottom: 5px;
+			}
+				
+			#text-content {
+				border-style: solid;
+				border-width: 8px;
+				border-color: #4f152b;
+			}
+
+			html {
+ 		   	font-family: 'Varela';
+			}
+
+			div.channelBoxLabel {
+				font-family: 'Varela' !important;
+			}
+
+			#firstImage {
+				background-image: url("https://choptop84.github.io/choptop84s-image-repository/slushiepfp.PNG") !important;
+				background-repeat: no-repeat !important;
+				background-size: 100% 100% !important;
+			}
+
+			#text-content > section > h1 > font {
+				display: none;
+				}
+				#text-content > section > h1 {
+				margin: auto;
+				content: url("https://choptop84.github.io/choptop84s-image-repository/AbyssBoxGlydeThemeLogo.png");
+				}
+
+				div.beepboxEditor.load {
+					background: none !important;
+				   }
+		
+				   div.noSelection {
+					background: none !important;
+				   }
+		
+				   .beepboxEditor .loopEditor {
+					background: none !important;
+				   }
+		
+				   .beepboxEditor .muteEditor {
+					background: none !important;
+				   }
+		
+				   div.muteEditor div {
+					background: none !important;
+				   }
+
+
+			`,
+        "AWeebyssBox": `
+			:root {		
+			--page-margin: #1e0915; 		
+			--editor-background: #1e0915; 		
+			--hover-preview: white; 		
+			--playhead: rgba(255, 255, 255, 0.9); 		
+			--primary-text: white; 		
+			--secondary-text: #ffcedd; 		
+			--inverted-text: black;	 		
+			--text-selection: rgba(119,68,255,0.99); 		
+			--box-selection-fill: #1e0915; 		
+			--loop-accent: #873a51; 		
+			--link-accent: #df88ff; 		
+			--ui-widget-background: #581b3e; 		
+			--ui-widget-focus: #762b4c; 		
+			--pitch-background: #381d2455; 		
 			--tonic: #873a51; 		
 			--fifth-note: #75001e; 		
 			--white-piano-key: #cca5c7; 		
@@ -2506,7 +4117,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-sat: 96; 		
 			--mod-primary-note-sat-scale: 0; 		
 			--mod-primary-note-lum: 85; 		
-			--mod-primary-note-lum-scale: 0; 	
+			--mod-primary-note-lum-scale: 0; 
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;	
 				}
 		* {
 		cursor: url("abyssbox_cursor.png"), auto !important;
@@ -2543,6 +4156,7 @@ var beepbox = (function (exports) {
     				image-rendering: -o-crisp-edges !important;            /* Opera */
     				image-rendering: pixelated !important;                 /* Future browsers */
     				image-rendering: optimizeSpeed !important;             /* IE */ 
+
 				}
 			 .beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
     				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png") !important;
@@ -2558,6 +4172,17 @@ var beepbox = (function (exports) {
     				image-rendering: optimizeSpeed !important;             /* IE */
 				}
 
+				select.trackSelectBox {
+					border-image: none !important;
+				}
+
+				#firstImage {
+					background-image: url("https://choptop84.github.io/abyssbox-source/website/viviandbelle.png") !important;
+					background-repeat: no-repeat !important;
+					background-size: 100% 100% !important;
+				}
+
+
 			@font-face {
 		   font-family: "AbyssType_small";
 		   src:
@@ -2568,299 +4193,11 @@ var beepbox = (function (exports) {
  		   	font-family: 'AbyssType';
 			}
 
-		   var(--track-font): 'AbyssType';
-
-			`,
-        "AbyssBox Competative": `
-			:root { 		
-			--page-margin: #000000; 		
-			--editor-background: #000000; 		
-			--hover-preview: white; 		
-			--playhead: rgba(255, 255, 255, 0.9); 		
-			--primary-text: white; 		
-			--secondary-text: #ffcedd; 		
-			--inverted-text: black;	 		
-			--text-selection: rgba(119,68,255,0.99); 		
-			--box-selection-fill: #bf2c5d; 		
-			--loop-accent: #873a51; 		
-			--link-accent: #df88ff; 		
-			--ui-widget-background: #581b3e; 		
-			--ui-widget-focus: #000000; 		
-			--pitch-background: #240f15; 		
-			--tonic: #a34b65; 		
-			--fifth-note: #75001e; 		
-			--white-piano-key: #cca5c7; 		
-			--black-piano-key: #402f2f; 		
-			--use-color-formula: true; 		
-			--track-editor-bg-pitch: #571c40; 		
-			--track-editor-bg-pitch-dim: #290d0d; 		
-			--track-editor-bg-noise: #571131; 		
-			--track-editor-bg-noise-dim: #330a28; 		
-			--track-editor-bg-mod: #54083c; 		
-			--track-editor-bg-mod-dim: #360426; 		
-			--multiplicative-mod-slider: #9f6082; 		
-			--overwriting-mod-slider: #9e3470; 		
-			--indicator-primary: #b3498f; 		
-			--indicator-secondary: #541d40; 		
-			--select2-opt-group: #4f191e; 		
-			--input-box-outline: #18041a; 		
-			--mute-button-normal: #dd5d94;	 		
-			--mute-button-mod: #ba364c; 		
-			--mod-label-primary: #541625; 		
-			--mod-label-secondary-text: rgb(120, 87, 86); 
-			--mod-label-primary-text: gray; 
-		
-			--pitch-secondary-channel-hue: -80; 		
-			--pitch-secondary-channel-hue-scale 0; 		
-			--pitch-secondary-channel-sat: 43; 		
-			--pitch-secondary-channel-sat-scale: 0.1; 		
-			--pitch-secondary-channel-lum: 40; 		
-			--pitch-secondary-channel-lum-scale: 0.05; 
-		
-			--pitch-primary-channel-hue: -53; 		
-			--pitch-primary-channel-hue-scale: 6.1; 		
-			--pitch-primary-channel-sat: 75; 		
-			--pitch-primary-channel-sat-scale: 0.1; 		
-			--pitch-primary-channel-lum: 67.5; 		
-			--pitch-primary-channel-lum-scale: 0.05; 	
-	
-			--pitch-secondary-note-hue: -34; 		
-			--pitch-secondary-note-hue-scale: 6.1; 		
-			--pitch-secondary-note-sat: 93.9; 		
-			--pitch-secondary-note-sat-scale: 0.1; 		
-			--pitch-secondary-note-lum: 25; 		
-			--pitch-secondary-note-lum-scale: 0.05; 
-		
-			--pitch-primary-note-hue: -53; 		
-			--pitch-primary-note-hue-scale: 6.1; 		
-			--pitch-primary-note-sat: 100; 		
-			--pitch-primary-note-sat-scale: 0.05; 		
-			--pitch-primary-note-lum: 85.6; 		
-			--pitch-primary-note-lum-scale: 0.025; 
-		
-			--noise-secondary-channel-hue: 0; 		
-			--noise-secondary-channel-hue-scale: 2; 		
-			--noise-secondary-channel-sat: 65; 		
-			--noise-secondary-channel-sat-scale: 0; 		
-			--noise-secondary-channel-lum: 42; 		
-			--noise-secondary-channel-lum-scale: 0; 
-		
-			--noise-primary-channel-hue: 0; 		
-			--noise-primary-channel-hue-scale: 1; 		
-			--noise-primary-channel-sat: 100; 		
-			--noise-primary-channel-sat-scale: 1; 		
-			--noise-primary-channel-lum: 63.5; 		
-			--noise-primary-channel-lum-scale: 0; 
-		
-			--noise-secondary-note-hue: 24; 		
-			--noise-secondary-note-hue-scale: 2; 		
-			--noise-secondary-note-sat: 100; 		
-			--noise-secondary-note-sat-scale: 0; 		
-			--noise-secondary-note-lum: 35; 		
-			--noise-secondary-note-lum-scale: 0; 	
-	
-			--noise-primary-note-hue: 24; 		
-			--noise-primary-note-hue-scale: 2; 		
-			--noise-primary-note-sat: 100; 		
-			--noise-primary-note-sat-scale: 1; 		
-			--noise-primary-note-lum: 60; 		
-			--noise-primary-note-lum-scale: 1; 	
-	
-			--mod-secondary-channel-hue: 55; 		
-			--mod-secondary-channel-hue-scale: 1.5; 		
-			--mod-secondary-channel-sat: 100; 		
-			--mod-secondary-channel-sat-scale: 0; 		
-			--mod-secondary-channel-lum: 20; 		
-			--mod-secondary-channel-lum-scale: 0; 
-		
-			--mod-primary-channel-hue: 55; 		
-			--mod-primary-channel-hue-scale: 1.5; 		
-			--mod-primary-channel-sat: 96; 		
-			--mod-primary-channel-sat-scale: 0; 		
-			--mod-primary-channel-lum: 50; 		
-			--mod-primary-channel-lum-scale: 0; 
-		
-			--mod-secondary-note-hue: 55; 		
-			--mod-secondary-note-hue-scale: 1.5; 		
-			--mod-secondary-note-sat: 92; 		
-			--mod-secondary-note-sat-scale: 0; 		
-			--mod-secondary-note-lum: 45; 		
-			--mod-secondary-note-lum-scale: 0; 
-		
-			--mod-primary-note-hue: 55; 		
-			--mod-primary-note-hue-scale: 1.5; 		
-			--mod-primary-note-sat: 96; 		
-			--mod-primary-note-sat-scale: 0; 		
-			--mod-primary-note-lum: 85; 		
-			--mod-primary-note-lum-scale: 0; 
-			--track-font: "AbyssType";	
-				}
-		/* sets cursor */ 
-		* {
-		cursor: url("abyssbox_cursor.png"), auto !important;
-		}
-			@font-face {
-		   font-family: "AbyssType";
-		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			div.channelBoxLabel {
+				font-family: 'AbyssType_small' !important;
 			}
 
-			@font-face {
-		   font-family: "AbyssType_small";
-		   src:
- 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
-			}
-
-			html {
- 		   font-family: 'AbyssType_small';
-			}
-		   var(--track-font): 'AbyssType';
-
-			`,
-        "AbyssBox Light": `
-			:root { 		
-			--page-margin: #e0adbc; 		
-			--editor-background: #e0adbc; 		
-			--hover-preview: white; 		
-			--playhead: rgba(255, 255, 255, 0.9); 		
-			--primary-text: #c763a0; 		
-			--secondary-text: #c763a0; 		
-			--inverted-text:  #e8bcc9;	 		
-			--text-selection: rgba(119,68,255,0.99); 		
-			--box-selection-fill: #bf2c5d; 		
-			--loop-accent: #8c346a; 		
-			--link-accent: #8c346a; 		
-			--ui-widget-background: #f5e9f0;		
-			--ui-widget-focus: #8c346a; 		
-			--pitch-background: #eddadf; 		
-			--tonic: #f5f0f1; 		
-			--fifth-note: #75001e; 		
-			--white-piano-key: #cca5c7; 		
-			--black-piano-key: #402f2f; 		
-			--use-color-formula: true; 		
-			--track-editor-bg-pitch: #decad8; 		
-			--track-editor-bg-pitch-dim: #bfb0bb; 		
-			--track-editor-bg-noise: #d6a3ca; 		
-			--track-editor-bg-noise-dim: #b389a9; 		
-			--track-editor-bg-mod: #b0649e; 		
-			--track-editor-bg-mod-dim: #915683; 		
-			--multiplicative-mod-slider: #9f6082; 		
-			--overwriting-mod-slider: #9e3470; 		
-			--indicator-primary: #b3498f; 		
-			--indicator-secondary: #541d40; 		
-			--select2-opt-group: #4f191e; 		
-			--input-box-outline: #18041a; 		
-			--mute-button-normal: #dd5d94;	 		
-			--mute-button-mod: #ba364c; 		
-			--mod-label-primary: #541625; 		
-			--mod-label-secondary-text: rgb(120, 87, 86); 
-			--mod-label-primary-text: gray; 
-		
-			--pitch-secondary-channel-hue: -80; 		
-			--pitch-secondary-channel-hue-scale 0; 		
-			--pitch-secondary-channel-sat: 43; 		
-			--pitch-secondary-channel-sat-scale: 0.1; 		
-			--pitch-secondary-channel-lum: 20; 		
-			--pitch-secondary-channel-lum-scale: 0.05; 
-		
-			--pitch-primary-channel-hue: -53; 		
-			--pitch-primary-channel-hue-scale: 6.1; 		
-			--pitch-primary-channel-sat: 75; 		
-			--pitch-primary-channel-sat-scale: 0.1; 		
-			--pitch-primary-channel-lum: 47.5; 		
-			--pitch-primary-channel-lum-scale: 0.05; 	
-	
-			--pitch-secondary-note-hue: -34; 		
-			--pitch-secondary-note-hue-scale: 6.1; 		
-			--pitch-secondary-note-sat: 93.9; 		
-			--pitch-secondary-note-sat-scale: 0.1; 		
-			--pitch-secondary-note-lum: 15; 		
-			--pitch-secondary-note-lum-scale: 0.05; 
-		
-			--pitch-primary-note-hue: -53; 		
-			--pitch-primary-note-hue-scale: 6.1; 		
-			--pitch-primary-note-sat: 45; 		
-			--pitch-primary-note-sat-scale: 0.05; 		
-			--pitch-primary-note-lum: 45.6; 		
-			--pitch-primary-note-lum-scale: 0.025; 
-		
-			--noise-secondary-channel-hue: 0; 		
-			--noise-secondary-channel-hue-scale: 2; 		
-			--noise-secondary-channel-sat: 65; 		
-			--noise-secondary-channel-sat-scale: 0; 		
-			--noise-secondary-channel-lum: 42; 		
-			--noise-secondary-channel-lum-scale: 0; 
-		
-			--noise-primary-channel-hue: 0; 		
-			--noise-primary-channel-hue-scale: 1; 		
-			--noise-primary-channel-sat: 100; 		
-			--noise-primary-channel-sat-scale: 1; 		
-			--noise-primary-channel-lum: 63.5; 		
-			--noise-primary-channel-lum-scale: 0; 
-		
-			--noise-secondary-note-hue: 24; 		
-			--noise-secondary-note-hue-scale: 2; 		
-			--noise-secondary-note-sat: 100; 		
-			--noise-secondary-note-sat-scale: 0; 		
-			--noise-secondary-note-lum: 35; 		
-			--noise-secondary-note-lum-scale: 0; 	
-	
-			--noise-primary-note-hue: 24; 		
-			--noise-primary-note-hue-scale: 2; 		
-			--noise-primary-note-sat: 75; 		
-			--noise-primary-note-sat-scale: 1; 		
-			--noise-primary-note-lum: 60; 		
-			--noise-primary-note-lum-scale: 1; 	
-	
-			--mod-secondary-channel-hue: 55; 		
-			--mod-secondary-channel-hue-scale: 1.5; 		
-			--mod-secondary-channel-sat: 100; 		
-			--mod-secondary-channel-sat-scale: 0; 		
-			--mod-secondary-channel-lum: 20; 		
-			--mod-secondary-channel-lum-scale: 0; 
-		
-			--mod-primary-channel-hue: 55; 		
-			--mod-primary-channel-hue-scale: 1.5; 		
-			--mod-primary-channel-sat: 96; 		
-			--mod-primary-channel-sat-scale: 0; 		
-			--mod-primary-channel-lum: 50; 		
-			--mod-primary-channel-lum-scale: 0; 
-		
-			--mod-secondary-note-hue: 55; 		
-			--mod-secondary-note-hue-scale: 1.5; 		
-			--mod-secondary-note-sat: 92; 		
-			--mod-secondary-note-sat-scale: 0; 		
-			--mod-secondary-note-lum: 45; 		
-			--mod-secondary-note-lum-scale: 0; 
-		
-			--mod-primary-note-hue: 55; 		
-			--mod-primary-note-hue-scale: 1.5; 		
-			--mod-primary-note-sat: 96; 		
-			--mod-primary-note-sat-scale: 0; 		
-			--mod-primary-note-lum: 85; 		
-			--mod-primary-note-lum-scale: 0; 	
-			--track-font: "AbyssType";
-				}
-		/* sets cursor */ 
-		* {
-		cursor: url("abyssbox_cursor.png"), auto !important;
-		}
-			@font-face {
-		   font-family: "AbyssType";
-		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
-			}
-
-			@font-face {
-		   font-family: "AbyssType_small";
-		   src:
- 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
-			}
-
-			html {
- 		   font-family: 'AbyssType_small';
-			}
-		   var(--track-font): 'AbyssType';
+		   
 
 			`,
         "Half-Life": `
@@ -2984,7 +4321,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-sat: 96; 		
 			--mod-primary-note-sat-scale: 0; 		
 			--mod-primary-note-lum: 85; 		
-			--mod-primary-note-lum-scale: 0; 	
+			--mod-primary-note-lum-scale: 0; 
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;	
 				}
 		/* replaces hotdog (in a hacky way) with an image of gordon freeman but really wide*/
 		#Hotdog {
@@ -2993,14 +4332,14 @@ var beepbox = (function (exports) {
 		.instructions-column > section:first-of-type > p:first-of-type:after {
 		display: block;
 		content: url("wide-gordon.png");
-		width: 50%;
-		height: 50%;
+		width: inherit;
+		height: contain;
 		text-align: center;
 		margin-top: 25px;
 		}
 		/* sets background image */
 		body {
-		background-image: url("lambda.png") !important;
+		background-image: url("https://choptop84.github.io/abyssbox-source/website/lambda.png") !important;
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
@@ -3018,8 +4357,805 @@ var beepbox = (function (exports) {
 			html {
  		   font-family: 'trebuc';
 			}
+			div.channelBoxLabel {
+				font-family: 'trebuc' !important;
+			}
+
+			.modTitle::before {
+				content: "λbyssBox" !important;
+			}
 
 			`,
+        "Half-Life: Source": `
+			:root { 		
+			--page-margin: #0c1012; 		
+			--editor-background: #0c1012; 		
+			--hover-preview: white; 		
+			--playhead: rgba(255, 255, 255, 0.9); 		
+			--primary-text: #ffee00; 		
+			--secondary-text: #ffee00; 		
+			--inverted-text:  #000000;	 		
+			--text-selection: rgba(119,68,255,0.99); 		
+			--box-selection-fill: #ff6f00; 		
+			--loop-accent: #ff6f00; 		
+			--link-accent: #ff6f00; 		
+			--ui-widget-background: #36454F;		
+			--ui-widget-focus: #36454F; 		
+			--pitch-background: #5e2103; 		
+			--tonic: #ff6f00; 		
+			--fifth-note: #963c00; 		
+			--white-piano-key: #ccbca5; 		
+			--black-piano-key: #40382f; 		
+			--use-color-formula: true; 		
+			--track-editor-bg-pitch: #7d5100; 		
+			--track-editor-bg-pitch-dim: #3b2c10; 		
+			--track-editor-bg-noise: #730a00; 		
+			--track-editor-bg-noise-dim: #360e0b; 		
+			--track-editor-bg-mod: #856f00; 		
+			--track-editor-bg-mod-dim: #3b3205; 		
+			--multiplicative-mod-slider: #9f8460; 		
+			--overwriting-mod-slider: #9e7534; 		
+			--indicator-primary: #b38949; 		
+			--indicator-secondary: #543d1d; 		
+			--select2-opt-group: #4f3b19; 		
+			--input-box-outline: #1a0b04; 		
+			--mute-button-normal: #ddac5d;	 		
+			--mute-button-mod: #ba3d36; 		
+			--mod-label-primary: #542f16; 		
+			--mod-label-secondary-text: rgb(120, 87, 86); 
+			--mod-label-primary-text: gray; 
+		
+			--pitch-secondary-channel-hue: 0; 		
+			--pitch-secondary-channel-hue-scale 0; 		
+			--pitch-secondary-channel-sat: 43; 		
+			--pitch-secondary-channel-sat-scale: 0.1; 		
+			--pitch-secondary-channel-lum: 60; 		
+			--pitch-secondary-channel-lum-scale: 0.05; 
+		
+			--pitch-primary-channel-hue: 154; 		
+			--pitch-primary-channel-hue-scale: 6.1; 		
+			--pitch-primary-channel-sat: 75; 		
+			--pitch-primary-channel-sat-scale: 0.1; 		
+			--pitch-primary-channel-lum: 60; 		
+			--pitch-primary-channel-lum-scale: 0.05; 	
+	
+			--pitch-secondary-note-hue: 154; 		
+			--pitch-secondary-note-hue-scale: 6.1; 		
+			--pitch-secondary-note-sat: 93.9; 		
+			--pitch-secondary-note-sat-scale: 0.1; 		
+			--pitch-secondary-note-lum: 20; 		
+			--pitch-secondary-note-lum-scale: 0.05; 
+		
+			--pitch-primary-note-hue: 154; 		
+			--pitch-primary-note-hue-scale: 6.1; 		
+			--pitch-primary-note-sat: 65; 		
+			--pitch-primary-note-sat-scale: 0.05; 		
+			--pitch-primary-note-lum: 60; 		
+			--pitch-primary-note-lum-scale: 0.05; 
+		
+			--noise-secondary-channel-hue: 0; 		
+			--noise-secondary-channel-hue-scale: 2; 		
+			--noise-secondary-channel-sat: 65; 		
+			--noise-secondary-channel-sat-scale: 0; 		
+			--noise-secondary-channel-lum: 60; 		
+			--noise-secondary-channel-lum-scale: 0; 
+		
+			--noise-primary-channel-hue: 0; 		
+			--noise-primary-channel-hue-scale: 1; 		
+			--noise-primary-channel-sat: 100; 		
+			--noise-primary-channel-sat-scale: 1; 		
+			--noise-primary-channel-lum: 63.5; 		
+			--noise-primary-channel-lum-scale: 0; 
+		
+			--noise-secondary-note-hue: 24; 		
+			--noise-secondary-note-hue-scale: 2; 		
+			--noise-secondary-note-sat: 100; 		
+			--noise-secondary-note-sat-scale: 0; 		
+			--noise-secondary-note-lum: 25; 		
+			--noise-secondary-note-lum-scale: 0; 	
+	
+			--noise-primary-note-hue: 24; 		
+			--noise-primary-note-hue-scale: 2; 		
+			--noise-primary-note-sat: 75; 		
+			--noise-primary-note-sat-scale: 1; 		
+			--noise-primary-note-lum: 60; 		
+			--noise-primary-note-lum-scale: 1; 	
+	
+			--mod-secondary-channel-hue: 55; 		
+			--mod-secondary-channel-hue-scale: 1.5; 		
+			--mod-secondary-channel-sat: 100; 		
+			--mod-secondary-channel-sat-scale: 0; 		
+			--mod-secondary-channel-lum: 20; 		
+			--mod-secondary-channel-lum-scale: 0; 
+		
+			--mod-primary-channel-hue: 55; 		
+			--mod-primary-channel-hue-scale: 1.5; 		
+			--mod-primary-channel-sat: 96; 		
+			--mod-primary-channel-sat-scale: 0; 		
+			--mod-primary-channel-lum: 50; 		
+			--mod-primary-channel-lum-scale: 0; 
+		
+			--mod-secondary-note-hue: 55; 		
+			--mod-secondary-note-hue-scale: 1.5; 		
+			--mod-secondary-note-sat: 92; 		
+			--mod-secondary-note-sat-scale: 0; 		
+			--mod-secondary-note-lum: 45; 		
+			--mod-secondary-note-lum-scale: 0; 
+		
+			--mod-primary-note-hue: 55; 		
+			--mod-primary-note-hue-scale: 1.5; 		
+			--mod-primary-note-sat: 96; 		
+			--mod-primary-note-sat-scale: 0; 		
+			--mod-primary-note-lum: 85; 		
+			--mod-primary-note-lum-scale: 0; 
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;	
+				}
+		/* replaces hotdog (in a hacky way) with an image of gordon freeman but really wide*/
+		#Hotdog {
+		display: none;
+		}
+		.instructions-column > section:first-of-type > p:first-of-type:after {
+		display: block;
+		content: url("wide-gordon.png");
+		width: inherit;
+		height: contain;
+		text-align: center;
+		margin-top: 25px;
+		}
+		/* sets background image */
+		body {
+		background-image: url("https://choptop84.github.io/abyssbox-source/website/lambda.png") !important;
+		background-position: center;
+		background-repeat: repeat;
+			}
+			/* make editor background transparent */
+		#beepboxEditorContainer, .beepboxEditor, #text-content {
+		}
+
+			@font-face {
+		   font-family: "trebuc";
+		   src:
+ 		   url("trebuc.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			div.prompt.noSelection {
+				left: 636px !important;
+			}
+
+			#beepboxEditorContainer {
+				padding-top: 20px;
+			}
+
+			div.beepboxEditor.load {
+				width: 50%;
+			}
+
+			#text-content {
+				overflow: visible;
+				width: 20% !important;
+			}
+
+			html {
+ 		   font-family: 'trebuc';
+			}
+			div.channelBoxLabel {
+				font-family: 'trebuc' !important;
+			}
+
+			.modTitle::before {
+				content: "λbyssBox: Source" !important;
+			}
+
+			`,
+        "Scratch": `
+		:root {
+			--page-margin: #4d97ff40;
+			--editor-background: #f6e5fa;
+			--hover-preview: #ff9900;
+			--playhead: #4cbf56;
+			--primary-text: #fff;
+			--secondary-text: #000;
+			--inverted-text: #fff;
+			--text-selection: rgba(255, 255, 255, 0.99);
+			--box-selection-fill: #7725ff;
+			--loop-accent: #ffab19;
+			--link-accent: #ff9900;
+			--ui-widget-background: #855cd6;
+			--ui-widget-focus: #ff661a;
+			--pitch-background: #fff;
+			--tonic: #855cd6;
+			--fifth-note: #7e7e7e;
+			--use-color-formula: false;
+			--track-editor-bg-pitch: #fff;
+			--track-editor-bg-pitch-dim: #c7c7c7;
+			--track-editor-bg-noise: #4d97ff40;
+			--track-editor-bg-noise-dim: #1c54a3b0;
+			--track-editor-bg-mod: #855cd6;
+			--track-editor-bg-mod-dim: #503389;
+			--multiplicative-mod-slider: #ff6680;
+			--overwriting-mod-slider: #ff3355;
+			--indicator-primary: #855cd6;
+			--indicator-secondary: #cecece;
+			--select2-opt-group: #5a3b98;
+			--input-box-outline: #626262;
+			--mute-button-normal: #cf63cf;
+			--mute-button-mod: #cf63cf;
+			--mod-label-primary: #ff3355;
+			--white-piano-key: #fff;
+			--black-piano-key: #000;
+			--white-piano-key-text: #000;
+			--black-piano-key-text: #fff;
+			--note-flash: #4cbf56;
+			--note-flash-secondary: #b84848;
+			--track-font: sans-serif;
+			--oscilloscope-line-L: #d587e6;
+			--oscilloscope-line-R: #b11cc7;
+			--pitch1-secondary-channel: #3373cc;
+			--pitch1-primary-channel: #4c97ff;
+			--pitch1-secondary-note: #3373cc;
+			--pitch1-primary-note: #4c97ff;
+			--pitch2-secondary-channel: #774dcb;
+			--pitch2-primary-channel: #9966ff;
+			--pitch2-secondary-note: #774dcb;
+			--pitch2-primary-note: #9966ff;
+			--pitch3-secondary-channel: #bd42bd;
+			--pitch3-primary-channel: #cf63cf;
+			--pitch3-secondary-note: #bd42bd;
+			--pitch3-primary-note: #cf63cf;
+			--pitch4-secondary-channel: #cc9900;
+			--pitch4-primary-channel: #ffbf00;
+			--pitch4-secondary-note: #cc9900;
+			--pitch4-primary-note: #ffbf00;
+			--pitch5-secondary-channel: #cf8b17;
+			--pitch5-primary-channel: #ffab19;
+			--pitch5-secondary-note: #cf8b17;
+			--pitch5-primary-note: #ffab19;
+			--pitch6-secondary-channel: #2e8eb8;
+			--pitch6-primary-channel: #5cb1d6;
+			--pitch6-secondary-note: #2e8eb8;
+			--pitch6-primary-note: #5cb1d6;
+			--pitch7-secondary-channel: #389438;
+			--pitch7-primary-channel: #59c059;
+			--pitch7-secondary-note: #389438;
+			--pitch7-primary-note: #59c059;
+			--pitch8-secondary-channel: #db6e00;
+			--pitch8-primary-channel: #ff8c1a;
+			--pitch8-secondary-note: #db6e00;
+			--pitch8-primary-note: #ff8c1a;
+			--pitch9-secondary-channel: #ff3355;
+			--pitch9-primary-channel: #ff6680;
+			--pitch9-secondary-note: #ff3355;
+			--pitch9-primary-note: #ff6680;
+			--pitch10-secondary-channel: #0b8e69;
+			--pitch10-primary-channel: #0fbd8c;
+			--pitch10-secondary-note: #0b8e69;
+			--pitch10-primary-note: #0fbd8c;
+			--noise1-secondary-channel: #ef3d23;
+			--noise1-primary-channel: #fcf9ce;
+			--noise1-secondary-note: #ef3d23;
+			--noise1-primary-note: #fcf9ce;
+			--noise2-secondary-channel: #dd002b;
+			--noise2-primary-channel: #f73d61;
+			--noise2-secondary-note: #dd002b;
+			--noise2-primary-note: #f73d61;
+			--noise3-secondary-channel: #d0e9ea;
+			--noise3-primary-channel: #f3ffff;
+			--noise3-secondary-note: #d0e9ea;
+			--noise3-primary-note: #f3ffff;
+			--noise4-secondary-channel: #ed9b24;
+			--noise4-primary-channel: #ffc941;
+			--noise4-secondary-note: #ed9b24;
+			--noise4-primary-note: #ffc941;
+			--noise5-secondary-channel: #663b00;
+			--noise5-primary-channel: #ffe9cc;
+			--noise5-secondary-note: #663b00;
+			--noise5-primary-note: #ffe9cc;
+			--mod1-secondary-channel: #001026;
+			--mod1-primary-channel: #ffab19;
+			--mod1-secondary-note: #001026;
+			--mod1-primary-note: #ffab19;
+			--mod2-secondary-channel: #603813;
+			--mod2-primary-channel: #ffc93e;
+			--mod2-secondary-note: #603813;
+			--mod2-primary-note: #ffc93e;
+			--mod3-secondary-channel: #1b75bb;
+			--mod3-primary-channel: #e6e7e8;
+			--mod3-secondary-note: #1b75bb;
+			--mod3-primary-note: #e6e7e8;
+			--mod4-secondary-channel: #404041;
+			--mod4-primary-channel: #f05a28;
+			--mod4-secondary-note: #404041;
+			--mod4-primary-note: #f05a28;
+			--disabled-note-primary: #ff6680;
+			--disabled-note-secondary: #ff3355;
+		  }
+		  * {
+		  --play-symbol:url("https://choptop84.github.io/choptop84s-image-repository/Greenflag.png");
+		  --pause-symbol:url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png");
+		  --stop-symbol:url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png");
+		  }
+
+		  button.playButton::before {
+
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/Greenflag.png") !important;
+			background-size: 18px !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+			mask-size: 800px;
+			color: #fff0;
+			/* Hold on, before you start asking: "WHAT THE? WHY IS THE ICON SO LARGE!!!" Let me tell ya that this method removes all the filtering issues on the png and it looks incredibly seemless so shush */
+
+		}
+
+		button.pauseButton::before {
+
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png") !important;
+			background-size: 18px !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+			mask-size: 800px;
+			color: #fff0;
+		}
+
+		button.stopButton::before {
+
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png") !important;
+			background-size: 18px !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+			mask-size: 800px;
+			color: #fff0;
+		}
+
+		  #text-content > section > h1 {
+			margin: auto;
+			content: url("https://file.garden/ZMQ0Om5nmTe-x2hq/AbyssBox%20Scratch%20Logo3.png");
+		  }
+		  .beepboxEditor,
+		  #beepboxEditorContainer {
+			background-color: rgb(255, 255, 255) !important;
+			border-radius: 6px;
+			box-shadow: 0px 0px 0px 4px rgba(158, 158, 158, 0.91);
+		  }
+		  .beepboxEditor .loopEditor {
+			--editor-background: #4d97ff40 !important;
+			border-radius: 3px;
+		  }
+		  .beepboxEditor .muteEditor {
+			--editor-background: #4d97ff40 !important;
+			border-radius: 0px;
+			height: 158px;
+		  }
+		  .beepboxEditor .pattern-area {
+			--editor-background: #4d97ff40 !important;
+			border-radius: 3px;
+		  }
+		  .beepboxEditor .trackContainer svg {
+			--editor-background: #3100ff !important;
+		  }
+		  .beepboxEditor .muteEditor > :last-child {
+			--editor-background: #4d97ff40 !important;
+		  }
+		  .beepboxEditor #octaveScrollBarContainer {
+			background-color: #4d97ff40;
+		  }
+		  .beepboxEditor .muteButtonText {
+			transform: translate(0px, 1px) !important;
+			color: #777 !important;
+		  }
+		  .beepboxEditor .instrument-bar {
+			--text-color-lit: #fff !important;
+			--text-color-dim: #4c4c4c !important;
+		  }
+		  .beepboxEditor .instrument-bar .selected-instrument {
+			color: rgb(0, 0, 0) !important;
+			text-shadow: 0px 0px 4px var(--text-color-lit);
+		  }
+		  .beepboxEditor .instrument-bar .deactivated {
+			color: rgba(0, 0, 0, 1) !important;
+			text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2);
+		  }
+		  .beepboxEditor .instrument-bar > :not(.last-button) {
+			border-color: var(--background-color-lit) !important;
+		  }
+		  .beepboxEditor .instrument-bar .selected-instrument {
+			border-color: rgba(255, 255, 255, 1) !important;
+		  }
+		  .beepboxEditor button {
+			color: #fff;
+			background: #3c236f;
+		  }
+		  .beepboxEditor .instrument-bar .selected-instrument,
+		  .beepboxEditor .filterEditor svg,
+		  .beepboxEditor .fadeInOut svg,
+		  .beepboxEditor .harmonics svg,
+		  .beepboxEditor .spectrum svg {
+			background: rgb(255, 255, 255) !important;
+			box-shadow:
+			  0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+			  inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+			  inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		  }
+		  .beepboxEditor input[type="range"]::-webkit-slider-thumb {
+			background: #000000 !important;
+		  }
+		  .beepboxEditor input[type="range"]::-moz-range-thumb {
+			background: #000000 !important;
+		  }
+		  .beepboxEditor input[type="range"]::-webkit-slider-runnable-track {
+			background: rgb(127, 127, 127) !important;
+		  }
+		  .beepboxEditor input[type="range"]::-moz-range-track {
+			background: rgb(127, 127, 127) !important;
+		  }
+		  .beepboxEditor input[type="range"]::-webkit-slider-runnable-track::focus {
+			background: rgba(255, 255, 255, 0.2) !important;
+			box-shadow:
+			  0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+			  inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+			  inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		  }
+		  .beepboxEditor input[type="range"]::-moz-range-track::focus {
+			background: rgba(255, 255, 255, 0.2) !important;
+			box-shadow:
+			  0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+			  inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+			  inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		  }
+		  .beepboxEditor input[type="text"],
+		  .beepboxEditor input[type="number"] {
+			font-size: inherit !important;
+			font-weight: bold !important;
+			font-family: inherit !important;
+			background: #ff8c1a !important;
+			text-align: center !important;
+			border: 1px solid var(--input-box-outline);
+			color: #fff !important;
+			box-shadow: 0px 0px 0px 1px rgb(134, 134, 134) !important;
+		  }
+		  .beepboxEditor .prompt {
+			--primary-text: #fff;
+			--secondary-text: #fff;
+			--ui-widget-background: #351f5f;
+			color: #fff !important;
+			background: #855cd6 !important;
+		  }
+		  .beepboxEditor .trackContainer {
+			--editor-background: #fff;
+		  }
+		  #text-content {
+			color: #fff;
+			background: #855cd6;
+		  }
+		  body:not(#secondImage) {
+			background-image: url("https://cdn.scratch.mit.edu/scratchr2/static/__74e70580e9dbe93ce1c3f8422dde592d__/images/scratch-bg.png");
+		  }
+		  body:not(#secondImage) input {
+			--primary-text: #000;
+		  }
+		  body:not(#secondImage) h1 {
+			color: #000;
+		  }
+		  button.copyButton,
+		  button.pasteButton,
+		  button.exportInstrumentButton,
+		  button.importInstrumentButton, 
+		  button.addEnvelope,
+		  div.editor-controls div button,
+		  div.selectRow button,
+		  div.effects-menu button,
+		  div.effects-menu::before,
+		  div.selectContainer select,
+		  div.selectContainer::after,
+		  span#select2-pitchPresetSelect-container {
+			color: white !important;
+		  }
+		  div#text-content {
+			padding-top: 15px;
+		  }
+		  div#beepboxEditorContainer{
+			padding-bottom: 15px;
+		  }
+		  div.channelBox {
+			border-radius: 5px;
+		  }
+		  div.muteEditor {
+			border-radius: 0px !important;
+			height: 158px !important;
+		  }
+		  div.loopEditor {
+			border-radius: 0px !important;
+		  }
+		`,
+        "Scratch Addons": `
+		:root {
+			--page-margin: #111111;
+			--editor-background: #f6e5fa;
+			--hover-preview: #ff9900;
+			--playhead: #4cbf56;
+			--primary-text: #fff;
+			--secondary-text: #fff;
+			--inverted-text: #fff;
+			--text-selection: rgba(255, 255, 255, .99);
+			--box-selection-fill: #7725ff;
+			--loop-accent: rgb(225, 169, 26);
+			--link-accent: #ff9900;
+			--ui-widget-background: #202020;
+			--ui-widget-focus: #0a0a0a;
+			--pitch-background: #111111;
+			--tonic: #855cd6;
+			--fifth-note: #2e4274;
+			--use-color-formula: false;
+			--track-editor-bg-pitch: #393939;
+			--track-editor-bg-pitch-dim: #21211F;
+			--track-editor-bg-noise: #393939;
+			--track-editor-bg-noise-dim: #21211FF;
+			--track-editor-bg-mod: #393939;
+			--track-editor-bg-mod-dim: #21211FF;
+			--multiplicative-mod-slider: #ff6680;
+			--overwriting-mod-slider: #ff3355;
+			--indicator-primary: #855cd6;
+			--indicator-secondary: #cecece;
+			--select2-opt-group: #333;
+			--input-box-outline: #626262;
+			--mute-button-normal: #cf63cf;
+			--mute-button-mod: #cf63cf;
+			--mod-label-primary: #ff3355;
+			--white-piano-key: #fff;
+			--black-piano-key: #000;
+			--white-piano-key-text: #000;
+			--black-piano-key-text: #fff;
+			--note-flash: #ff0;
+			--note-flash-secondary: #ff7b00;
+			--track-font: sans-serif;
+			--oscilloscope-line-L: #d587e6;
+			--oscilloscope-line-R: #b11cc7;
+		   
+			--pitch1-secondary-channel: #3b56aa;
+			--pitch1-primary-channel: #4a6cd4;
+			--pitch1-secondary-note: #3b56aa;
+			--pitch1-primary-note: #4a6cd4;
+			--pitch2-secondary-channel: rgb(110, 68, 172);
+			--pitch2-primary-channel: rgb(138, 85, 215);
+			--pitch2-secondary-note: rgb(110, 68, 172);
+			--pitch2-primary-note: rgb(138, 85, 215);
+			--pitch3-secondary-channel: rgb(150, 53, 156);
+			--pitch3-primary-channel: rgb(187, 66, 195);
+			--pitch3-secondary-note: rgb(150, 53, 156);
+			--pitch3-primary-note: rgb(187, 66, 195);
+			--pitch4-secondary-channel: rgb(160, 105, 38);
+			--pitch4-primary-channel: rgb(200, 131, 48);
+			--pitch4-secondary-note: rgb(160, 105, 38);
+			--pitch4-primary-note: rgb(200, 131, 48);
+			--pitch5-secondary-channel: rgb(180, 135, 21);
+			--pitch5-primary-channel: rgb(225, 169, 26);
+			--pitch5-secondary-note: rgb(180, 135, 21);
+			--pitch5-primary-note: rgb(225, 169, 26);
+			--pitch6-secondary-channel: rgb(35, 132, 181);
+			--pitch6-primary-channel: rgb(44, 165, 226);
+			--pitch6-secondary-note: rgb(35, 132, 181);
+			--pitch6-primary-note: rgb(44, 165, 226);
+			--pitch7-secondary-channel: rgb(74, 146, 14);
+			--pitch7-primary-channel: rgb(92, 183, 18);
+			--pitch7-secondary-note: rgb(74, 146, 14);
+			--pitch7-primary-note: rgb(92, 183, 18);
+			--pitch8-secondary-channel: rgb(190, 100, 18);
+			--pitch8-primary-channel: rgb(238, 125, 22);
+			--pitch8-secondary-note: rgb(190, 100, 18);
+			--pitch8-primary-note: rgb(238, 125, 22);
+			--pitch9-secondary-channel: rgb(79, 36, 122);
+			--pitch9-primary-channel: rgb(99, 45, 153);
+			--pitch9-secondary-note: rgb(79, 36, 122);
+			--pitch9-primary-note: rgb(99, 45, 153);
+			--pitch10-secondary-channel: rgb(11, 123, 86);
+			--pitch10-primary-channel: rgb(14, 154, 108);
+			--pitch10-secondary-note: rgb(11, 123, 86);
+			--pitch10-primary-note: rgb(14, 154, 108);
+			--noise1-secondary-channel: #ef3d23;
+			--noise1-primary-channel: #fcf9ce;
+			--noise1-secondary-note: #ef3d23;
+			--noise1-primary-note: #fcf9ce;
+			--noise2-secondary-channel: #dd002b;
+			--noise2-primary-channel: #f73d61;
+			--noise2-secondary-note: #dd002b;
+			--noise2-primary-note: #f73d61;
+			--noise3-secondary-channel: #d0e9ea;
+			--noise3-primary-channel: #f3ffff;
+			--noise3-secondary-note: #d0e9ea;
+			--noise3-primary-note: #f3ffff;
+			--noise4-secondary-channel: #ed9b24;
+			--noise4-primary-channel: #ffc941;
+			--noise4-secondary-note: #ed9b24;
+			--noise4-primary-note: #ffc941;
+			--noise5-secondary-channel: #663b00;
+			--noise5-primary-channel: #ffe9cc;
+			--noise5-secondary-note: #663b00;
+			--noise5-primary-note: #ffe9cc;
+			--mod1-secondary-channel: #001026;
+			--mod1-primary-channel: #ffab19;
+			--mod1-secondary-note: #001026;
+			--mod1-primary-note: #ffab19;
+			--mod2-secondary-channel: #603813;
+			--mod2-primary-channel: #ffc93e;
+			--mod2-secondary-note: #603813;
+			--mod2-primary-note: #ffc93e;
+			--mod3-secondary-channel: #1b75bb;
+			--mod3-primary-channel: #e6e7e8;
+			--mod3-secondary-note: #1b75bb;
+			--mod3-primary-note: #e6e7e8;
+			--mod4-secondary-channel: #404041;
+			--mod4-primary-channel: #f05a28;
+			--mod4-secondary-note: #404041;
+			--mod4-primary-note: #f05a28;
+			--disabled-note-primary: #ff6680;
+			--disabled-note-secondary: #ff3355;
+		   }
+
+		   * {
+		   --play-symbol:url("https://choptop84.github.io/choptop84s-image-repository/Greenflag.png");
+		   --pause-symbol:url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png");
+		   }
+ 
+		   button.playButton::before {
+			 background-image: url("https://choptop84.github.io/choptop84s-image-repository/Greenflag.png") !important;
+			 background-size: 18px !important;
+			 background-position: center !important;
+			 background-repeat: no-repeat !important;
+			 mask-size: 800px;
+			 color: #fff0;
+		 }
+ 
+		 button.pauseButton::before {
+			 background-image: url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png") !important;
+			 background-size: 18px !important;
+			 background-position: center !important;
+			 background-repeat: no-repeat !important;
+			 mask-size: 800px;
+			   color: #fff0;
+		 }
+
+		   #text-content > section > h1 {
+			 margin: auto;
+			 content: url("https://file.garden/ZMQ0Om5nmTe-x2hq/AbyssBox%20Scratch%20Logo3.png");
+		   }
+		   .beepboxEditor,
+		   #beepboxEditorContainer {
+			 background-color: #111111 !important;
+			 border-radius: 6px;
+			 box-shadow: 0px 0px 0px 4px rgba(158, 158, 158, 0.91);
+		   }
+		   .beepboxEditor .loopEditor {
+			 --editor-background: #111111 !important;
+			 border-radius: 3px;
+		   }
+		   .beepboxEditor .muteEditor {
+			 --editor-background: #4d97ff40 !important;
+			 border-radius: 3px;
+		   }
+		   .beepboxEditor .pattern-area {
+			 --editor-background: #292929 !important;
+			 border-radius: 3px;
+		   }
+		   .beepboxEditor .trackContainer svg {
+			 --editor-background: #3100ff !important;
+		   }
+		   .beepboxEditor .muteEditor > :last-child {
+			 --editor-background: #111111 !important;
+		   }
+		   .beepboxEditor #octaveScrollBarContainer {
+			 background-color: #111111;
+		   }
+		   .beepboxEditor .muteButtonText {
+			 transform: translate(0px, 1px) !important;
+			 color: #777 !important;
+		   }
+		   .beepboxEditor .instrument-bar {
+			 --text-color-lit: #111111 !important;
+			 --text-color-dim: #4c4c4c !important;
+		   }
+		   .beepboxEditor .instrument-bar .selected-instrument {
+			 color: rgb(0, 0, 0) !important;
+			 text-shadow: 0px 0px 4px var(--text-color-lit);
+		   }
+		   .beepboxEditor .instrument-bar .deactivated {
+			 color: rgba(0, 0, 0, 1) !important;
+			 text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2);
+		   }
+		   .beepboxEditor .instrument-bar > :not(.last-button) {
+			 border-color: var(--background-color-lit) !important;
+		   }
+		   .beepboxEditor .instrument-bar .selected-instrument {
+			 border-color: #111111 !important;
+		   }
+		   .beepboxEditor button {
+			 color: #fff;
+			 background: #3c236f;
+		   }
+		   .beepboxEditor .instrument-bar .selected-instrument,
+		   .beepboxEditor .filterEditor svg,
+		   .beepboxEditor .fadeInOut svg,
+		   .beepboxEditor .harmonics svg,
+		   .beepboxEditor .spectrum svg {
+			 background: rgb(255, 255, 255) !important;
+			 box-shadow:
+			   0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+			   inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+			   inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		   }
+		   .beepboxEditor input[type="range"]::-webkit-slider-thumb {
+			 background: #fff !important;
+		   }
+		   .beepboxEditor input[type="range"]::-moz-range-thumb {
+			 background: #000000 !important;
+		   }
+		   .beepboxEditor input[type="range"]::-webkit-slider-runnable-track {
+			 background: rgb(127, 127, 127) !important;
+		   }
+		   .beepboxEditor input[type="range"]::-moz-range-track {
+			 background: rgb(127, 127, 127) !important;
+		   }
+		   .beepboxEditor input[type="range"]::-webkit-slider-runnable-track::focus {
+			 background: rgba(255, 255, 255, 0.2) !important;
+			 box-shadow:
+			   0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+			   inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+			   inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		   }
+		   .beepboxEditor input[type="range"]::-moz-range-track::focus {
+			 background: rgba(255, 255, 255, 0.2) !important;
+			 box-shadow:
+			   0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+			   inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+			   inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		   }
+		   .beepboxEditor input[type="text"],
+		   .beepboxEditor input[type="number"] {
+			 font-size: inherit !important;
+			 font-weight: bold !important;
+			 font-family: inherit !important;
+			 background: #202020 !important;
+			 text-align: center !important;
+			 border: 1px solid var(--input-box-outline);
+			 color: #fff !important;
+			 box-shadow: 0px 0px 0px 1px rgb(134, 134, 134) !important;
+		   }
+		   .beepboxEditor .prompt {
+			 --primary-text: #fff;
+			 --secondary-text: #fff;
+			 --ui-widget-background: #351f5f;
+			 color: #fff !important;
+			 background: #202020 !important;
+		   }
+		   .beepboxEditor .trackContainer {
+			 --editor-background: #000;
+		   }
+		   #text-content {
+			 color: #fff;
+			 background: #202020;
+		   }
+		   body:not(#secondImage) {
+			 background: #202020;
+		   }
+		   body:not(#secondImage) input {
+			 --primary-text: #000;
+		   }
+		   body:not(#secondImage) h1 {
+			 color: #fff;
+		   }
+		  div#text-content {
+			padding-top: 15px;
+		  }
+		  div#beepboxEditorContainer{
+			padding-bottom: 15px;
+		  }
+		  div.channelBox {
+			border-radius: 5px;
+		  }
+		  div.muteEditor {
+			border-radius: 0px !important;
+		  }
+		`,
         "Doom 1993": `
 			:root { 		
 			--page-margin: #470000; 		
@@ -3141,7 +5277,10 @@ var beepbox = (function (exports) {
 			--mod-primary-note-sat: 96; 		
 			--mod-primary-note-sat-scale: 0; 		
 			--mod-primary-note-lum: 85; 		
-			--mod-primary-note-lum-scale: 0; 	
+			--mod-primary-note-lum-scale: 0; 
+			
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;
 				}
 		
 			#text-content > section > h1 > font {
@@ -3173,7 +5312,232 @@ var beepbox = (function (exports) {
 			html {
  		   font-family: 'doomfont';
 			}
+			div.channelBoxLabel {
+				font-family: 'doomfont' !important;
+			}
 
+			`,
+        "Undertale": `
+			:root {
+				--page-margin: #000;
+				--editor-background: #000;
+				--hover-preview: #fff;
+				--playhead: rgba(255, 255, 255, 0.9);
+				--primary-text: #fff;
+				--secondary-text: #979797;
+				--inverted-text: #000;
+				--text-selection: rgba(255, 255, 255, .99);
+				--box-selection-fill: #fff;
+				--loop-accent: #f00;
+				--link-accent: #0f0;
+				--ui-widget-background: #4d4d4d;
+				--ui-widget-focus: #000;
+				--pitch-background: #2d2d2d73;
+				--tonic: #c9c9c9;
+				--fifth-note: #400000;
+				--white-piano-key: #fff;
+				--black-piano-key: #000;
+				--white-piano-key-text: #000;
+				--black-piano-key-text: #fff;
+				--use-color-formula: false;
+				--track-editor-bg-pitch: #8b8b8b;
+				--track-editor-bg-pitch-dim: #000;
+				--track-editor-bg-noise: #5c5c5c;
+				--track-editor-bg-noise-dim: #000;
+				--track-editor-bg-mod: #585858;
+				--track-editor-bg-mod-dim: #000;
+				--multiplicative-mod-slider: #f00;
+				--overwriting-mod-slider: #00f;
+				--indicator-primary: #f00;
+				--indicator-secondary: #919191;
+				--select2-opt-group: #5d576f;
+				--input-box-outline: #626262;
+				--mute-button-normal: #ffffff;
+				--mute-button-mod: #4f4f4f;
+				--mod-label-primary: #f00;
+			
+				--pitch1-secondary-channel: #590000;
+			  --pitch1-primary-channel: #f00;
+			  --pitch1-secondary-note: #590000;
+			  --pitch1-primary-note: #f00;
+			
+			  --pitch2-secondary-channel: #00678a;
+			  --pitch2-primary-channel: #00ffef;
+			  --pitch2-secondary-note: #00678a;
+			  --pitch2-primary-note: #00ffef;
+			
+			  --pitch3-secondary-channel: #b35600;
+			  --pitch3-primary-channel: #ff7a00;
+			  --pitch3-secondary-note: #b35600;
+			  --pitch3-primary-note: #ff7a00;
+			
+			  --pitch4-secondary-channel: #002866;
+			  --pitch4-primary-channel: #001aff;
+			  --pitch4-secondary-note: #002866;
+			  --pitch4-primary-note: #001aff;
+			
+			  --pitch5-secondary-channel: #005e0b;
+			  --pitch5-primary-channel: #00ff1d;
+			  --pitch5-secondary-note: #005e0b;
+			  --pitch5-primary-note: #00ff1d;
+			
+			  --pitch6-secondary-channel: #b55d00;
+			  --pitch6-primary-channel: #fe0;
+			  --pitch6-secondary-note: #b55d00;
+			  --pitch6-primary-note: #fe0;
+			
+			  --pitch7-secondary-channel: #6a00b3;
+			  --pitch7-primary-channel: #a429f7;
+			  --pitch7-secondary-note: #6a00b3;
+			  --pitch7-primary-note: #a429f7;
+			
+			  --pitch8-secondary-channel: #02009f;
+			  --pitch8-primary-channel: #0058ff;
+			  --pitch8-secondary-note: #02009f;
+			  --pitch8-primary-note: #0058ff;
+			
+			  --pitch9-secondary-channel: #5c5c5c;
+			  --pitch9-primary-channel: #fff;
+			  --pitch9-secondary-note: #5c5c5c;
+			  --pitch9-primary-note: #fff;
+			
+			  --pitch10-secondary-channel: #5e2700;
+			  --pitch10-primary-channel: #ffb300;
+			  --pitch10-secondary-note: #5e2700;
+			  --pitch10-primary-note: #ffb300;
+			
+			  --noise1-secondary-channel: #750000;
+			  --noise1-primary-channel: #f00;
+			  --noise1-secondary-note: #750000;
+			  --noise1-primary-note: #f00;
+			
+			  --noise2-secondary-channel: #8567ff;
+			  --noise2-primary-channel: #f00;
+			  --noise2-secondary-note: #8567ff;
+			  --noise2-primary-note: #f00;
+			
+			  --noise3-secondary-channel: #8567ff;
+			  --noise3-primary-channel: #cec2ff;
+			  --noise3-secondary-note: #8567ff;
+			  --noise3-primary-note: #cec2ff;
+			
+			  --noise4-secondary-channel: #00266a;
+			  --noise4-primary-channel: #ffe100;
+			  --noise4-secondary-note: #00266a;
+			  --noise4-primary-note: #ffe100;
+			
+			  --noise5-secondary-channel: #976a00;
+			  --noise5-primary-channel: #ffe100;
+			  --noise5-secondary-note: #976a00;
+			  --noise5-primary-note: #ffe100;
+			
+			  --mod1-secondary-channel: #aaa;
+			  --mod1-primary-channel: #fff;
+			  --mod1-secondary-note: #aaa;
+			  --mod1-primary-note: #fff;
+			
+			  --mod2-secondary-channel: #950000;
+			  --mod2-primary-channel: #ff6000;
+			  --mod2-secondary-note: #950000;
+			  --mod2-primary-note: #ff6000;
+			
+			  --mod3-secondary-channel: #021300;
+			  --mod3-primary-channel: #1db917;
+			  --mod3-secondary-note: #021300;
+			  --mod3-primary-note: #1db917;
+			
+			  --mod4-secondary-channel: #a00000;
+			  --mod4-primary-channel: #ff252f;
+			  --mod4-secondary-note: #a00000;
+			  --mod4-primary-note: #ff252f;
+			
+			  --disabled-note-primary: #999;
+			  --disabled-note-secondary: #696969;
+
+			  --arrow-color: #f67c33;
+			  --icon-color: #f67c33;
+				}
+				* {
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/cursor-heart.png"), auto !important;
+					--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+					--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+					--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+					--text-enabled-icon:❤️ ;
+					}
+			
+			/* sets background image */
+			body {
+			background-image: url("https://cdn.discordapp.com/attachments/804372822931668994/1165384144948305960/spr_battlebg_1.png") !important;
+			background-position: center;
+			background-size: contain;
+			background-attachment: fixed;
+			background-repeat: no-repeat;
+			}
+			#text-content > section > h1 > font {
+			display: none;
+			}
+			#text-content > section > h1 {
+			margin: auto;
+			content: url("https://choptop84.github.io/choptop84s-image-repository/UndertaleThemeLogo.png");
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/AbyssBoxUtThemeLogo.png");
+ 			background-size: contain;
+ 			background-position: center;
+  			background-repeat: no-repeat;
+			}
+
+			div.selectContainer.menu.file select,
+			div.selectContainer.menu.edit select,
+			div.selectContainer.menu.preferences select {
+				border-style: solid;
+				border-color: #f67c33;
+				border-radius: 0px;
+			}
+			div.selectContainer.menu.file,
+			div.selectContainer.menu.edit,
+			div.selectContainer.menu.preferences {
+				--ui-widget-background: black;
+				--icon-color: #f67c33;
+				--arrow-color: #f67c33;
+				color: #f67c33;
+			}
+			.beepboxEditor select:focus,
+			.beepboxEditor .selectContainer:focus-within
+			{
+				border-color: #fbff4b !important;
+				--ui-widget-background: black !important;
+				--icon-color: #f00 !important;
+				--arrow-color: #fbff4b !important;
+				color: #fbff4b !important;
+
+				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-soul.png");
+				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-soul.png");
+				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-soul.png");
+			}
+			.beepboxEditor .menu.edit::before,
+			.beepboxEditor .menu.file::before,
+			.beepboxEditor .menu.preferences::before {
+				background: var(--icon-color) !important;
+			}
+			.beepboxEditor .menu.edit::after,
+			.beepboxEditor .menu.file::after,
+			.beepboxEditor .menu.preferences::after {
+				background: var(--arrow-color) !important;
+			}
+
+			#text-content {
+				border-style: solid;
+				border-radius: 0px;
+				padding-left: 20px;
+				padding-right: 20px;
+				padding-top: 15px;
+			}
+		#beepboxEditorContainer {
+			border-style: solid;
+			border-radius: 0px;
+			padding-left: 20px;
+			padding-right: 20px;
+			padding-bottom: 15px;
+			}
 			`,
         "Windows Xp": `
 			:root {		
@@ -3188,11 +5552,11 @@ var beepbox = (function (exports) {
 			--box-selection-fill: #1e0915; 		
 			--loop-accent: #003399; 		
 			--link-accent: #003399; 		
-			--ui-widget-background: #cfcab2; 		
-			--ui-widget-focus: #cfcab2; 		
-			--pitch-background: #918d79; 		
-			--tonic: #575344; 		
-			--fifth-note: #b0ac96; 		
+			--ui-widget-background: #faf9f2; 		
+			--ui-widget-focus: #faf9f2; 		
+			--pitch-background: #ffffff; 		
+			--tonic: #d5dbf5; 		
+			--fifth-note: #e8e8e8; 		
 			--white-piano-key: #ebe2ca; 		
 			--black-piano-key: #403a2f; 		
 			--use-color-formula: true; 		
@@ -3297,10 +5661,410 @@ var beepbox = (function (exports) {
 --mod-primary-note-sat-scale: 0;		
 --mod-primary-note-lum: 65;		
 --mod-primary-note-lum-scale: 0;	
+
+			--note-flash: #ffffff77;
+			--note-flash-secondary: #ffffff66;
 				}
+				
+				@font-face {
+					font-family: "tahoma";
+					src:
+					 url("https://choptop84.github.io/abyssbox-app/tahoma.otf") format("opentype") tech(color-COLRv1),
+					 image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					 image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					 image-rendering: -o-crisp-edges !important;            /* Opera */
+					 image-rendering: pixelated !important;                 /* Future browsers */
+					 image-rendering: optimizeSpeed !important;             /* IE */
+
+				}
+
+				html {
+				font-family: 'tahoma' !important;
+			   font-size: 150% !important;
+				}
+				div.channelBoxLabel {
+					font-family: 'tahoma' !important;
+				}
+
+				.beepboxEditor .promptContainer {
+				}
+
+				div.prompt.noSelection {
+					margin: auto;
+					text-align: center;
+					background: var(--editor-background);
+					border-radius: 15px;
+					border: 0px solid var(--ui-widget-background) !important;
+					padding-left: 20px !important;
+					box-shadow: 0px 0px 0px 0px rgba(0,0,0,0) !important;
+					padding-top: 6px !important;
+					padding-right: 20px !important;
+					padding-bottom: 20px !important;
+					border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/xpborder.png") !important;
+					border-image-slice: 34 !important;
+					border-image-width: 50px !important;
+					border-width: unset !important;
+
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+				}
+
+				div.prompt.noSelection button.cancelButton {
+					opacity: 0;
+				}
+
+				div.promptTitle {
+					text-align: left !important;
+					color: white !important;
+				}
+				.set-themeExt::after {
+					content: "setTheme.exe";
+				}
+				.set-themeTitle {
+					display: none;
+				}
+				.layoutExt::before {
+					content: "layout.exe";
+				}
+				.layoutTitle {
+					display: none;
+				}
+				.channelExt::after {
+					content: "channelSettings.exe";
+				}
+				.channelTitle {
+					display: none;
+				}
+				.limiterExt::after {
+					content: "limiter.exe";
+				}
+				.limiterTitle {
+					display: none;
+				}
+
+				.bpmTitle {
+					display: none;
+				}
+				.bpmExt::after {
+					content: "bpb.exe";
+				}
+
+				.gerTitle {
+					display: none;
+				}
+				.gerExt::after {
+					content: "euclidianRhythm.exe";
+				}
+
+				.samplesTitle {
+					display: none;
+				}
+				.samplesExt::after {
+					content: "sampler.exe";
+					margin-bottom: 0.5em;
+
+				}
+				.samplesExt {
+					padding-bottom: 8px;
+				}
+
+				.importTitle {
+					display: none;
+				}
+				.importExt::after {
+					content: "import.exe";
+				}
+
+				.exportTitle {
+					display: none;
+				}
+				.exportExt::after {
+					content: "export.exe";
+				}
+
+				.import-instrumentTitle {
+					display: none;
+				}
+				.import-instrumentExt::after {
+					content: "importInstrument.exe";
+				}
+
+				.export-instrumentTitle {
+					display: none;
+				}
+				.export-instrumentExt::after {
+					content: "exportInstrument.exe";
+				}
+
+				.song-lengthTitle {
+					display: none;
+				}
+				.song-lengthExt::after {
+					content: "songExtender.exe";
+				}
+
+				.mnsTitle {
+					display: none;
+				}
+				.mnsExt::after {
+					content: "moveNotesSideways.exe";
+				}
+
+				.nrsTitle {
+					display: none;
+				}
+				.nrsExt::after {
+					content: "setupMidiKeyboard.exe";
+				}
+
+				.beepboxEditor .promptContainer::before {
+					background: #fff0;
+				}
+
 		* {
 		cursor: url("https://choptop84.github.io/abyssbox-app/xpcursor.png"), auto !important;
+		--play-symbol:url("https://choptop84.github.io/abyssbox-app/xpPlay.png");
+		--pause-symbol:url("https://choptop84.github.io/abyssbox-app/xpPause.png");
+		--record-symbol:url("https://choptop84.github.io/abyssbox-app/xpRecord.png");
+		--stop-symbol:url("https://choptop84.github.io/abyssbox-app/xpStop.png");
+		--prev-bar-symbol:url("https://choptop84.github.io/abyssbox-app/xpBackward.png");
+		--next-bar-symbol:url("https://choptop84.github.io/abyssbox-app/xpForward.png");
+		--file-page-symbol: url("https://choptop84.github.io/abyssbox-app/xpFile.png");
+		--edit-pencil-symbol: url("https://choptop84.github.io/abyssbox-app/xpEdit.png");
+		--preferences-gear-symbol: url("https://choptop84.github.io/abyssbox-app/xpPreferences.png");
+		--muted-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeakerMute.png");
+		--unmuted-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
+		--volume-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
+		--zoom-in-symbol: url("https://choptop84.github.io/abyssbox-app/xpZoomIn.png");
+		--zoom-out-symbol: url("https://choptop84.github.io/abyssbox-app/xpZoomOut.png");
 		}
+
+		.beepboxEditor button,
+		button.playButton,
+		button.pauseButton, 
+		button.recordButton, 
+		button.stopButton,
+		button.nextBarButton, 
+		button.prevBarButton, 
+		button.copyButton, 
+		button.pasteButton, 
+		button.exportInstrumentButton, 
+		button.importInstrumentButton, 
+		.beepboxEditor select, 
+		.beepboxEditor .select2-selection__rendered {
+				cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+			}
+
+		div.mute-button::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png") !important;
+			background-size: 120% !important;
+			background-position-x: center !important;
+			background-position-y: center !important;
+			background-repeat: no-repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		div.mute-button.muted::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeakerMute.png") !important;
+			background-size: 120% !important;
+			background-position-x: center !important;
+			background-position-y: center !important;
+			background-repeat: no-repeat !important;
+			
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		button.recordButton::Before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpRecord.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		button.stopButton::Before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpStop.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		button.pauseButton::Before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpPause.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		.beepboxEditor span.volume-speaker {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+			}
+
+		div.selectContainer.menu.file::before {
+
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpFile.png");
+			background-size: 64%;
+			background-position-x: center;
+			background-position-y: center;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		div.selectContainer.menu.edit::before {
+
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpEdit.png");
+			background-size: 64%;
+			background-position-x: center;
+			background-position-y: center;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+		div.selectContainer.menu.preferences::before {
+
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpPreferences.png");
+			background-size: 64%;
+			background-position-x: center;
+			background-position-y: center;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+		button.playButton::before {
+
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpPlay.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		.beepboxEditor button.prevBarButton::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpBackward.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		.beepboxEditor button.nextBarButton::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpForward.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		.beepboxEditor .zoomInButton::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpZoomIn.png") !important;
+			background-position: center !important;
+
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		.beepboxEditor .zoomOutButton::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpZoomOut.png") !important;
+			background-position: center !important;
+
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		.beepboxEditor input[type="range"]::-moz-range-thumb {
+			background-image: url("https://choptop84.github.io/abyssbox-app/scrollbar.png") !important;
+			background-position: center !important;
+			background-size: inherit !important;
+
+			border-radius: 0px !important;
+			width: 13px !important;
+			height: 23px !important;
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+			/* NON ICON STUFFS SO DON'T GET CONFUSED DUMMY!!! */
 
 			#text-content > section > h1 > font {
 		display: none;
@@ -3324,7 +6088,7 @@ var beepbox = (function (exports) {
    				border-image-width: 11px; 
 				border-image-repeat: stretch;
     				background-color: transparent; 
-    				padding: 11px; 
+    				padding: 14px; 
 				}
 			#beepboxEditorContainer {
     				border-image-source: url("https://choptop84.github.io/abyssbox-app/xptextbg.png");
@@ -3334,25 +6098,635 @@ var beepbox = (function (exports) {
     				background-color: transparent; 
     				padding: 13px; 
 				}
-			 .beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/xpbuttonbg.png") !important;
-    				border-image-slice: 5 fill !important; 
-   				border-image-width: 2px !important; 
-				border-image-repeat: stretch !important;
-    				background-color: transparent !important; 
-    				padding: 7px !important; 
-				}		
 
-			@font-face {
-		   font-family: "tahoma";
-		   src:
- 		   url("https://choptop84.github.io/abyssbox-app/tahoma.otf") format("opentype") tech(color-COLRv1),
+			#firstImage {
+				background-image: url("https://choptop84.github.io/abyssbox-app/xpsongeditorbg.png") !important;
+				background-repeat: no-repeat !important;
+				background-size: 100% 100% !important;
 			}
 
-			html {
- 		   font-family: 'tahoma';
-		   font-size: 125% !important;
+			div.menu-area {
+				--ui-widget-background: #edead9; 
 			}
+			select {
+				--ui-widget-background: #edead9; 
+				cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+			}
+			div.playback-bar-controls {
+				--ui-widget-background: #edead9; 
+			}
+
+			.beepboxEditor input[type="range"]::-moz-range-track
+			{
+				background: rgba(222, 217, 189, 0.2) !important;
+				box-shadow:
+					0px 0px 1px 1px rgba(0, 0, 0, 0.0), 
+					inset 0px 1px 2px 0px rgb(125, 120, 95), 
+					inset 0px -1px 0px 0px rgb(255, 255, 255)
+				;
+				border-radius: 4px;
+			} /* Thanks to LeoV's Skeumorphic theme on this one */
+			
+			.beepboxEditor input[type="range"]::-moz-range-track {
+				height: 3px !important;
+			}
+			
+			.beepboxEditor select:focus {
+					border-image-source: url("https://choptop84.github.io/abyssbox-app/xpbuttonpressedbg.png");
+					border-image-slice: 4 fill; 
+					border-image-width: 4px; 
+					border-image-repeat: repeat;
+					background-color: transparent; 
+					padding: 6px; 
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+
+				.beepboxEditor input[type="checkbox"]
+				{
+					appearance: none;
+					background: rgba(255, 255, 255, 1);
+					color: currentColor;
+					border-radius: 0px;
+					width: 13px !important;
+					height: 13px !important;
+					background-image:url("https://choptop84.github.io/abyssbox-app/xpCheckmarkBlank.png");
+					background-repeat:no-repeat;
+
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+					transform: scale(2) !important;
+					}
+
+				.beepboxEditor input[type="checkbox"]:checked
+				{
+					display: flex;
+					justify-content: center;
+					transform: scale(2) !important;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]:checked:after
+				{
+					width: 13px;
+					height: 13px;
+					text-align: center;
+					content: "";
+					background-repeat:no-repeat;
+					background-image:url("https://choptop84.github.io/abyssbox-app/xpCheckmark.png");
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+				}
+
+				.beepboxEditor input[type="range"]::-webkit-slider-thumb
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]::-ms-thumb
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]::-ms-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-ms-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]::-moz-range-thumb
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]::-moz-range-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-moz-range-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="text"],
+				.beepboxEditor input[type="number"]
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]:checked
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]:checked:after
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+	
+				div.selectRow span 
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+
+
+			`,
+        "Terminal 2.0 (AB)": `
+
+			:root { 
+			--page-margin: black; 
+			--editor-background: black; 
+			--hover-preview: white; 
+			--playhead: white; 
+			--primary-text: #26ff00; 
+			--secondary-text: #0d6d00; 
+			--inverted-text: #000000; 
+			--text-selection: rgba(119,68,255,0.99); 
+			--box-selection-fill: rgba(255,255,255,0.2); 
+			--loop-accent: #1eff00; 
+			--link-accent: #8dff7e; 
+			--ui-widget-background: #000000; 
+			--ui-widget-focus: #242424; 
+			--pitch-background: #0d0d0d50; 
+			--tonic: #06350090; 
+			--fifth-note: #20202090; 
+			--white-piano-key: #ffffff; 
+			--black-piano-key: #000000; 
+			--white-piano-key-text: #131200; 
+			--black-piano-key-text: #fff; 
+			--use-color-formula: false; 
+			--track-editor-bg-pitch: #152912; 
+			--track-editor-bg-pitch-dim: #091307; 
+			--track-editor-bg-noise: #1a1a1a; 
+			--track-editor-bg-noise-dim: #333; 
+			--track-editor-bg-mod: #000000; 
+			--track-editor-bg-mod-dim: #000000; 
+			--multiplicative-mod-slider: #073c00; 
+			--overwriting-mod-slider: #0c6700; 
+			--indicator-primary: #139f00; 
+			--indicator-secondary: #1eff00; 
+			--select2-opt-group: #171717; 
+			--input-box-outline: #00ff00; 
+			--mute-button-normal: #00ff44; 
+			--mute-button-mod: #44ff00; 
+			--pitch1-secondary-channel: #0099A1; 
+			--pitch1-primary-channel: #25F3FF; 
+			--pitch1-secondary-note: #00BDC7; 
+			--pitch1-primary-note: #92F9FF; 
+			--pitch2-secondary-channel: #A1A100; 
+			--pitch2-primary-channel: #FFFF25; 
+			--pitch2-secondary-note: #C7C700; 
+			--pitch2-primary-note: #FFFF92; 
+			--pitch3-secondary-channel: #C75000; 
+			--pitch3-primary-channel: #FF9752; 
+			--pitch3-secondary-note: #FF771C; 
+			--pitch3-primary-note: #FFCDAB; 
+			--pitch4-secondary-channel: #00A100; 
+			--pitch4-primary-channel: #50FF50; 
+			--pitch4-secondary-note: #00C700; 
+			--pitch4-primary-note: #A0FFA0; 
+			--pitch5-secondary-channel: #D020D0; 
+			--pitch5-primary-channel: #FF90FF; 
+			--pitch5-secondary-note: #E040E0; 
+			--pitch5-primary-note: #FFC0FF; 
+			--pitch6-secondary-channel: #7777B0; 
+			--pitch6-primary-channel: #A0A0FF; 
+			--pitch6-secondary-note: #8888D0; 
+			--pitch6-primary-note: #D0D0FF; 
+			--pitch7-secondary-channel: #8AA100; 
+			--pitch7-primary-channel: #DEFF25; 
+			--pitch7-secondary-note: #AAC700; 
+			--pitch7-primary-note: #E6FF92; 
+			--pitch8-secondary-channel: #DF0019; 
+			--pitch8-primary-channel: #FF98A4; 
+			--pitch8-secondary-note: #FF4E63; 
+			--pitch8-primary-note: #FFB2BB; 
+			--pitch9-secondary-channel: #00A170; 
+			--pitch9-primary-channel: #50FFC9; 
+			--pitch9-secondary-note: #00C78A; 
+			--pitch9-primary-note: #83FFD9; 
+			--pitch10-secondary-channel: #A11FFF; 
+			--pitch10-primary-channel: #CE8BFF; 
+			--pitch10-secondary-note: #B757FF; 
+			--pitch10-primary-note: #DFACFF; 
+			--noise1-secondary-channel: #6F6F6F; 
+			--noise1-primary-channel: #AAAAAA; 
+			--noise1-secondary-note: #A7A7A7; 
+			--noise1-primary-note: #E0E0E0; 
+			--noise2-secondary-channel: #996633; 
+			--noise2-primary-channel: #DDAA77; 
+			--noise2-secondary-note: #CC9966; 
+			--noise2-primary-note: #F0D0BB; 
+			--noise3-secondary-channel: #4A6D8F; 
+			--noise3-primary-channel: #77AADD; 
+			--noise3-secondary-note: #6F9FCF; 
+			--noise3-primary-note: #BBD7FF; 
+			--noise4-secondary-channel: #7A4F9A; 
+			--noise4-primary-channel: #AF82D2; 
+			--noise4-secondary-note: #9E71C1; 
+			--noise4-primary-note: #D4C1EA; 
+			--noise5-secondary-channel: #607837; 
+			--noise5-primary-channel: #A2BB77; 
+			--noise5-secondary-note: #91AA66; 
+			--noise5-primary-note: #C5E2B2; 
+			--mod1-secondary-channel: #339955; 
+			--mod1-primary-channel: #77fc55; 
+			--mod1-secondary-note: #77ff8a; 
+			--mod1-primary-note: #cdffee; 
+			--mod2-secondary-channel: #993355; 
+			--mod2-primary-channel: #f04960; 
+			--mod2-secondary-note: #f057a0; 
+			--mod2-primary-note: #ffb8de; 
+			--mod3-secondary-channel: #553399; 
+			--mod3-primary-channel: #8855fc; 
+			--mod3-secondary-note: #aa64ff; 
+			--mod3-primary-note: #f8ddff; 
+			--mod4-secondary-channel: #a86436; 
+			--mod4-primary-channel: #c8a825; 
+			--mod4-secondary-note: #e8ba46; 
+			--mod4-primary-note: #fff6d3; 
+			--mod-label-primary: #164705; 
+			--mod-label-secondary-text: #333; 
+			--mod-label-primary-text: #44ff00; 
+			--disabled-note-primary: #999; 
+			--disabled-note-secondary: #666; 
+			--note-flash: #a4ff82; 
+			--note-flash-secondary: #dffbd57a; }
+			
+						.beepboxEditor button,
+						button.playButton,
+						button.pauseButton, 
+						button.recordButton, 
+						button.stopButton,
+						button.nextBarButton, 
+						button.prevBarButton, 
+						button.copyButton, 
+						button.pasteButton, 
+						button.exportInstrumentButton, 
+						button.importInstrumentButton,
+						.beepboxEditor select, 
+						.beepboxEditor .select2-selection__rendered {
+							background-image: url("https://choptop84.github.io/choptop84s-image-repository/lines2.png") !important;
+							background-size: 75% !important;
+							}
+			
+						.beepboxEditor .playButton::before,
+						.beepboxEditor .pauseButton::before, 
+						.beepboxEditor .recordButton::before, 
+						.beepboxEditor .stopButton::before,
+						.beepboxEditor .nextBarButton::before, 
+						.beepboxEditor .prevBarButton::before, 
+						.beepboxEditor .copyButton::before, 
+						.beepboxEditor .pasteButton::before,
+						.beepboxEditor .copyPatternButton::before, 
+						.beepboxEditor .pastePatternButton::before,
+						.beepboxEditor .undoButton::before,
+						.beepboxEditor .redoButton::before,
+						.beepboxEditor .insertChannelButton::before,
+						.beepboxEditor .deleteChannelButton::before,
+						.beepboxEditor .selectAllButton::before,
+						.beepboxEditor .duplicateButton::before,
+						.beepboxEditor .notesUpButton::before,
+						.beepboxEditor .notesDownButton::before,
+						.beepboxEditor .loopBarButton::before,
+						.beepboxEditor .menu.file::before,
+						.beepboxEditor .menu.edit::before,
+						.beepboxEditor .menu.preferences::before,
+						.beepboxEditor .volume-speaker,
+						.beepboxEditor .mute-button::before,
+						.beepboxEditor .mute-button.modMute::before,
+						div.noSelection  {
+							border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/lines2.png") !important;
+							border-image-width: 46% !important;
+							}
+			
+						@font-face {
+					   font-family: "Workbench";
+					   src:
+						url("https://choptop84.github.io/abyssbox-app/Workbench.ttf") format("truetype") tech(color-COLRv1),
+						}
+			
+						html {
+							font-family: 'Workbench';
+						}
+			
+						div.channelBoxLabel {
+							font-family: 'Workbench' !important;
+						}
+			
+							#firstImage {
+								background-image: url("https://choptop84.github.io/choptop84s-image-repository/lines.png") !important;
+								background-repeat: repeat !important;
+								background-size: 40% 40% !important;
+								opacity: 70%;
+							}
+			
+						.beepboxEditor input[type="range"]::-moz-range-thumb {
+							border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/lines2.png") !important;
+							border-image-width: 46% !important;
+						}    
+			
+						.modTitle::before {
+							content: "> AbyssBox Terminal 2.0" !important;
+						}
+
+						div.channelBox {
+						background-image: url("https://choptop84.github.io/choptop84s-image-repository/lines2.png") !important;
+					  }
+			`,
+        "2012 Video Tutorial": `
+			:root {
+				--page-margin: black;
+				--editor-background: black;
+				--hover-preview: white;
+				--playhead: white;
+				--primary-text: white;
+				--secondary-text: #999;
+				--inverted-text: black;
+				--text-selection: rgba(119,68,255,0.99);
+				--box-selection-fill: rgba(255,255,255,0.2);
+				--loop-accent: #74f;
+				--link-accent: #98f;
+				--ui-widget-background: #444;
+				--ui-widget-focus: #777;
+				--pitch-background: #444;
+				--tonic: #864;
+				--fifth-note: #468;
+				--white-piano-key: #bbb;
+				--black-piano-key: #444;
+				--white-piano-key-text: #131200;
+				--black-piano-key-text: #fff;
+					--use-color-formula: false;
+					--track-editor-bg-pitch: #444;
+					--track-editor-bg-pitch-dim: #333;
+					--track-editor-bg-noise: #444;
+					--track-editor-bg-noise-dim: #333;
+					--track-editor-bg-mod: #234;
+					--track-editor-bg-mod-dim: #123;
+					--multiplicative-mod-slider: #456;
+					--overwriting-mod-slider: #654;
+					--indicator-primary: #74f;
+					--indicator-secondary: #444;
+					--select2-opt-group: #585858;
+					--input-box-outline: #333;
+					--mute-button-normal: #ffa033;
+					--mute-button-mod: #9a6bff;
+				--pitch1-secondary-channel: #0099A1;
+				--pitch1-primary-channel:   #25F3FF;
+				--pitch1-secondary-note:    #00BDC7;
+				--pitch1-primary-note:      #92F9FF;
+				--pitch2-secondary-channel: #A1A100;
+				--pitch2-primary-channel:   #FFFF25;
+				--pitch2-secondary-note:    #C7C700;
+				--pitch2-primary-note:      #FFFF92;
+				--pitch3-secondary-channel: #C75000;
+				--pitch3-primary-channel:   #FF9752;
+				--pitch3-secondary-note:    #FF771C;
+				--pitch3-primary-note:      #FFCDAB;
+				--pitch4-secondary-channel: #00A100;
+				--pitch4-primary-channel:   #50FF50;
+				--pitch4-secondary-note:    #00C700;
+				--pitch4-primary-note:      #A0FFA0;
+				--pitch5-secondary-channel: #D020D0;
+				--pitch5-primary-channel:   #FF90FF;
+				--pitch5-secondary-note:    #E040E0;
+				--pitch5-primary-note:      #FFC0FF;
+				--pitch6-secondary-channel: #7777B0;
+				--pitch6-primary-channel:   #A0A0FF;
+				--pitch6-secondary-note:    #8888D0;
+				--pitch6-primary-note:      #D0D0FF;
+				--pitch7-secondary-channel: #8AA100;
+				--pitch7-primary-channel:   #DEFF25;
+				--pitch7-secondary-note:    #AAC700;
+				--pitch7-primary-note:      #E6FF92;
+				--pitch8-secondary-channel: #DF0019;
+				--pitch8-primary-channel:   #FF98A4;
+				--pitch8-secondary-note:    #FF4E63;
+				--pitch8-primary-note:      #FFB2BB;
+				--pitch9-secondary-channel: #00A170;
+				--pitch9-primary-channel:   #50FFC9;
+				--pitch9-secondary-note:    #00C78A;
+				--pitch9-primary-note:      #83FFD9;
+				--pitch10-secondary-channel:#A11FFF;
+				--pitch10-primary-channel:  #CE8BFF;
+				--pitch10-secondary-note:   #B757FF;
+				--pitch10-primary-note:     #DFACFF;
+				--noise1-secondary-channel: #6F6F6F;
+				--noise1-primary-channel:   #AAAAAA;
+				--noise1-secondary-note:    #A7A7A7;
+				--noise1-primary-note:      #E0E0E0;
+				--noise2-secondary-channel: #996633;
+				--noise2-primary-channel:   #DDAA77;
+				--noise2-secondary-note:    #CC9966;
+				--noise2-primary-note:      #F0D0BB;
+				--noise3-secondary-channel: #4A6D8F;
+				--noise3-primary-channel:   #77AADD;
+				--noise3-secondary-note:    #6F9FCF;
+				--noise3-primary-note:      #BBD7FF;
+				--noise4-secondary-channel: #7A4F9A;
+				--noise4-primary-channel:   #AF82D2;
+				--noise4-secondary-note:    #9E71C1;
+				--noise4-primary-note:      #D4C1EA;
+				--noise5-secondary-channel: #607837;
+				--noise5-primary-channel:   #A2BB77;
+				--noise5-secondary-note:    #91AA66;
+				--noise5-primary-note:      #C5E2B2;
+          --mod1-secondary-channel:   #339955;
+					--mod1-primary-channel:     #77fc55;
+					--mod1-secondary-note:      #77ff8a;
+					--mod1-primary-note:        #cdffee;
+					--mod2-secondary-channel:   #993355;
+					--mod2-primary-channel:     #f04960;
+					--mod2-secondary-note:      #f057a0;
+					--mod2-primary-note:        #ffb8de;
+					--mod3-secondary-channel:   #553399;
+					--mod3-primary-channel:     #8855fc;
+					--mod3-secondary-note:      #aa64ff;
+					--mod3-primary-note:	    #f8ddff;
+					--mod4-secondary-channel:   #a86436;
+					--mod4-primary-channel:     #c8a825;
+					--mod4-secondary-note:      #e8ba46;
+					--mod4-primary-note:        #fff6d3;
+					--mod-label-primary:        #999;
+					--mod-label-secondary-text: #333;
+					--mod-label-primary-text:   black;
+					--disabled-note-primary:    #999;
+					--disabled-note-secondary:  #666;
+				}
+
+				.overlay {
+					background-image: url("https://choptop84.github.io/choptop84s-image-repository/bandicam_watermark.png");
+					background-repeat: no-repeat;
+  					background-size: contain;
+  					background-position-x: center;
+				  	backdrop-filter: blur(1px);
+					position: fixed !important;
+				}
+
+				 html:not(.overlay) {
+					width: 75vw;
+					padding-left: 12.5%;
+					position: relative;
+					background: black;
+				} 
+
+			`,
+        "I am on fire": `
+			:root {
+				--page-margin: black;
+				--editor-background: black;
+				--hover-preview: white;
+				--playhead: white;
+				--primary-text: white;
+				--secondary-text: #999;
+				--inverted-text: black;
+				--text-selection: rgba(119,68,255,0.99);
+				--box-selection-fill: rgba(255,255,255,0.2);
+				--loop-accent: #74f;
+				--link-accent: #98f;
+				--ui-widget-background: #444;
+				--ui-widget-focus: #777;
+				--pitch-background: #444;
+				--tonic: #864;
+				--fifth-note: #468;
+				--white-piano-key: #bbb;
+				--black-piano-key: #444;
+				--white-piano-key-text: #131200;
+				--black-piano-key-text: #fff;
+					--use-color-formula: false;
+					--track-editor-bg-pitch: #444;
+					--track-editor-bg-pitch-dim: #333;
+					--track-editor-bg-noise: #444;
+					--track-editor-bg-noise-dim: #333;
+					--track-editor-bg-mod: #234;
+					--track-editor-bg-mod-dim: #123;
+					--multiplicative-mod-slider: #456;
+					--overwriting-mod-slider: #654;
+					--indicator-primary: #74f;
+					--indicator-secondary: #444;
+					--select2-opt-group: #585858;
+					--input-box-outline: #333;
+					--mute-button-normal: #ffa033;
+					--mute-button-mod: #9a6bff;
+				--pitch1-secondary-channel: #0099A1;
+				--pitch1-primary-channel:   #25F3FF;
+				--pitch1-secondary-note:    #00BDC7;
+				--pitch1-primary-note:      #92F9FF;
+				--pitch2-secondary-channel: #A1A100;
+				--pitch2-primary-channel:   #FFFF25;
+				--pitch2-secondary-note:    #C7C700;
+				--pitch2-primary-note:      #FFFF92;
+				--pitch3-secondary-channel: #C75000;
+				--pitch3-primary-channel:   #FF9752;
+				--pitch3-secondary-note:    #FF771C;
+				--pitch3-primary-note:      #FFCDAB;
+				--pitch4-secondary-channel: #00A100;
+				--pitch4-primary-channel:   #50FF50;
+				--pitch4-secondary-note:    #00C700;
+				--pitch4-primary-note:      #A0FFA0;
+				--pitch5-secondary-channel: #D020D0;
+				--pitch5-primary-channel:   #FF90FF;
+				--pitch5-secondary-note:    #E040E0;
+				--pitch5-primary-note:      #FFC0FF;
+				--pitch6-secondary-channel: #7777B0;
+				--pitch6-primary-channel:   #A0A0FF;
+				--pitch6-secondary-note:    #8888D0;
+				--pitch6-primary-note:      #D0D0FF;
+				--pitch7-secondary-channel: #8AA100;
+				--pitch7-primary-channel:   #DEFF25;
+				--pitch7-secondary-note:    #AAC700;
+				--pitch7-primary-note:      #E6FF92;
+				--pitch8-secondary-channel: #DF0019;
+				--pitch8-primary-channel:   #FF98A4;
+				--pitch8-secondary-note:    #FF4E63;
+				--pitch8-primary-note:      #FFB2BB;
+				--pitch9-secondary-channel: #00A170;
+				--pitch9-primary-channel:   #50FFC9;
+				--pitch9-secondary-note:    #00C78A;
+				--pitch9-primary-note:      #83FFD9;
+				--pitch10-secondary-channel:#A11FFF;
+				--pitch10-primary-channel:  #CE8BFF;
+				--pitch10-secondary-note:   #B757FF;
+				--pitch10-primary-note:     #DFACFF;
+				--noise1-secondary-channel: #6F6F6F;
+				--noise1-primary-channel:   #AAAAAA;
+				--noise1-secondary-note:    #A7A7A7;
+				--noise1-primary-note:      #E0E0E0;
+				--noise2-secondary-channel: #996633;
+				--noise2-primary-channel:   #DDAA77;
+				--noise2-secondary-note:    #CC9966;
+				--noise2-primary-note:      #F0D0BB;
+				--noise3-secondary-channel: #4A6D8F;
+				--noise3-primary-channel:   #77AADD;
+				--noise3-secondary-note:    #6F9FCF;
+				--noise3-primary-note:      #BBD7FF;
+				--noise4-secondary-channel: #7A4F9A;
+				--noise4-primary-channel:   #AF82D2;
+				--noise4-secondary-note:    #9E71C1;
+				--noise4-primary-note:      #D4C1EA;
+				--noise5-secondary-channel: #607837;
+				--noise5-primary-channel:   #A2BB77;
+				--noise5-secondary-note:    #91AA66;
+				--noise5-primary-note:      #C5E2B2;
+          --mod1-secondary-channel:   #339955;
+					--mod1-primary-channel:     #77fc55;
+					--mod1-secondary-note:      #77ff8a;
+					--mod1-primary-note:        #cdffee;
+					--mod2-secondary-channel:   #993355;
+					--mod2-primary-channel:     #f04960;
+					--mod2-secondary-note:      #f057a0;
+					--mod2-primary-note:        #ffb8de;
+					--mod3-secondary-channel:   #553399;
+					--mod3-primary-channel:     #8855fc;
+					--mod3-secondary-note:      #aa64ff;
+					--mod3-primary-note:	    #f8ddff;
+					--mod4-secondary-channel:   #a86436;
+					--mod4-primary-channel:     #c8a825;
+					--mod4-secondary-note:      #e8ba46;
+					--mod4-primary-note:        #fff6d3;
+					--mod-label-primary:        #999;
+					--mod-label-secondary-text: #333;
+					--mod-label-primary-text:   black;
+					--disabled-note-primary:    #999;
+					--disabled-note-secondary:  #666;
+				}
+
+				.overlay {
+					background-image: url("https://choptop84.github.io/choptop84s-image-repository/fire.gif");
+					background-repeat: no-repeat;
+  					background-size: cover;
+  					background-position-y: bottom;
+				}
+
+				
+				.modTitle::before {
+					content: "AAAA I'M ON FIRE AAA" !important;
+				}
 
 			`,
         "dark classic": `
@@ -3714,6 +7088,10 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #666;
 					--disabled-note-secondary:  #aaa;
+
+					
+					
+
 			}
 			
 			.beepboxEditor button, .beepboxEditor select {
@@ -3838,6 +7216,10 @@ var beepbox = (function (exports) {
 					--mod-primary-note-lum-scale: 0;
 					--disabled-note-primary:    #91879f;
 					--disabled-note-secondary:  #6a677a;
+
+					
+					
+
 				}
 			`,
         "forest": `
@@ -3954,7 +7336,214 @@ var beepbox = (function (exports) {
 					--mod-primary-note-lum-scale: 0;
 					--disabled-note-primary:    #536e5c;
 					--disabled-note-secondary:  #395440;
+
+					
+					
+
 				}
+			`,
+        "forest 2": `
+					:root { --page-margin: #132f16; 
+					--editor-background: #002b03;; 
+					--hover-preview: white; 
+					--playhead: rgba(255, 255, 255, 0.9); 
+					--primary-text: #96d69f; 
+					--secondary-text: #7fdb60; 
+					--inverted-text: #2c562e; 
+					--text-selection: rgba(119,68,255,0.99); 
+					--box-selection-fill: #044b94; 
+					--loop-accent: #63e469; 
+					--link-accent: #c5facd; 
+					--ui-widget-background: #396b32; 
+					--ui-widget-focus: #002b03; 
+					--pitch-background: #30583c; 
+					--tonic: #4dac5b; 
+					--fifth-note: #458343; 
+					--white-piano-key: #bee9bf; 
+					--black-piano-key: #395e3c; 
+					--use-color-formula: true; 
+					--track-editor-bg-pitch: #43a631; 
+					--track-editor-bg-pitch-dim: #387e34; 
+					--track-editor-bg-noise: #3c8462; 
+					--track-editor-bg-noise-dim: #285821; 
+					--track-editor-bg-mod: #419296; 
+					--track-editor-bg-mod-dim: #3e7b59; 
+					--multiplicative-mod-slider: #345838; 
+					--overwriting-mod-slider: #3a8136; 
+					--indicator-primary: #75ce71; 
+					--indicator-secondary: #5fe857; 
+					--select2-opt-group: #002002; 
+					--input-box-outline: #bbe6b0; 
+					--mute-button-normal: #50aa4a; 
+					--mute-button-mod: #49ab69; 
+					--mod-label-primary: #8dd883; 
+					--mod-label-secondary-text: #7be250; 
+					--mod-label-primary-text: #bcebb4; 
+
+					--pitch-secondary-channel-hue: 120;
+					--pitch-secondary-channel-hue-scale: 8.1;
+					--pitch-secondary-channel-sat: 59;
+					--pitch-secondary-channel-sat-scale: 0.1;
+					--pitch-secondary-channel-lum: 50;
+					--pitch-secondary-channel-lum-scale: 0.04;
+					--pitch-primary-channel-hue: 120;
+					--pitch-primary-channel-hue-scale: 8.1;
+					--pitch-primary-channel-sat: 86;
+					--pitch-primary-channel-sat-scale: 0.1;
+					--pitch-primary-channel-lum: 70;
+					--pitch-primary-channel-lum-scale: 0.04;
+					--pitch-secondary-note-hue: 120;
+					--pitch-secondary-note-hue-scale: 8.1;
+					--pitch-secondary-note-sat: 85;
+					--pitch-secondary-note-sat-scale: 0.1;
+					--pitch-secondary-note-lum: 30;
+					--pitch-secondary-note-lum-scale: 0.04;
+					--pitch-primary-note-hue: 120;
+					--pitch-primary-note-hue-scale: 8.1;
+					--pitch-primary-note-sat: 90;
+					--pitch-primary-note-sat-scale: 0.05;
+					--pitch-primary-note-lum: 80;
+					--pitch-primary-note-lum-scale: 0.025;
+					--noise-secondary-channel-hue: 200;
+					--noise-secondary-channel-hue-scale: 1.1;
+					--noise-secondary-channel-sat: 25;
+					--noise-secondary-channel-sat-scale: 0;
+					--noise-secondary-channel-lum: 22;
+					--noise-secondary-channel-lum-scale: 0;
+					--noise-primary-channel-hue: 200;
+					--noise-primary-channel-hue-scale: 1.1;
+					--noise-primary-channel-sat: 48;
+					--noise-primary-channel-sat-scale: 0;
+					--noise-primary-channel-lum: 65;
+					--noise-primary-channel-lum-scale: 0;
+					--noise-secondary-note-hue: 200;
+					--noise-secondary-note-hue-scale: 1.1;
+					--noise-secondary-note-sat: 33.5;
+					--noise-secondary-note-sat-scale: 0;
+					--noise-secondary-note-lum: 33;
+					--noise-secondary-note-lum-scale: 0;
+					--noise-primary-note-hue: 200;
+					--noise-primary-note-hue-scale: 1.1;
+					--noise-primary-note-sat: 46.5;
+					--noise-primary-note-sat-scale: 0;
+					--noise-primary-note-lum: 64;
+					--noise-primary-note-lum-scale: 0;
+					--mod-secondary-channel-hue: 40;
+					--mod-secondary-channel-hue-scale: 1.8;
+					--mod-secondary-channel-sat: 44;
+					--mod-secondary-channel-sat-scale: 0;
+					--mod-secondary-channel-lum: 50;
+					--mod-secondary-channel-lum-scale: 0;
+					--mod-primary-channel-hue: 40;
+					--mod-primary-channel-hue-scale: 1.8;
+					--mod-primary-channel-sat: 60;
+					--mod-primary-channel-sat-scale: 0;
+					--mod-primary-channel-lum: 80;
+					--mod-primary-channel-lum-scale: 0;
+					--mod-secondary-note-hue: 40;
+					--mod-secondary-note-hue-scale: 1.8;
+					--mod-secondary-note-sat: 62;
+					--mod-secondary-note-sat-scale: 0;
+					--mod-secondary-note-lum: 55;
+					--mod-secondary-note-lum-scale: 0;
+					--mod-primary-note-hue: 40;
+					--mod-primary-note-hue-scale: 1.8;
+					--mod-primary-note-sat: 66;
+					--mod-primary-note-sat-scale: 0;
+					--mod-primary-note-lum: 85;
+					--mod-primary-note-lum-scale: 0;
+					--disabled-note-primary:    #536e5c;
+					--disabled-note-secondary:  #395440;
+
+
+					}
+					/* sets background image */
+					body {
+						background-image: url("https://choptop84.github.io/abyssbox-app/Forest2Trees.png") !important;
+						background-size: cover;
+						background-position: center top; /* Adjusted to align with the top */
+  						background-repeat: no-repeat;
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */ 
+						}
+						#text-content {
+						--editor-background: (255, 255, 255, 0);
+							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border.png");
+							border-image-slice: 16 fill; 
+						   	border-image-width: 32px; 
+							border-image-repeat: repeat; 
+							padding: 36px; 
+		
+							image-rendering: -moz-crisp-edges !important;         /* Firefox */
+							image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+							image-rendering: -o-crisp-edges !important;            /* Opera */
+							image-rendering: pixelated !important;                 /* Future browsers */
+							image-rendering: optimizeSpeed !important;             /* IE */
+						}
+					#beepboxEditorContainer {
+						--editor-background: (255, 255, 255, 0);
+							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border.png");
+							border-image-slice: 16 fill; 
+						   	border-image-width: 32px; 
+							border-image-repeat: repeat; 
+							padding-left: 36px; 
+							padding-right: 36px; 
+							padding-top: 5px; 
+							padding-bottom: 5px; 
+
+							image-rendering: -moz-crisp-edges !important;         /* Firefox */
+							image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+							image-rendering: -o-crisp-edges !important;            /* Opera */
+							image-rendering: pixelated !important;                 /* Future browsers */
+							image-rendering: optimizeSpeed !important;             /* IE */ 
+						}
+					.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
+							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border2.png") !important;
+							border-image-slice: 4 fill !important; 
+						   border-image-width: 4px !important; 
+						border-image-repeat: stretch !important;
+							padding: 4px !important; 
+		
+							image-rendering: -moz-crisp-edges !important;         /* Firefox */
+							image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+							image-rendering: -o-crisp-edges !important;            /* Opera */
+							image-rendering: pixelated !important;                 /* Future browsers */
+							image-rendering: optimizeSpeed !important;             /* IE */
+						}
+					select.trackSelectBox {
+						border-image: none !important;
+					}
+					div.prompt.noSelection {
+						--editor-background: #002b03; 
+					}
+					/* div.channelBox {
+					border-radius: 5px;
+					} */
+					* {
+						cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+						} 
+							@font-face {
+						   font-family: "AbyssType";
+						   src:
+							url("abysstype.otf") format("opentype") tech(color-COLRv1),
+							}
+				
+							@font-face {
+						   font-family: "AbyssType_small";
+						   src:
+							url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+							}
+				
+							html {
+							font-family: 'AbyssType';
+							}
+							div.channelBoxLabel {
+								font-family: 'AbyssType_small' !important;
+							}
 			`,
         "canyon": `
 				:root {
@@ -4070,6 +7659,9 @@ var beepbox = (function (exports) {
 					--mod-primary-note-lum-scale: 0;
 					--disabled-note-primary:    #515164;
 					--disabled-note-secondary:  #2a2a3a;
+
+					
+					
 				}
 			`,
         "midnight": `
@@ -4186,6 +7778,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum-scale: 0;
 			--disabled-note-primary:    #66a;
 			--disabled-note-secondary:  #447;
+
+			
+			
 		}
 	`,
         "jummbox light": `
@@ -4303,6 +7898,9 @@ var beepbox = (function (exports) {
 					--mod-primary-note-lum-scale: 0;
 					--disabled-note-primary:    #868;
 					--disabled-note-secondary:  #767;
+
+					
+					
 				}
 
 				.beepboxEditor button, .beepboxEditor select {
@@ -4431,6 +8029,9 @@ var beepbox = (function (exports) {
 					--mod-primary-note-lum-scale: 0;
 					--disabled-note-primary: #91879f;
 					--disabled-note-secondary: #6a677a;
+
+					
+					
 				}
 
 			`,
@@ -4553,6 +8154,8 @@ var beepbox = (function (exports) {
   --disabled-note-primary: #91879f;
   --disabled-note-secondary: #6a677a;
 
+  
+  
 
 			}
 		`,
@@ -4674,6 +8277,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #c9c9c9;
 			--disabled-note-secondary: #616161;
+
+			
+			
 		}`,
         "moonlight": `
 			:root {
@@ -4793,7 +8399,10 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #828282;
 			--disabled-note-secondary: #4f4f4f;
-			}`,
+			
+			
+			
+		}`,
         "autumn": `
 		:root {
 			--page-margin: #060304;
@@ -4912,6 +8521,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #5d5d5d;
 			--disabled-note-secondary: #292929;
+
+			
+			
 		}`,
         "fruit": `
 		:root {
@@ -5031,6 +8643,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #5d5d5d;
 			--disabled-note-secondary: #292929;
+
+			
+			
 		}`,
         "sunset": `
 		:root {
@@ -5150,6 +8765,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #5d5d5d;
 			--disabled-note-secondary: #292929;
+
+			
+			
 		}`,
         "toxic": `
 		:root {
@@ -5269,6 +8887,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #5d5d5d;
 			--disabled-note-secondary: #292929;
+
+			
+			
 		}`,
         "violet verdant": `
 		:root {
@@ -5384,6 +9005,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum-scale: 0;
 			--disabled-note-primary: #91879f;
 			--disabled-note-secondary: #6a677a;
+
+			
+			
 		}`,
         "portal": `
 		:root {
@@ -5503,6 +9127,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: #7bd4ff;
 			--disabled-note-primary: #072f4a;
 			--disabled-note-secondary: #6585a7;
+
+			
+			
 		}`,
         "fusion": `:root {
 			--page-margin: #0c0306;
@@ -5621,6 +9248,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: black;
 			--disabled-note-primary: #696969;
 			--disabled-note-secondary: #232323;
+
+			
+			
 		}`,
         "inverse": `:root {
 			--page-margin: #c4c8e3;
@@ -5739,10 +9369,13 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: black;
 			--disabled-note-primary: #959595;
 			--disabled-note-secondary: #6e6e6e;
+
+			
+			
 			}`,
         "nebula": `
 		:root {
-			--page-margin: #040410;
+			--page-margin: #11001c;
 			--editor-background: #150e1f;
 			--hover-preview: white;
 			--playhead: rgba(255, 255, 255, 0.9);
@@ -5854,7 +9487,215 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum-scale: 0;
 			--disabled-note-primary: #aaa;
 			--disabled-note-secondary: #666;
+
+			
+			
 		}`,
+        "Nebula 2": ` 
+			:root { 
+				--page-margin: #040410;
+				--editor-background: #11001c;
+				--hover-preview: white;
+				--playhead: rgba(255, 255, 255, 0.9);
+				--primary-text: white;
+				--secondary-text: #8C849A;
+				--inverted-text: black;
+				--text-selection: rgba(141,79,201,0.99);
+				--box-selection-fill: #311E44;
+				--loop-accent: #CC688C;
+				--link-accent: #817DC9;
+				--ui-widget-background: #3b2057;
+				--ui-widget-focus: #7A6386;
+				--pitch-background: #393e4f40;
+				--tonic: #7D5C9EC0;
+				--fifth-note: #ab77bd50;
+				--white-piano-key: #EEEEEE;
+				--black-piano-key: #5F5566;
+				--white-piano-key-text: #131200;
+				--black-piano-key-text: #fff;
+				--use-color-formula: true;
+				--track-editor-bg-pitch: #46374C;
+				--track-editor-bg-pitch-dim: #1F1C2850;
+				--track-editor-bg-noise: #3D353B;
+				--track-editor-bg-noise-dim: #16131550;
+				--track-editor-bg-mod: #623F4C;
+				--track-editor-bg-mod-dim: #361A2450;
+				--multiplicative-mod-slider: #9F6E6A;
+				--overwriting-mod-slider: #A664B5;
+				--indicator-primary: #CC6B8E;
+				--indicator-secondary: #3b2057;
+				--select2-opt-group: #6A576F;
+				--input-box-outline: #222;
+				--mute-button-normal: #BF91DC;
+				--mute-button-mod: #DC8C9A;
+				--mod-label-primary: #3A2840;
+				--mod-label-secondary-text: #62485E;
+				--mod-label-primary-text: white;
+				--pitch-secondary-channel-hue: -96;
+				--pitch-secondary-channel-hue-scale: 4.2;
+				--pitch-secondary-channel-sat: 50.3;
+				--pitch-secondary-channel-sat-scale: 0.1;
+				--pitch-secondary-channel-lum: 40;
+				--pitch-secondary-channel-lum-scale: 0.05;
+				--pitch-primary-channel-hue: -96;
+				--pitch-primary-channel-hue-scale: 4.2;
+				--pitch-primary-channel-sat: 70;
+				--pitch-primary-channel-sat-scale: 0.1;
+				--pitch-primary-channel-lum: 67.5;
+				--pitch-primary-channel-lum-scale: 0.05;
+				--pitch-secondary-note-hue: -96;
+				--pitch-secondary-note-hue-scale: 4.2;
+				--pitch-secondary-note-sat: 70.9;
+				--pitch-secondary-note-sat-scale: 0.1;
+				--pitch-secondary-note-lum: 25;
+				--pitch-secondary-note-lum-scale: 0.05;
+				--pitch-primary-note-hue: -96;
+				--pitch-primary-note-hue-scale: 4.2;
+				--pitch-primary-note-sat: 90;
+				--pitch-primary-note-sat-scale: 0.05;
+				--pitch-primary-note-lum: 85.6;
+				--pitch-primary-note-lum-scale: 0.025;
+				--noise-secondary-channel-hue: 16;
+				--noise-secondary-channel-hue-scale: -1.33;
+				--noise-secondary-channel-sat: 25;
+				--noise-secondary-channel-sat-scale: 0;
+				--noise-secondary-channel-lum: 42;
+				--noise-secondary-channel-lum-scale: 0;
+				--noise-primary-channel-hue: 16;
+				--noise-primary-channel-hue-scale: -1.33;
+				--noise-primary-channel-sat: 33;
+				--noise-primary-channel-sat-scale: 0;
+				--noise-primary-channel-lum: 63.5;
+				--noise-primary-channel-lum-scale: 0;
+				--noise-secondary-note-hue: 12;
+				--noise-secondary-note-hue-scale: -1.33;
+				--noise-secondary-note-sat: 33.5;
+				--noise-secondary-note-sat-scale: 0;
+				--noise-secondary-note-lum: 55;
+				--noise-secondary-note-lum-scale: 0;
+				--noise-primary-note-hue: 12;
+				--noise-primary-note-hue-scale: -1.33;
+				--noise-primary-note-sat: 46.5;
+				--noise-primary-note-sat-scale: 0;
+				--noise-primary-note-lum: 74;
+				--noise-primary-note-lum-scale: 0;
+				--mod-secondary-channel-hue: 12;
+				--mod-secondary-channel-hue-scale: -.75;
+				--mod-secondary-channel-sat: 50;
+				--mod-secondary-channel-sat-scale: 0;
+				--mod-secondary-channel-lum: 50;
+				--mod-secondary-channel-lum-scale: 0;
+				--mod-primary-channel-hue: 12;
+				--mod-primary-channel-hue-scale: -.75;
+				--mod-primary-channel-sat: 70;
+				--mod-primary-channel-sat-scale: 0;
+				--mod-primary-channel-lum: 80;
+				--mod-primary-channel-lum-scale: 0;
+				--mod-secondary-note-hue: 12;
+				--mod-secondary-note-hue-scale: -.75;
+				--mod-secondary-note-sat: 75;
+				--mod-secondary-note-sat-scale: 0;
+				--mod-secondary-note-lum: 45;
+				--mod-secondary-note-lum-scale: 0;
+				--mod-primary-note-hue: 12;
+				--mod-primary-note-hue-scale: -.75;
+				--mod-primary-note-sat: 85;
+				--mod-primary-note-sat-scale: 0;
+				--mod-primary-note-lum: 85;
+				--mod-primary-note-lum-scale: 0;
+				--disabled-note-primary: #aaa;
+				--disabled-note-secondary: #666;
+				
+				
+				
+			}
+			body {
+				background-image: url("https://choptop84.github.io/abyssbox-app/stars.gif") !important;
+				background-size: contain;
+				background-position: center top;
+				  background-repeat: repeat;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */ 
+				}
+			#text-content {
+				--editor-background: rgba(255, 255, 255, 0);
+					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border.png");
+					border-image-slice: 16 fill; 
+					   border-image-width: 32px; 
+					border-image-repeat: repeat; 
+					padding: 36px; 
+
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+				}
+			#beepboxEditorContainer {
+				--editor-background: rgba(255, 255, 255, 0);
+					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border.png");
+					border-image-slice: 16 fill; 
+					   border-image-width: 32px; 
+					border-image-repeat: repeat; 
+					padding-left: 36px; 
+					padding-right: 36px; 
+					padding-top: 5px; 
+					padding-bottom: 5px; 
+
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */ 
+				}
+			.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
+					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border2.png") !important;
+					border-image-slice: 4 fill !important; 
+				   border-image-width: 4px !important; 
+				border-image-repeat: stretch !important;
+					padding: 4px !important; 
+
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+				}
+				select.trackSelectBox {
+					border-image: none !important;
+				}
+			/* div.channelBox {
+			border-radius: 5px;
+			} */
+			* {
+				cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+				} 
+					@font-face {
+				   font-family: "AbyssType";
+				   src:
+					url("abysstype.otf") format("opentype") tech(color-COLRv1),
+					}
+		
+					@font-face {
+				   font-family: "AbyssType_small";
+				   src:
+					url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+					}
+		
+					html {
+					font-family: 'AbyssType';
+					}
+					div.channelBoxLabel {
+						font-family: 'AbyssType_small' !important;
+					}
+		
+
+
+		`,
         "roe light": `
 		:root {
 			--page-margin: #fff5f5;
@@ -5973,6 +9814,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: black;
 			--disabled-note-primary: #616161;
 			--disabled-note-secondary: #474747;
+
+			
+			
 		}`,
         "energized": `
 		:root {
@@ -6090,6 +9934,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #808080;
 			--disabled-note-secondary: #666666;
+
+			
+			
 		}`,
         "neapolitan": `:root {
 			--page-margin: #120807;
@@ -6208,6 +10055,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: #decdbf;
 			--disabled-note-primary: #bababa;
 			--disabled-note-secondary: #878787;
+
+			
+			
 		}`,
         "mono": `:root {
 			--page-margin: #000;
@@ -6321,6 +10171,125 @@ var beepbox = (function (exports) {
 			--disabled-note-primary: #c6c6c6;
 			--disabled-note-secondary: #8c8c8c;
 		}`,
+        "blutonium": `:root {
+			--page-margin: #02070D;
+			--editor-background: #02070D;
+			--hover-preview: white;
+			--playhead: white;
+			--primary-text: #9bd1ee;
+			--secondary-text: #5a6da8;
+			--inverted-text: black;
+			--text-selection: rgb(68 68 255 / 99%);
+			--box-selection-fill: rgb(0 0 255 / 30%);
+			--loop-accent: #024aca;
+			--link-accent: #024aca;
+			--ui-widget-background: #161c2e;
+			--ui-widget-focus: #262c3e;
+			--pitch-background: #22272D;
+			--tonic: #1b3056;
+			--fifth-note: #344051;
+			--white-piano-key: #a6c6ed;
+			--black-piano-key: #2f4687;
+			--use-color-formula: false;
+			--track-editor-bg-pitch: #25284c;
+			--track-editor-bg-pitch-dim: #211c26;
+			--track-editor-bg-noise: #261f42;
+			--track-editor-bg-noise-dim: #1a152d;
+			--track-editor-bg-mod: #183049;
+			--track-editor-bg-mod-dim: #102132;
+			--multiplicative-mod-slider: #344a7f;
+			--overwriting-mod-slider: #344a7f;
+			--indicator-primary: #024aca;
+			--indicator-secondary: #00177d;
+			--select2-opt-group: #141e34;
+			--input-box-outline: #141e34;
+			--mute-button-normal: #273b9d;
+			--mute-button-mod: #27989d;
+			--pitch1-secondary-channel: hsl(200, 100%, 40%);
+			--pitch1-primary-channel: #99ddff;
+			--pitch1-secondary-note: hsl(200, 100%, 40%);
+			--pitch1-primary-note: #99ddff;
+			--pitch2-secondary-channel: 	hsl(212, 100%, 34%);
+			--pitch2-primary-channel: #5BA8FF;
+			--pitch2-secondary-note: hsl(212, 100%, 34%);
+			--pitch2-primary-note: #5BA8FF;
+			--pitch3-secondary-channel: #024ACA;
+			--pitch3-primary-channel: #0A89FF;
+			--pitch3-secondary-note: #024ACA;
+			--pitch3-primary-note: #0A89FF;
+			--pitch4-secondary-channel: #00177D;
+			--pitch4-primary-channel: #024ACA;
+			--pitch4-secondary-note: #00177D;
+			--pitch4-primary-note: #024ACA;
+			--pitch5-secondary-channel: #000e4e;
+			--pitch5-primary-channel: #0023bf;
+			--pitch5-secondary-note: #000e4e;
+			--pitch5-primary-note: #0023bf;
+			--pitch6-secondary-channel: #8990FE;
+			--pitch6-primary-channel: #C2C6FF;
+			--pitch6-secondary-note: #8990FE;
+			--pitch6-primary-note: #C2C6FF;
+			--pitch7-secondary-channel: #5E65D3;
+			--pitch7-primary-channel: #8990FE;
+			--pitch7-secondary-note: #5E65D3;
+			--pitch7-primary-note: #8990FE;
+			--pitch8-secondary-channel: #3138A6;
+			--pitch8-primary-channel: #5E65D3;
+			--pitch8-secondary-note: #3138A6;
+			--pitch8-primary-note: #5E65D3;
+			--pitch9-secondary-channel: #1B0B7F;
+			--pitch9-primary-channel: #3138A6;
+			--pitch9-secondary-note: #1B0B7F;
+			--pitch9-primary-note: #3138A6;
+			--pitch10-secondary-channel: #13015D;
+			--pitch10-primary-channel: #1c02bd;
+			--pitch10-secondary-note: #13015D;
+			--pitch10-primary-note: #1c02bd;
+			--noise1-secondary-channel: #A675FE;
+			--noise1-primary-channel: #E2C9FF;
+			--noise1-secondary-note: #A675FE;
+			--noise1-primary-note: #E2C9FF;
+			--noise2-secondary-channel: #6A31CA;
+			--noise2-primary-channel: #A675FE;
+			--noise2-secondary-note: #6A31CA;
+			--noise2-primary-note: #A675FE;
+			--noise3-secondary-channel: #5A1991;
+			--noise3-primary-channel: #6A31CA;
+			--noise3-secondary-note: #5A1991;
+			--noise3-primary-note: #6A31CA;
+			--noise4-secondary-channel: #2f1a68;
+			--noise4-primary-channel: #5A1991;
+			--noise4-secondary-note: #2f1a68;
+			--noise4-primary-note: #5A1991;
+			--noise5-secondary-channel: #211640;
+			--noise5-primary-channel: #391b8d;
+			--noise5-secondary-note: #211640;
+			--noise5-primary-note: #391b8d;
+			--mod1-secondary-channel: #25E2CD;
+			--mod1-primary-channel: #BDFFCA;
+			--mod1-secondary-note: #25E2CD;
+			--mod1-primary-note: #BDFFCA;
+			--mod2-secondary-channel: #0A98AC;
+			--mod2-primary-channel: #25E2CD;
+			--mod2-secondary-note: #0A98AC;
+			--mod2-primary-note: #25E2CC;
+			--mod3-secondary-channel: #005280;
+			--mod3-primary-channel: #0A98AC;
+			--mod3-secondary-note: #005280;
+			--mod3-primary-note: #0A98AC;
+			--mod4-secondary-channel: #0f3670;
+			--mod4-primary-channel: #1369c1;
+			--mod4-secondary-note: #0f3670;
+			--mod4-primary-note: #1369c1;
+			--mod-label-primary: #191d26;
+			--mod-label-secondary-text: #024aca;
+			--mod-label-primary-text: #ffffffa6;
+			--disabled-note-primary: #c9c9c9;
+			--disabled-note-secondary: #616161;
+
+			
+			
+	}`,
         "modbox classic": `
 			:root {
 				--page-margin: black;
@@ -6441,6 +10410,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "zefbox": `
@@ -6561,6 +10533,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "sandbox classic": `
@@ -6683,6 +10658,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "harrybox": `
@@ -6804,13 +10782,16 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "brucebox": `
 		:root {
 				font: 16px/2 cursive;
 				--page-margin: #4667CE;
-				--editor-background: black;
+				--editor-background: #4667CE;
 				--hover-preview: white;
 				--playhead: white;
 				--primary-text: white;
@@ -6928,6 +10909,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "shitbox 2.0": `
@@ -7050,6 +11034,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "shitbox 3.0": `
@@ -7174,6 +11161,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			
 			`,
@@ -7297,6 +11287,96 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
+				}
+			`,
+        "nepbox": `
+			:root {
+				--page-margin: #000;
+				--editor-background: #060606;
+				--hover-preview: #fff;
+				--playhead: rgb(0, 242, 255);
+				--primary-text: #00fff5;
+				--secondary-text: #a82f2f;
+				--inverted-text: #000;
+				--text-selection: rgba(98, 46, 164, .99);
+				--box-selection-fill: #b74a4a;
+				--loop-accent: #7744FF;
+				--link-accent: #ff00e1;
+				--ui-widget-background: #484848;
+				--ui-widget-focus: #3e3e3e;
+				--pitch-background: #0a2d44;
+				--tonic: #9150ff;
+				--fifth-note: #900;
+				--white-piano-key: #353535;
+				--black-piano-key: #fff;
+				--white-piano-key-text: #fff;
+				--black-piano-key-text: #000;
+				--use-color-formula: false;
+				--track-editor-bg-pitch: #424242;
+				--track-editor-bg-pitch-dim: #000;
+				--track-editor-bg-noise: #424242;
+				--track-editor-bg-noise-dim: #000;
+				--track-editor-bg-mod: #3c3c3c;
+				--track-editor-bg-mod-dim: #000;
+				--multiplicative-mod-slider: #fff;
+				--overwriting-mod-slider: #9d9d9d;
+				--indicator-primary: #f00;
+				--indicator-secondary: #919191;
+				--select2-opt-group: #5d576f;
+				--input-box-outline: #626262;
+				--mute-button-normal: #9a00ff;
+				--mute-button-mod: #00fff7;
+				--mod-label-primary: #2b2b2b;
+				--pitch-channel-limit: 4;
+				--noise-channel-limit: 2;
+				--pitch1-secondary-channel: #c13cbf;
+				--pitch1-primary-channel: #f75dff;
+				--pitch1-secondary-note: #b930a2;
+				--pitch1-primary-note: #fca5ff;
+				--pitch2-secondary-channel: #800000;
+				--pitch2-primary-channel: #f00;
+				--pitch2-secondary-note: #8c2121;
+				--pitch2-primary-note: #ff5252;
+				--pitch3-secondary-channel: #004bb3;
+				--pitch3-primary-channel: #1792ff;
+				--pitch3-secondary-note: #005cb3;
+				--pitch3-primary-note: #00ffe9;
+				--pitch4-secondary-channel: #a48800;
+				--pitch4-primary-channel: #fb0;
+				--pitch4-secondary-note: #9c4100;
+				--pitch4-primary-note: #ffd84e;
+				--noise1-secondary-channel: #868686;
+				--noise1-primary-channel: #fff;
+				--noise1-secondary-note: #868686;
+				--noise1-primary-note: #fff;
+				--noise2-secondary-channel: #805300;
+				--noise2-primary-channel: #ff8c00;
+				--noise2-secondary-note: #6a3500;
+				--noise2-primary-note: #a85400;
+				--mod1-secondary-channel: #6c0000;
+				--mod1-primary-channel: #ff3e3e;
+				--mod1-secondary-note: #6c0000;
+				--mod1-primary-note: #ff3e3e;
+				--mod2-secondary-channel: #d25a00;
+				--mod2-primary-channel: #fdff00;
+				--mod2-secondary-note: #d25a00;
+				--mod2-primary-note: #fdff00;
+				--mod3-secondary-channel: #046000;
+				--mod3-primary-channel: #23ff1b;
+				--mod3-secondary-note: #046000;
+				--mod3-primary-note: #23ff1b;
+				--mod4-secondary-channel: #3b2bae;
+				--mod4-primary-channel: #0c79ff;
+				--mod4-secondary-note: #3b2bae;
+				--mod4-primary-note: #0c79ff;
+				--disabled-note-primary: #999;
+				--disabled-note-secondary: #696969;
+
+				
+				
 				}
 			`,
         "cardboardbox classic": `
@@ -7413,6 +11493,9 @@ var beepbox = (function (exports) {
 --mod-label-primary: #999;
 --mod-label-secondary-text: #333;
 --mod-label-primary-text: black;
+
+			
+			
 				}
 			`,
         "blubox classic": `
@@ -7525,6 +11608,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary:        #282840;
 					--mod-label-secondary-text: rgb(87, 86, 120);
 					--mod-label-primary-text:   white;
+
+					
+					
 				}
 			`,
         "dogebox classic": `
@@ -7647,6 +11733,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text:   black;
 			--disabled-note-primary:    #999;
 			--disabled-note-secondary:  #666;
+
+			
+			
 				}
 			`,
         "dogebox dark": `
@@ -7705,6 +11794,9 @@ var beepbox = (function (exports) {
 					--noise3-primary-channel:   #77aadd;
 					--noise3-secondary-note:    #6f9fcf;
 					--noise3-primary-note:      #bbd7ff;
+
+					
+					
 				}
 			`,
         "todbox classic": `
@@ -7827,6 +11919,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "todbox dark mode": `
@@ -7950,6 +12045,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 				.beepboxEditor button, .beepboxEditor select {
 					box-shadow: inset 0 0 0 1px var(--secondary-text);
@@ -8075,6 +12173,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "fogbox": `
@@ -8195,6 +12296,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "foxbox": `
@@ -8315,6 +12419,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;	
+
+					
+					
 				}
 			`,
         "wackybox": `
@@ -8439,6 +12546,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 
 .beepboxEditor {
@@ -8592,6 +12702,9 @@ var beepbox = (function (exports) {
 					--mod-primary-note-sat-scale: 0;
 					--mod-primary-note-lum: 85;
 					--mod-primary-note-lum-scale: 0;
+
+					
+					
 				}
 			`,
         "paandorasbox": `
@@ -8710,125 +12823,10 @@ var beepbox = (function (exports) {
 			  --mod-label-primary-text: #331512;
 			  --disabled-note-primary: #994038;
 			  --disabled-note-secondary: #331512;
+
+			  
+			  
 			}
-			`,
-        "slushie": `
-			:root {
-				--page-margin: #040814;
-    --editor-background: #040814;
-    --hover-preview: #c6f7ff;
-    --playhead: white;
-    --primary-text: #d3f3ff;
-    --secondary-text: #6f72b5;
-    --inverted-text: black;
-    --text-selection: rgba(119,68,255,0.99);
-    --box-selection-fill: rgb(43 70 171 / 62%);
-    --loop-accent: #573ebb;
-    --link-accent: #98f;
-    --ui-widget-background: #2e2f44;
-    --ui-widget-focus: #2b2c46;
-    --pitch-background: #353654;
-    --tonic: #716fe3;
-    --fifth-note: #76469b;
-    --white-piano-key: #abbce3;
-    --black-piano-key: #2f235e;
-    --use-color-formula: false;
-    --track-editor-bg-pitch: #3a3b5c;
-    --track-editor-bg-pitch-dim: #1f2036;
-    --track-editor-bg-noise: #3c3554;
-    --track-editor-bg-noise-dim: #1e1834;
-    --track-editor-bg-mod: #30335e;
-    --track-editor-bg-mod-dim: #161938;
-    --multiplicative-mod-slider: #e29cff;
-    --overwriting-mod-slider: #495789;
-    --indicator-primary: #e1a6ff;
-    --indicator-secondary: #415187;
-    --select2-opt-group: #22223a;
-    --input-box-outline: #2d2648;
-    --mute-button-normal: #7aceff;
-    --mute-button-mod: #9d6bff;
-    --pitch1-secondary-channel: #5f3ea5;
-    --pitch1-primary-channel: #c1a4ff;
-    --pitch1-secondary-note: #794fd3;
-    --pitch1-primary-note: #d8c6ff;
-    --pitch2-secondary-channel: #4f44bf;
-    --pitch2-primary-channel: #9287ff;
-    --pitch2-secondary-note: #5e51d9;
-    --pitch2-primary-note: #b6afff;
-    --pitch3-secondary-channel: #374eb9;
-    --pitch3-primary-channel: #8097ff;
-    --pitch3-secondary-note: #445cc9;
-    --pitch3-primary-note: #a0b2ff;
-    --pitch4-secondary-channel: #2867cf;
-    --pitch4-primary-channel: #6fa5ff;
-    --pitch4-secondary-note: #2e6ed7;
-    --pitch4-primary-note: #a6c7ff;
-    --pitch5-secondary-channel: #3175a7;
-    --pitch5-primary-channel: #7ec9ff;
-    --pitch5-secondary-note: #367eb3;
-    --pitch5-primary-note: #9fd7ff;
-    --pitch6-secondary-channel: #3993a9;
-    --pitch6-primary-channel: #8ce9ff;
-    --pitch6-secondary-note: #386da3;
-    --pitch6-primary-note: #9eecff;
-    --pitch7-secondary-channel: #369d8a;
-    --pitch7-primary-channel: #8bfce7;
-    --pitch7-secondary-note: #1c93a7;
-    --pitch7-primary-note: #abffef;
-    --pitch8-secondary-channel: #00A170;
-    --pitch8-primary-channel: #50FFC9;
-    --pitch8-secondary-note: #00C78A;
-    --pitch8-primary-note: #83FFD9;
-    --pitch9-secondary-channel: #49b374;
-    --pitch9-primary-channel: #8affa9;
-    --pitch9-secondary-note: #26815f;
-    --pitch9-primary-note: #c8ffde;
-    --pitch10-secondary-channel: #58a747;
-    --pitch10-primary-channel: #bbffaa;
-    --pitch10-secondary-note: #1d7c48;
-    --pitch10-primary-note: #c7ffbc;
-    --noise1-secondary-channel: #42829b;
-    --noise1-primary-channel: #97d3fc;
-    --noise1-secondary-note: #3f53b3;
-    --noise1-primary-note: #97d3fc;
-    --noise2-secondary-channel: #6354bb;
-    --noise2-primary-channel: #9a89ff;
-    --noise2-secondary-note: #5f4dcd;
-    --noise2-primary-note: #c6bcff;
-    --noise3-secondary-channel: #704a95;
-    --noise3-primary-channel: #c285ff;
-    --noise3-secondary-note: #ad5aff;
-    --noise3-primary-note: #d3a6ff;
-    --noise4-secondary-channel: #a53c65;
-    --noise4-primary-channel: #f794bb;
-    --noise4-secondary-note: #cb5080;
-    --noise4-primary-note: #f794bb;
-    --noise5-secondary-channel: #9b2d2d;
-    --noise5-primary-channel: #ff7676;
-    --noise5-secondary-note: #cb4444;
-    --noise5-primary-note: #ff9999;
-    --mod1-secondary-channel: #b7613c;
-    --mod1-primary-channel: #ff9f76;
-    --mod1-secondary-note: #e77e52;
-    --mod1-primary-note: #ffb99b;
-    --mod2-secondary-channel: #916d34;
-    --mod2-primary-channel: #fece80;
-    --mod2-secondary-note: #c58b35;
-    --mod2-primary-note: #ffdda5;
-    --mod3-secondary-channel: #83761a;
-    --mod3-primary-channel: #fdf68c;
-    --mod3-secondary-note: #c18e00;
-    --mod3-primary-note: #fdf68c;
-    --mod4-secondary-channel: #a86436;
-    --mod4-primary-channel: #c8a825;
-    --mod4-secondary-note: #e8ba46;
-    --mod4-primary-note: #c8a825;
-    --mod-label-primary: #37325e;
-    --mod-label-secondary-text: #6e8aa7;
-    --mod-label-primary-text: #c1ffff;
-    --disabled-note-primary: #999;
-    --disabled-note-secondary: #666;
-				}
 			`,
         "midbox": `:root {
 			--page-margin: #010a1e;
@@ -8943,6 +12941,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum-scale: 0;
 			--disabled-note-primary:    #53527b;
 			--disabled-note-secondary:  #1c1b30;
+
+			
+			
 		}`,
         "dogebox2": `
 			:root {
@@ -9061,6 +13062,9 @@ var beepbox = (function (exports) {
 				--mod4-primary-note: #b2fffb;
 				--disabled-note-primary: #c6c6c6;
 				--disabled-note-secondary: #8c8c8c;
+
+				
+				
 				}`,
         "azur lane": `
 		:root {
@@ -9178,6 +13182,9 @@ var beepbox = (function (exports) {
 		  --mod4-primary-note: #fff;
 		  --disabled-note-primary: #3a3a3a;
 		  --disabled-note-secondary: #000;
+
+		  
+		  
 			}
 		/* replaces hotdog (in a hacky way) with an image of the girls using the same scratch sprites from the 404 page*/
 		#Hotdog {
@@ -9213,6 +13220,134 @@ var beepbox = (function (exports) {
 		content: url("UltraBoxALThemeLogo.png");
 		}
 	}`,
+        "WeebBox": `
+	:root {
+		--page-margin: #040410;
+		--editor-background: #040410;
+		--hover-preview: white;
+		--playhead: rgba(255, 255, 255, 0.9);
+		--primary-text: white;
+		--secondary-text: #84859a;
+		--inverted-text: black;
+		--text-selection: rgba(119,68,255,0.99);
+		--box-selection-fill: #044b94;
+		--loop-accent: #74f;
+		--link-accent: #98f;
+		--ui-widget-background: #393e4f;
+		--ui-widget-focus: #6d6886;
+		--pitch-background: #393e4f55;
+		--tonic: #725491;
+		--fifth-note: #54547a;
+		--white-piano-key: #eee;
+		--black-piano-key: #666;
+		--white-piano-key-text: #131200;
+		--black-piano-key-text: #fff;
+		--use-color-formula: true;
+		--track-editor-bg-pitch: #393e4f;
+		--track-editor-bg-pitch-dim: #1c1d28;
+		--track-editor-bg-noise: #3d3535;
+		--track-editor-bg-noise-dim: #161313;
+		--track-editor-bg-mod: #283560;
+		--track-editor-bg-mod-dim: #0a101f;
+		--multiplicative-mod-slider: #606c9f;
+		--overwriting-mod-slider: #6850b5;
+		--indicator-primary: #9c64f7;
+		--indicator-secondary: #393e4f;
+		--select2-opt-group: #5d576f;
+		--input-box-outline: #222;
+		--mute-button-normal: #dda85d;
+		--mute-button-mod: #886eae;
+		--mod-label-primary: #282840;
+		--mod-label-secondary-text: rgb(87, 86, 120);
+		--mod-label-primary-text: white;
+		--pitch-secondary-channel-hue: 0;
+		--pitch-secondary-channel-hue-scale: 6.5;
+		--pitch-secondary-channel-sat: 83.3;
+		--pitch-secondary-channel-sat-scale: 0.1;
+		--pitch-secondary-channel-lum: 40;
+		--pitch-secondary-channel-lum-scale: 0.05;
+		--pitch-primary-channel-hue: 0;
+		--pitch-primary-channel-hue-scale: 6.5;
+		--pitch-primary-channel-sat: 100;
+		--pitch-primary-channel-sat-scale: 0.1;
+		--pitch-primary-channel-lum: 67.5;
+		--pitch-primary-channel-lum-scale: 0.05;
+		--pitch-secondary-note-hue: 0;
+		--pitch-secondary-note-hue-scale: 6.5;
+		--pitch-secondary-note-sat: 93.9;
+		--pitch-secondary-note-sat-scale: 0.1;
+		--pitch-secondary-note-lum: 25;
+		--pitch-secondary-note-lum-scale: 0.05;
+		--pitch-primary-note-hue: 0;
+		--pitch-primary-note-hue-scale: 6.5;
+		--pitch-primary-note-sat: 100;
+		--pitch-primary-note-sat-scale: 0.05;
+		--pitch-primary-note-lum: 85.6;
+		--pitch-primary-note-lum-scale: 0.025;
+		--noise-secondary-channel-hue: 0;
+		--noise-secondary-channel-hue-scale: 2;
+		--noise-secondary-channel-sat: 25;
+		--noise-secondary-channel-sat-scale: 0;
+		--noise-secondary-channel-lum: 42;
+		--noise-secondary-channel-lum-scale: 0;
+		--noise-primary-channel-hue: 0;
+		--noise-primary-channel-hue-scale: 2;
+		--noise-primary-channel-sat: 33;
+		--noise-primary-channel-sat-scale: 0;
+		--noise-primary-channel-lum: 63.5;
+		--noise-primary-channel-lum-scale: 0;
+		--noise-secondary-note-hue: 0;
+		--noise-secondary-note-hue-scale: 2;
+		--noise-secondary-note-sat: 33.5;
+		--noise-secondary-note-sat-scale: 0;
+		--noise-secondary-note-lum: 55;
+		--noise-secondary-note-lum-scale: 0;
+		--noise-primary-note-hue: 0;
+		--noise-primary-note-hue-scale: 2;
+		--noise-primary-note-sat: 46.5;
+		--noise-primary-note-sat-scale: 0;
+		--noise-primary-note-lum: 74;
+		--noise-primary-note-lum-scale: 0;
+		--mod-secondary-channel-hue: 192;
+		--mod-secondary-channel-hue-scale: 1.5;
+		--mod-secondary-channel-sat: 88;
+		--mod-secondary-channel-sat-scale: 0;
+		--mod-secondary-channel-lum: 50;
+		--mod-secondary-channel-lum-scale: 0;
+		--mod-primary-channel-hue: 192;
+		--mod-primary-channel-hue-scale: 1.5;
+		--mod-primary-channel-sat: 96;
+		--mod-primary-channel-sat-scale: 0;
+		--mod-primary-channel-lum: 80;
+		--mod-primary-channel-lum-scale: 0;
+		--mod-secondary-note-hue: 192;
+		--mod-secondary-note-hue-scale: 1.5;
+		--mod-secondary-note-sat: 92;
+		--mod-secondary-note-sat-scale: 0;
+		--mod-secondary-note-lum: 45;
+		--mod-secondary-note-lum-scale: 0;
+		--mod-primary-note-hue: 192;
+		--mod-primary-note-hue-scale: 1.5;
+		--mod-primary-note-sat: 96;
+		--mod-primary-note-sat-scale: 0;
+		--mod-primary-note-lum: 85;
+		--mod-primary-note-lum-scale: 0;
+		--disabled-note-primary:    #91879f;
+		--disabled-note-secondary:  #6a677a;
+
+		
+		
+	}
+	#firstImage {
+		background-image: url("https://choptop84.github.io/choptop84s-image-repository/weebboxbackground.jpg") !important;
+		background-repeat: no-repeat !important;
+		background-size: 100% 100% !important;
+	}
+
+	#firstImage rect {
+		opacity: 0.8 !important;
+	}
+`,
         "Protanopia": `
 :root { 
 --page-margin: #000000; 
@@ -9228,9 +13363,9 @@ var beepbox = (function (exports) {
 --link-accent: #8915c8; 
 --ui-widget-background: #676767; 
 --ui-widget-focus: #696969; 
---pitch-background: #7a7887; 
---tonic: #313036; 
---fifth-note: #c3c1db; 
+--pitch-background: #302f36; 
+--tonic: #19181c; 
+--fifth-note: #1b1924; 
 --white-piano-key: #a6a6a6; 
 --black-piano-key: #484848; 
 --use-color-formula: false; 
@@ -9251,11 +13386,11 @@ var beepbox = (function (exports) {
 --mod-label-primary: #0909ff; 
 --mod-label-secondary-text: #ffffff; 
 --mod-label-primary-text: #c8ecfd; 
-				--pitch1-secondary-channel: #0e0429;
-				--pitch1-primary-channel:   #310b8f;
+				--pitch1-secondary-channel: #160740;
+				--pitch1-primary-channel:   #482d8a;
 
-				--pitch1-secondary-note:    #0e0429;
-				--pitch1-primary-note:      #310b8f;
+				--pitch1-secondary-note:    #160740;
+				--pitch1-primary-note:      #482d8a;
 
 				--pitch2-secondary-channel: #0b555e;
 				--pitch2-primary-channel:   #126e7a;
@@ -9354,6 +13489,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 }
 
 			`,
@@ -9372,9 +13510,9 @@ var beepbox = (function (exports) {
 --link-accent: #8915c8; 
 --ui-widget-background: #676767; 
 --ui-widget-focus: #696969; 
---pitch-background: #7a7887; 
---tonic: #313036; 
---fifth-note: #c3c1db; 
+--pitch-background: #302f36; 
+--tonic: #19181c; 
+--fifth-note: #1b1924; 
 --white-piano-key: #a6a6a6; 
 --black-piano-key: #484848; 
 --use-color-formula: false; 
@@ -9498,6 +13636,8 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+					
+					
 }
 
 			`,
@@ -9615,6 +13755,9 @@ var beepbox = (function (exports) {
   --mod4-primary-note: #0ce7ff;
   --disabled-note-primary: #8d8d8d;
   --disabled-note-secondary: #363636;
+
+  
+  
     }
 
 			`,
@@ -9727,6 +13870,9 @@ var beepbox = (function (exports) {
 				--mod-primary-note-sat-scale: 0;
 				--mod-primary-note-lum: 85;
 				--mod-primary-note-lum-scale: 0;
+
+				
+				
 			}`}`,
     };
     ColorConfig.pageMargin = "var(--page-margin)";
@@ -9749,9 +13895,6 @@ var beepbox = (function (exports) {
     ColorConfig.blackPianoKey = "var(--black-piano-key)";
     ColorConfig.whitePianoKeyText = "var(--white-piano-key-text)";
     ColorConfig.blackPianoKeyText = "var(--black-piano-key-text)";
-    ColorConfig.oscilloscopeLineL = "var(--oscilloscope-line-L)";
-    ColorConfig.oscilloscopeLineR = "var(--oscilloscope-line-R)";
-    ColorConfig.modTitle = "var(--mod-title)";
     ColorConfig.useColorFormula = "var(--use-color-formula)";
     ColorConfig.pitchSecondaryChannelHue = "var(--pitch-secondary-channel-hue)";
     ColorConfig.pitchSecondaryChannelHueScale = "var(--pitch-secondary-channel-hue-scale)";
@@ -9844,6 +13987,85 @@ var beepbox = (function (exports) {
     ColorConfig.modLabelPrimaryText = "var(--mod-label-primary-text)";
     ColorConfig.disabledNotePrimary = "var(--disabled-note-primary)";
     ColorConfig.disabledNoteSecondary = "var(--disabled-note-secondary)";
+    ColorConfig.c_pitchSecondaryChannelHue = 0;
+    ColorConfig.c_pitchSecondaryChannelHueScale = 0;
+    ColorConfig.c_pitchSecondaryChannelSat = 0;
+    ColorConfig.c_pitchSecondaryChannelSatScale = 0;
+    ColorConfig.c_pitchSecondaryChannelLum = 0;
+    ColorConfig.c_pitchSecondaryChannelLumScale = 0;
+    ColorConfig.c_pitchPrimaryChannelHue = 0;
+    ColorConfig.c_pitchPrimaryChannelHueScale = 0;
+    ColorConfig.c_pitchPrimaryChannelSat = 0;
+    ColorConfig.c_pitchPrimaryChannelSatScale = 0;
+    ColorConfig.c_pitchPrimaryChannelLum = 0;
+    ColorConfig.c_pitchPrimaryChannelLumScale = 0;
+    ColorConfig.c_pitchSecondaryNoteHue = 0;
+    ColorConfig.c_pitchSecondaryNoteHueScale = 0;
+    ColorConfig.c_pitchSecondaryNoteSat = 0;
+    ColorConfig.c_pitchSecondaryNoteSatScale = 0;
+    ColorConfig.c_pitchSecondaryNoteLum = 0;
+    ColorConfig.c_pitchSecondaryNoteLumScale = 0;
+    ColorConfig.c_pitchPrimaryNoteHue = 0;
+    ColorConfig.c_pitchPrimaryNoteHueScale = 0;
+    ColorConfig.c_pitchPrimaryNoteSat = 0;
+    ColorConfig.c_pitchPrimaryNoteSatScale = 0;
+    ColorConfig.c_pitchPrimaryNoteLum = 0;
+    ColorConfig.c_pitchPrimaryNoteLumScale = 0;
+    ColorConfig.c_modSecondaryChannelHue = 0;
+    ColorConfig.c_modSecondaryChannelHueScale = 0;
+    ColorConfig.c_modSecondaryChannelSat = 0;
+    ColorConfig.c_modSecondaryChannelSatScale = 0;
+    ColorConfig.c_modSecondaryChannelLum = 0;
+    ColorConfig.c_modSecondaryChannelLumScale = 0;
+    ColorConfig.c_modPrimaryChannelHue = 0;
+    ColorConfig.c_modPrimaryChannelHueScale = 0;
+    ColorConfig.c_modPrimaryChannelSat = 0;
+    ColorConfig.c_modPrimaryChannelSatScale = 0;
+    ColorConfig.c_modPrimaryChannelLum = 0;
+    ColorConfig.c_modPrimaryChannelLumScale = 0;
+    ColorConfig.c_modSecondaryNoteHue = 0;
+    ColorConfig.c_modSecondaryNoteHueScale = 0;
+    ColorConfig.c_modSecondaryNoteSat = 0;
+    ColorConfig.c_modSecondaryNoteSatScale = 0;
+    ColorConfig.c_modSecondaryNoteLum = 0;
+    ColorConfig.c_modSecondaryNoteLumScale = 0;
+    ColorConfig.c_modPrimaryNoteHue = 0;
+    ColorConfig.c_modPrimaryNoteHueScale = 0;
+    ColorConfig.c_modPrimaryNoteSat = 0;
+    ColorConfig.c_modPrimaryNoteSatScale = 0;
+    ColorConfig.c_modPrimaryNoteLum = 0;
+    ColorConfig.c_modPrimaryNoteLumScale = 0;
+    ColorConfig.c_noiseSecondaryChannelHue = 0;
+    ColorConfig.c_noiseSecondaryChannelHueScale = 0;
+    ColorConfig.c_noiseSecondaryChannelSat = 0;
+    ColorConfig.c_noiseSecondaryChannelSatScale = 0;
+    ColorConfig.c_noiseSecondaryChannelLum = 0;
+    ColorConfig.c_noiseSecondaryChannelLumScale = 0;
+    ColorConfig.c_noisePrimaryChannelHue = 0;
+    ColorConfig.c_noisePrimaryChannelHueScale = 0;
+    ColorConfig.c_noisePrimaryChannelSat = 0;
+    ColorConfig.c_noisePrimaryChannelSatScale = 0;
+    ColorConfig.c_noisePrimaryChannelLum = 0;
+    ColorConfig.c_noisePrimaryChannelLumScale = 0;
+    ColorConfig.c_noiseSecondaryNoteHue = 0;
+    ColorConfig.c_noiseSecondaryNoteHueScale = 0;
+    ColorConfig.c_noiseSecondaryNoteSat = 0;
+    ColorConfig.c_noiseSecondaryNoteSatScale = 0;
+    ColorConfig.c_noiseSecondaryNoteLum = 0;
+    ColorConfig.c_noiseSecondaryNoteLumScale = 0;
+    ColorConfig.c_noisePrimaryNoteHue = 0;
+    ColorConfig.c_noisePrimaryNoteHueScale = 0;
+    ColorConfig.c_noisePrimaryNoteSat = 0;
+    ColorConfig.c_noisePrimaryNoteSatScale = 0;
+    ColorConfig.c_noisePrimaryNoteLum = 0;
+    ColorConfig.c_noisePrimaryNoteLumScale = 0;
+    ColorConfig.c_invertedText = "";
+    ColorConfig.c_trackEditorBgNoiseDim = "";
+    ColorConfig.c_trackEditorBgNoise = "";
+    ColorConfig.c_trackEditorBgModDim = "";
+    ColorConfig.c_trackEditorBgMod = "";
+    ColorConfig.c_trackEditorBgPitchDim = "";
+    ColorConfig.c_trackEditorBgPitch = "";
     ColorConfig.pitchChannels = toNameMap([
         {
             name: "pitch1",
@@ -10016,6 +14238,18 @@ var beepbox = (function (exports) {
 	--add-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-13 -13 26 26"><path fill="gray" d="M -8 -1 L -1 -1 L -1 -8  L 1 -8 L 1 -1 L 8 -1 L 8 1 L 1 1 L 1 8 L -1 8 L -1 1 L -8 1 z"/></svg>');
 	--zoom-in-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-10 -10 20 20"><circle cx="-1" cy="-1" r="6" stroke-width="2" stroke="gray" fill="none"></circle><path stroke="gray" stroke-width="2" d="M 3 3 L 7 7 M -1 -4 L -1 2 M -4 -1 L 2 -1" fill="none"></path></svg>');
 	--zoom-out-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-10 -10 20 20"><circle cx="-1" cy="-1" r="6" stroke-width="2" stroke="gray" fill="none"></circle><path stroke="gray" stroke-width="2" d="M 3 3 L 7 7 M -4 -1 L 2 -1" fill="none"></path></svg>');
+	--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
+	--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
+	--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+	--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+	--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
+	--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
+	--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
+	--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
+	--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
+	--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
+	--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
+	--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
 	--checkmark-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-13 -13 26 26"><path fill="gray" d="M -9 -2 L -8 -3 L -3 2 L 9 -8 L 10 -7 L -3 8 z"/></svg>');
 	--drum-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40"> \
 			<defs> \
@@ -10087,7 +14321,6 @@ var beepbox = (function (exports) {
 			<path d="M -1 76 L 30 76 L 30 1 L 33 -1 L 33 80 L -1 80 z" fill="rgba(0,0,0,0.7)"/> \
 			<rect x="-1" y="-1" width="19" height="80" fill="url(%23shadow)"/> \
 		</svg>');
-		--track-font: "sans-serif"
 }
 
 
@@ -10106,12 +14339,6 @@ var beepbox = (function (exports) {
 	border: 3px solid ${ColorConfig.editorBackground};
 }
 
-@-moz-document url-prefix() {
-	.muteButtonText {
-		transform: translate(3px, 1px) !important;
-	}
-}
-
 .beepboxEditor {
 	display: grid;
     grid-template-columns: minmax(0, 1fr) max-content;
@@ -10123,7 +14350,7 @@ var beepbox = (function (exports) {
 	touch-action: manipulation;
 	cursor: default;
 	font-size: 13px;
-	overflow: hidden;
+	overflow: show;
 	color: ${ColorConfig.primaryText};
 	background: ${ColorConfig.editorBackground};
     opacity: 0;
@@ -10185,7 +14412,7 @@ var beepbox = (function (exports) {
     -o-transition: opacity 0.5s ease-in;
     -ms-transition: opacity 0.5s ease-in;
     transition: opacity 0.5s ease-in;
-    transition-delay: 0.45s;
+    transition-delay: 0.15s;
 }
 
 .trackAndMuteContainer {
@@ -10527,6 +14754,309 @@ var beepbox = (function (exports) {
 	-webkit-mask-image: var(--zoom-out-symbol);
 	-webkit-mask-repeat: no-repeat;
 	-webkit-mask-position: center;
+}
+
+.beepboxEditor .undoButton,
+.beepboxEditor .redoButton,
+.beepboxEditor .copyPatternButton,
+.beepboxEditor .pastePatternButton,
+.beepboxEditor .insertChannelButton,
+.beepboxEditor .deleteChannelButton, 
+.beepboxEditor .selectAllButton,
+.beepboxEditor .duplicateButton, 
+.beepboxEditor .notesUpButton, 
+.beepboxEditor .notesDownButton,
+.beepboxEditor .loopBarButton,
+.beepboxEditor .fullscreenButton
+ {
+	width: var(--button-size);
+	position: absolute;
+	right: 10px;
+}
+.beepboxEditor .undoButton {
+	top: 10px;
+}
+.beepboxEditor .redoButton {
+	top: 10px;
+}
+.beepboxEditor .copyPatternButton {
+	top: 40px;
+}
+.beepboxEditor .pastePatternButton {
+	top: 40px;
+}
+.beepboxEditor .insertChannelButton {
+	top: 70px;
+}
+.beepboxEditor .deleteChannelButton {
+	top: 70px;
+}
+.beepboxEditor .selectAllButton {
+	top: 100px;
+}
+.beepboxEditor .duplicateButton {
+	top: 100px;
+}
+.beepboxEditor .notesUpButton {
+	top: 130px;
+}
+.beepboxEditor .notesDownButton {
+	top: 130px;
+}
+.beepboxEditor .loopBarButton {
+	top: 160px;
+}
+.beepboxEditor .copyPatternButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--copy-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--copy-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .pastePatternButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--paste-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--paste-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .undoButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--undo-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--undo-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .redoButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--redo-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--redo-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .insertChannelButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--insert-channel-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--insert-channel-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .deleteChannelButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--delete-channel-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--delete-channel-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .selectAllButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--select-all-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--select-all-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .duplicateButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--duplicate-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--duplicate-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .notesUpButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--notes-up-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--notes-up-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .notesDownButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--notes-down-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--notes-down-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .loopBarButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--loop-bar-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--loop-bar-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
+}
+.beepboxEditor .fullscreenButton::before {
+	content: "";
+	position: absolute;
+	width: var(--button-size);
+	height: var(--button-size);
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--fullscreen-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--fullscreen-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;         /* Firefox */
+	image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+	image-rendering: -o-crisp-edges !important;            /* Opera */
+	image-rendering: pixelated !important;                 /* Future browsers */
+	image-rendering: optimizeSpeed !important;             /* IE */
 }
 
 .beepboxEditor .delete-envelope {
@@ -11281,6 +15811,7 @@ var beepbox = (function (exports) {
 
 .beepboxEditor .trackContainer {
 	flex-grow: 1;
+	--track-font: "sans-serif"
 }
 
 .beepboxEditor .trackAndMuteContainer {
@@ -11291,6 +15822,31 @@ var beepbox = (function (exports) {
 	flex: 1;
 	overflow-x: hidden;
 	position: relative;
+}
+
+.beepboxEditor .channelRow {
+	display: flex;
+}
+.beepboxEditor .channelBox {
+	display: flex;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	padding-top: 1px;
+}
+.beepboxEditor .channelBoxLabel {
+	font-size: 20px;
+	font-family: sans-serif;
+	font-weight: bold;
+}
+.beepboxEditor .dropFader {
+	opacity: 0;
+	-webkit-transition:opacity 0.17s linear;
+    -moz-transition:opacity 0.17s linear;
+    -o-transition:opacity 0.17s linear;
+    -ms-transition:opacity 0.17s linear; 
+    transition:opacity 0.17s linear;
 }
 
 .beepboxEditor .muteEditor {
@@ -11617,9 +16173,8 @@ li.select2-results__option[role=group] > strong:hover {
 `));
 
     class BarScrollBar {
-        constructor(_doc, _trackContainer) {
+        constructor(_doc) {
             this._doc = _doc;
-            this._trackContainer = _trackContainer;
             this._editorWidth = 512;
             this._editorHeight = 20;
             this._playhead = SVG.rect("rect", { fill: ColorConfig.playhead, x: 0, y: 0, width: 2, height: this._editorHeight });
@@ -11643,9 +16198,6 @@ li.select2-results__option[role=group] > strong:hover {
                     this._renderedPlayhead = playhead;
                     this._playhead.setAttribute("x", "" + playhead);
                 }
-            };
-            this._onScroll = (event) => {
-                this._doc.barScrollPos = (this._trackContainer.scrollLeft / this._doc.getBarWidth());
             };
             this._whenMouseOver = (event) => {
                 if (this._mouseOver)
@@ -11726,7 +16278,6 @@ li.select2-results__option[role=group] > strong:hover {
             this.container.addEventListener("touchmove", this._whenTouchMoved);
             this.container.addEventListener("touchend", this._whenCursorReleased);
             this.container.addEventListener("touchcancel", this._whenCursorReleased);
-            this._trackContainer.addEventListener("scroll", this._onScroll, { capture: false, passive: true });
         }
         _whenCursorMoved() {
             if (this._dragging) {
@@ -11805,8 +16356,6 @@ li.select2-results__option[role=group] > strong:hover {
                     this._notches.appendChild(SVG.rect({ fill: ColorConfig.uiWidgetBackground, x: i * this._notchSpace - 1, y: lineHeight, width: 2, height: this._editorHeight - lineHeight * 2 }));
                 }
             }
-            this._doc.barScrollPos = Math.max(0, Math.min(this._doc.song.barCount - this._doc.trackVisibleBars, this._doc.barScrollPos));
-            this._doc.channelScrollPos = Math.max(0, Math.min(this._doc.song.getChannelCount() - this._doc.trackVisibleChannels, this._doc.channelScrollPos));
             if (resized || this._renderedScrollBarPos != this._doc.barScrollPos) {
                 this._renderedScrollBarPos = this._doc.barScrollPos;
                 this._handle.setAttribute("x", String(this._notchSpace * this._doc.barScrollPos));
@@ -11815,8 +16364,6 @@ li.select2-results__option[role=group] > strong:hover {
                 this._handleHighlight.setAttribute("width", String(this._notchSpace * this._doc.trackVisibleBars));
             }
             this._updatePreview();
-            this._trackContainer.scrollLeft = this._doc.barScrollPos * this._doc.getBarWidth();
-            this._trackContainer.scrollTop = this._doc.channelScrollPos * this._doc.getChannelHeight();
         }
     }
 
@@ -12150,6 +16697,21 @@ li.select2-results__option[role=group] > strong:hover {
             this.b[1] = -(1.0 + cos) / a0;
             this.order = 2;
         }
+        highShelf2ndOrder(cornerRadiansPerSample, shelfLinearGain, slope) {
+            const A = Math.sqrt(shelfLinearGain);
+            const c = Math.cos(cornerRadiansPerSample);
+            const Aplus = A + 1.0;
+            const Aminus = A - 1.0;
+            const alpha = Math.sin(cornerRadiansPerSample) * 0.5 * Math.sqrt((Aplus / A) * (1.0 / slope - 1.0) + 2.0);
+            const sqrtA2Alpha = 2.0 * Math.sqrt(A) * alpha;
+            const a0 = (Aplus - Aminus * c + sqrtA2Alpha);
+            this.a[1] = 2 * (Aminus - Aplus * c) / a0;
+            this.a[2] = (Aplus - Aminus * c - sqrtA2Alpha) / a0;
+            this.b[0] = A * (Aplus + Aminus * c + sqrtA2Alpha) / a0;
+            this.b[1] = -2 * A * (Aminus + Aplus * c) / a0;
+            this.b[2] = A * (Aplus + Aminus * c - sqrtA2Alpha) / a0;
+            this.order = 2;
+        }
         peak2ndOrder(cornerRadiansPerSample, peakLinearGain, bandWidthScale) {
             const sqrtGain = Math.sqrt(peakLinearGain);
             const bandWidth = bandWidthScale * cornerRadiansPerSample / (sqrtGain >= 1 ? sqrtGain : 1 / sqrtGain);
@@ -12245,6 +16807,9 @@ li.select2-results__option[role=group] > strong:hover {
             }
             this.useMultiplicativeInputCoefficients = useMultiplicativeInputCoefficients;
         }
+    }
+    function warpInfinityToNyquist(radians) {
+        return 2.0 * Math.atan(radians * 0.5);
     }
 
     const epsilon = (1.0e-24);
@@ -13279,6 +17844,8 @@ li.select2-results__option[role=group] > strong:hover {
             this.vibratoSpeed = 10;
             this.vibratoDelay = 0;
             this.vibratoType = 0;
+            this.envelopeSpeed = 12;
+            this.discreteEnvelope = false;
             this.unison = 0;
             this.unisonVoices = 1;
             this.unisonSpread = 0.0;
@@ -13296,11 +17863,12 @@ li.select2-results__option[role=group] > strong:hover {
             this.clicklessTransition = false;
             this.aliases = false;
             this.pulseWidth = Config.pulseWidthRange;
+            this.decimalOffset = 0;
             this.supersawDynamism = Config.supersawDynamismMax;
             this.supersawSpread = Math.ceil(Config.supersawSpreadMax / 2.0);
             this.supersawShape = 0;
-            this.decimalOffset = 0;
             this.stringSustain = 10;
+            this.stringSustainType = 1;
             this.distortion = 0;
             this.bitcrusherFreq = 0;
             this.bitcrusherQuantization = 0;
@@ -13315,9 +17883,6 @@ li.select2-results__option[role=group] > strong:hover {
             this.customAlgorithm = new CustomAlgorithm();
             this.customFeedbackType = new CustomFeedBack();
             this.feedbackAmplitude = 0;
-            this.LFOtime = 0;
-            this.nextLFOtime = 0;
-            this.arpTime = 0;
             this.customChipWave = new Float32Array(64);
             this.customChipWaveIntegral = new Float32Array(65);
             this.operators = [];
@@ -13331,7 +17896,7 @@ li.select2-results__option[role=group] > strong:hover {
             this.invalidModulators = [];
             if (isModChannel) {
                 for (let mod = 0; mod < Config.modCount; mod++) {
-                    this.modChannels.push(0);
+                    this.modChannels.push(-2);
                     this.modInstruments.push(0);
                     this.modulators.push(Config.modulators.dictionary["none"].index);
                 }
@@ -13363,7 +17928,7 @@ li.select2-results__option[role=group] > strong:hover {
         }
         setTypeAndReset(type, isNoiseChannel, isModChannel) {
             if (isModChannel)
-                type = 9;
+                type = 10;
             this.type = type;
             this.preset = type;
             this.volume = 0;
@@ -13394,8 +17959,11 @@ li.select2-results__option[role=group] > strong:hover {
             this.vibrato = 0;
             this.unison = 0;
             this.stringSustain = 10;
+            this.stringSustainType = Config.enableAcousticSustain ? 1 : 0;
             this.clicklessTransition = false;
             this.arpeggioSpeed = 12;
+            this.envelopeSpeed = 12;
+            this.discreteEnvelope = false;
             this.legacyTieOver = false;
             this.aliases = false;
             this.fadeIn = 0;
@@ -13413,7 +17981,7 @@ li.select2-results__option[role=group] > strong:hover {
                     this.chipWavePlayBackwards = false;
                     this.chipWaveStartOffset = 0;
                     break;
-                case 8:
+                case 9:
                     this.chipWave = 2;
                     this.chord = Config.chords.dictionary["arpeggio"].index;
                     for (let i = 0; i < 64; i++) {
@@ -13442,7 +18010,7 @@ li.select2-results__option[role=group] > strong:hover {
                         this.operators[i].reset(i);
                     }
                     break;
-                case 10:
+                case 11:
                     this.transition = 1;
                     this.vibrato = 0;
                     this.effects = 1;
@@ -13482,12 +18050,13 @@ li.select2-results__option[role=group] > strong:hover {
                 case 6:
                     this.chord = Config.chords.dictionary["arpeggio"].index;
                     this.pulseWidth = Config.pulseWidthRange;
+                    this.decimalOffset = 0;
                     break;
                 case 7:
                     this.chord = Config.chords.dictionary["strum"].index;
                     this.harmonicsWave.reset();
                     break;
-                case 9:
+                case 10:
                     this.transition = 0;
                     this.vibrato = 0;
                     this.interval = 0;
@@ -13504,12 +18073,13 @@ li.select2-results__option[role=group] > strong:hover {
                         this.modFilterTypes[mod] = 0;
                     }
                     break;
-                case 11:
+                case 8:
                     this.chord = Config.chords.dictionary["arpeggio"].index;
                     this.supersawDynamism = Config.supersawDynamismMax;
                     this.supersawSpread = Math.ceil(Config.supersawSpreadMax / 2.0);
                     this.supersawShape = 0;
                     this.pulseWidth = Config.pulseWidthRange - 1;
+                    this.decimalOffset = 0;
                     break;
                 default:
                     throw new Error("Unrecognized instrument type: " + type);
@@ -13615,7 +18185,9 @@ li.select2-results__option[role=group] > strong:hover {
                 "eqFilter": this.eqFilter.toJsonObject(),
                 "eqFilterType": this.eqFilterType,
                 "eqSimpleCut": this.eqFilterSimpleCut,
-                "eqSimplePeak": this.eqFilterSimplePeak
+                "eqSimplePeak": this.eqFilterSimplePeak,
+                "envelopeSpeed": this.envelopeSpeed,
+                "discreteEnvelope": this.discreteEnvelope
             };
             if (this.preset != this.type) {
                 instrumentObject["preset"] = this.preset;
@@ -13746,8 +18318,9 @@ li.select2-results__option[role=group] > strong:hover {
                 instrumentObject["pulseWidth"] = this.pulseWidth;
                 instrumentObject["decimalOffset"] = this.decimalOffset;
             }
-            else if (this.type == 11) {
-                instrumentObject["pulseWidth"] = Math.round(getPulseWidthRatio(this.pulseWidth) * 100 * 100000) / 100000;
+            else if (this.type == 8) {
+                instrumentObject["pulseWidth"] = this.pulseWidth;
+                instrumentObject["decimalOffset"] = this.decimalOffset;
                 instrumentObject["dynamism"] = Math.round(100 * this.supersawDynamism / Config.supersawDynamismMax);
                 instrumentObject["spread"] = Math.round(100 * this.supersawSpread / Config.supersawSpreadMax);
                 instrumentObject["shape"] = Math.round(100 * this.supersawShape / Config.supersawShapeMax);
@@ -13762,6 +18335,9 @@ li.select2-results__option[role=group] > strong:hover {
                     instrumentObject["unisonSign"] = this.unisonSign;
                 }
                 instrumentObject["stringSustain"] = Math.round(100 * this.stringSustain / (Config.stringSustainRange - 1));
+                if (Config.enableAcousticSustain) {
+                    instrumentObject["stringSustainType"] = Config.sustainTypeNames[this.stringSustainType];
+                }
             }
             else if (this.type == 5) {
                 instrumentObject["unison"] = this.unison == Config.unisons.length ? "custom" : Config.unisons[this.unison].name;
@@ -13773,7 +18349,7 @@ li.select2-results__option[role=group] > strong:hover {
                     instrumentObject["unisonSign"] = this.unisonSign;
                 }
             }
-            else if (this.type == 1 || this.type == 10) {
+            else if (this.type == 1 || this.type == 11) {
                 const operatorArray = [];
                 for (const operator of this.operators) {
                     operatorArray.push({
@@ -13807,7 +18383,7 @@ li.select2-results__option[role=group] > strong:hover {
                     instrumentObject["operators"] = operatorArray;
                 }
             }
-            else if (this.type == 8) {
+            else if (this.type == 9) {
                 instrumentObject["wave"] = Config.chipWaves[this.chipWave].name;
                 instrumentObject["unison"] = this.unison == Config.unisons.length ? "custom" : Config.unisons[this.unison].name;
                 if (this.unison == Config.unisons.length) {
@@ -13823,15 +18399,16 @@ li.select2-results__option[role=group] > strong:hover {
                     instrumentObject["customChipWave"][i] = this.customChipWave[i];
                 }
             }
-            else if (this.type == 9) {
+            else if (this.type == 10) {
                 instrumentObject["modChannels"] = [];
                 instrumentObject["modInstruments"] = [];
                 instrumentObject["modSettings"] = [];
-                instrumentObject["modStatuses"] = [];
+                instrumentObject["modFilterTypes"] = [];
                 for (let mod = 0; mod < Config.modCount; mod++) {
                     instrumentObject["modChannels"][mod] = this.modChannels[mod];
                     instrumentObject["modInstruments"][mod] = this.modInstruments[mod];
                     instrumentObject["modSettings"][mod] = this.modulators[mod];
+                    instrumentObject["modFilterTypes"][mod] = this.modFilterTypes[mod];
                 }
             }
             else {
@@ -13849,8 +18426,9 @@ li.select2-results__option[role=group] > strong:hover {
                 instrumentObject = {};
             let type = Config.instrumentTypeNames.indexOf(instrumentObject["type"]);
             if (type == -1)
-                type = isModChannel ? 9 : (isNoiseChannel ? 2 : 0);
+                type = isModChannel ? 10 : (isNoiseChannel ? 2 : 0);
             this.setTypeAndReset(type, isNoiseChannel, isModChannel);
+            this.effects &= ~(1 << 2);
             if (instrumentObject["preset"] != undefined) {
                 this.preset = instrumentObject["preset"] >>> 0;
             }
@@ -13859,6 +18437,18 @@ li.select2-results__option[role=group] > strong:hover {
             }
             else {
                 this.volume = 0;
+            }
+            if (instrumentObject["envelopeSpeed"] != undefined) {
+                this.envelopeSpeed = clamp(0, Config.modulators.dictionary["envelope speed"].maxRawVol + 1, instrumentObject["envelopeSpeed"] | 0);
+            }
+            else {
+                this.envelopeSpeed = 12;
+            }
+            if (instrumentObject["discreteEnvelope"] != undefined) {
+                this.discreteEnvelope = instrumentObject["discreteEnvelope"];
+            }
+            else {
+                this.discreteEnvelope = false;
             }
             if (Array.isArray(instrumentObject["effects"])) {
                 let effects = 0;
@@ -13926,7 +18516,7 @@ li.select2-results__option[role=group] > strong:hover {
                     else if (this.type == 0) {
                         this.chord = Config.chords.dictionary["arpeggio"].index;
                     }
-                    else if (this.type == 1 || this.type == 10) {
+                    else if (this.type == 1 || this.type == 11) {
                         this.chord = Config.chords.dictionary["custom interval"].index;
                     }
                     else {
@@ -13995,7 +18585,6 @@ li.select2-results__option[role=group] > strong:hover {
             }
             else {
                 this.pan = Config.panCenter;
-                this.effects = (this.effects | (1 << 2));
             }
             if (instrumentObject["panDelay"] != undefined) {
                 this.panDelay = (instrumentObject["panDelay"] | 0);
@@ -14039,6 +18628,12 @@ li.select2-results__option[role=group] > strong:hover {
             else {
                 this.pulseWidth = Config.pulseWidthRange;
             }
+            if (instrumentObject["decimalOffset"] != undefined) {
+                this.decimalOffset = clamp(0, 99 + 1, Math.round(instrumentObject["decimalOffset"]));
+            }
+            else {
+                this.decimalOffset = 0;
+            }
             if (instrumentObject["dynamism"] != undefined) {
                 this.supersawDynamism = clamp(0, Config.supersawDynamismMax + 1, Math.round(Config.supersawDynamismMax * (instrumentObject["dynamism"] | 0) / 100));
             }
@@ -14056,12 +18651,6 @@ li.select2-results__option[role=group] > strong:hover {
             }
             else {
                 this.supersawShape = 0;
-            }
-            if (instrumentObject["decimalOffset"] != undefined) {
-                this.decimalOffset = clamp(0, 99 + 1, Math.round(instrumentObject["decimalOffset"]));
-            }
-            else {
-                this.decimalOffset = 0;
             }
             if (instrumentObject["harmonics"] != undefined) {
                 for (let i = 0; i < Config.harmonicsControlPoints; i++) {
@@ -14086,6 +18675,9 @@ li.select2-results__option[role=group] > strong:hover {
             else {
                 this.stringSustain = 10;
             }
+            this.stringSustainType = Config.enableAcousticSustain ? Config.sustainTypeNames.indexOf(instrumentObject["stringSustainType"]) : 0;
+            if (this.stringSustainType == -1)
+                this.stringSustainType = 0;
             if (this.type == 2) {
                 this.chipNoise = Config.chipNoises.findIndex(wave => wave.name == instrumentObject["wave"]);
                 if (instrumentObject["wave"] == "pink noise")
@@ -14147,7 +18739,7 @@ li.select2-results__option[role=group] > strong:hover {
                 if (this.chipWave == -1)
                     this.chipWave = 1;
             }
-            if (this.type == 1 || this.type == 10) {
+            if (this.type == 1 || this.type == 11) {
                 if (this.type == 1) {
                     this.algorithm = Config.algorithms.findIndex(algorithm => algorithm.name == instrumentObject["algorithm"]);
                     if (this.algorithm == -1)
@@ -14182,7 +18774,7 @@ li.select2-results__option[role=group] > strong:hover {
                 else {
                     this.feedbackAmplitude = 0;
                 }
-                for (let j = 0; j < Config.operatorCount + (this.type == 10 ? 2 : 0); j++) {
+                for (let j = 0; j < Config.operatorCount + (this.type == 11 ? 2 : 0); j++) {
                     const operator = this.operators[j];
                     let operatorObject = undefined;
                     if (instrumentObject["operators"] != undefined)
@@ -14221,7 +18813,7 @@ li.select2-results__option[role=group] > strong:hover {
                     }
                 }
             }
-            else if (this.type == 8) {
+            else if (this.type == 9) {
                 if (instrumentObject["customChipWave"]) {
                     for (let i = 0; i < 64; i++) {
                         this.customChipWave[i] = instrumentObject["customChipWave"][i];
@@ -14241,16 +18833,18 @@ li.select2-results__option[role=group] > strong:hover {
                     this.customChipWaveIntegral[64] = 0.0;
                 }
             }
-            else if (this.type == 9) {
+            else if (this.type == 10) {
                 if (instrumentObject["modChannels"] != undefined) {
                     for (let mod = 0; mod < Config.modCount; mod++) {
                         this.modChannels[mod] = instrumentObject["modChannels"][mod];
                         this.modInstruments[mod] = instrumentObject["modInstruments"][mod];
                         this.modulators[mod] = instrumentObject["modSettings"][mod];
+                        if (instrumentObject["modFilterTypes"] != undefined)
+                            this.modFilterTypes[mod] = instrumentObject["modFilterTypes"][mod];
                     }
                 }
             }
-            if (this.type != 9) {
+            if (this.type != 10) {
                 if (this.chord == Config.chords.dictionary["arpeggio"].index && instrumentObject["arpeggioSpeed"] != undefined) {
                     this.arpeggioSpeed = instrumentObject["arpeggioSpeed"];
                 }
@@ -14389,6 +18983,24 @@ li.select2-results__option[role=group] > strong:hover {
                 }
             }
         }
+        getLargestControlPointCount(forNoteFilter) {
+            let largest;
+            if (forNoteFilter) {
+                largest = this.noteFilter.controlPointCount;
+                for (let i = 0; i < Config.filterMorphCount; i++) {
+                    if (this.noteSubFilters[i] != null && this.noteSubFilters[i].controlPointCount > largest)
+                        largest = this.noteSubFilters[i].controlPointCount;
+                }
+            }
+            else {
+                largest = this.eqFilter.controlPointCount;
+                for (let i = 0; i < Config.filterMorphCount; i++) {
+                    if (this.eqSubFilters[i] != null && this.eqSubFilters[i].controlPointCount > largest)
+                        largest = this.eqSubFilters[i].controlPointCount;
+                }
+            }
+            return largest;
+        }
         static frequencyFromPitch(pitch) {
             return 440.0 * Math.pow(2.0, (pitch - 69.0) / 12.0);
         }
@@ -14408,6 +19020,9 @@ li.select2-results__option[role=group] > strong:hover {
         }
         supportsEnvelopeTarget(target, index) {
             const automationTarget = Config.instrumentAutomationTargets[target];
+            if (automationTarget.computeIndex == null && automationTarget.name != "none") {
+                return false;
+            }
             if (index >= automationTarget.maxCount) {
                 return false;
             }
@@ -14438,7 +19053,7 @@ li.select2-results__option[role=group] > strong:hover {
         }
         getTransition() {
             return effectsIncludeTransition(this.effects) ? Config.transitions[this.transition] :
-                (this.type == 9 ? Config.transitions.dictionary["interrupt"] : Config.transitions.dictionary["normal"]);
+                (this.type == 10 ? Config.transitions.dictionary["interrupt"] : Config.transitions.dictionary["normal"]);
         }
         getFadeInSeconds() {
             return (this.type == 4) ? 0.0 : Synth.fadeInSettingToSeconds(this.fadeIn);
@@ -14608,7 +19223,7 @@ li.select2-results__option[role=group] > strong:hover {
                         if (channel.instruments.length <= instrument) {
                             channel.instruments[instrument] = new Instrument(isNoiseChannel, isModChannel);
                         }
-                        channel.instruments[instrument].setTypeAndReset(isModChannel ? 9 : (isNoiseChannel ? 2 : 0), isNoiseChannel, isModChannel);
+                        channel.instruments[instrument].setTypeAndReset(isModChannel ? 10 : (isNoiseChannel ? 2 : 0), isNoiseChannel, isModChannel);
                     }
                     channel.instruments.length = Config.instrumentCountMin;
                     for (let bar = 0; bar < this.barCount; bar++) {
@@ -14838,7 +19453,7 @@ li.select2-results__option[role=group] > strong:hover {
                         encode32BitNumber(buffer, instrument.chipWaveLoopEnd);
                         encode32BitNumber(buffer, instrument.chipWaveStartOffset);
                     }
-                    else if (instrument.type == 1 || instrument.type == 10) {
+                    else if (instrument.type == 1 || instrument.type == 11) {
                         if (instrument.type == 1) {
                             buffer.push(65, base64IntToCharCode[instrument.algorithm]);
                             buffer.push(70, base64IntToCharCode[instrument.feedbackType]);
@@ -14870,22 +19485,22 @@ li.select2-results__option[role=group] > strong:hover {
                         }
                         buffer.push(66, base64IntToCharCode[instrument.feedbackAmplitude]);
                         buffer.push(81);
-                        for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                        for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                             buffer.push(base64IntToCharCode[instrument.operators[o].frequency]);
                         }
                         buffer.push(80);
-                        for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                        for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                             buffer.push(base64IntToCharCode[instrument.operators[o].amplitude]);
                         }
                         buffer.push(82);
-                        for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                        for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                             buffer.push(base64IntToCharCode[instrument.operators[o].waveform]);
                             if (instrument.operators[o].waveform == 2) {
                                 buffer.push(base64IntToCharCode[instrument.operators[o].pulseWidth]);
                             }
                         }
                     }
-                    else if (instrument.type == 8) {
+                    else if (instrument.type == 9) {
                         if (instrument.chipWave > 186) {
                             buffer.push(119, base64IntToCharCode[instrument.chipWave - 186]);
                             buffer.push(base64IntToCharCode[3]);
@@ -14944,22 +19559,27 @@ li.select2-results__option[role=group] > strong:hover {
                         buffer.push(87, base64IntToCharCode[instrument.pulseWidth]);
                         buffer.push(base64IntToCharCode[instrument.decimalOffset >> 6], base64IntToCharCode[instrument.decimalOffset & 0x3f]);
                     }
-                    else if (instrument.type == 11) {
+                    else if (instrument.type == 8) {
                         buffer.push(120, base64IntToCharCode[instrument.supersawDynamism], base64IntToCharCode[instrument.supersawSpread], base64IntToCharCode[instrument.supersawShape]);
                         buffer.push(87, base64IntToCharCode[instrument.pulseWidth]);
                         buffer.push(base64IntToCharCode[instrument.decimalOffset >> 6], base64IntToCharCode[instrument.decimalOffset & 0x3f]);
                     }
                     else if (instrument.type == 7) {
+                        if (Config.stringSustainRange > 0x20 || 2 > 2) {
+                            throw new Error("Not enough bits to represent sustain value and type in same base64 character.");
+                        }
                         buffer.push(104, base64IntToCharCode[instrument.unison]);
                         if (instrument.unison == Config.unisons.length)
                             encodeUnisonSettings(buffer, instrument.unisonVoices, instrument.unisonSpread, instrument.unisonOffset, instrument.unisonExpression, instrument.unisonSign);
-                        buffer.push(73, base64IntToCharCode[instrument.stringSustain]);
+                        buffer.push(73, base64IntToCharCode[instrument.stringSustain | (instrument.stringSustainType << 5)]);
                     }
-                    else if (instrument.type == 9) ;
+                    else if (instrument.type == 10) ;
                     else {
                         throw new Error("Unknown instrument type.");
                     }
                     buffer.push(69, base64IntToCharCode[instrument.envelopeCount]);
+                    buffer.push(base64IntToCharCode[instrument.envelopeSpeed]);
+                    buffer.push(base64IntToCharCode[+instrument.discreteEnvelope]);
                     for (let envelopeIndex = 0; envelopeIndex < instrument.envelopeCount; envelopeIndex++) {
                         buffer.push(base64IntToCharCode[instrument.envelopes[envelopeIndex].target]);
                         if (Config.instrumentAutomationTargets[instrument.envelopes[envelopeIndex].target].maxCount > 1) {
@@ -15593,15 +20213,17 @@ li.select2-results__option[role=group] > strong:hover {
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
                             let instrumentType = validateRange(0, 12 - 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                             if ((fromJummBox && beforeFive) || (beforeFour && fromGoldBox)) {
-                                if (instrumentType == 7) {
-                                    instrumentType = 8;
+                                if (instrumentType == 7 || instrumentType == 8) {
+                                    instrumentType += 2;
                                 }
-                                else if (instrumentType == 8) {
-                                    instrumentType = 9;
+                            }
+                            else if ((fromJummBox && beforeSix) || (fromGoldBox && !beforeFour) || (fromUltraBox && beforeFive)) {
+                                if (instrumentType == 8 || instrumentType == 9 || instrumentType == 10) {
+                                    instrumentType += 1;
                                 }
                             }
                             instrument.setTypeAndReset(instrumentType, instrumentChannelIterator >= this.pitchChannelCount && instrumentChannelIterator < this.pitchChannelCount + this.noiseChannelCount, instrumentChannelIterator >= this.pitchChannelCount + this.noiseChannelCount);
-                            if (((beforeSeven && fromBeepBox) || (beforeTwo && fromJummBox)) && (instrumentType == 0 || instrumentType == 8 || instrumentType == 6)) {
+                            if (((beforeSeven && fromBeepBox) || (beforeTwo && fromJummBox)) && (instrumentType == 0 || instrumentType == 9 || instrumentType == 6)) {
                                 instrument.aliases = true;
                                 instrument.distortion = 0;
                                 instrument.effects |= 1 << 3;
@@ -15626,8 +20248,22 @@ li.select2-results__option[role=group] > strong:hover {
                             this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = presetValue;
                             if ((fromJummBox && beforeFive) || (beforeFour && fromGoldBox)) {
                                 if (this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset == 7) {
-                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = 8;
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = 9;
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].type = 9;
                                 }
+                            }
+                            else if ((fromJummBox && beforeSix) || (fromUltraBox && beforeFive)) {
+                                if (this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset == 8) {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = 9;
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].type = 9;
+                                }
+                                if (this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset == 10) {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = 11;
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].type = 11;
+                                }
+                            }
+                            if (fromBeepBox && presetValue == EditorConfig.nameToPresetValue("grand piano 1")) {
+                                this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = EditorConfig.nameToPresetValue("grand piano 3");
                             }
                         }
                         break;
@@ -15911,23 +20547,16 @@ li.select2-results__option[role=group] > strong:hover {
                                 instrument.convertLegacySettings(legacySettings, forceSimpleFilter);
                             }
                             if (fromUltraBox && !beforeFour) {
-                                const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
                                 instrument.decimalOffset = clamp(0, 99 + 1, (base64CharCodeToInt[compressed.charCodeAt(charIndex++)] << 6) + base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                             }
-                        }
-                        break;
-                    case 120:
-                        {
-                            const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
-                            instrument.supersawDynamism = clamp(0, Config.supersawDynamismMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
-                            instrument.supersawSpread = clamp(0, Config.supersawSpreadMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
-                            instrument.supersawShape = clamp(0, Config.supersawShapeMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                         }
                         break;
                     case 73:
                         {
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
-                            instrument.stringSustain = clamp(0, Config.stringSustainRange, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                            const sustainValue = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
+                            instrument.stringSustain = clamp(0, Config.stringSustainRange, sustainValue & 0x1F);
+                            instrument.stringSustainType = Config.enableAcousticSustain ? clamp(0, 2, sustainValue >> 5) : 0;
                         }
                         break;
                     case 100:
@@ -16130,7 +20759,7 @@ li.select2-results__option[role=group] > strong:hover {
                                 this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].unison = clamp(0, Config.unisons.length + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                             }
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
-                            if (instrument.unison == Config.unisons.length) {
+                            if ((fromUltraBox && !beforeFive) && (instrument.unison == Config.unisons.length)) {
                                 instrument.unisonVoices = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
                                 const unisonSpreadNegative = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
                                 const unisonSpread = base64CharCodeToInt[compressed.charCodeAt(charIndex++)] + ((base64CharCodeToInt[compressed.charCodeAt(charIndex++)] + (base64CharCodeToInt[compressed.charCodeAt(charIndex++)] * 63)) * 63);
@@ -16476,6 +21105,39 @@ li.select2-results__option[role=group] > strong:hover {
                             }
                         }
                         break;
+                    case 120:
+                        {
+                            if (fromGoldBox && !beforeFour && beforeSix) {
+                                const chipWaveForCompat = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
+                                if ((chipWaveForCompat + 62) > 85) {
+                                    if (document.URL.substring(document.URL.length - 13).toLowerCase() != "legacysamples") {
+                                        if (!willLoadLegacySamplesForOldSongs) {
+                                            willLoadLegacySamplesForOldSongs = true;
+                                            Config.willReloadForCustomSamples = true;
+                                            EditorConfig.customSamples = ["legacySamples"];
+                                            loadBuiltInSamples(0);
+                                        }
+                                    }
+                                }
+                                if ((chipWaveForCompat + 62) > 78) {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = clamp(0, Config.chipWaves.length, chipWaveForCompat + 63);
+                                }
+                                else if ((chipWaveForCompat + 62) > 67) {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = clamp(0, Config.chipWaves.length, chipWaveForCompat + 61);
+                                }
+                                else if ((chipWaveForCompat + 62) == 67) {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = 40;
+                                }
+                                else {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = clamp(0, Config.chipWaves.length, chipWaveForCompat + 62);
+                                }
+                            }
+                            const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
+                            instrument.supersawDynamism = clamp(0, Config.supersawDynamismMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                            instrument.supersawSpread = clamp(0, Config.supersawSpreadMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                            instrument.supersawShape = clamp(0, Config.supersawShapeMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                        }
+                        break;
                     case 70:
                         {
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
@@ -16530,18 +21192,18 @@ li.select2-results__option[role=group] > strong:hover {
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
                             if (beforeThree && fromGoldBox) {
                                 const freqToGold3 = [4, 5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 18, 20, 22, 24, 2, 1, 9, 17, 19, 21, 23, 0, 3];
-                                for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                                for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                     instrument.operators[o].frequency = freqToGold3[clamp(0, freqToGold3.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)])];
                                 }
                             }
                             else if (!fromGoldBox && !fromUltraBox) {
                                 const freqToUltraBox = [4, 5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 18, 20, 23, 27, 2, 1, 9, 17, 19, 21, 23, 0, 3];
-                                for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                                for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                     instrument.operators[o].frequency = freqToUltraBox[clamp(0, freqToUltraBox.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)])];
                                 }
                             }
                             else {
-                                for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                                for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                     instrument.operators[o].frequency = clamp(0, Config.operatorFrequencies.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                                 }
                             }
@@ -16550,7 +21212,7 @@ li.select2-results__option[role=group] > strong:hover {
                     case 80:
                         {
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
-                            for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                            for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                 instrument.operators[o].amplitude = clamp(0, Config.operatorAmplitudeMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                             }
                         }
@@ -16558,20 +21220,27 @@ li.select2-results__option[role=group] > strong:hover {
                     case 69:
                         {
                             const pregoldToEnvelope = [0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14, 16, 17, 18, 19, 20, 21, 23, 24, 25, 27, 28, 29, 32, 33, 34, 31, 11];
+                            const jummToUltraEnvelope = [0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14, 16, 17, 18, 19, 20, 21, 23, 24, 25, 58, 59, 60];
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
                             if ((beforeNine && fromBeepBox) || (beforeFive && fromJummBox) || (beforeFour && fromGoldBox)) {
                                 const legacySettings = legacySettingsCache[instrumentChannelIterator][instrumentIndexIterator];
                                 legacySettings.operatorEnvelopes = [];
-                                for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                                for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                     let aa = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
-                                    if ((beforeTwo && fromGoldBox) || (!fromGoldBox && !fromUltraBox))
+                                    if ((beforeTwo && fromGoldBox) || (fromBeepBox))
                                         aa = pregoldToEnvelope[aa];
+                                    if (fromJummBox)
+                                        aa = jummToUltraEnvelope[aa];
                                     legacySettings.operatorEnvelopes[o] = Song._envelopeFromLegacyIndex(aa);
                                 }
                                 instrument.convertLegacySettings(legacySettings, forceSimpleFilter);
                             }
                             else {
                                 const envelopeCount = clamp(0, Config.maxEnvelopeCount + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                                if ((fromJummBox && !beforeSix) || (fromUltraBox && !beforeFive)) {
+                                    instrument.envelopeSpeed = clamp(0, Config.modulators.dictionary["envelope speed"].maxRawVol + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                                    instrument.discreteEnvelope = (base64CharCodeToInt[compressed.charCodeAt(charIndex++)]) ? true : false;
+                                }
                                 for (let i = 0; i < envelopeCount; i++) {
                                     const target = clamp(0, Config.instrumentAutomationTargets.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                                     let index = 0;
@@ -16580,8 +21249,10 @@ li.select2-results__option[role=group] > strong:hover {
                                         index = clamp(0, maxCount, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                                     }
                                     let aa = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
-                                    if ((beforeTwo && fromGoldBox) || (!fromGoldBox && !fromUltraBox))
+                                    if ((beforeTwo && fromGoldBox) || (fromBeepBox))
                                         aa = pregoldToEnvelope[aa];
+                                    if (fromJummBox)
+                                        aa = jummToUltraEnvelope[aa];
                                     const envelope = clamp(0, Config.envelopes.length, aa);
                                     instrument.addEnvelope(target, index, envelope);
                                 }
@@ -16608,7 +21279,7 @@ li.select2-results__option[role=group] > strong:hover {
                                 }
                             }
                             else {
-                                for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                                for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                     if (fromJummBox) {
                                         const jummToG = [0, 1, 3, 2, 4, 5];
                                         instrument.operators[o].waveform = jummToG[clamp(0, Config.operatorWaves.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)])];
@@ -17709,8 +22380,10 @@ li.select2-results__option[role=group] > strong:hover {
             this.scale = 0;
             if (jsonObject["scale"] != undefined) {
                 const oldScaleNames = {
-                    "romani :)": "dbl harmonic :)",
-                    "romani :(": "dbl harmonic :(",
+                    "romani :)": "double harmonic :)",
+                    "romani :(": "double harmonic :(",
+                    "dbl harmonic :)": "double harmonic :)",
+                    "dbl harmonic :(": "double harmonic :(",
                     "enigma": "strange",
                 };
                 const scaleName = (oldScaleNames[jsonObject["scale"]] != undefined) ? oldScaleNames[jsonObject["scale"]] : jsonObject["scale"];
@@ -17970,40 +22643,43 @@ li.select2-results__option[role=group] > strong:hover {
     Song._oldestBeepboxVersion = 2;
     Song._latestBeepboxVersion = 9;
     Song._oldestJummBoxVersion = 1;
-    Song._latestJummBoxVersion = 5;
+    Song._latestJummBoxVersion = 6;
     Song._oldestGoldBoxVersion = 1;
     Song._latestGoldBoxVersion = 4;
     Song._oldestUltraBoxVersion = 1;
-    Song._latestUltraBoxVersion = 4;
+    Song._latestUltraBoxVersion = 5;
     Song._variant = 0x75;
     class PickedString {
         constructor() {
             this.delayLine = null;
             this.allPassG = 0.0;
             this.allPassGDelta = 0.0;
-            this.shelfA1 = 0.0;
-            this.shelfA1Delta = 0.0;
-            this.shelfB0 = 0.0;
-            this.shelfB0Delta = 0.0;
-            this.shelfB1 = 0.0;
-            this.shelfB1Delta = 0.0;
+            this.sustainFilterA1 = 0.0;
+            this.sustainFilterA1Delta = 0.0;
+            this.sustainFilterA2 = 0.0;
+            this.sustainFilterA2Delta = 0.0;
+            this.sustainFilterB0 = 0.0;
+            this.sustainFilterB0Delta = 0.0;
+            this.sustainFilterB1 = 0.0;
+            this.sustainFilterB1Delta = 0.0;
+            this.sustainFilterB2 = 0.0;
+            this.sustainFilterB2Delta = 0.0;
             this.reset();
         }
         reset() {
             this.delayIndex = -1;
             this.allPassSample = 0.0;
             this.allPassPrevInput = 0.0;
-            this.shelfSample = 0.0;
-            this.shelfPrevInput = 0.0;
+            this.sustainFilterSample = 0.0;
+            this.sustainFilterPrevOutput2 = 0.0;
+            this.sustainFilterPrevInput1 = 0.0;
+            this.sustainFilterPrevInput2 = 0.0;
             this.fractionalDelaySample = 0.0;
             this.prevDelayLength = -1.0;
             this.delayResetOffset = 0;
         }
-        update(synth, instrumentState, tone, stringIndex, roundedSamplesPerTick, stringDecayStart, stringDecayEnd) {
+        update(synth, instrumentState, tone, stringIndex, roundedSamplesPerTick, stringDecayStart, stringDecayEnd, sustainType) {
             const allPassCenter = 2.0 * Math.PI * Config.pickedStringDispersionCenterFreq / synth.samplesPerSecond;
-            const shelfRadians = 2.0 * Math.PI * Config.pickedStringShelfHz / synth.samplesPerSecond;
-            const decayCurveStart = (Math.pow(100.0, stringDecayStart) - 1.0) / 99.0;
-            const decayCurveEnd = (Math.pow(100.0, stringDecayEnd) - 1.0) / 99.0;
             const prevDelayLength = this.prevDelayLength;
             const phaseDeltaStart = tone.phaseDeltas[stringIndex];
             const phaseDeltaScale = tone.phaseDeltaScales[stringIndex];
@@ -18014,10 +22690,14 @@ li.select2-results__option[role=group] > strong:hover {
             const centerHarmonicEnd = radiansPerSampleEnd * 2.0;
             const allPassRadiansStart = Math.min(Math.PI, radiansPerSampleStart * Config.pickedStringDispersionFreqMult * Math.pow(allPassCenter / radiansPerSampleStart, Config.pickedStringDispersionFreqScale));
             const allPassRadiansEnd = Math.min(Math.PI, radiansPerSampleEnd * Config.pickedStringDispersionFreqMult * Math.pow(allPassCenter / radiansPerSampleEnd, Config.pickedStringDispersionFreqScale));
-            const decayRateStart = Math.pow(0.5, decayCurveStart * shelfRadians / radiansPerSampleStart);
-            const decayRateEnd = Math.pow(0.5, decayCurveEnd * shelfRadians / radiansPerSampleEnd);
-            const shelfGainStart = Math.pow(decayRateStart, Config.stringDecayRate);
-            const shelfGainEnd = Math.pow(decayRateEnd, Config.stringDecayRate);
+            const shelfRadians = 2.0 * Math.PI * Config.pickedStringShelfHz / synth.samplesPerSecond;
+            const decayCurveStart = (Math.pow(100.0, stringDecayStart) - 1.0) / 99.0;
+            const decayCurveEnd = (Math.pow(100.0, stringDecayEnd) - 1.0) / 99.0;
+            const register = sustainType == 1 ? 0.25 : 0.0;
+            const registerShelfCenter = 15.6;
+            const registerLowpassCenter = 3.0 * synth.samplesPerSecond / 48000;
+            const decayRateStart = Math.pow(0.5, decayCurveStart * Math.pow(shelfRadians / (radiansPerSampleStart * registerShelfCenter), (1.0 + 2.0 * register)) * registerShelfCenter);
+            const decayRateEnd = Math.pow(0.5, decayCurveEnd * Math.pow(shelfRadians / (radiansPerSampleEnd * registerShelfCenter), (1.0 + 2.0 * register)) * registerShelfCenter);
             const expressionDecayStart = Math.pow(decayRateStart, 0.002);
             const expressionDecayEnd = Math.pow(decayRateEnd, 0.002);
             Synth.tempFilterStartCoefficients.allPass1stOrderInvertPhaseAbove(allPassRadiansStart);
@@ -18028,33 +22708,57 @@ li.select2-results__option[role=group] > strong:hover {
             synth.tempFrequencyResponse.analyze(Synth.tempFilterEndCoefficients, centerHarmonicEnd);
             const allPassGEnd = Synth.tempFilterEndCoefficients.b[0];
             const allPassPhaseDelayEnd = -synth.tempFrequencyResponse.angle() / centerHarmonicEnd;
-            Synth.tempFilterStartCoefficients.highShelf1stOrder(shelfRadians, shelfGainStart);
+            const brightnessType = sustainType == 0 ? 0 : 1;
+            if (brightnessType == 0) {
+                const shelfGainStart = Math.pow(decayRateStart, Config.stringDecayRate);
+                const shelfGainEnd = Math.pow(decayRateEnd, Config.stringDecayRate);
+                Synth.tempFilterStartCoefficients.highShelf2ndOrder(shelfRadians, shelfGainStart, 0.5);
+                Synth.tempFilterEndCoefficients.highShelf2ndOrder(shelfRadians, shelfGainEnd, 0.5);
+            }
+            else {
+                const cornerHardness = Math.pow(brightnessType == 1 ? 0.0 : 1.0, 0.25);
+                const lowpass1stOrderCutoffRadiansStart = Math.pow(registerLowpassCenter * registerLowpassCenter * radiansPerSampleStart * 3.3 * 48000 / synth.samplesPerSecond, 0.5 + register) / registerLowpassCenter / Math.pow(decayCurveStart, .5);
+                const lowpass1stOrderCutoffRadiansEnd = Math.pow(registerLowpassCenter * registerLowpassCenter * radiansPerSampleEnd * 3.3 * 48000 / synth.samplesPerSecond, 0.5 + register) / registerLowpassCenter / Math.pow(decayCurveEnd, .5);
+                const lowpass2ndOrderCutoffRadiansStart = lowpass1stOrderCutoffRadiansStart * Math.pow(2.0, 0.5 - 1.75 * (1.0 - Math.pow(1.0 - cornerHardness, 0.85)));
+                const lowpass2ndOrderCutoffRadiansEnd = lowpass1stOrderCutoffRadiansEnd * Math.pow(2.0, 0.5 - 1.75 * (1.0 - Math.pow(1.0 - cornerHardness, 0.85)));
+                const lowpass2ndOrderGainStart = Math.pow(2.0, -Math.pow(2.0, -Math.pow(cornerHardness, 0.9)));
+                const lowpass2ndOrderGainEnd = Math.pow(2.0, -Math.pow(2.0, -Math.pow(cornerHardness, 0.9)));
+                Synth.tempFilterStartCoefficients.lowPass2ndOrderButterworth(warpInfinityToNyquist(lowpass2ndOrderCutoffRadiansStart), lowpass2ndOrderGainStart);
+                Synth.tempFilterEndCoefficients.lowPass2ndOrderButterworth(warpInfinityToNyquist(lowpass2ndOrderCutoffRadiansEnd), lowpass2ndOrderGainEnd);
+            }
             synth.tempFrequencyResponse.analyze(Synth.tempFilterStartCoefficients, centerHarmonicStart);
-            const shelfA1Start = Synth.tempFilterStartCoefficients.a[1];
-            const shelfB0Start = Synth.tempFilterStartCoefficients.b[0] * expressionDecayStart;
-            const shelfB1Start = Synth.tempFilterStartCoefficients.b[1] * expressionDecayStart;
-            const shelfPhaseDelayStart = -synth.tempFrequencyResponse.angle() / centerHarmonicStart;
-            Synth.tempFilterEndCoefficients.highShelf1stOrder(shelfRadians, shelfGainEnd);
+            const sustainFilterA1Start = Synth.tempFilterStartCoefficients.a[1];
+            const sustainFilterA2Start = Synth.tempFilterStartCoefficients.a[2];
+            const sustainFilterB0Start = Synth.tempFilterStartCoefficients.b[0] * expressionDecayStart;
+            const sustainFilterB1Start = Synth.tempFilterStartCoefficients.b[1] * expressionDecayStart;
+            const sustainFilterB2Start = Synth.tempFilterStartCoefficients.b[2] * expressionDecayStart;
+            const sustainFilterPhaseDelayStart = -synth.tempFrequencyResponse.angle() / centerHarmonicStart;
             synth.tempFrequencyResponse.analyze(Synth.tempFilterEndCoefficients, centerHarmonicEnd);
-            const shelfA1End = Synth.tempFilterEndCoefficients.a[1];
-            const shelfB0End = Synth.tempFilterEndCoefficients.b[0] * expressionDecayEnd;
-            const shelfB1End = Synth.tempFilterEndCoefficients.b[1] * expressionDecayEnd;
-            const shelfPhaseDelayEnd = -synth.tempFrequencyResponse.angle() / centerHarmonicEnd;
+            const sustainFilterA1End = Synth.tempFilterEndCoefficients.a[1];
+            const sustainFilterA2End = Synth.tempFilterEndCoefficients.a[2];
+            const sustainFilterB0End = Synth.tempFilterEndCoefficients.b[0] * expressionDecayEnd;
+            const sustainFilterB1End = Synth.tempFilterEndCoefficients.b[1] * expressionDecayEnd;
+            const sustainFilterB2End = Synth.tempFilterEndCoefficients.b[2] * expressionDecayEnd;
+            const sustainFilterPhaseDelayEnd = -synth.tempFrequencyResponse.angle() / centerHarmonicEnd;
             const periodLengthStart = 1.0 / phaseDeltaStart;
             const periodLengthEnd = 1.0 / phaseDeltaEnd;
             const minBufferLength = Math.ceil(Math.max(periodLengthStart, periodLengthEnd) * 2);
-            const delayLength = periodLengthStart - allPassPhaseDelayStart - shelfPhaseDelayStart;
-            const delayLengthEnd = periodLengthEnd - allPassPhaseDelayEnd - shelfPhaseDelayEnd;
+            const delayLength = periodLengthStart - allPassPhaseDelayStart - sustainFilterPhaseDelayStart;
+            const delayLengthEnd = periodLengthEnd - allPassPhaseDelayEnd - sustainFilterPhaseDelayEnd;
             this.prevDelayLength = delayLength;
             this.delayLengthDelta = (delayLengthEnd - delayLength) / roundedSamplesPerTick;
             this.allPassG = allPassGStart;
-            this.shelfA1 = shelfA1Start;
-            this.shelfB0 = shelfB0Start;
-            this.shelfB1 = shelfB1Start;
+            this.sustainFilterA1 = sustainFilterA1Start;
+            this.sustainFilterA2 = sustainFilterA2Start;
+            this.sustainFilterB0 = sustainFilterB0Start;
+            this.sustainFilterB1 = sustainFilterB1Start;
+            this.sustainFilterB2 = sustainFilterB2Start;
             this.allPassGDelta = (allPassGEnd - allPassGStart) / roundedSamplesPerTick;
-            this.shelfA1Delta = (shelfA1End - shelfA1Start) / roundedSamplesPerTick;
-            this.shelfB0Delta = (shelfB0End - shelfB0Start) / roundedSamplesPerTick;
-            this.shelfB1Delta = (shelfB1End - shelfB1Start) / roundedSamplesPerTick;
+            this.sustainFilterA1Delta = (sustainFilterA1End - sustainFilterA1Start) / roundedSamplesPerTick;
+            this.sustainFilterA2Delta = (sustainFilterA2End - sustainFilterA2Start) / roundedSamplesPerTick;
+            this.sustainFilterB0Delta = (sustainFilterB0End - sustainFilterB0Start) / roundedSamplesPerTick;
+            this.sustainFilterB1Delta = (sustainFilterB1End - sustainFilterB1Start) / roundedSamplesPerTick;
+            this.sustainFilterB2Delta = (sustainFilterB2End - sustainFilterB2Start) / roundedSamplesPerTick;
             const pitchChanged = Math.abs(Math.log2(delayLength / prevDelayLength)) > 0.01;
             const reinitializeImpulse = (this.delayIndex == -1 || pitchChanged);
             if (this.delayLine == null || this.delayLine.length <= minBufferLength) {
@@ -18076,8 +22780,10 @@ li.select2-results__option[role=group] > strong:hover {
                 this.delayIndex = 0;
                 this.allPassSample = 0.0;
                 this.allPassPrevInput = 0.0;
-                this.shelfSample = 0.0;
-                this.shelfPrevInput = 0.0;
+                this.sustainFilterSample = 0.0;
+                this.sustainFilterPrevOutput2 = 0.0;
+                this.sustainFilterPrevInput1 = 0.0;
+                this.sustainFilterPrevInput2 = 0.0;
                 this.fractionalDelaySample = 0.0;
                 const startImpulseFrom = -delayLength;
                 const startZerosFrom = Math.floor(startImpulseFrom - periodLengthStart / 2);
@@ -18158,7 +22864,8 @@ li.select2-results__option[role=group] > strong:hover {
             this._prevNoteSizeFinal = Config.noteSizeMax;
             this._modifiedEnvelopeCount = 0;
         }
-        computeEnvelopes(instrument, currentPart, tickTimeStart, secondsPerTick, tone) {
+        computeEnvelopes(instrument, currentPart, tickTimeStart, tickTimeStartReal, secondsPerTick, tone, timeScale) {
+            secondsPerTick *= timeScale;
             const transition = instrument.getTransition();
             if (tone != null && tone.atNoteStart && !transition.continues && !tone.forceContinueAtStart) {
                 this.prevNoteSecondsEnd = this.noteSecondsEnd;
@@ -18175,7 +22882,8 @@ li.select2-results__option[role=group] > strong:hover {
                     this._noteSizeFinal = Config.noteSizeMax;
                 }
             }
-            const tickTimeEnd = tickTimeStart + 1.0;
+            const tickTimeEnd = tickTimeStart + timeScale;
+            const tickTimeEndReal = tickTimeStartReal + 1.0;
             const noteSecondsStart = this.noteSecondsEnd;
             const noteSecondsEnd = noteSecondsStart + secondsPerTick;
             const noteTicksStart = this.noteTicksEnd;
@@ -18205,8 +22913,8 @@ li.select2-results__option[role=group] > strong:hover {
                 const endPin = tone.note.pins[endPinIndex];
                 const startPinTick = (tone.note.start + startPin.time) * Config.ticksPerPart;
                 const endPinTick = (tone.note.start + endPin.time) * Config.ticksPerPart;
-                const ratioStart = (tickTimeStart - startPinTick) / (endPinTick - startPinTick);
-                const ratioEnd = (tickTimeEnd - startPinTick) / (endPinTick - startPinTick);
+                const ratioStart = (tickTimeStartReal - startPinTick) / (endPinTick - startPinTick);
+                const ratioEnd = (tickTimeEndReal - startPinTick) / (endPinTick - startPinTick);
                 noteSizeStart = startPin.size + (endPin.size - startPin.size) * ratioStart;
                 noteSizeEnd = startPin.size + (endPin.size - startPin.size) * ratioEnd;
                 if (transition.slides) {
@@ -18216,24 +22924,24 @@ li.select2-results__option[role=group] > strong:hover {
                     const maximumSlideTicks = noteLengthTicks * 0.5;
                     const slideTicks = Math.min(maximumSlideTicks, transition.slideTicks);
                     if (tone.prevNote != null && !tone.forceContinueAtStart) {
-                        if (tickTimeStart - noteStartTick < slideTicks) {
+                        if (tickTimeStartReal - noteStartTick < slideTicks) {
                             prevSlideStart = true;
-                            prevSlideRatioStart = 0.5 * (1.0 - (tickTimeStart - noteStartTick) / slideTicks);
+                            prevSlideRatioStart = 0.5 * (1.0 - (tickTimeStartReal - noteStartTick) / slideTicks);
                         }
-                        if (tickTimeEnd - noteStartTick < slideTicks) {
+                        if (tickTimeEndReal - noteStartTick < slideTicks) {
                             prevSlideEnd = true;
-                            prevSlideRatioEnd = 0.5 * (1.0 - (tickTimeEnd - noteStartTick) / slideTicks);
+                            prevSlideRatioEnd = 0.5 * (1.0 - (tickTimeEndReal - noteStartTick) / slideTicks);
                         }
                     }
                     if (tone.nextNote != null && !tone.forceContinueAtEnd) {
                         nextNoteSize = tone.nextNote.pins[0].size;
-                        if (noteEndTick - tickTimeStart < slideTicks) {
+                        if (noteEndTick - tickTimeStartReal < slideTicks) {
                             nextSlideStart = true;
-                            nextSlideRatioStart = 0.5 * (1.0 - (noteEndTick - tickTimeStart) / slideTicks);
+                            nextSlideRatioStart = 0.5 * (1.0 - (noteEndTick - tickTimeStartReal) / slideTicks);
                         }
-                        if (noteEndTick - tickTimeEnd < slideTicks) {
+                        if (noteEndTick - tickTimeEndReal < slideTicks) {
                             nextSlideEnd = true;
-                            nextSlideRatioEnd = 0.5 * (1.0 - (noteEndTick - tickTimeEnd) / slideTicks);
+                            nextSlideRatioEnd = 0.5 * (1.0 - (noteEndTick - tickTimeEndReal) / slideTicks);
                         }
                     }
                 }
@@ -18262,22 +22970,25 @@ li.select2-results__option[role=group] > strong:hover {
                 if (automationTarget.computeIndex != null) {
                     const computeIndex = automationTarget.computeIndex + targetIndex;
                     let envelopeStart = EnvelopeComputer.computeEnvelope(envelope, noteSecondsStart, beatTimeStart, noteSizeStart);
-                    let envelopeEnd = EnvelopeComputer.computeEnvelope(envelope, noteSecondsEnd, beatTimeEnd, noteSizeEnd);
                     if (prevSlideStart) {
                         const other = EnvelopeComputer.computeEnvelope(envelope, prevNoteSecondsStart, beatTimeStart, prevNoteSize);
                         envelopeStart += (other - envelopeStart) * prevSlideRatioStart;
-                    }
-                    if (prevSlideEnd) {
-                        const other = EnvelopeComputer.computeEnvelope(envelope, prevNoteSecondsEnd, beatTimeEnd, prevNoteSize);
-                        envelopeEnd += (other - envelopeEnd) * prevSlideRatioEnd;
                     }
                     if (nextSlideStart) {
                         const other = EnvelopeComputer.computeEnvelope(envelope, 0.0, beatTimeStart, nextNoteSize);
                         envelopeStart += (other - envelopeStart) * nextSlideRatioStart;
                     }
-                    if (nextSlideEnd) {
-                        const other = EnvelopeComputer.computeEnvelope(envelope, 0.0, beatTimeEnd, nextNoteSize);
-                        envelopeEnd += (other - envelopeEnd) * nextSlideRatioEnd;
+                    let envelopeEnd = envelopeStart;
+                    if (instrument.discreteEnvelope == false) {
+                        envelopeEnd = EnvelopeComputer.computeEnvelope(envelope, noteSecondsEnd, beatTimeEnd, noteSizeEnd);
+                        if (prevSlideEnd) {
+                            const other = EnvelopeComputer.computeEnvelope(envelope, prevNoteSecondsEnd, beatTimeEnd, prevNoteSize);
+                            envelopeEnd += (other - envelopeEnd) * prevSlideRatioEnd;
+                        }
+                        if (nextSlideEnd) {
+                            const other = EnvelopeComputer.computeEnvelope(envelope, 0.0, beatTimeEnd, nextNoteSize);
+                            envelopeEnd += (other - envelopeEnd) * nextSlideRatioEnd;
+                        }
                     }
                     this.envelopeStarts[computeIndex] *= envelopeStart;
                     this.envelopeEnds[computeIndex] *= envelopeEnd;
@@ -18333,6 +23044,7 @@ li.select2-results__option[role=group] > strong:hover {
                     const attack = 0.25 / Math.sqrt(envelope.speed);
                     return time < attack ? time / attack : 1.0 / (1.0 + (time - attack) * envelope.speed);
                 case 8: return Math.pow(2, -envelope.speed * time);
+                case 13: return 1.0 * +(time < (0.25 / Math.sqrt(envelope.speed)));
                 case 9:
                     let temp = 0.5 - Math.cos(beats * envelope.speed) * 0.5;
                     temp = 1.0 / (1.0 + time * (envelope.speed - (temp / (1.5 / envelope.speed))));
@@ -18499,6 +23211,10 @@ li.select2-results__option[role=group] > strong:hover {
             this.effects = 0;
             this.volumeScale = 0;
             this.aliases = false;
+            this.arpTime = 0;
+            this.vibratoTime = 0;
+            this.nextVibratoTime = 0;
+            this.envelopeTime = 0;
             this.eqFilterVolume = 1.0;
             this.eqFilterVolumeDelta = 0.0;
             this.mixVolume = 1.0;
@@ -18669,6 +23385,10 @@ li.select2-results__option[role=group] > strong:hover {
         }
         resetAllEffects() {
             this.deactivate();
+            this.vibratoTime = 0;
+            this.nextVibratoTime = 0;
+            this.arpTime = 0;
+            this.envelopeTime = 0;
             if (this.chorusDelayLineDirty) {
                 for (let i = 0; i < this.chorusDelayLineL.length; i++)
                     this.chorusDelayLineL[i] = 0.0;
@@ -19032,7 +23752,7 @@ li.select2-results__option[role=group] > strong:hover {
                 this.unisonExpression = instrument.unisonExpression;
                 this.unisonSign = instrument.unisonSign;
             }
-            else if (instrument.type == 8) {
+            else if (instrument.type == 9) {
                 this.wave = (this.aliases) ? instrument.customChipWave : instrument.customChipWaveIntegral;
                 this.volumeScale = 0.05;
                 this.unisonVoices = instrument.unisonVoices;
@@ -19119,6 +23839,19 @@ li.select2-results__option[role=group] > strong:hover {
                 }
             }
         }
+        initModFilters(song) {
+            if (song != null) {
+                for (let channelIndex = 0; channelIndex < song.getChannelCount(); channelIndex++) {
+                    for (let instrumentIndex = 0; instrumentIndex < song.channels[channelIndex].instruments.length; instrumentIndex++) {
+                        const instrument = song.channels[channelIndex].instruments[instrumentIndex];
+                        instrument.tmpEqFilterStart = instrument.eqFilter;
+                        instrument.tmpEqFilterEnd = null;
+                        instrument.tmpNoteFilterStart = instrument.noteFilter;
+                        instrument.tmpNoteFilterEnd = null;
+                    }
+                }
+            }
+        }
         warmUpSynthesizer(song) {
             if (song != null) {
                 this.syncSongState();
@@ -19128,13 +23861,10 @@ li.select2-results__option[role=group] > strong:hover {
                         const instrument = song.channels[channelIndex].instruments[instrumentIndex];
                         const instrumentState = this.channels[channelIndex].instruments[instrumentIndex];
                         Synth.getInstrumentSynthFunction(instrument);
-                        instrument.LFOtime = 0;
-                        instrument.nextLFOtime = 0;
-                        instrument.arpTime = 0;
-                        instrument.tmpEqFilterStart = instrument.eqFilter;
-                        instrument.tmpEqFilterEnd = null;
-                        instrument.tmpNoteFilterStart = instrument.noteFilter;
-                        instrument.tmpNoteFilterEnd = null;
+                        instrumentState.vibratoTime = 0;
+                        instrumentState.nextVibratoTime = 0;
+                        instrumentState.envelopeTime = 0;
+                        instrumentState.arpTime = 0;
                         instrumentState.updateWaves(instrument, this.samplesPerSecond);
                         instrumentState.allocateNecessaryBuffers(this, instrument, samplesPerTick);
                     }
@@ -19153,6 +23883,7 @@ li.select2-results__option[role=group] > strong:hover {
                 this.nextModValues = [];
                 this.modInsValues = [];
                 this.nextModInsValues = [];
+                this.heldMods = [];
                 for (let channel = 0; channel < this.song.pitchChannelCount + this.song.noiseChannelCount; channel++) {
                     latestModInsTimes[channel] = [];
                     this.modInsValues[channel] = [];
@@ -19178,7 +23909,11 @@ li.select2-results__option[role=group] > strong:hover {
                                     ? currentPart
                                     : this.findPartsInBar(currentBar);
                                 for (const note of pattern.notes) {
-                                    if (note.start < partsInBar && (latestPinParts[Config.modCount - 1 - note.pitches[0]] == null || note.end > latestPinParts[Config.modCount - 1 - note.pitches[0]])) {
+                                    if (note.start <= partsInBar && (latestPinParts[Config.modCount - 1 - note.pitches[0]] == null || note.end > latestPinParts[Config.modCount - 1 - note.pitches[0]])) {
+                                        if (note.start == partsInBar) {
+                                            latestPinParts[Config.modCount - 1 - note.pitches[0]] = note.start;
+                                            latestPinValues[Config.modCount - 1 - note.pitches[0]] = note.pins[0].size;
+                                        }
                                         if (note.end <= partsInBar) {
                                             latestPinParts[Config.modCount - 1 - note.pitches[0]] = note.end;
                                             latestPinValues[Config.modCount - 1 - note.pitches[0]] = note.pins[note.pins.length - 1].size;
@@ -19201,7 +23936,7 @@ li.select2-results__option[role=group] > strong:hover {
                                     if (latestPinParts[mod] != null) {
                                         if (Config.modulators[instrument.modulators[mod]].forSong) {
                                             if (latestModTimes[instrument.modulators[mod]] == null || currentBar * Config.partsPerBeat * this.song.beatsPerBar + latestPinParts[mod] > latestModTimes[instrument.modulators[mod]]) {
-                                                this.setModValue(latestPinValues[mod], latestPinValues[mod], mod, instrument.modChannels[mod], instrument.modInstruments[mod], instrument.modulators[mod]);
+                                                this.setModValue(latestPinValues[mod], latestPinValues[mod], instrument.modChannels[mod], instrument.modInstruments[mod], instrument.modulators[mod]);
                                                 latestModTimes[instrument.modulators[mod]] = currentBar * Config.partsPerBeat * this.song.beatsPerBar + latestPinParts[mod];
                                             }
                                         }
@@ -19225,10 +23960,10 @@ li.select2-results__option[role=group] > strong:hover {
                                                 const noteFilterParam = instrument.modulators[mod] == Config.modulators.dictionary["note filter"].index;
                                                 let modulatorAdjust = instrument.modulators[mod];
                                                 if (eqFilterParam) {
-                                                    modulatorAdjust = Config.modulators.length + instrument.modFilterTypes[mod];
+                                                    modulatorAdjust = Config.modulators.length + (instrument.modFilterTypes[mod] | 0);
                                                 }
                                                 else if (noteFilterParam) {
-                                                    modulatorAdjust = Config.modulators.length + 1 + (2 * Config.filterMaxPoints) + instrument.modFilterTypes[mod];
+                                                    modulatorAdjust = Config.modulators.length + 1 + (2 * Config.filterMaxPoints) + (instrument.modFilterTypes[mod] | 0);
                                                 }
                                                 if (latestModInsTimes[instrument.modChannels[mod]][usedInstruments[instrumentIndex]][modulatorAdjust] == null
                                                     || currentBar * Config.partsPerBeat * this.song.beatsPerBar + latestPinParts[mod] > latestModInsTimes[instrument.modChannels[mod]][usedInstruments[instrumentIndex]][modulatorAdjust]) {
@@ -19239,13 +23974,13 @@ li.select2-results__option[role=group] > strong:hover {
                                                         }
                                                         else {
                                                             for (let i = 0; i < Config.filterMorphCount; i++) {
-                                                                if (tgtInstrument.tmpEqFilterStart == tgtInstrument.eqSubFilters[i]) {
+                                                                if (tgtInstrument.tmpEqFilterStart != null && tgtInstrument.tmpEqFilterStart == tgtInstrument.eqSubFilters[i]) {
                                                                     tgtInstrument.tmpEqFilterStart = new FilterSettings();
                                                                     tgtInstrument.tmpEqFilterStart.fromJsonObject(tgtInstrument.eqSubFilters[i].toJsonObject());
                                                                     i = Config.filterMorphCount;
                                                                 }
                                                             }
-                                                            if (Math.floor((instrument.modFilterTypes[mod] - 1) / 2) < tgtInstrument.tmpEqFilterStart.controlPointCount) {
+                                                            if (tgtInstrument.tmpEqFilterStart != null && Math.floor((instrument.modFilterTypes[mod] - 1) / 2) < tgtInstrument.tmpEqFilterStart.controlPointCount) {
                                                                 if (instrument.modFilterTypes[mod] % 2)
                                                                     tgtInstrument.tmpEqFilterStart.controlPoints[Math.floor((instrument.modFilterTypes[mod] - 1) / 2)].freq = latestPinValues[mod];
                                                                 else
@@ -19261,13 +23996,13 @@ li.select2-results__option[role=group] > strong:hover {
                                                         }
                                                         else {
                                                             for (let i = 0; i < Config.filterMorphCount; i++) {
-                                                                if (tgtInstrument.tmpNoteFilterStart == tgtInstrument.noteSubFilters[i]) {
+                                                                if (tgtInstrument.tmpNoteFilterStart != null && tgtInstrument.tmpNoteFilterStart == tgtInstrument.noteSubFilters[i]) {
                                                                     tgtInstrument.tmpNoteFilterStart = new FilterSettings();
                                                                     tgtInstrument.tmpNoteFilterStart.fromJsonObject(tgtInstrument.noteSubFilters[i].toJsonObject());
                                                                     i = Config.filterMorphCount;
                                                                 }
                                                             }
-                                                            if (Math.floor((instrument.modFilterTypes[mod] - 1) / 2) < tgtInstrument.tmpNoteFilterStart.controlPointCount) {
+                                                            if (tgtInstrument.tmpNoteFilterStart != null && Math.floor((instrument.modFilterTypes[mod] - 1) / 2) < tgtInstrument.tmpNoteFilterStart.controlPointCount) {
                                                                 if (instrument.modFilterTypes[mod] % 2)
                                                                     tgtInstrument.tmpNoteFilterStart.controlPoints[Math.floor((instrument.modFilterTypes[mod] - 1) / 2)].freq = latestPinValues[mod];
                                                                 else
@@ -19277,7 +24012,7 @@ li.select2-results__option[role=group] > strong:hover {
                                                         tgtInstrument.tmpNoteFilterEnd = tgtInstrument.tmpNoteFilterStart;
                                                     }
                                                     else
-                                                        this.setModValue(latestPinValues[mod], latestPinValues[mod], mod, instrument.modChannels[mod], usedInstruments[instrumentIndex], modulatorAdjust);
+                                                        this.setModValue(latestPinValues[mod], latestPinValues[mod], instrument.modChannels[mod], usedInstruments[instrumentIndex], modulatorAdjust);
                                                     latestModInsTimes[instrument.modChannels[mod]][usedInstruments[instrumentIndex]][modulatorAdjust] = currentBar * Config.partsPerBeat * this.song.beatsPerBar + latestPinParts[mod];
                                                 }
                                             }
@@ -19316,16 +24051,17 @@ li.select2-results__option[role=group] > strong:hover {
                         continue;
                     const str = Config.modulators[instrument.modulators[mod]].name;
                     if (!((Config.modulators[instrument.modulators[mod]].associatedEffect != 12 && !(tgtInstrument.effects & (1 << Config.modulators[instrument.modulators[mod]].associatedEffect)))
-                        || ((tgtInstrument.type != 1 && tgtInstrument.type != 10) && (str == "fm slider 1" || str == "fm slider 2" || str == "fm slider 3" || str == "fm slider 4" || str == "fm feedback"))
-                        || ((tgtInstrument.type != 6 && tgtInstrument.type != 11) && (str == "pulse width"))
-                        || tgtInstrument.type != 10 && (str == "fm slider 5" || str == "fm slider 6")
+                        || ((tgtInstrument.type != 1 && tgtInstrument.type != 11) && (str == "fm slider 1" || str == "fm slider 2" || str == "fm slider 3" || str == "fm slider 4" || str == "fm feedback"))
+                        || tgtInstrument.type != 11 && (str == "fm slider 5" || str == "fm slider 6")
+                        || ((tgtInstrument.type != 6 && tgtInstrument.type != 8) && (str == "pulse width" || str == "decimal offset"))
+                        || ((tgtInstrument.type != 8) && (str == "dynamism" || str == "spread" || str == "saw shape"))
                         || (!tgtInstrument.getChord().arpeggiates && (str == "arp speed" || str == "reset arp"))
                         || (tgtInstrument.eqFilterType && str == "eq filter")
                         || (!tgtInstrument.eqFilterType && (str == "eq filt cut" || str == "eq filt peak"))
-                        || (str == "eq filter" && Math.floor((instrument.modFilterTypes[mod] + 1) / 2) > tgtInstrument.eqFilter.controlPointCount)
+                        || (str == "eq filter" && Math.floor((instrument.modFilterTypes[mod] + 1) / 2) > tgtInstrument.getLargestControlPointCount(false))
                         || (tgtInstrument.noteFilterType && str == "note filter")
                         || (!tgtInstrument.noteFilterType && (str == "note filt cut" || str == "note filt peak"))
-                        || (str == "note filter" && Math.floor((instrument.modFilterTypes[mod] + 1) / 2) > tgtInstrument.noteFilter.controlPointCount))) {
+                        || (str == "note filter" && Math.floor((instrument.modFilterTypes[mod] + 1) / 2) > tgtInstrument.getLargestControlPointCount(true)))) {
                         instrument.invalidModulators[mod] = false;
                         i = tgtInstrumentList.length;
                     }
@@ -19401,7 +24137,7 @@ li.select2-results__option[role=group] > strong:hover {
             let hasTempoMods = false;
             let hasNextBarMods = false;
             let prevTempo = this.song.tempo;
-            for (let channel = this.song.pitchChannelCount + this.song.noiseChannelCount; channel < this.song.getChannelCount(); channel++) {
+            for (let channel = this.song.getChannelCount() - 1; channel >= this.song.pitchChannelCount + this.song.noiseChannelCount; channel--) {
                 for (let bar = startBar; bar < endBar; bar++) {
                     let pattern = this.song.getPattern(channel, bar);
                     if (pattern != null) {
@@ -19421,7 +24157,7 @@ li.select2-results__option[role=group] > strong:hover {
                 let latestTempoPin = null;
                 let latestTempoValue = 0;
                 for (let bar = startBar - 1; bar >= 0; bar--) {
-                    for (let channel = this.song.pitchChannelCount + this.song.noiseChannelCount; channel < this.song.getChannelCount(); channel++) {
+                    for (let channel = this.song.getChannelCount() - 1; channel >= this.song.pitchChannelCount + this.song.noiseChannelCount; channel--) {
                         let pattern = this.song.getPattern(channel, bar);
                         if (pattern != null) {
                             let instrumentIdx = pattern.instruments[0];
@@ -19469,7 +24205,7 @@ li.select2-results__option[role=group] > strong:hover {
                     }
                     if (hasTempoMods) {
                         let foundMod = false;
-                        for (let channel = this.song.pitchChannelCount + this.song.noiseChannelCount; channel < this.song.getChannelCount(); channel++) {
+                        for (let channel = this.song.getChannelCount() - 1; channel >= this.song.pitchChannelCount + this.song.noiseChannelCount; channel--) {
                             if (foundMod == false) {
                                 let pattern = this.song.getPattern(channel, bar);
                                 if (pattern != null) {
@@ -19544,10 +24280,15 @@ li.select2-results__option[role=group] > strong:hover {
             this.preferLowerLatency = false;
             this.anticipatePoorPerformance = false;
             this.liveInputDuration = 0;
+            this.liveBassInputDuration = 0;
             this.liveInputStarted = false;
+            this.liveBassInputStarted = false;
             this.liveInputPitches = [];
+            this.liveBassInputPitches = [];
             this.liveInputChannel = 0;
+            this.liveBassInputChannel = 0;
             this.liveInputInstruments = [];
+            this.liveBassInputInstruments = [];
             this.loopRepeatCount = -1;
             this.volume = 1.0;
             this.oscRefreshEventTimer = 0;
@@ -19555,6 +24296,7 @@ li.select2-results__option[role=group] > strong:hover {
             this.enableMetronome = false;
             this.countInMetronome = false;
             this.renderingSong = false;
+            this.heldMods = [];
             this.wantToSkip = false;
             this.playheadInternal = 0.0;
             this.bar = 0;
@@ -19576,6 +24318,7 @@ li.select2-results__option[role=group] > strong:hover {
             this.browserAutomaticallyClearsAudioBuffer = true;
             this.tempDrumSetControlPoint = new FilterControlPoint();
             this.tempFrequencyResponse = new FrequencyResponse();
+            this.loopBar = -1;
             this.channels = [];
             this.tonePool = new Deque();
             this.tempMatchedPitchTones = Array(Config.maxChordSize).fill(null);
@@ -19670,10 +24413,11 @@ li.select2-results__option[role=group] > strong:hover {
         play() {
             if (this.isPlayingSong)
                 return;
+            this.initModFilters(this.song);
             this.computeLatestModValues();
+            this.activateAudio();
             this.warmUpSynthesizer(this.song);
             this.isPlayingSong = true;
-            this.activateAudio();
         }
         pause() {
             if (!this.isPlayingSong)
@@ -19682,6 +24426,7 @@ li.select2-results__option[role=group] > strong:hover {
             this.isRecording = false;
             this.modValues = [];
             this.nextModValues = [];
+            this.heldMods = [];
             if (this.song != null) {
                 this.song.inVolumeCap = 0.0;
                 this.song.outVolumeCap = 0.0;
@@ -19707,7 +24452,7 @@ li.select2-results__option[role=group] > strong:hover {
                 }
             }
         }
-        setModValue(volumeStart, volumeEnd, mod, channelIndex, instrumentIndex, setting) {
+        setModValue(volumeStart, volumeEnd, channelIndex, instrumentIndex, setting) {
             let val = volumeStart + Config.modulators[setting].convertRealFactor;
             let nextVal = volumeEnd + Config.modulators[setting].convertRealFactor;
             if (Config.modulators[setting].optionalModify == "invert-0to50") {
@@ -19761,6 +24506,16 @@ li.select2-results__option[role=group] > strong:hover {
             if (this.isModActive(setting) || (channel != undefined && instrument != undefined && this.isModActive(setting, channel, instrument))) {
                 this.modValues[setting] = null;
                 this.nextModValues[setting] = null;
+                for (let i = 0; i < this.heldMods.length; i++) {
+                    if (channel != undefined && instrument != undefined) {
+                        if (this.heldMods[i].channelIndex == channel && this.heldMods[i].instrumentIndex == instrument && this.heldMods[i].setting == setting)
+                            this.heldMods.splice(i, 1);
+                    }
+                    else {
+                        if (this.heldMods[i].setting == setting)
+                            this.heldMods.splice(i, 1);
+                    }
+                }
                 if (channel != undefined && instrument != undefined) {
                     this.modInsValues[channel][instrument][setting] = null;
                     this.nextModInsValues[channel][instrument][setting] = null;
@@ -19792,6 +24547,18 @@ li.select2-results__option[role=group] > strong:hover {
                 return (this.modInsValues[channel][instrument][setting] != null);
             }
             return false;
+        }
+        forceHoldMods(volumeStart, channelIndex, instrumentIndex, setting) {
+            let found = false;
+            for (let i = 0; i < this.heldMods.length; i++) {
+                if (this.heldMods[i].channelIndex == channelIndex && this.heldMods[i].instrumentIndex == instrumentIndex && this.heldMods[i].setting == setting) {
+                    this.heldMods[i].volume = volumeStart;
+                    this.heldMods[i].holdFor = 24;
+                    found = true;
+                }
+            }
+            if (!found)
+                this.heldMods.push({ volume: volumeStart, channelIndex: channelIndex, instrumentIndex: instrumentIndex, setting: setting, holdFor: 24 });
         }
         snapToStart() {
             this.bar = 0;
@@ -19853,6 +24620,9 @@ li.select2-results__option[role=group] > strong:hover {
                 if (nextBar >= this.song.barCount) {
                     nextBar = this.song.barCount - 1;
                 }
+            }
+            else if (this.bar == this.loopBar && !this.renderingSong) {
+                nextBar = this.bar;
             }
             else if (this.loopRepeatCount != 0 && nextBar == this.song.loopStart + this.song.loopLength) {
                 nextBar = this.song.loopStart;
@@ -19918,8 +24688,8 @@ li.select2-results__option[role=group] > strong:hover {
                 this.tempMonoInstrumentSampleBuffer = new Float32Array(outputBufferLength);
             }
             const volume = +this.volume;
-            const limitDecay = 1.0 - Math.pow(0.5, 4.0 / this.samplesPerSecond);
-            const limitRise = 1.0 - Math.pow(0.5, 4000.0 / this.samplesPerSecond);
+            const limitDecay = 1.0 - Math.pow(0.5, this.song.limitDecay / this.samplesPerSecond);
+            const limitRise = 1.0 - Math.pow(0.5, this.song.limitRise / this.samplesPerSecond);
             let limit = +this.limit;
             let skippedBars = [];
             let firstSkippedBufferIndex = -1;
@@ -19941,7 +24711,33 @@ li.select2-results__option[role=group] > strong:hover {
                             const instrumentState = channelState.instruments[instrumentIndex];
                             for (let i = 0; i < instrumentState.activeModTones.count(); i++) {
                                 const tone = instrumentState.activeModTones.get(i);
+                                const channel = song.channels[channelIndex];
+                                const instrument = channel.instruments[tone.instrumentIndex];
+                                let mod = Config.modCount - 1 - tone.pitches[0];
+                                if ((instrument.modulators[mod] == Config.modulators.dictionary["note filter"].index
+                                    || instrument.modulators[mod] == Config.modulators.dictionary["eq filter"].index)
+                                    && instrument.modFilterTypes[mod] != null && instrument.modFilterTypes[mod] > 0) {
+                                    continue;
+                                }
                                 this.playModTone(song, channelIndex, samplesPerTick, bufferIndex, runLength, tone, false, false);
+                            }
+                        }
+                    }
+                    for (let channelIndex = song.pitchChannelCount + song.noiseChannelCount; channelIndex < song.getChannelCount(); channelIndex++) {
+                        const channel = song.channels[channelIndex];
+                        const channelState = this.channels[channelIndex];
+                        for (let instrumentIndex = 0; instrumentIndex < channel.instruments.length; instrumentIndex++) {
+                            const instrumentState = channelState.instruments[instrumentIndex];
+                            for (let i = 0; i < instrumentState.activeModTones.count(); i++) {
+                                const tone = instrumentState.activeModTones.get(i);
+                                const channel = song.channels[channelIndex];
+                                const instrument = channel.instruments[tone.instrumentIndex];
+                                let mod = Config.modCount - 1 - tone.pitches[0];
+                                if ((instrument.modulators[mod] == Config.modulators.dictionary["note filter"].index
+                                    || instrument.modulators[mod] == Config.modulators.dictionary["eq filter"].index)
+                                    && instrument.modFilterTypes[mod] != null && instrument.modFilterTypes[mod] > 0) {
+                                    this.playModTone(song, channelIndex, samplesPerTick, bufferIndex, runLength, tone, false, false);
+                                }
                             }
                         }
                     }
@@ -20013,16 +24809,16 @@ li.select2-results__option[role=group] > strong:hover {
                         const partTimeStart = partTimeTickStart + (partTimeTickEnd - partTimeTickStart) * startRatio;
                         const partTimeEnd = partTimeTickStart + (partTimeTickEnd - partTimeTickStart) * endRatio;
                         let useVibratoSpeed = instrument.vibratoSpeed;
-                        instrument.LFOtime = instrument.nextLFOtime;
+                        instrumentState.vibratoTime = instrumentState.nextVibratoTime;
                         if (this.isModActive(Config.modulators.dictionary["vibrato speed"].index, channelIndex, instrumentIndex)) {
                             useVibratoSpeed = this.getModValue(Config.modulators.dictionary["vibrato speed"].index, channelIndex, instrumentIndex);
                         }
                         if (useVibratoSpeed == 0) {
-                            instrument.LFOtime = 0;
-                            instrument.nextLFOtime = 0;
+                            instrumentState.vibratoTime = 0;
+                            instrumentState.nextVibratoTime = 0;
                         }
                         else {
-                            instrument.nextLFOtime += useVibratoSpeed * 0.1 * (partTimeEnd - partTimeStart);
+                            instrumentState.nextVibratoTime += useVibratoSpeed * 0.1 * (partTimeEnd - partTimeStart);
                         }
                     }
                 }
@@ -20100,18 +24896,32 @@ li.select2-results__option[role=group] > strong:hover {
                     for (let channel = 0; channel < this.song.pitchChannelCount + this.song.noiseChannelCount; channel++) {
                         for (let instrumentIdx = 0; instrumentIdx < this.song.channels[channel].instruments.length; instrumentIdx++) {
                             let instrument = this.song.channels[channel].instruments[instrumentIdx];
+                            let instrumentState = this.channels[channel].instruments[instrumentIdx];
                             let useArpeggioSpeed = instrument.arpeggioSpeed;
                             if (this.isModActive(Config.modulators.dictionary["arp speed"].index, channel, instrumentIdx)) {
-                                useArpeggioSpeed = this.getModValue(Config.modulators.dictionary["arp speed"].index, channel, instrumentIdx, false);
+                                useArpeggioSpeed = Math.max(0, Math.min(Config.arpSpeedScale.length - 1, this.getModValue(Config.modulators.dictionary["arp speed"].index, channel, instrumentIdx, false)));
                                 if (Number.isInteger(useArpeggioSpeed)) {
-                                    instrument.arpTime += Config.arpSpeedScale[useArpeggioSpeed];
+                                    instrumentState.arpTime += Config.arpSpeedScale[useArpeggioSpeed];
                                 }
                                 else {
-                                    instrument.arpTime += (1 - (useArpeggioSpeed % 1)) * Config.arpSpeedScale[Math.floor(useArpeggioSpeed)] + (useArpeggioSpeed % 1) * Config.arpSpeedScale[Math.ceil(useArpeggioSpeed)];
+                                    instrumentState.arpTime += (1 - (useArpeggioSpeed % 1)) * Config.arpSpeedScale[Math.floor(useArpeggioSpeed)] + (useArpeggioSpeed % 1) * Config.arpSpeedScale[Math.ceil(useArpeggioSpeed)];
                                 }
                             }
                             else {
-                                instrument.arpTime += Config.arpSpeedScale[useArpeggioSpeed];
+                                instrumentState.arpTime += Config.arpSpeedScale[useArpeggioSpeed];
+                            }
+                            let useEnvelopeSpeed = instrument.envelopeSpeed;
+                            if (this.isModActive(Config.modulators.dictionary["envelope speed"].index, channel, instrumentIdx)) {
+                                useEnvelopeSpeed = Math.max(0, Math.min(Config.arpSpeedScale.length - 1, this.getModValue(Config.modulators.dictionary["envelope speed"].index, channel, instrumentIdx, false)));
+                                if (Number.isInteger(useEnvelopeSpeed)) {
+                                    instrumentState.envelopeTime += Config.arpSpeedScale[useEnvelopeSpeed];
+                                }
+                                else {
+                                    instrumentState.envelopeTime += (1 - (useEnvelopeSpeed % 1)) * Config.arpSpeedScale[Math.floor(useEnvelopeSpeed)] + (useEnvelopeSpeed % 1) * Config.arpSpeedScale[Math.ceil(useEnvelopeSpeed)];
+                                }
+                            }
+                            else {
+                                instrumentState.envelopeTime += Config.arpSpeedScale[useEnvelopeSpeed];
                             }
                         }
                     }
@@ -20138,6 +24948,13 @@ li.select2-results__option[role=group] > strong:hover {
                         this.tick = 0;
                         this.part++;
                         this.liveInputDuration--;
+                        this.liveBassInputDuration--;
+                        for (let i = 0; i < this.heldMods.length; i++) {
+                            this.heldMods[i].holdFor--;
+                            if (this.heldMods[i].holdFor <= 0) {
+                                this.heldMods.splice(i, 1);
+                            }
+                        }
                         if (this.part == Config.partsPerBeat) {
                             this.part = 0;
                             if (playSong) {
@@ -20174,10 +24991,13 @@ li.select2-results__option[role=group] > strong:hover {
                     samplesPerTick = this.getSamplesPerTick();
                     this.tickSampleCountdown = Math.min(this.tickSampleCountdown, samplesPerTick);
                 }
-                for (let channel = 0; channel < this.song.pitchChannelCount; channel++) {
-                    for (let instrument of this.song.channels[channel].instruments) {
-                        instrument.nextLFOtime = (instrument.nextLFOtime % (Config.vibratoTypes[instrument.vibratoType].period / (Config.ticksPerPart * samplesPerTick / this.samplesPerSecond)));
-                        instrument.arpTime = (instrument.arpTime % (2520 * Config.ticksPerArpeggio));
+                for (let channelIndex = 0; channelIndex < this.song.pitchChannelCount + this.song.noiseChannelCount; channelIndex++) {
+                    for (let instrumentIndex = 0; instrumentIndex < this.channels[channelIndex].instruments.length; instrumentIndex++) {
+                        const instrumentState = this.channels[channelIndex].instruments[instrumentIndex];
+                        const instrument = this.song.channels[channelIndex].instruments[instrumentIndex];
+                        instrumentState.nextVibratoTime = (instrumentState.nextVibratoTime % (Config.vibratoTypes[instrument.vibratoType].period / (Config.ticksPerPart * samplesPerTick / this.samplesPerSecond)));
+                        instrumentState.arpTime = (instrumentState.arpTime % (2520 * Config.ticksPerArpeggio));
+                        instrumentState.envelopeTime = (instrumentState.envelopeTime % (Config.partsPerBeat * Config.ticksPerPart * this.song.beatsPerBar));
                     }
                 }
                 for (let setting = 0; setting < Config.modulators.length; setting++) {
@@ -20235,11 +25055,12 @@ li.select2-results__option[role=group] > strong:hover {
             const channel = song.channels[channelIndex];
             const channelState = this.channels[channelIndex];
             const pitches = this.liveInputPitches;
+            const bassPitches = this.liveBassInputPitches;
             for (let instrumentIndex = 0; instrumentIndex < channel.instruments.length; instrumentIndex++) {
                 const instrumentState = channelState.instruments[instrumentIndex];
                 const toneList = instrumentState.liveInputTones;
                 let toneCount = 0;
-                if (this.liveInputDuration > 0 && channelIndex == this.liveInputChannel && pitches.length > 0 && this.liveInputInstruments.indexOf(instrumentIndex) != -1) {
+                if (this.liveInputDuration > 0 && (channelIndex == this.liveInputChannel) && pitches.length > 0 && this.liveInputInstruments.indexOf(instrumentIndex) != -1) {
                     const instrument = channel.instruments[instrumentIndex];
                     if (instrument.getChord().singleTone) {
                         let tone;
@@ -20298,12 +25119,72 @@ li.select2-results__option[role=group] > strong:hover {
                         }
                     }
                 }
+                if (this.liveBassInputDuration > 0 && (channelIndex == this.liveBassInputChannel) && bassPitches.length > 0 && this.liveBassInputInstruments.indexOf(instrumentIndex) != -1) {
+                    const instrument = channel.instruments[instrumentIndex];
+                    if (instrument.getChord().singleTone) {
+                        let tone;
+                        if (toneList.count() <= toneCount) {
+                            tone = this.newTone();
+                            toneList.pushBack(tone);
+                        }
+                        else if (!instrument.getTransition().isSeamless && this.liveInputStarted) {
+                            this.releaseTone(instrumentState, toneList.get(toneCount));
+                            tone = this.newTone();
+                            toneList.set(toneCount, tone);
+                        }
+                        else {
+                            tone = toneList.get(toneCount);
+                        }
+                        toneCount++;
+                        for (let i = 0; i < bassPitches.length; i++) {
+                            tone.pitches[i] = bassPitches[i];
+                        }
+                        tone.pitchCount = bassPitches.length;
+                        tone.chordSize = 1;
+                        tone.instrumentIndex = instrumentIndex;
+                        tone.note = tone.prevNote = tone.nextNote = null;
+                        tone.atNoteStart = this.liveBassInputStarted;
+                        tone.forceContinueAtStart = false;
+                        tone.forceContinueAtEnd = false;
+                        this.computeTone(song, channelIndex, samplesPerTick, tone, false, false);
+                    }
+                    else {
+                        this.moveTonesIntoOrderedTempMatchedList(toneList, bassPitches);
+                        for (let i = 0; i < bassPitches.length; i++) {
+                            let tone;
+                            if (this.tempMatchedPitchTones[toneCount] != null) {
+                                tone = this.tempMatchedPitchTones[toneCount];
+                                this.tempMatchedPitchTones[toneCount] = null;
+                                if (tone.pitchCount != 1 || tone.pitches[0] != bassPitches[i]) {
+                                    this.releaseTone(instrumentState, tone);
+                                    tone = this.newTone();
+                                }
+                                toneList.pushBack(tone);
+                            }
+                            else {
+                                tone = this.newTone();
+                                toneList.pushBack(tone);
+                            }
+                            toneCount++;
+                            tone.pitches[0] = bassPitches[i];
+                            tone.pitchCount = 1;
+                            tone.chordSize = bassPitches.length;
+                            tone.instrumentIndex = instrumentIndex;
+                            tone.note = tone.prevNote = tone.nextNote = null;
+                            tone.atNoteStart = this.liveBassInputStarted;
+                            tone.forceContinueAtStart = false;
+                            tone.forceContinueAtEnd = false;
+                            this.computeTone(song, channelIndex, samplesPerTick, tone, false, false);
+                        }
+                    }
+                }
                 while (toneList.count() > toneCount) {
                     this.releaseTone(instrumentState, toneList.popBack());
                 }
                 this.clearTempMatchedPitchTones(toneCount, instrumentState);
             }
             this.liveInputStarted = false;
+            this.liveBassInputStarted = false;
         }
         adjacentPatternHasCompatibleInstrumentTransition(song, channel, pattern, otherPattern, instrumentIndex, transition, chord, note, otherNote, forceContinue) {
             if (song.patternInstruments && otherPattern.instruments.indexOf(instrumentIndex) == -1) {
@@ -20795,7 +25676,7 @@ li.select2-results__option[role=group] > strong:hover {
                 expressionReferencePitch = basePitch;
                 pitchDamping = Config.chipNoises[instrument.chipNoise].isSoft ? 24.0 : 60.0;
             }
-            else if (instrument.type == 1 || instrument.type == 10) {
+            else if (instrument.type == 1 || instrument.type == 11) {
                 baseExpression = Config.fmBaseExpression;
             }
             else if (instrument.type == 0) {
@@ -20817,7 +25698,7 @@ li.select2-results__option[role=group] > strong:hover {
                     }
                 }
             }
-            else if (instrument.type == 8) {
+            else if (instrument.type == 9) {
                 baseExpression = Config.chipBaseExpression;
             }
             else if (instrument.type == 5) {
@@ -20826,13 +25707,13 @@ li.select2-results__option[role=group] > strong:hover {
             else if (instrument.type == 6) {
                 baseExpression = Config.pwmBaseExpression;
             }
-            else if (instrument.type == 11) {
+            else if (instrument.type == 8) {
                 baseExpression = Config.supersawBaseExpression;
             }
             else if (instrument.type == 7) {
                 baseExpression = Config.pickedStringBaseExpression;
             }
-            else if (instrument.type == 9) {
+            else if (instrument.type == 10) {
                 baseExpression = 1.0;
                 expressionReferencePitch = 0;
                 pitchDamping = 1.0;
@@ -20843,15 +25724,17 @@ li.select2-results__option[role=group] > strong:hover {
             }
             if ((tone.atNoteStart && !transition.isSeamless && !tone.forceContinueAtStart) || tone.freshlyAllocated) {
                 tone.reset();
-                const chipWaveLength = Config.rawRawChipWaves[instrument.chipWave].samples.length - 1;
-                const firstOffset = instrument.chipWaveStartOffset / chipWaveLength;
-                const lastOffset = 0.999999999999999;
-                for (let i = 0; i < Config.maxPitchOrOperatorCount; i++) {
-                    tone.phases[i] = instrument.chipWavePlayBackwards ? Math.max(0, Math.min(lastOffset, firstOffset)) : Math.max(0, firstOffset);
-                    tone.directions[i] = instrument.chipWavePlayBackwards ? -1 : 1;
-                    tone.chipWaveCompletions[i] = 0;
-                    tone.chipWavePrevWaves[i] = 0;
-                    tone.chipWaveCompletionsLastWave[i] = 0;
+                if (instrument.type == 0 && instrument.isUsingAdvancedLoopControls) {
+                    const chipWaveLength = Config.rawRawChipWaves[instrument.chipWave].samples.length - 1;
+                    const firstOffset = instrument.chipWaveStartOffset / chipWaveLength;
+                    const lastOffset = 0.999999999999999;
+                    for (let i = 0; i < Config.maxPitchOrOperatorCount; i++) {
+                        tone.phases[i] = instrument.chipWavePlayBackwards ? Math.max(0, Math.min(lastOffset, firstOffset)) : Math.max(0, firstOffset);
+                        tone.directions[i] = instrument.chipWavePlayBackwards ? -1 : 1;
+                        tone.chipWaveCompletions[i] = 0;
+                        tone.chipWavePrevWaves[i] = 0;
+                        tone.chipWaveCompletionsLastWave[i] = 0;
+                    }
                 }
             }
             tone.freshlyAllocated = false;
@@ -20863,7 +25746,7 @@ li.select2-results__option[role=group] > strong:hover {
             }
             tone.expression = 0.0;
             tone.expressionDelta = 0.0;
-            for (let i = 0; i < Config.operatorCount; i++) {
+            for (let i = 0; i < (instrument.type == 11 ? 6 : Config.operatorCount); i++) {
                 tone.operatorWaves[i] = Synth.getOperatorWave(instrument.operators[i].waveform, instrument.operators[i].pulseWidth);
             }
             if (released) {
@@ -20952,7 +25835,17 @@ li.select2-results__option[role=group] > strong:hover {
                 instrument.tmpNoteFilterStart = noteFilterSettingsStart;
             }
             const envelopeComputer = tone.envelopeComputer;
-            envelopeComputer.computeEnvelopes(instrument, currentPart, Config.ticksPerPart * partTimeStart, samplesPerTick / this.samplesPerSecond, tone);
+            let useEnvelopeSpeed = Config.arpSpeedScale[instrument.envelopeSpeed];
+            if (this.isModActive(Config.modulators.dictionary["envelope speed"].index, channelIndex, tone.instrumentIndex)) {
+                useEnvelopeSpeed = Math.max(0, Math.min(Config.arpSpeedScale.length - 1, this.getModValue(Config.modulators.dictionary["envelope speed"].index, channelIndex, tone.instrumentIndex, false)));
+                if (Number.isInteger(useEnvelopeSpeed)) {
+                    useEnvelopeSpeed = Config.arpSpeedScale[useEnvelopeSpeed];
+                }
+                else {
+                    useEnvelopeSpeed = (1 - (useEnvelopeSpeed % 1)) * Config.arpSpeedScale[Math.floor(useEnvelopeSpeed)] + (useEnvelopeSpeed % 1) * Config.arpSpeedScale[Math.ceil(useEnvelopeSpeed)];
+                }
+            }
+            envelopeComputer.computeEnvelopes(instrument, currentPart, instrumentState.envelopeTime, Config.ticksPerPart * partTimeStart, samplesPerTick / this.samplesPerSecond, tone, useEnvelopeSpeed);
             const envelopeStarts = tone.envelopeComputer.envelopeStarts;
             const envelopeEnds = tone.envelopeComputer.envelopeEnds;
             instrument.noteFilter = tmpNoteFilter;
@@ -21015,8 +25908,8 @@ li.select2-results__option[role=group] > strong:hover {
                     modDetuneStart += 4 * this.getModValue(Config.modulators.dictionary["song detune"].index, channelIndex, tone.instrumentIndex, false);
                     modDetuneEnd += 4 * this.getModValue(Config.modulators.dictionary["song detune"].index, channelIndex, tone.instrumentIndex, true);
                 }
-                intervalStart += Synth.detuneToCents((modDetuneStart) * envelopeStart) * Config.pitchesPerOctave / (12.0 * 100.0);
-                intervalEnd += Synth.detuneToCents((modDetuneEnd) * envelopeEnd) * Config.pitchesPerOctave / (12.0 * 100.0);
+                intervalStart += Synth.detuneToCents(modDetuneStart) * envelopeStart * Config.pitchesPerOctave / (12.0 * 100.0);
+                intervalEnd += Synth.detuneToCents(modDetuneEnd) * envelopeEnd * Config.pitchesPerOctave / (12.0 * 100.0);
             }
             if (effectsIncludeVibrato(instrument.effects)) {
                 let delayTicks;
@@ -21048,18 +25941,18 @@ li.select2-results__option[role=group] > strong:hover {
                     vibratoStart = tone.prevVibrato;
                 }
                 else {
-                    let lfoStart = Synth.getLFOAmplitude(instrument, secondsPerPart * instrument.LFOtime);
+                    let vibratoLfoStart = Synth.getLFOAmplitude(instrument, secondsPerPart * instrumentState.vibratoTime);
                     const vibratoDepthEnvelopeStart = envelopeStarts[20];
-                    vibratoStart = vibratoAmplitudeStart * lfoStart * vibratoDepthEnvelopeStart;
+                    vibratoStart = vibratoAmplitudeStart * vibratoLfoStart * vibratoDepthEnvelopeStart;
                     if (delayTicks > 0.0) {
                         const ticksUntilVibratoStart = delayTicks - envelopeComputer.noteTicksStart;
                         vibratoStart *= Math.max(0.0, Math.min(1.0, 1.0 - ticksUntilVibratoStart / 2.0));
                     }
                 }
-                let lfoEnd = Synth.getLFOAmplitude(instrument, secondsPerPart * instrument.nextLFOtime);
+                let vibratoLfoEnd = Synth.getLFOAmplitude(instrument, secondsPerPart * instrumentState.nextVibratoTime);
                 const vibratoDepthEnvelopeEnd = envelopeEnds[20];
-                if (instrument.type != 9) {
-                    let vibratoEnd = vibratoAmplitudeEnd * lfoEnd * vibratoDepthEnvelopeEnd;
+                if (instrument.type != 10) {
+                    let vibratoEnd = vibratoAmplitudeEnd * vibratoLfoEnd * vibratoDepthEnvelopeEnd;
                     if (delayTicks > 0.0) {
                         const ticksUntilVibratoEnd = delayTicks - envelopeComputer.noteTicksEnd;
                         vibratoEnd *= Math.max(0.0, Math.min(1.0, 1.0 - ticksUntilVibratoEnd / 2.0));
@@ -21128,22 +26021,25 @@ li.select2-results__option[role=group] > strong:hover {
                 const drumsetFilterEnvelope = instrument.getDrumsetEnvelope(tone.drumsetPitch);
                 noteFilterExpression *= EnvelopeComputer.getLowpassCutoffDecayVolumeCompensation(drumsetFilterEnvelope);
                 let drumsetFilterEnvelopeStart = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.noteSecondsStart, beatsPerPart * partTimeStart, envelopeComputer.noteSizeStart);
-                let drumsetFilterEnvelopeEnd = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.noteSecondsEnd, beatsPerPart * partTimeEnd, envelopeComputer.noteSizeEnd);
                 if (envelopeComputer.prevSlideStart) {
                     const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.prevNoteSecondsStart, beatsPerPart * partTimeStart, envelopeComputer.prevNoteSize);
                     drumsetFilterEnvelopeStart += (other - drumsetFilterEnvelopeStart) * envelopeComputer.prevSlideRatioStart;
-                }
-                if (envelopeComputer.prevSlideEnd) {
-                    const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.prevNoteSecondsEnd, beatsPerPart * partTimeEnd, envelopeComputer.prevNoteSize);
-                    drumsetFilterEnvelopeEnd += (other - drumsetFilterEnvelopeEnd) * envelopeComputer.prevSlideRatioEnd;
                 }
                 if (envelopeComputer.nextSlideStart) {
                     const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, 0.0, beatsPerPart * partTimeStart, envelopeComputer.nextNoteSize);
                     drumsetFilterEnvelopeStart += (other - drumsetFilterEnvelopeStart) * envelopeComputer.nextSlideRatioStart;
                 }
-                if (envelopeComputer.nextSlideEnd) {
-                    const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, 0.0, beatsPerPart * partTimeEnd, envelopeComputer.nextNoteSize);
-                    drumsetFilterEnvelopeEnd += (other - drumsetFilterEnvelopeEnd) * envelopeComputer.nextSlideRatioEnd;
+                let drumsetFilterEnvelopeEnd = drumsetFilterEnvelopeStart;
+                if (instrument.discreteEnvelope == false) {
+                    drumsetFilterEnvelopeEnd = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.noteSecondsEnd, beatsPerPart * partTimeEnd, envelopeComputer.noteSizeEnd);
+                    if (envelopeComputer.prevSlideEnd) {
+                        const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.prevNoteSecondsEnd, beatsPerPart * partTimeEnd, envelopeComputer.prevNoteSize);
+                        drumsetFilterEnvelopeEnd += (other - drumsetFilterEnvelopeEnd) * envelopeComputer.prevSlideRatioEnd;
+                    }
+                    if (envelopeComputer.nextSlideEnd) {
+                        const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, 0.0, beatsPerPart * partTimeEnd, envelopeComputer.nextNoteSize);
+                        drumsetFilterEnvelopeEnd += (other - drumsetFilterEnvelopeEnd) * envelopeComputer.nextSlideRatioEnd;
+                    }
                 }
                 const point = this.tempDrumSetControlPoint;
                 point.type = 0;
@@ -21157,18 +26053,18 @@ li.select2-results__option[role=group] > strong:hover {
                 tone.noteFilterCount++;
             }
             noteFilterExpression = Math.min(3.0, noteFilterExpression);
-            if (instrument.type == 1 || instrument.type == 10) {
+            if (instrument.type == 1 || instrument.type == 11) {
                 let sineExpressionBoost = 1.0;
                 let totalCarrierExpression = 0.0;
                 let arpeggioInterval = 0;
                 const arpeggiates = chord.arpeggiates;
                 if (tone.pitchCount > 1 && arpeggiates) {
-                    const arpeggio = Math.floor(instrument.arpTime / Config.ticksPerArpeggio);
+                    const arpeggio = Math.floor(instrumentState.arpTime / Config.ticksPerArpeggio);
                     arpeggioInterval = tone.pitches[getArpeggioPitchIndex(tone.pitchCount, instrument.fastTwoNoteArp, arpeggio)] - tone.pitches[0];
                 }
-                const carrierCount = (instrument.type == 10 ? instrument.customAlgorithm.carrierCount : Config.algorithms[instrument.algorithm].carrierCount);
-                for (let i = 0; i < (instrument.type == 10 ? 6 : Config.operatorCount); i++) {
-                    const associatedCarrierIndex = (instrument.type == 10 ? instrument.customAlgorithm.associatedCarrier[i] - 1 : Config.algorithms[instrument.algorithm].associatedCarrier[i] - 1);
+                const carrierCount = (instrument.type == 11 ? instrument.customAlgorithm.carrierCount : Config.algorithms[instrument.algorithm].carrierCount);
+                for (let i = 0; i < (instrument.type == 11 ? 6 : Config.operatorCount); i++) {
+                    const associatedCarrierIndex = (instrument.type == 11 ? instrument.customAlgorithm.associatedCarrier[i] - 1 : Config.algorithms[instrument.algorithm].associatedCarrier[i] - 1);
                     const pitch = tone.pitches[arpeggiates ? 0 : ((i < tone.pitchCount) ? i : ((associatedCarrierIndex < tone.pitchCount) ? associatedCarrierIndex : 0))];
                     const freqMult = Config.operatorFrequencies[instrument.operators[i].frequency].mult;
                     const interval = Config.operatorCarrierInterval[associatedCarrierIndex] + arpeggioInterval;
@@ -21268,7 +26164,7 @@ li.select2-results__option[role=group] > strong:hover {
                 const basePhaseDeltaScale = Math.pow(freqEndRatio, 1.0 / roundedSamplesPerTick);
                 let pitch = tone.pitches[0];
                 if (tone.pitchCount > 1 && (chord.arpeggiates || chord.customInterval)) {
-                    const arpeggio = Math.floor(instrument.arpTime / Config.ticksPerArpeggio);
+                    const arpeggio = Math.floor(instrumentState.arpTime / Config.ticksPerArpeggio);
                     if (chord.customInterval) {
                         const intervalOffset = tone.pitches[1 + getArpeggioPitchIndex(tone.pitchCount - 1, instrument.fastTwoNoteArp, arpeggio)] - tone.pitches[0];
                         specialIntervalMult = Math.pow(2.0, intervalOffset / 12.0);
@@ -21328,7 +26224,7 @@ li.select2-results__option[role=group] > strong:hover {
                     settingsExpressionMult *= Math.pow(2.0, 0.7 * (1.0 - useSustainStart / (Config.stringSustainRange - 1)));
                 }
                 const startFreq = Instrument.frequencyFromPitch(startPitch);
-                if (instrument.type == 0 || instrument.type == 8 || instrument.type == 5 || instrument.type == 7) {
+                if (instrument.type == 0 || instrument.type == 9 || instrument.type == 5 || instrument.type == 7) {
                     const unisonVoices = instrument.unisonVoices;
                     const unisonSpread = instrument.unisonSpread;
                     const unisonOffset = instrument.unisonOffset;
@@ -21352,20 +26248,20 @@ li.select2-results__option[role=group] > strong:hover {
                 }
                 let supersawExpressionStart = 1.0;
                 let supersawExpressionEnd = 1.0;
-                if (instrument.type == 11) {
+                if (instrument.type == 8) {
                     const minFirstVoiceAmplitude = 1.0 / Math.sqrt(Config.supersawVoiceCount);
-                    let baseDynamismSliderStart = instrument.supersawDynamism / Config.supersawDynamismMax;
-                    let baseDynamismSliderEnd = instrument.supersawDynamism / Config.supersawDynamismMax;
+                    let useDynamismStart = instrument.supersawDynamism / Config.supersawDynamismMax;
+                    let useDynamismEnd = instrument.supersawDynamism / Config.supersawDynamismMax;
                     if (this.isModActive(Config.modulators.dictionary["dynamism"].index, channelIndex, tone.instrumentIndex)) {
-                        baseDynamismSliderStart = Math.max(0.0, this.getModValue(Config.modulators.dictionary["dynamism"].index, channelIndex, tone.instrumentIndex, false) / Config.supersawDynamismMax);
-                        baseDynamismSliderEnd = Math.max(0.0, this.getModValue(Config.modulators.dictionary["dynamism"].index, channelIndex, tone.instrumentIndex, true) / Config.supersawDynamismMax);
+                        useDynamismStart = (this.getModValue(Config.modulators.dictionary["dynamism"].index, channelIndex, tone.instrumentIndex, false)) / Config.supersawDynamismMax;
+                        useDynamismEnd = (this.getModValue(Config.modulators.dictionary["dynamism"].index, channelIndex, tone.instrumentIndex, true)) / Config.supersawDynamismMax;
                     }
-                    const curvedDynamismStart = 1.0 - Math.pow(Math.max(0.0, 1.0 - baseDynamismSliderStart * envelopeStarts[38]), 0.2);
-                    const curvedDynamismEnd = 1.0 - Math.pow(Math.max(0.0, 1.0 - baseDynamismSliderEnd * envelopeEnds[38]), 0.2);
+                    const curvedDynamismStart = 1.0 - Math.pow(Math.max(0.0, 1.0 - useDynamismStart * envelopeStarts[38]), 0.2);
+                    const curvedDynamismEnd = 1.0 - Math.pow(Math.max(0.0, 1.0 - useDynamismEnd * envelopeEnds[38]), 0.2);
                     const firstVoiceAmplitudeStart = Math.pow(2.0, Math.log2(minFirstVoiceAmplitude) * curvedDynamismStart);
                     const firstVoiceAmplitudeEnd = Math.pow(2.0, Math.log2(minFirstVoiceAmplitude) * curvedDynamismEnd);
-                    let dynamismStart = Math.sqrt((1.0 / Math.pow(firstVoiceAmplitudeStart, 2.0) - 1.0) / (Config.supersawVoiceCount - 1.0));
-                    let dynamismEnd = Math.sqrt((1.0 / Math.pow(firstVoiceAmplitudeEnd, 2.0) - 1.0) / (Config.supersawVoiceCount - 1.0));
+                    const dynamismStart = Math.sqrt((1.0 / Math.pow(firstVoiceAmplitudeStart, 2.0) - 1.0) / (Config.supersawVoiceCount - 1.0));
+                    const dynamismEnd = Math.sqrt((1.0 / Math.pow(firstVoiceAmplitudeEnd, 2.0) - 1.0) / (Config.supersawVoiceCount - 1.0));
                     tone.supersawDynamism = dynamismStart;
                     tone.supersawDynamismDelta = (dynamismEnd - dynamismStart) / roundedSamplesPerTick;
                     const initializeSupersaw = (tone.supersawDelayIndex == -1);
@@ -21411,12 +26307,14 @@ li.select2-results__option[role=group] > strong:hover {
                         }
                     }
                     const baseSpreadSlider = instrument.supersawSpread / Config.supersawSpreadMax;
-                    let spreadSliderStart = Math.max(0.0, baseSpreadSlider * envelopeStarts[39]);
-                    let spreadSliderEnd = Math.max(0.0, baseSpreadSlider * envelopeEnds[39]);
+                    let useSpreadStart = baseSpreadSlider;
+                    let useSpreadEnd = baseSpreadSlider;
                     if (this.isModActive(Config.modulators.dictionary["spread"].index, channelIndex, tone.instrumentIndex)) {
-                        spreadSliderStart = Math.max(0.0, this.getModValue(Config.modulators.dictionary["spread"].index, channelIndex, tone.instrumentIndex, false) / Config.supersawSpreadMax);
-                        spreadSliderEnd = Math.max(0.0, this.getModValue(Config.modulators.dictionary["spread"].index, channelIndex, tone.instrumentIndex, true) / Config.supersawSpreadMax);
+                        useSpreadStart = (this.getModValue(Config.modulators.dictionary["spread"].index, channelIndex, tone.instrumentIndex, false)) / Config.supersawSpreadMax;
+                        useSpreadEnd = (this.getModValue(Config.modulators.dictionary["spread"].index, channelIndex, tone.instrumentIndex, true)) / Config.supersawSpreadMax;
                     }
+                    const spreadSliderStart = useSpreadStart * envelopeStarts[39];
+                    const spreadSliderEnd = useSpreadEnd * envelopeEnds[39];
                     const averageSpreadSlider = (spreadSliderStart + spreadSliderEnd) * 0.5;
                     const curvedSpread = Math.pow(1.0 - Math.sqrt(Math.max(0.0, 1.0 - averageSpreadSlider)), 1.75);
                     for (let i = 0; i < Config.supersawVoiceCount; i++) {
@@ -21424,32 +26322,33 @@ li.select2-results__option[role=group] > strong:hover {
                         tone.supersawUnisonDetunes[i] = Math.pow(2.0, curvedSpread * offset / 12.0);
                     }
                     const baseShape = instrument.supersawShape / Config.supersawShapeMax;
-                    let shapeStart = baseShape * envelopeStarts[40];
-                    let shapeEnd = baseShape * envelopeEnds[40];
-                    if (this.isModActive(Config.modulators.dictionary["shape"].index, channelIndex, tone.instrumentIndex)) {
-                        shapeStart = Math.max(0.0, this.getModValue(Config.modulators.dictionary["shape"].index, channelIndex, tone.instrumentIndex, false) / Config.supersawShapeMax);
-                        shapeEnd = Math.max(0.0, this.getModValue(Config.modulators.dictionary["shape"].index, channelIndex, tone.instrumentIndex, true) / Config.supersawShapeMax);
+                    let useShapeStart = baseShape * envelopeStarts[40];
+                    let useShapeEnd = baseShape * envelopeEnds[40];
+                    if (this.isModActive(Config.modulators.dictionary["saw shape"].index, channelIndex, tone.instrumentIndex)) {
+                        useShapeStart = (this.getModValue(Config.modulators.dictionary["saw shape"].index, channelIndex, tone.instrumentIndex, false)) / Config.supersawShapeMax;
+                        useShapeEnd = (this.getModValue(Config.modulators.dictionary["saw shape"].index, channelIndex, tone.instrumentIndex, true)) / Config.supersawShapeMax;
                     }
+                    const shapeStart = useShapeStart * envelopeStarts[40];
+                    const shapeEnd = useShapeEnd * envelopeEnds[40];
                     tone.supersawShape = shapeStart;
                     tone.supersawShapeDelta = (shapeEnd - shapeStart) / roundedSamplesPerTick;
-                    const basePulseWidth = getPulseWidthRatio(instrument.pulseWidth);
-                    let pulseWidthModStart = basePulseWidth;
-                    let pulseWidthModEnd = basePulseWidth;
-                    if (this.isModActive(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex)) {
-                        pulseWidthModStart = Math.max(0.0, this.getModValue(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex, false) / (Config.pulseWidthRange * 2));
-                        pulseWidthModEnd = Math.max(0.0, this.getModValue(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex, true) / (Config.pulseWidthRange * 2));
-                    }
-                    const pulseWidthStart = pulseWidthModStart * envelopeStarts[2];
-                    const pulseWidthEnd = pulseWidthModEnd * envelopeEnds[2];
-                    tone.pulseWidth = pulseWidthStart;
-                    tone.pulseWidthDelta = (pulseWidthEnd - pulseWidthStart) / roundedSamplesPerTick;
                     let decimalOffsetModStart = instrument.decimalOffset;
                     if (this.isModActive(Config.modulators.dictionary["decimal offset"].index, channelIndex, tone.instrumentIndex)) {
                         decimalOffsetModStart = this.getModValue(Config.modulators.dictionary["decimal offset"].index, channelIndex, tone.instrumentIndex, false);
                     }
                     const decimalOffsetStart = decimalOffsetModStart * envelopeStarts[37];
                     tone.decimalOffset = decimalOffsetStart;
-                    tone.pulseWidth -= (tone.decimalOffset) / 10000;
+                    const basePulseWidth = getPulseWidthRatio(instrument.pulseWidth);
+                    let pulseWidthModStart = basePulseWidth;
+                    let pulseWidthModEnd = basePulseWidth;
+                    if (this.isModActive(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex)) {
+                        pulseWidthModStart = (this.getModValue(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex, false)) / (Config.pulseWidthRange * 2);
+                        pulseWidthModEnd = (this.getModValue(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex, true)) / (Config.pulseWidthRange * 2);
+                    }
+                    let pulseWidthStart = pulseWidthModStart * envelopeStarts[2];
+                    let pulseWidthEnd = pulseWidthModEnd * envelopeEnds[2];
+                    pulseWidthStart -= decimalOffsetStart / 10000;
+                    pulseWidthEnd -= decimalOffsetStart / 10000;
                     const phaseDeltaStart = (tone.supersawPrevPhaseDelta != null) ? tone.supersawPrevPhaseDelta : startFreq * sampleTime;
                     const phaseDeltaEnd = startFreq * sampleTime * freqEndRatio;
                     tone.supersawPrevPhaseDelta = phaseDeltaEnd;
@@ -21511,7 +26410,7 @@ li.select2-results__option[role=group] > strong:hover {
                         }
                     }
                     for (let i = 0; i < unisonVoices; i++) {
-                        tone.pickedStrings[i].update(this, instrumentState, tone, i, roundedSamplesPerTick, stringDecayStart, stringDecayEnd);
+                        tone.pickedStrings[i].update(this, instrumentState, tone, i, roundedSamplesPerTick, stringDecayStart, stringDecayEnd, instrument.stringSustainType);
                     }
                 }
             }
@@ -21570,7 +26469,8 @@ li.select2-results__option[role=group] > strong:hover {
                             synthSource.push(line);
                         }
                     }
-                    Synth.fmSynthFunctionCache[fingerprint] = new Function("synth", "bufferIndex", "roundedSamplesPerTick", "tone", "instrumentState", synthSource.join("\n"));
+                    const wrappedFmSynth = "return (synth, bufferIndex, roundedSamplesPerTick, tone, instrument) => {" + synthSource.join("\n") + "}";
+                    Synth.fmSynthFunctionCache[fingerprint] = new Function("Config", "Synth", wrappedFmSynth)(Config, Synth);
                 }
                 return Synth.fmSynthFunctionCache[fingerprint];
             }
@@ -21580,7 +26480,7 @@ li.select2-results__option[role=group] > strong:hover {
                 }
                 return Synth.chipSynth;
             }
-            else if (instrument.type == 8) {
+            else if (instrument.type == 9) {
                 return Synth.chipSynth;
             }
             else if (instrument.type == 5) {
@@ -21589,7 +26489,7 @@ li.select2-results__option[role=group] > strong:hover {
             else if (instrument.type == 6) {
                 return Synth.pulseWidthSynth;
             }
-            else if (instrument.type == 11) {
+            else if (instrument.type == 8) {
                 return Synth.supersawSynth;
             }
             else if (instrument.type == 7) {
@@ -21604,10 +26504,10 @@ li.select2-results__option[role=group] > strong:hover {
             else if (instrument.type == 4) {
                 return Synth.drumsetSynth;
             }
-            else if (instrument.type == 9) {
+            else if (instrument.type == 10) {
                 return Synth.modSynth;
             }
-            else if (instrument.type == 10) {
+            else if (instrument.type == 11) {
                 const fingerprint = instrument.customAlgorithm.name + "_" + instrument.customFeedbackType.name;
                 if (Synth.fm6SynthFunctionCache[fingerprint] == undefined) {
                     const synthSource = [];
@@ -21653,7 +26553,8 @@ li.select2-results__option[role=group] > strong:hover {
                             synthSource.push(line);
                         }
                     }
-                    Synth.fm6SynthFunctionCache[fingerprint] = new Function("synth", "bufferIndex", "roundedSamplesPerTick", "tone", "instrumentState", synthSource.join("\n"));
+                    const wrappedFm6Synth = "return (synth, bufferIndex, roundedSamplesPerTick, tone, instrument) => {" + synthSource.join("\n") + "}";
+                    Synth.fm6SynthFunctionCache[fingerprint] = new Function("Config", "Synth", wrappedFm6Synth)(Config, Synth);
                 }
                 return Synth.fm6SynthFunctionCache[fingerprint];
             }
@@ -22134,7 +27035,7 @@ li.select2-results__option[role=group] > strong:hover {
             const voiceCount = instrumentState.unisonVoices;
             let pickedStringFunction = Synth.pickedStringFunctionCache[voiceCount];
             if (pickedStringFunction == undefined) {
-                let pickedStringSource = "";
+                let pickedStringSource = "return (synth, bufferIndex, runLength, tone, instrumentState) => {";
                 pickedStringSource += `
 				const Config = beepbox.Config;
 				const Synth = beepbox.Synth;
@@ -22143,8 +27044,10 @@ li.select2-results__option[role=group] > strong:hover {
 				let pickedString# = tone.pickedStrings[#];
 				let allPassSample# = +pickedString#.allPassSample;
 				let allPassPrevInput# = +pickedString#.allPassPrevInput;
-				let shelfSample# = +pickedString#.shelfSample;
-				let shelfPrevInput# = +pickedString#.shelfPrevInput;
+				let sustainFilterSample# = +pickedString#.sustainFilterSample;
+				let sustainFilterPrevOutput2# = +pickedString#.sustainFilterPrevOutput2;
+				let sustainFilterPrevInput1# = +pickedString#.sustainFilterPrevInput1;
+				let sustainFilterPrevInput2# = +pickedString#.sustainFilterPrevInput2;
 				let fractionalDelaySample# = +pickedString#.fractionalDelaySample;
 				const delayLine# = pickedString#.delayLine;
 				const delayBufferMask# = (delayLine#.length - 1) >> 0;
@@ -22153,13 +27056,17 @@ li.select2-results__option[role=group] > strong:hover {
 				let delayLength# = +pickedString#.prevDelayLength;
 				const delayLengthDelta# = +pickedString#.delayLengthDelta;
 				let allPassG# = +pickedString#.allPassG;
-				let shelfA1# = +pickedString#.shelfA1;
-				let shelfB0# = +pickedString#.shelfB0;
-				let shelfB1# = +pickedString#.shelfB1;
+				let sustainFilterA1# = +pickedString#.sustainFilterA1;
+				let sustainFilterA2# = +pickedString#.sustainFilterA2;
+				let sustainFilterB0# = +pickedString#.sustainFilterB0;
+				let sustainFilterB1# = +pickedString#.sustainFilterB1;
+				let sustainFilterB2# = +pickedString#.sustainFilterB2;
 				const allPassGDelta# = +pickedString#.allPassGDelta;
-				const shelfA1Delta# = +pickedString#.shelfA1Delta;
-				const shelfB0Delta# = +pickedString#.shelfB0Delta;
-				const shelfB1Delta# = +pickedString#.shelfB1Delta;
+				const sustainFilterA1Delta# = +pickedString#.sustainFilterA1Delta;
+				const sustainFilterA2Delta# = +pickedString#.sustainFilterA2Delta;
+				const sustainFilterB0Delta# = +pickedString#.sustainFilterB0Delta;
+				const sustainFilterB1Delta# = +pickedString#.sustainFilterB1Delta;
+				const sustainFilterB2Delta# = +pickedString#.sustainFilterB2Delta;
 				
 				let expression = +tone.expression;
 				const expressionDelta = +tone.expressionDelta;
@@ -22187,10 +27094,13 @@ li.select2-results__option[role=group] > strong:hover {
 					allPassSample# = fractionalDelaySample# * allPassG# + allPassPrevInput# - allPassG# * allPassSample#;
 					allPassPrevInput# = fractionalDelaySample#;
 					
-					shelfSample# = shelfB0# * allPassSample# + shelfB1# * shelfPrevInput# - shelfA1# * shelfSample#;
-					shelfPrevInput# = allPassSample#;
+					const sustainFilterPrevOutput1# = sustainFilterSample#;
+					sustainFilterSample# = sustainFilterB0# * allPassSample# + sustainFilterB1# * sustainFilterPrevInput1# + sustainFilterB2# * sustainFilterPrevInput2# - sustainFilterA1# * sustainFilterSample# - sustainFilterA2# * sustainFilterPrevOutput2#;
+					sustainFilterPrevOutput2# = sustainFilterPrevOutput1#;
+					sustainFilterPrevInput2# = sustainFilterPrevInput1#;
+					sustainFilterPrevInput1# = allPassSample#;
 					
-					delayLine#[delayIndex# & delayBufferMask#] += shelfSample#;
+					delayLine#[delayIndex# & delayBufferMask#] += sustainFilterSample#;
 					delayLine#[(delayIndex# + delayResetOffset#) & delayBufferMask#] = 0.0;
 					delayIndex#++;
 					
@@ -22209,35 +27119,44 @@ li.select2-results__option[role=group] > strong:hover {
 					expression += expressionDelta;
 					delayLength# += delayLengthDelta#;
 					allPassG# += allPassGDelta#;
-					shelfA1# += shelfA1Delta#;
-					shelfB0# += shelfB0Delta#;
-					shelfB1# += shelfB1Delta#;
+					sustainFilterA1# += sustainFilterA1Delta#;
+					sustainFilterA2# += sustainFilterA2Delta#;
+					sustainFilterB0# += sustainFilterB0Delta#;
+					sustainFilterB1# += sustainFilterB1Delta#;
+					sustainFilterB2# += sustainFilterB2Delta#;
 				}
 				
 				// Avoid persistent denormal or NaN values in the delay buffers and filter history.
 				const epsilon = (1.0e-24);
 				if (!Number.isFinite(allPassSample#) || Math.abs(allPassSample#) < epsilon) allPassSample# = 0.0;
 				if (!Number.isFinite(allPassPrevInput#) || Math.abs(allPassPrevInput#) < epsilon) allPassPrevInput# = 0.0;
-				if (!Number.isFinite(shelfSample#) || Math.abs(shelfSample#) < epsilon) shelfSample# = 0.0;
-				if (!Number.isFinite(shelfPrevInput#) || Math.abs(shelfPrevInput#) < epsilon) shelfPrevInput# = 0.0;
+				if (!Number.isFinite(sustainFilterSample#) || Math.abs(sustainFilterSample#) < epsilon) sustainFilterSample# = 0.0;
+				if (!Number.isFinite(sustainFilterPrevOutput2#) || Math.abs(sustainFilterPrevOutput2#) < epsilon) sustainFilterPrevOutput2# = 0.0;
+				if (!Number.isFinite(sustainFilterPrevInput1#) || Math.abs(sustainFilterPrevInput1#) < epsilon) sustainFilterPrevInput1# = 0.0;
+				if (!Number.isFinite(sustainFilterPrevInput2#) || Math.abs(sustainFilterPrevInput2#) < epsilon) sustainFilterPrevInput2# = 0.0;
 				if (!Number.isFinite(fractionalDelaySample#) || Math.abs(fractionalDelaySample#) < epsilon) fractionalDelaySample# = 0.0;
 				pickedString#.allPassSample = allPassSample#;
 				pickedString#.allPassPrevInput = allPassPrevInput#;
-				pickedString#.shelfSample = shelfSample#;
-				pickedString#.shelfPrevInput = shelfPrevInput#;
+				pickedString#.sustainFilterSample = sustainFilterSample#;
+				pickedString#.sustainFilterPrevOutput2 = sustainFilterPrevOutput2#;
+				pickedString#.sustainFilterPrevInput1 = sustainFilterPrevInput1#;
+				pickedString#.sustainFilterPrevInput2 = sustainFilterPrevInput2#;
 				pickedString#.fractionalDelaySample = fractionalDelaySample#;
 				pickedString#.delayIndex = delayIndex#;
 				pickedString#.prevDelayLength = delayLength#;
 				pickedString#.allPassG = allPassG#;
-				pickedString#.shelfA1 = shelfA1#;
-				pickedString#.shelfB0 = shelfB0#;
-				pickedString#.shelfB1 = shelfB1#;
+				pickedString#.sustainFilterA1 = sustainFilterA1#;
+				pickedString#.sustainFilterA2 = sustainFilterA2#;
+				pickedString#.sustainFilterB0 = sustainFilterB0#;
+				pickedString#.sustainFilterB1 = sustainFilterB1#;
+				pickedString#.sustainFilterB2 = sustainFilterB2#;
 				
 				tone.expression = expression;
 				
 				synth.sanitizeFilters(filters);
 				tone.initialNoteFilterInput1 = initialFilterInput1;
-				tone.initialNoteFilterInput2 = initialFilterInput2;`;
+				tone.initialNoteFilterInput2 = initialFilterInput2;
+			}`;
                 pickedStringSource = pickedStringSource.replace(/^.*\#.*$/mg, line => {
                     const lines = [];
                     for (let voice = 0; voice < voiceCount; voice++) {
@@ -22245,7 +27164,7 @@ li.select2-results__option[role=group] > strong:hover {
                     }
                     return lines.join("\n");
                 });
-                pickedStringFunction = new Function("synth", "bufferIndex", "runLength", "tone", "instrumentState", pickedStringSource);
+                pickedStringFunction = new Function("Config", "Synth", pickedStringSource)(Config, Synth);
                 Synth.pickedStringFunctionCache[voiceCount] = pickedStringFunction;
             }
             pickedStringFunction(synth, bufferIndex, roundedSamplesPerTick, tone, instrumentState);
@@ -22281,10 +27200,9 @@ li.select2-results__option[role=group] > strong:hover {
                 signature = signature | 1;
             let effectsFunction = Synth.effectsFunctionCache[signature];
             if (effectsFunction == undefined) {
-                let effectsSource = "";
+                let effectsSource = "return (synth, outputDataL, outputDataR, bufferIndex, runLength, instrumentState) => {";
                 const usesDelays = usesChorus || usesReverb || usesEcho;
                 effectsSource += `
-				const Config = beepbox.Config;
 				const tempMonoInstrumentSampleBuffer = synth.tempMonoInstrumentSampleBuffer;
 				
 				let mixVolume = +instrumentState.mixVolume;
@@ -22344,7 +27262,7 @@ li.select2-results__option[role=group] > strong:hover {
 				const filterCount = instrumentState.eqFilterCount|0;
 				let initialFilterInput1 = +instrumentState.initialEqFilterInput1;
 				let initialFilterInput2 = +instrumentState.initialEqFilterInput2;
-				const applyFilters = beepbox.Synth.applyFilters;`;
+				const applyFilters = Synth.applyFilters;`;
                 }
                 effectsSource += `
 				
@@ -22726,7 +27644,7 @@ li.select2-results__option[role=group] > strong:hover {
                 if (usesPanning) {
                     effectsSource += `
 				
-				beepbox.Synth.sanitizeDelayLine(panningDelayLine, panningDelayPos, panningMask);
+				Synth.sanitizeDelayLine(panningDelayLine, panningDelayPos, panningMask);
 				instrumentState.panningDelayPos = panningDelayPos;
 				instrumentState.panningVolumeL = panningVolumeL;
 				instrumentState.panningVolumeR = panningVolumeR;
@@ -22736,8 +27654,8 @@ li.select2-results__option[role=group] > strong:hover {
                 if (usesChorus) {
                     effectsSource += `
 				
-				beepbox.Synth.sanitizeDelayLine(chorusDelayLineL, chorusDelayPos, chorusMask);
-				beepbox.Synth.sanitizeDelayLine(chorusDelayLineR, chorusDelayPos, chorusMask);
+				Synth.sanitizeDelayLine(chorusDelayLineL, chorusDelayPos, chorusMask);
+				Synth.sanitizeDelayLine(chorusDelayLineR, chorusDelayPos, chorusMask);
 				instrumentState.chorusPhase = chorusPhase;
 				instrumentState.chorusDelayPos = chorusDelayPos;
 				instrumentState.chorusVoiceMult = chorusVoiceMult;
@@ -22746,8 +27664,8 @@ li.select2-results__option[role=group] > strong:hover {
                 if (usesEcho) {
                     effectsSource += `
 				
-				beepbox.Synth.sanitizeDelayLine(echoDelayLineL, echoDelayPos, echoMask);
-				beepbox.Synth.sanitizeDelayLine(echoDelayLineR, echoDelayPos, echoMask);
+				Synth.sanitizeDelayLine(echoDelayLineL, echoDelayPos, echoMask);
+				Synth.sanitizeDelayLine(echoDelayLineR, echoDelayPos, echoMask);
 				instrumentState.echoDelayPos = echoDelayPos;
 				instrumentState.echoMult = echoMult;
 				instrumentState.echoDelayOffsetRatio = echoDelayOffsetRatio;
@@ -22764,10 +27682,10 @@ li.select2-results__option[role=group] > strong:hover {
                 if (usesReverb) {
                     effectsSource += `
 				
-				beepbox.Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos        , reverbMask);
-				beepbox.Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos +  3041, reverbMask);
-				beepbox.Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos +  6426, reverbMask);
-				beepbox.Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos + 10907, reverbMask);
+				Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos        , reverbMask);
+				Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos +  3041, reverbMask);
+				Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos +  6426, reverbMask);
+				Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos + 10907, reverbMask);
 				instrumentState.reverbDelayPos = reverbDelayPos;
 				instrumentState.reverbMult = reverb;
 				
@@ -22788,7 +27706,8 @@ li.select2-results__option[role=group] > strong:hover {
 				instrumentState.reverbShelfPrevInput2 = reverbShelfPrevInput2;
 				instrumentState.reverbShelfPrevInput3 = reverbShelfPrevInput3;`;
                 }
-                effectsFunction = new Function("synth", "outputDataL", "outputDataR", "bufferIndex", "runLength", "instrumentState", effectsSource);
+                effectsSource += "}";
+                effectsFunction = new Function("Config", "Synth", effectsSource)(Config, Synth);
                 Synth.effectsFunctionCache[signature] = effectsFunction;
             }
             effectsFunction(synth, outputDataL, outputDataR, bufferIndex, runLength, instrumentState);
@@ -22877,26 +27796,30 @@ li.select2-results__option[role=group] > strong:hover {
             for (let sampleIndex = bufferIndex; sampleIndex < stopIndex; sampleIndex++) {
                 let phase = (phases[0] + phaseDelta) % 1.0;
                 let supersawSample = phase - 0.5 * (1.0 + (voiceCount - 1.0) * dynamism);
-                if (phase < phaseDelta) {
-                    var t = phase / phaseDelta;
-                    supersawSample -= (t + t - t * t - 1) * 0.5;
-                }
-                else if (phase > 1.0 - phaseDelta) {
-                    var t = (phase - 1.0) / phaseDelta;
-                    supersawSample -= (t + t + t * t + 1) * 0.5;
+                if (!instrumentState.aliases) {
+                    if (phase < phaseDelta) {
+                        var t = phase / phaseDelta;
+                        supersawSample -= (t + t - t * t - 1) * 0.5;
+                    }
+                    else if (phase > 1.0 - phaseDelta) {
+                        var t = (phase - 1.0) / phaseDelta;
+                        supersawSample -= (t + t + t * t + 1) * 0.5;
+                    }
                 }
                 phases[0] = phase;
                 for (let i = 1; i < voiceCount; i++) {
                     const detunedPhaseDelta = phaseDelta * unisonDetunes[i];
                     let phase = (phases[i] + detunedPhaseDelta) % 1.0;
                     supersawSample += phase * dynamism;
-                    if (phase < detunedPhaseDelta) {
-                        const t = phase / detunedPhaseDelta;
-                        supersawSample -= (t + t - t * t - 1) * 0.5 * dynamism;
-                    }
-                    else if (phase > 1.0 - detunedPhaseDelta) {
-                        const t = (phase - 1.0) / detunedPhaseDelta;
-                        supersawSample -= (t + t + t * t + 1) * 0.5 * dynamism;
+                    if (!instrumentState.aliases) {
+                        if (phase < detunedPhaseDelta) {
+                            const t = phase / detunedPhaseDelta;
+                            supersawSample -= (t + t - t * t - 1) * 0.5 * dynamism;
+                        }
+                        else if (phase > 1.0 - detunedPhaseDelta) {
+                            const t = (phase - 1.0) / detunedPhaseDelta;
+                            supersawSample -= (t + t + t * t + 1) * 0.5 * dynamism;
+                        }
                     }
                     phases[i] = phase;
                 }
@@ -22939,7 +27862,7 @@ li.select2-results__option[role=group] > strong:hover {
             let expression = +tone.expression;
             const expressionDelta = +tone.expressionDelta;
             let phase = (tone.phases[0] % 1) * Config.chipNoiseLength;
-            if (tone.phases[0] == 0) {
+            if (tone.phases[0] == 0.0) {
                 phase = Math.random() * Config.chipNoiseLength;
             }
             const phaseMask = Config.chipNoiseLength - 1;
@@ -22987,7 +27910,7 @@ li.select2-results__option[role=group] > strong:hover {
             let initialFilterInput2 = +tone.initialNoteFilterInput2;
             const applyFilters = Synth.applyFilters;
             let phase = (tone.phases[0] % 1) * Config.spectrumNoiseLength;
-            if (tone.phases[0] == 0)
+            if (tone.phases[0] == 0.0)
                 phase = Synth.findRandomZeroCrossing(wave, Config.spectrumNoiseLength) + phaseDelta;
             const phaseMask = Config.spectrumNoiseLength - 1;
             const pitchRelativefilter = Math.min(1.0, phaseDelta);
@@ -23031,7 +27954,7 @@ li.select2-results__option[role=group] > strong:hover {
             let initialFilterInput2 = +tone.initialNoteFilterInput2;
             const applyFilters = Synth.applyFilters;
             let phase = (tone.phases[0] % 1) * Config.spectrumNoiseLength;
-            if (tone.phases[0] == 0)
+            if (tone.phases[0] == 0.0)
                 phase = Synth.findRandomZeroCrossing(wave, Config.spectrumNoiseLength) + phaseDelta;
             const phaseMask = Config.spectrumNoiseLength - 1;
             const stopIndex = bufferIndex + runLength;
@@ -23084,9 +28007,18 @@ li.select2-results__option[role=group] > strong:hover {
                 }
             }
             for (let instrumentIndex = 0; instrumentIndex < usedInstruments.length; instrumentIndex++) {
-                synth.setModValue(tone.expression, tone.expression + tone.expressionDelta, mod, instrument.modChannels[mod], usedInstruments[instrumentIndex], setting);
+                synth.setModValue(tone.expression, tone.expression + tone.expressionDelta, instrument.modChannels[mod], usedInstruments[instrumentIndex], setting);
+                for (let i = 0; i < synth.heldMods.length; i++) {
+                    if (Config.modulators[instrument.modulators[mod]].forSong) {
+                        if (synth.heldMods[i].setting == setting)
+                            synth.setModValue(synth.heldMods[i].volume, synth.heldMods[i].volume, instrument.modChannels[mod], usedInstruments[instrumentIndex], setting);
+                    }
+                    else if (synth.heldMods[i].channelIndex == instrument.modChannels[mod] && synth.heldMods[i].instrumentIndex == usedInstruments[instrumentIndex] && synth.heldMods[i].setting == setting) {
+                        synth.setModValue(synth.heldMods[i].volume, synth.heldMods[i].volume, instrument.modChannels[mod], usedInstruments[instrumentIndex], setting);
+                    }
+                }
                 if (setting == Config.modulators.dictionary["reset arp"].index && synth.tick == 0 && tone.noteStartPart == synth.beat * Config.partsPerBeat + synth.part) {
-                    synth.song.channels[instrument.modChannels[mod]].instruments[usedInstruments[instrumentIndex]].arpTime = 0;
+                    synth.channels[instrument.modChannels[mod]].instruments[usedInstruments[instrumentIndex]].arpTime = 0;
                 }
                 else if (setting == Config.modulators.dictionary["next bar"].index) {
                     synth.wantToSkip = true;
@@ -23342,7 +28274,7 @@ li.select2-results__option[role=group] > strong:hover {
     Synth.pickedStringFunctionCache = Array(3).fill(undefined);
     Synth.fmSourceTemplate = (`
 		const data = synth.tempMonoInstrumentSampleBuffer;
-		const sineWave = beepbox.Config.sineWave;
+		const sineWave = Config.sineWave;
 			
 		// I'm adding 1000 to the phase to ensure that it's never negative even when modulated by other waves because negative numbers don't work with the modulus operator very well.
 		let operator#Phase       = +((tone.phases[#] % 1) + 1000) * ` + Config.sineWaveLength + `;
@@ -23361,7 +28293,7 @@ li.select2-results__option[role=group] > strong:hover {
 		const filterCount = tone.noteFilterCount|0;
 		let initialFilterInput1 = +tone.initialNoteFilterInput1;
 		let initialFilterInput2 = +tone.initialNoteFilterInput2;
-		const applyFilters = beepbox.Synth.applyFilters;
+		const applyFilters = Synth.applyFilters;
 		
 		const stopIndex = bufferIndex + roundedSamplesPerTick;
 		for (let sampleIndex = bufferIndex; sampleIndex < stopIndex; sampleIndex++) {
@@ -23471,6 +28403,12 @@ li.select2-results__option[role=group] > strong:hover {
             else {
                 this._changes = changes.concat();
             }
+            this._committed = false;
+        }
+        checkFirst() {
+            if (this._changes.length > 0)
+                return this._changes[0];
+            return null;
         }
         append(change) {
             if (change.isNoop())
@@ -23487,6 +28425,12 @@ li.select2-results__option[role=group] > strong:hover {
             for (let i = this._changes.length - 1; i >= 0; i--) {
                 this._changes[i].undo();
             }
+        }
+        isCommitted() {
+            return this._committed;
+        }
+        commit() {
+            this._committed = true;
         }
     }
 
@@ -23998,7 +28942,8 @@ li.select2-results__option[role=group] > strong:hover {
             }
             const isNoise = doc.song.getChannelIsNoise(doc.channel);
             const instrument = doc.song.channels[doc.channel].instruments[doc.getCurrentInstrument()];
-            instrument.effects &= 1 << 2;
+            instrument.effects = 1 << 2;
+            instrument.aliases = false;
             instrument.envelopeCount = 0;
             const midFreq = FilterControlPoint.getRoundedSettingValueFromHz(700.0);
             const maxFreq = Config.filterFreqRange - 1;
@@ -24182,12 +29127,12 @@ li.select2-results__option[role=group] > strong:hover {
                 const type = selectWeightedRandom([
                     { item: 0, weight: 4 },
                     { item: 6, weight: 4 },
-                    { item: 11, weight: 5 },
+                    { item: 8, weight: 5 },
                     { item: 5, weight: 5 },
                     { item: 7, weight: 5 },
                     { item: 3, weight: 1 },
                     { item: 1, weight: 5 },
-                    { item: 10, weight: 3 },
+                    { item: 11, weight: 3 },
                 ]);
                 instrument.preset = instrument.type = type;
                 instrument.fadeIn = (Math.random() < 0.5) ? 0 : selectCurvedDistribution(0, Config.fadeInRange - 1, 0, 2);
@@ -24356,7 +29301,13 @@ li.select2-results__option[role=group] > strong:hover {
                         }
                         break;
                     case 6:
+                    case 8:
                         {
+                            if (type == 8) {
+                                instrument.supersawDynamism = selectCurvedDistribution(0, Config.supersawDynamismMax, Config.supersawDynamismMax, 2);
+                                instrument.supersawSpread = selectCurvedDistribution(0, Config.supersawSpreadMax, Math.ceil(Config.supersawSpreadMax / 3), 4);
+                                instrument.supersawShape = selectCurvedDistribution(0, Config.supersawShapeMax, 0, 4);
+                            }
                             instrument.pulseWidth = selectCurvedDistribution(0, Config.pulseWidthRange - 1, Config.pulseWidthRange - 1, 2);
                             instrument.decimalOffset = 0;
                             if (Math.random() < 0.6) {
@@ -24403,9 +29354,9 @@ li.select2-results__option[role=group] > strong:hover {
                             }
                         }
                         break;
-                    case 11:
+                    case 8:
                         {
-                            if (type == 11) {
+                            if (type == 8) {
                                 instrument.supersawDynamism = selectCurvedDistribution(0, Config.supersawDynamismMax, Config.supersawDynamismMax, 2);
                                 instrument.supersawSpread = selectCurvedDistribution(0, Config.supersawSpreadMax, Math.ceil(Config.supersawSpreadMax / 3), 4);
                                 instrument.supersawShape = selectCurvedDistribution(0, Config.supersawShapeMax, 0, 4);
@@ -24643,7 +29594,7 @@ li.select2-results__option[role=group] > strong:hover {
                             instrument.spectrumWave.markCustomWaveDirty();
                         }
                         break;
-                    case 10:
+                    case 11:
                     case 1:
                         {
                             if (type == 1) {
@@ -24685,7 +29636,7 @@ li.select2-results__option[role=group] > strong:hover {
                                     ]);
                                 }
                             }
-                            for (let i = algorithm.carrierCount; i < Config.operatorCount + (type == 10 ? 2 : 0); i++) {
+                            for (let i = algorithm.carrierCount; i < Config.operatorCount + (type == 11 ? 2 : 0); i++) {
                                 instrument.operators[i].frequency = selectCurvedDistribution(3, Config.operatorFrequencies.length - 1, 0, 3);
                                 instrument.operators[i].amplitude = (Math.pow(Math.random(), 2) * Config.operatorAmplitudeMax) | 0;
                                 if (instrument.envelopeCount < Config.maxEnvelopeCount && Math.random() < 0.4) {
@@ -24833,6 +29784,8 @@ li.select2-results__option[role=group] > strong:hover {
             instrument.effects = newValue;
             if (toggleFlag != 2)
                 instrument.preset = instrument.type;
+            if (toggleFlag == 3 && wasSelected)
+                instrument.aliases = false;
             if (wasSelected)
                 instrument.clearInvalidEnvelopeTargets();
             this._didSomething();
@@ -25016,9 +29969,10 @@ li.select2-results__option[role=group] > strong:hover {
                                     const preset = EditorConfig.valueToPreset(presetValue);
                                     instrument.fromJsonObject(preset.settings, isNoise, isMod, doc.song.rhythm == 0 || doc.song.rhythm == 2, doc.song.rhythm >= 2);
                                     instrument.preset = presetValue;
+                                    instrument.effects |= 1 << 2;
                                 }
                                 else {
-                                    instrument.setTypeAndReset(9, isNoise, isMod);
+                                    instrument.setTypeAndReset(10, isNoise, isMod);
                                 }
                                 newChannels[channelIndex].instruments[j] = instrument;
                             }
@@ -25272,6 +30226,19 @@ li.select2-results__option[role=group] > strong:hover {
             }
         }
     }
+    class ChangeEnvelopeSpeed extends Change {
+        constructor(doc, oldValue, newValue) {
+            super();
+            const instrument = doc.song.channels[doc.channel].instruments[doc.getCurrentInstrument()];
+            doc.synth.unsetMod(Config.modulators.dictionary["envelope speed"].index, doc.channel, doc.getCurrentInstrument());
+            doc.notifier.changed();
+            if (oldValue != newValue) {
+                instrument.envelopeSpeed = newValue;
+                doc.notifier.changed();
+                this._didSomething();
+            }
+        }
+    }
     class ChangeVibratoSpeed extends Change {
         constructor(doc, oldValue, newValue) {
             super();
@@ -25364,6 +30331,18 @@ li.select2-results__option[role=group] > strong:hover {
             }
         }
     }
+    class ChangeDiscreteEnvelope extends Change {
+        constructor(doc, newValue) {
+            super();
+            const instrument = doc.song.channels[doc.channel].instruments[doc.getCurrentInstrument()];
+            const oldValue = instrument.discreteEnvelope;
+            doc.notifier.changed();
+            if (oldValue != newValue) {
+                instrument.discreteEnvelope = newValue;
+                this._didSomething();
+            }
+        }
+    }
     class ChangeSpectrum extends Change {
         constructor(doc, instrument, spectrumWave) {
             super();
@@ -25418,10 +30397,20 @@ li.select2-results__option[role=group] > strong:hover {
                 this._didSomething();
         }
     }
+    class ChangeDecimalOffset extends ChangeInstrumentSlider {
+        constructor(doc, oldValue, newValue) {
+            super(doc);
+            this._instrument.decimalOffset = newValue;
+            doc.notifier.changed();
+            if (oldValue != newValue)
+                this._didSomething();
+        }
+    }
     class ChangeSupersawDynamism extends ChangeInstrumentSlider {
         constructor(doc, oldValue, newValue) {
             super(doc);
             this._instrument.supersawDynamism = newValue;
+            doc.synth.unsetMod(Config.modulators.dictionary["dynamism"].index, doc.channel, doc.getCurrentInstrument());
             doc.notifier.changed();
             if (oldValue != newValue)
                 this._didSomething();
@@ -25431,6 +30420,7 @@ li.select2-results__option[role=group] > strong:hover {
         constructor(doc, oldValue, newValue) {
             super(doc);
             this._instrument.supersawSpread = newValue;
+            doc.synth.unsetMod(Config.modulators.dictionary["spread"].index, doc.channel, doc.getCurrentInstrument());
             doc.notifier.changed();
             if (oldValue != newValue)
                 this._didSomething();
@@ -25440,15 +30430,7 @@ li.select2-results__option[role=group] > strong:hover {
         constructor(doc, oldValue, newValue) {
             super(doc);
             this._instrument.supersawShape = newValue;
-            doc.notifier.changed();
-            if (oldValue != newValue)
-                this._didSomething();
-        }
-    }
-    class ChangeDecimalOffset extends ChangeInstrumentSlider {
-        constructor(doc, oldValue, newValue) {
-            super(doc);
-            this._instrument.decimalOffset = newValue;
+            doc.synth.unsetMod(Config.modulators.dictionary["saw shape"].index, doc.channel, doc.getCurrentInstrument());
             doc.notifier.changed();
             if (oldValue != newValue)
                 this._didSomething();
@@ -25509,6 +30491,19 @@ li.select2-results__option[role=group] > strong:hover {
             doc.notifier.changed();
             if (oldValue != newValue)
                 this._didSomething();
+        }
+    }
+    class ChangeStringSustainType extends Change {
+        constructor(doc, newValue) {
+            super();
+            const instrument = doc.song.channels[doc.channel].instruments[doc.getCurrentInstrument()];
+            const oldValue = instrument.stringSustainType;
+            if (oldValue != newValue) {
+                instrument.stringSustainType = newValue;
+                instrument.preset = instrument.type;
+                doc.notifier.changed();
+                this._didSomething();
+            }
         }
     }
     class ChangeEQFilterType extends Change {
@@ -25665,8 +30660,15 @@ li.select2-results__option[role=group] > strong:hover {
             this._doc.notifier.changed();
         }
     }
+    class FilterMoveData {
+        constructor(usePoint, useFreq, useGain) {
+            this.point = usePoint;
+            this.freq = useFreq;
+            this.gain = useGain;
+        }
+    }
     class ChangeFilterMovePoint extends UndoableChange {
-        constructor(doc, point, oldFreq, newFreq, oldGain, newGain) {
+        constructor(doc, point, oldFreq, newFreq, oldGain, newGain, useNoteFilter, pointIndex) {
             super(false);
             this._doc = doc;
             this._instrument = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()];
@@ -25677,27 +30679,28 @@ li.select2-results__option[role=group] > strong:hover {
             this._newFreq = newFreq;
             this._oldGain = oldGain;
             this._newGain = newGain;
+            this.useNoteFilter = useNoteFilter;
+            this.pointIndex = pointIndex;
+            this.pointType = point.type;
             this._didSomething();
             this.redo();
+        }
+        getMoveData(beforeChange) {
+            if (beforeChange) {
+                return new FilterMoveData(this._point, this._oldFreq, this._oldGain);
+            }
+            return new FilterMoveData(this._point, this._newFreq, this._newGain);
         }
         _doForwards() {
             this._point.freq = this._newFreq;
             this._point.gain = this._newGain;
             this._instrument.preset = this._instrumentNextPreset;
-            this._instrument.tmpEqFilterStart = this._instrument.eqFilter;
-            this._instrument.tmpEqFilterEnd = null;
-            this._instrument.tmpNoteFilterStart = this._instrument.noteFilter;
-            this._instrument.tmpNoteFilterEnd = null;
             this._doc.notifier.changed();
         }
         _doBackwards() {
             this._point.freq = this._oldFreq;
             this._point.gain = this._oldGain;
             this._instrument.preset = this._instrumentPrevPreset;
-            this._instrument.tmpEqFilterStart = this._instrument.eqFilter;
-            this._instrument.tmpEqFilterEnd = null;
-            this._instrument.tmpNoteFilterStart = this._instrument.noteFilter;
-            this._instrument.tmpNoteFilterEnd = null;
             this._doc.notifier.changed();
         }
     }
@@ -25884,6 +30887,8 @@ li.select2-results__option[role=group] > strong:hover {
     class ChangeOperatorAmplitude extends ChangeInstrumentSlider {
         constructor(doc, operatorIndex, oldValue, newValue) {
             super(doc);
+            this.operatorIndex = 0;
+            this.operatorIndex = operatorIndex;
             this._instrument.operators[operatorIndex].amplitude = newValue;
             doc.notifier.changed();
             if (oldValue != newValue)
@@ -25913,6 +30918,7 @@ li.select2-results__option[role=group] > strong:hover {
             const instrument = new Instrument(isNoise, isMod);
             instrument.fromJsonObject(preset.settings, isNoise, isMod, false, false, 1);
             instrument.preset = presetValue;
+            instrument.effects |= 1 << 2;
             instrument.volume = 0;
             channel.instruments.push(instrument);
             if (!isMod) {
@@ -25986,6 +30992,8 @@ li.select2-results__option[role=group] > strong:hover {
             super();
             if (doc.viewedInstrument[doc.channel] != index) {
                 doc.viewedInstrument[doc.channel] = index;
+                if (doc.channel >= doc.song.pitchChannelCount + doc.song.noiseChannelCount)
+                    doc.recentPatternInstruments[doc.channel] = [index];
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -26142,6 +31150,16 @@ li.select2-results__option[role=group] > strong:hover {
             this._didSomething();
         }
     }
+    class ChangeAppendInstrument extends ChangeGroup {
+        constructor(doc, channel, instrument) {
+            super();
+            let newInstrument = new Instrument(instrument["isDrum"], instrument["isMod"]);
+            newInstrument.fromJsonObject(instrument, instrument["isDrum"], instrument["isMod"], false, false);
+            channel.instruments.push(newInstrument);
+            this._didSomething();
+            doc.notifier.changed();
+        }
+    }
     class ChangeSetPatternInstruments extends Change {
         constructor(doc, channelIndex, instruments, pattern) {
             super();
@@ -26296,7 +31314,10 @@ li.select2-results__option[role=group] > strong:hover {
             this._channelIndex = channelIndex;
             this._oldPatternCount = song.patternsPerChannel;
             this._newPatternCount = song.patternsPerChannel;
-            this._newPatternInstruments = doc.recentPatternInstruments[channelIndex].concat();
+            if (channelIndex < doc.song.pitchChannelCount + doc.song.noiseChannelCount)
+                this._newPatternInstruments = doc.recentPatternInstruments[channelIndex].concat();
+            else
+                this._newPatternInstruments = [doc.viewedInstrument[channelIndex]];
             let firstEmptyUnusedIndex = null;
             let firstUnusedIndex = null;
             for (let patternIndex = 1; patternIndex <= song.patternsPerChannel; patternIndex++) {
@@ -26738,6 +31759,7 @@ li.select2-results__option[role=group] > strong:hover {
                 const preset = EditorConfig.valueToPreset(presetValue);
                 instrument.fromJsonObject(preset.settings, isNoise, isMod, song.rhythm == 0 || song.rhythm == 2, song.rhythm >= 2, 1);
                 instrument.preset = presetValue;
+                instrument.effects |= 1 << 2;
             }
         }
     }
@@ -27333,6 +32355,15 @@ li.select2-results__option[role=group] > strong:hover {
             }
         }
     }
+    class ChangeHoldingModRecording extends Change {
+        constructor(doc, storedChange, storedValues, slider) {
+            super();
+            this.storedChange = storedChange;
+            this.storedValues = storedValues;
+            this.storedSlider = slider;
+            this._didSomething();
+        }
+    }
     class ChangeDuplicateSelectedReusedPatterns extends ChangeGroup {
         constructor(doc, barStart, barWidth, channelStart, channelHeight) {
             super();
@@ -27699,15 +32730,15 @@ li.select2-results__option[role=group] > strong:hover {
         }
     }
 
-    const { button: button$k, div: div$k, span: span$6, h2: h2$j, input: input$f, br: br$3, select: select$a, option: option$a } = HTML;
+    const { button: button$m, div: div$m, span: span$6, h2: h2$l, input: input$h, br: br$4, select: select$b, option: option$b } = HTML;
     class BeatsPerBarPrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._beatsStepper = input$f({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
-            this._conversionStrategySelect = select$a({ style: "width: 100%;" }, option$a({ value: "splice" }, "Splice beats at end of bars."), option$a({ value: "stretch" }, "Stretch notes to fit in bars."), option$a({ value: "overflow" }, "Overflow notes across bars."));
-            this._cancelButton = button$k({ class: "cancelButton" });
-            this._okayButton = button$k({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$k({ class: "prompt noSelection", style: "width: 250px;" }, h2$j("Beats Per Bar"), div$k({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$k({ style: "text-align: right;" }, "Beats per bar:", br$3(), span$6({ style: "font-size: smaller; color: ${ColorConfig.secondaryText};" }, "(Multiples of 3 or 4 are recommended)")), this._beatsStepper), div$k({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$k({ class: "selectContainer", style: "width: 100%;" }, this._conversionStrategySelect)), div$k({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._beatsStepper = input$h({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
+            this._conversionStrategySelect = select$b({ style: "width: 100%;" }, option$b({ value: "splice" }, "Splice beats at end of bars."), option$b({ value: "stretch" }, "Stretch notes to fit in bars."), option$b({ value: "overflow" }, "Overflow notes across bars."));
+            this._cancelButton = button$m({ class: "cancelButton" });
+            this._okayButton = button$m({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$m({ class: "prompt noSelection", style: "width: 250px;" }, div$m({ class: "promptTitle" }, h2$l({ class: "bpmExt", style: "text-align: inherit;" }, ""), h2$l({ class: "bpmTitle" }, "Beats Per Bar")), div$m({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$m({ style: "text-align: right;" }, "Beats per bar:", br$4(), span$6({ style: "font-size: smaller; color: ${ColorConfig.secondaryText};" }, "(Multiples of 3 or 4 are recommended)")), this._beatsStepper), div$m({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$m({ class: "selectContainer", style: "width: 100%;" }, this._conversionStrategySelect)), div$m({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -27760,19 +32791,19 @@ li.select2-results__option[role=group] > strong:hover {
         }
     }
 
-    const { button: button$j, div: div$j, label: label$2, br: br$2, h2: h2$i, input: input$e } = HTML;
+    const { button: button$l, div: div$l, label: label$3, br: br$3, h2: h2$k, input: input$g } = HTML;
     class ChannelSettingsPrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._patternsStepper = input$e({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
-            this._pitchChannelStepper = input$e({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
-            this._drumChannelStepper = input$e({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
-            this._modChannelStepper = input$e({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
-            this._layeredInstrumentsBox = input$e({ style: "width: 3em; margin-left: 1em;", type: "checkbox" });
-            this._patternInstrumentsBox = input$e({ style: "width: 3em; margin-left: 1em;", type: "checkbox" });
-            this._cancelButton = button$j({ class: "cancelButton" });
-            this._okayButton = button$j({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$j({ class: "prompt noSelection", style: "width: 250px; text-align: right;" }, h2$i("Channel Settings"), label$2({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Pitch channels:", this._pitchChannelStepper), label$2({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Drum channels:", this._drumChannelStepper), div$j({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Mod channels:", this._modChannelStepper), label$2({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Available patterns per channel:", this._patternsStepper), label$2({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Simultaneous instruments", br$2(), "per channel:", this._layeredInstrumentsBox), label$2({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Different instruments", br$2(), "per pattern:", this._patternInstrumentsBox), label$2({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._patternsStepper = input$g({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
+            this._pitchChannelStepper = input$g({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
+            this._drumChannelStepper = input$g({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
+            this._modChannelStepper = input$g({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
+            this._layeredInstrumentsBox = input$g({ style: "width: 3em; margin-left: 1em;", type: "checkbox" });
+            this._patternInstrumentsBox = input$g({ style: "width: 3em; margin-left: 1em;", type: "checkbox" });
+            this._cancelButton = button$l({ class: "cancelButton" });
+            this._okayButton = button$l({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$l({ class: "prompt noSelection", style: "width: 250px; text-align: right;" }, div$l({ class: "promptTitle" }, h2$k({ class: "channelExt", style: "text-align: inherit;" }, ""), h2$k({ class: "channelTitle" }, "Channel Settings")), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Pitch channels:", this._pitchChannelStepper), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Drum channels:", this._drumChannelStepper), div$l({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Mod channels:", this._modChannelStepper), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Available patterns per channel:", this._patternsStepper), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Simultaneous instruments", br$3(), "per channel:", this._layeredInstrumentsBox), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Different instruments", br$3(), "per pattern:", this._patternInstrumentsBox), div$l({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -27847,7 +32878,7 @@ li.select2-results__option[role=group] > strong:hover {
         }
     }
 
-    const { button: button$i, div: div$i, h2: h2$h } = HTML;
+    const { button: button$k, div: div$k, h2: h2$j } = HTML;
     class CustomChipPromptCanvas {
         constructor(doc) {
             this._mouseX = 0;
@@ -28040,10 +33071,10 @@ li.select2-results__option[role=group] > strong:hover {
             this._doc = _doc;
             this._songEditor = _songEditor;
             this.customChipCanvas = new CustomChipPromptCanvas(this._doc);
-            this._playButton = button$i({ style: "width: 55%;", type: "button" });
-            this._cancelButton = button$i({ class: "cancelButton" });
-            this._okayButton = button$i({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$i({ class: "prompt noSelection", style: "width: 600px;" }, h2$h("Edit Custom Chip Instrument"), div$i({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), div$i({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, this.customChipCanvas.container), div$i({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._playButton = button$k({ style: "width: 55%;", type: "button" });
+            this._cancelButton = button$k({ class: "cancelButton" });
+            this._okayButton = button$k({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$k({ class: "prompt noSelection", style: "width: 600px;" }, div$k({ class: "promptTitle" }, h2$j({ class: "edit-custom-chipExt", style: "text-align: inherit;" }, ""), h2$j({ class: "edit-custom-chipTitle" }, "Edit Custom Chip Instrument")), div$k({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), div$k({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, this.customChipCanvas.container), div$k({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._togglePlay = () => {
                 this._songEditor.togglePlay();
                 this.updatePlayButton();
@@ -28118,6 +33149,7 @@ li.select2-results__option[role=group] > strong:hover {
             this._responsePath = SVG.path({ fill: ColorConfig.uiWidgetBackground, "pointer-events": "none" });
             this._indicators = [];
             this._subFilters = [];
+            this._writingMods = false;
             this._controlPointPath = SVG.path({ fill: "currentColor", "pointer-events": "none" });
             this._dottedLinePath = SVG.path({ fill: "none", stroke: "currentColor", "stroke-width": 1, "stroke-dasharray": "3, 2", "pointer-events": "none" });
             this._highlight = SVG.circle({ fill: "white", stroke: "none", "pointer-events": "none", r: 4 });
@@ -28226,13 +33258,17 @@ li.select2-results__option[role=group] > strong:hover {
                 this._whenCursorMoved();
             };
             this._whenCursorReleased = (event) => {
+                if (this._writingMods) {
+                    const instrument = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()];
+                    this._useFilterSettings = this._getTargetFilterSettings(instrument);
+                }
                 if (this.container.offsetParent == null)
                     return;
-                if (this._mouseDown && this._doc.lastChangeWas(this._dragChange) && this._dragChange != null) {
+                if (this._mouseDown && (this._doc.lastChangeWas(this._dragChange) || this._writingMods) && this._dragChange != null) {
                     if (!this._addingPoint && !this._mouseDragging && !this._touchMode) {
-                        if (this._selectedIndex < this._filterSettings.controlPointCount && this._selectedIndex != -1) {
-                            const point = this._filterSettings.controlPoints[this._selectedIndex];
-                            let change = new ChangeFilterAddPoint(this._doc, this._filterSettings, point, this._selectedIndex, this._useNoteFilter, true);
+                        if (this._selectedIndex < this._useFilterSettings.controlPointCount && this._selectedIndex != -1) {
+                            const point = this._useFilterSettings.controlPoints[this._selectedIndex];
+                            let change = new ChangeFilterAddPoint(this._doc, this._useFilterSettings, point, this._selectedIndex, this._useNoteFilter, true);
                             if (!this._larger) {
                                 this._doc.record(change);
                             }
@@ -28252,6 +33288,7 @@ li.select2-results__option[role=group] > strong:hover {
                 this._mouseDragging = false;
                 this._deletingPoint = false;
                 this._mouseDown = false;
+                this._writingMods = false;
                 this._updateCursor();
             };
             this._useNoteFilter = useNoteFilter;
@@ -28333,10 +33370,10 @@ li.select2-results__option[role=group] > strong:hover {
             this._addingPoint = true;
             this._selectedIndex = -1;
             let nearestDistance = Number.POSITIVE_INFINITY;
-            for (let i = 0; i < this._filterSettings.controlPointCount; i++) {
-                const point = this._filterSettings.controlPoints[i];
+            for (let i = 0; i < this._useFilterSettings.controlPointCount; i++) {
+                const point = this._useFilterSettings.controlPoints[i];
                 const distance = Math.sqrt(Math.pow(this._freqToX(point.freq) - this._mouseX, 2) + Math.pow(this._gainToY(point.gain) - this._mouseY, 2));
-                if ((distance <= 13 * (1 + +this._larger) || this._filterSettings.controlPointCount >= Config.filterMaxPoints) && distance < nearestDistance) {
+                if ((distance <= 13 * (1 + +this._larger) || this._useFilterSettings.controlPointCount >= Config.filterMaxPoints) && distance < nearestDistance) {
                     nearestDistance = distance;
                     this._selectedIndex = i;
                     this._addingPoint = false;
@@ -28356,7 +33393,31 @@ li.select2-results__option[role=group] > strong:hover {
             }
         }
         _whenCursorMoved() {
-            if (this._dragChange != null && this._doc.lastChangeWas(this._dragChange)) {
+            if (this._writingMods) {
+                const instrument = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()];
+                this._useFilterSettings = this._getTargetFilterSettings(instrument);
+                if (this._dragChange != null) {
+                    if (this._dragChange instanceof ChangeSequence && this._dragChange.checkFirst() instanceof ChangeFilterMovePoint) {
+                        const data = this._dragChange.checkFirst().getMoveData(true);
+                        const newPoint = this._useFilterSettings.controlPoints[this._selectedIndex];
+                        if (newPoint == null || newPoint.type != data.point.type) {
+                            this._dragChange = null;
+                            this._writingMods = false;
+                            this._mouseDown = false;
+                        }
+                        else {
+                            newPoint.freq = data.freq;
+                            newPoint.gain = data.gain;
+                        }
+                    }
+                    else {
+                        this._dragChange = null;
+                        this._writingMods = false;
+                        this._mouseDown = false;
+                    }
+                }
+            }
+            if (this._dragChange != null && (this._doc.lastChangeWas(this._dragChange) || this._writingMods)) {
                 this._dragChange.undo();
             }
             else {
@@ -28378,13 +33439,13 @@ li.select2-results__option[role=group] > strong:hover {
                 this._doc.setProspectiveChange(this._dragChange);
                 if (this._addingPoint) {
                     const gain = Math.max(0, Math.min(Config.filterGainRange - 1, Math.round(this._yToGain(this._mouseY))));
-                    const freq = this._findNearestFreqSlot(this._filterSettings, this._xToFreq(this._mouseX), -1);
+                    const freq = this._findNearestFreqSlot(this._useFilterSettings, this._xToFreq(this._mouseX), -1);
                     if (freq >= 0 && freq < Config.filterFreqRange) {
                         const point = new FilterControlPoint();
                         point.type = this._addedType;
                         point.freq = freq;
                         point.gain = gain;
-                        sequence.append(new ChangeFilterAddPoint(this._doc, this._filterSettings, point, this._filterSettings.controlPointCount, this._useNoteFilter));
+                        sequence.append(new ChangeFilterAddPoint(this._doc, this._useFilterSettings, point, this._useFilterSettings.controlPointCount, this._useNoteFilter));
                         if (this.coordText != null) {
                             this.coordText.innerText = "(" + freq + ", " + gain + ")";
                         }
@@ -28393,27 +33454,34 @@ li.select2-results__option[role=group] > strong:hover {
                         this._deletingPoint = true;
                     }
                 }
-                else if (this._selectedIndex >= this._filterSettings.controlPointCount || this._selectedIndex == -1) {
+                else if (this._selectedIndex >= this._useFilterSettings.controlPointCount || this._selectedIndex == -1) {
                     this._dragChange = null;
                     this._mouseDown = false;
                 }
                 else {
                     const freqDelta = this._xToFreq(this._mouseX) - this._freqStart;
                     const gainDelta = this._yToGain(this._mouseY) - this._gainStart;
-                    const point = this._filterSettings.controlPoints[this._selectedIndex];
+                    let point = this._useFilterSettings.controlPoints[this._selectedIndex];
                     const gain = Math.max(0, Math.min(Config.filterGainRange - 1, Math.round(point.gain + gainDelta)));
-                    const freq = this._findNearestFreqSlot(this._filterSettings, point.freq + freqDelta, this._selectedIndex);
+                    const freq = this._findNearestFreqSlot(this._useFilterSettings, point.freq + freqDelta, this._selectedIndex);
                     if (Math.round(freqDelta) != 0.0 || Math.round(gainDelta) != 0.0 || freq != point.freq || gain != point.gain) {
                         this._mouseDragging = true;
                     }
                     if (freq >= 0 && freq < Config.filterFreqRange) {
-                        sequence.append(new ChangeFilterMovePoint(this._doc, point, point.freq, freq, point.gain, gain));
+                        sequence.append(new ChangeFilterMovePoint(this._doc, point, point.freq, freq, point.gain, gain, this._useNoteFilter, this._selectedIndex));
                         if (this.coordText != null) {
                             this.coordText.innerText = "(" + freq + ", " + gain + ")";
+                            if (!this._writingMods) {
+                                const instrument = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()];
+                                instrument.tmpEqFilterStart = instrument.eqFilter;
+                                instrument.tmpEqFilterEnd = null;
+                                instrument.tmpNoteFilterStart = instrument.noteFilter;
+                                instrument.tmpNoteFilterEnd = null;
+                            }
                         }
                     }
                     else {
-                        sequence.append(new ChangeFilterAddPoint(this._doc, this._filterSettings, point, this._selectedIndex, this._useNoteFilter, true));
+                        sequence.append(new ChangeFilterAddPoint(this._doc, this._useFilterSettings, point, this._selectedIndex, this._useNoteFilter, true));
                         this._deletingPoint = true;
                     }
                 }
@@ -28457,8 +33525,8 @@ li.select2-results__option[role=group] > strong:hover {
             this._label.textContent = "";
             let controlPointPath = "";
             let dottedLinePath = "";
-            for (let i = 0; i < this._filterSettings.controlPointCount; i++) {
-                const point = this._filterSettings.controlPoints[i];
+            for (let i = 0; i < this._useFilterSettings.controlPointCount; i++) {
+                const point = this._useFilterSettings.controlPoints[i];
                 const pointX = this._freqToX(point.freq);
                 const pointY = this._gainToY(point.gain);
                 controlPointPath += FilterEditor._circlePath(pointX, pointY, this._pointRadius);
@@ -28476,7 +33544,7 @@ li.select2-results__option[role=group] > strong:hover {
                         this.coordText.innerText = "(" + point.freq + ", " + point.gain + ")";
                     }
                 }
-                if ((this._selectedIndex == i || (this._addingPoint && this._mouseDown && i == this._filterSettings.controlPointCount - 1)) && (this._mouseOver || this._mouseDown) && !this._deletingPoint) {
+                if ((this._selectedIndex == i || (this._addingPoint && this._mouseDown && i == this._useFilterSettings.controlPointCount - 1)) && (this._mouseOver || this._mouseDown) && !this._deletingPoint) {
                     this._label.textContent = (i + 1) + ": " + Config.filterTypeNames[point.type] + (this._larger ? " @" + prettyNumber(point.getHz()) + "Hz" : "");
                 }
                 if (this._larger) {
@@ -28491,14 +33559,14 @@ li.select2-results__option[role=group] > strong:hover {
                 this._label.textContent = "+ " + Config.filterTypeNames[this._addedType];
             }
             if (this._larger) {
-                for (let i = this._filterSettings.controlPointCount; i < Config.filterMaxPoints; i++) {
+                for (let i = this._useFilterSettings.controlPointCount; i < Config.filterMaxPoints; i++) {
                     this._indicators[i].style.setProperty("display", "none");
                 }
             }
             const standardSampleRate = 44800;
             const filters = [];
-            for (let i = 0; i < this._filterSettings.controlPointCount; i++) {
-                const point = this._filterSettings.controlPoints[i];
+            for (let i = 0; i < this._useFilterSettings.controlPointCount; i++) {
+                const point = this._useFilterSettings.controlPoints[i];
                 const filter = new FilterCoefficients();
                 point.toCoefficients(filter, standardSampleRate);
                 filters.push(filter);
@@ -28533,6 +33601,7 @@ li.select2-results__option[role=group] > strong:hover {
                 this.selfUndoSettings.push(JSON.stringify((this._filterSettings.toJsonObject())));
                 this.selfUndoHistoryPos++;
             }
+            this._useFilterSettings = this._filterSettings;
             this._updatePath();
         }
         saveSettings() {
@@ -28588,11 +33657,11 @@ li.select2-results__option[role=group] > strong:hover {
         swapSubfilterIndices(newIndex) {
             if (this._selectedIndex == -1)
                 return;
-            if (newIndex >= this._filterSettings.controlPointCount)
+            if (newIndex >= this._useFilterSettings.controlPointCount)
                 return;
-            let tmp = this._filterSettings.controlPoints[this._selectedIndex];
-            this._filterSettings.controlPoints[this._selectedIndex] = this._filterSettings.controlPoints[newIndex];
-            this._filterSettings.controlPoints[newIndex] = tmp;
+            let tmp = this._useFilterSettings.controlPoints[this._selectedIndex];
+            this._useFilterSettings.controlPoints[this._selectedIndex] = this._useFilterSettings.controlPoints[newIndex];
+            this._useFilterSettings.controlPoints[newIndex] = tmp;
             this.render();
         }
         swapToSubfilter(oldIndex, newIndex, useHistory = false) {
@@ -28614,56 +33683,61 @@ li.select2-results__option[role=group] > strong:hover {
                 this.swapToSettings(this._subFilters[newIndex], false);
             }
         }
-        render(activeMods = false) {
+        _getTargetFilterSettings(instrument) {
+            let targetSettings = (this._useNoteFilter) ? instrument.tmpNoteFilterStart : instrument.tmpEqFilterStart;
+            if (targetSettings == null)
+                targetSettings = (this._useNoteFilter) ? instrument.noteFilter : instrument.eqFilter;
+            return targetSettings;
+        }
+        render(activeMods = false, forceModRender = false) {
+            this._writingMods = forceModRender && this._mouseDown;
             const instrument = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()];
             const filterSettings = this._useNoteFilter ? instrument.noteFilter : instrument.eqFilter;
-            let displayMods = (activeMods && !this._larger && !this._mouseOver && !this._mouseDragging && !this._mouseDown && this._doc.synth.playing);
+            let displayMods = (activeMods && !this._larger && (forceModRender || (!this._mouseOver && !this._mouseDragging && !this._mouseDown)) && this._doc.synth.playing);
             if (displayMods)
                 this._controlPointPath.style.setProperty("fill", `${ColorConfig.overwritingModSlider}`);
             else if (!this._larger)
                 this._controlPointPath.style.setProperty("fill", "currentColor");
-            if (this._filterSettings != filterSettings) {
+            if (this._useFilterSettings != filterSettings && !this._writingMods) {
                 this._dragChange = null;
                 this._mouseDown = false;
             }
             this._filterSettings = filterSettings;
-            let targetSettings = filterSettings;
+            if (displayMods) {
+                this._useFilterSettings = this._getTargetFilterSettings(instrument);
+                if (this._writingMods)
+                    this._whenCursorMoved();
+            }
+            else {
+                this._useFilterSettings = filterSettings;
+            }
             if (!this._mouseDown)
                 this._updateCursor();
-            if (displayMods) {
-                targetSettings = (this._useNoteFilter) ? instrument.tmpNoteFilterStart : instrument.tmpEqFilterStart;
-                if (targetSettings == null)
-                    targetSettings = (this._useNoteFilter) ? instrument.noteFilter : instrument.eqFilter;
-                this._filterSettings = targetSettings;
-            }
             let pointTypes = 0;
             let pointFreqs = 0;
             let pointGains = 0;
-            for (let i = 0; i < targetSettings.controlPointCount; i++) {
-                const point = targetSettings.controlPoints[i];
+            for (let i = 0; i < this._useFilterSettings.controlPointCount; i++) {
+                const point = this._useFilterSettings.controlPoints[i];
                 pointTypes = pointTypes * 3 + point.type;
                 pointFreqs = pointFreqs * Config.filterFreqRange + point.freq;
                 pointGains = pointGains * Config.filterGainRange + point.gain;
             }
             if (this._renderedSelectedIndex != this._selectedIndex ||
-                this._renderedPointCount != targetSettings.controlPointCount ||
+                this._renderedPointCount != this._useFilterSettings.controlPointCount ||
                 this._renderedPointTypes != pointTypes ||
                 this._renderedPointFreqs != pointFreqs ||
                 this._renderedPointGains != pointGains) {
                 this._renderedSelectedIndex = this._selectedIndex;
-                this._renderedPointCount = targetSettings.controlPointCount;
+                this._renderedPointCount = this._useFilterSettings.controlPointCount;
                 this._renderedPointTypes = pointTypes;
                 this._renderedPointFreqs = pointFreqs;
                 this._renderedPointGains = pointGains;
                 this._updatePath();
             }
-            if (displayMods) {
-                this._filterSettings = filterSettings;
-            }
         }
     }
 
-    const { button: button$h, div: div$h, h2: h2$g, p: p$5 } = HTML;
+    const { button: button$j, div: div$j, h2: h2$i, p: p$7 } = HTML;
     class CustomFilterPrompt {
         constructor(_doc, _songEditor, _useNoteFilter) {
             this._doc = _doc;
@@ -28672,29 +33746,29 @@ li.select2-results__option[role=group] > strong:hover {
             this.filterData = new FilterSettings;
             this.startingFilterData = new FilterSettings;
             this._subfilterIndex = 0;
-            this._playButton = button$h({ style: "width: 55%;", type: "button" });
+            this._playButton = button$j({ style: "width: 55%;", type: "button" });
             this._filterButtons = [];
-            this._filterButtonContainer = div$h({ class: "instrument-bar", style: "justify-content: center;" });
-            this._cancelButton = button$h({ class: "cancelButton" });
-            this._okayButton = button$h({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this._filterContainer = div$h({ style: "width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: center;" });
-            this._editorTitle = div$h({}, h2$g("Edit Filter"));
-            this._filterCopyButton = button$h({ style: "width:86px; margin-right: 5px;", class: "copyButton" }, [
+            this._filterButtonContainer = div$j({ class: "instrument-bar", style: "justify-content: center;" });
+            this._cancelButton = button$j({ class: "cancelButton" });
+            this._okayButton = button$j({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this._filterContainer = div$j({ style: "width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: center;" });
+            this._editorTitle = div$j({ class: "promptTitle" }, h2$i({ class: "edit-filterExt", style: "text-align: inherit;" }, ""), h2$i({ class: "edit-filterTitle" }, "Edit Filter"));
+            this._filterCopyButton = button$j({ style: "width:86px; margin-right: 5px;", class: "copyButton" }, [
                 "Copy",
                 SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "-5 -21 26 26" }, [
                     SVG.path({ d: "M 0 -15 L 1 -15 L 1 0 L 13 0 L 13 1 L 0 1 L 0 -15 z M 2 -1 L 2 -17 L 10 -17 L 14 -13 L 14 -1 z M 3 -2 L 13 -2 L 13 -12 L 9 -12 L 9 -16 L 3 -16 z", fill: "currentColor" }),
                 ]),
             ]);
-            this._filterPasteButton = button$h({ style: "width:86px;", class: "pasteButton" }, [
+            this._filterPasteButton = button$j({ style: "width:86px;", class: "pasteButton" }, [
                 "Paste",
                 SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "0 0 26 26" }, [
                     SVG.path({ d: "M 8 18 L 6 18 L 6 5 L 17 5 L 17 7 M 9 8 L 16 8 L 20 12 L 20 22 L 9 22 z", stroke: "currentColor", fill: "none" }),
                     SVG.path({ d: "M 9 3 L 14 3 L 14 6 L 9 6 L 9 3 z M 16 8 L 20 12 L 16 12 L 16 8 z", fill: "currentColor", }),
                 ]),
             ]);
-            this._filterCopyPasteContainer = div$h({ style: "width: 185px;" }, this._filterCopyButton, this._filterPasteButton);
-            this._filterCoordinateText = div$h({ style: "text-align: left; margin-bottom: 0px; font-size: x-small; height: 1.3em; color: " + ColorConfig.secondaryText + ";" }, p$5(""));
-            this.container = div$h({ class: "prompt noSelection", style: "width: 600px;" }, this._editorTitle, div$h({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), this._filterButtonContainer, this._filterContainer, div$h({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton, this._filterCopyPasteContainer), this._cancelButton);
+            this._filterCopyPasteContainer = div$j({ style: "width: 185px;" }, this._filterCopyButton, this._filterPasteButton);
+            this._filterCoordinateText = div$j({ style: "text-align: left; margin-bottom: 0px; font-size: x-small; height: 1.3em; color: " + ColorConfig.secondaryText + ";" }, p$7(""));
+            this.container = div$j({ class: "prompt noSelection", style: "width: 600px;" }, this._editorTitle, div$j({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), this._filterButtonContainer, this._filterContainer, div$j({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton, this._filterCopyPasteContainer), this._cancelButton);
             this._setSubfilter = (index, useHistory = true, doSwap = true) => {
                 this._filterButtons[this._subfilterIndex].classList.remove("selected-instrument");
                 if (doSwap)
@@ -28796,12 +33870,12 @@ li.select2-results__option[role=group] > strong:hover {
             this.filterEditor.container.insertBefore(this._filterCoordinateText, this.filterEditor.container.firstChild);
             this.filterEditor.coordText = this._filterCoordinateText;
             this._editorTitle.children[0].innerHTML = (_useNoteFilter) ? "Edit Note Filter" : "Edit EQ Filter";
-            let newButton = button$h({ class: "no-underline", style: "max-width: 5em;" }, "Main");
+            let newButton = button$j({ class: "no-underline", style: "max-width: 5em;" }, "Main");
             this._filterButtonContainer.appendChild(newButton);
             this._filterButtons.push(newButton);
             newButton.addEventListener("click", () => { this._setSubfilter(0); });
             for (let i = 1; i < Config.filterMorphCount; i++) {
-                let newSubButton = button$h({ class: "no-underline", style: "max-width: 2em;" }, "" + i);
+                let newSubButton = button$j({ class: "no-underline", style: "max-width: 2em;" }, "" + i);
                 this._filterButtons.push(newSubButton);
                 this._filterButtonContainer.appendChild(newSubButton);
                 newSubButton.addEventListener("click", () => { this._setSubfilter(i); });
@@ -28831,6 +33905,228 @@ li.select2-results__option[role=group] > strong:hover {
                 this._playButton.title = "Play (Space)";
                 this._playButton.innerText = "Play";
             }
+        }
+    }
+
+    const { button: button$i, div: div$i, h2: h2$h, input: input$f, label: label$2, br: br$2 } = HTML;
+    class InstrumentExportPrompt {
+        constructor(_doc) {
+            this._doc = _doc;
+            this._cancelButton = button$i({ class: "cancelButton" });
+            this._exportButton = button$i({ class: "exportButton", style: "width:45%;" }, "Export");
+            this._exportMultipleBox = input$f({ style: "width: 3em; margin-left: 1em;", type: "checkbox" });
+            this._channelName = this._doc.song.channels[this._doc.channel].name == "" ? "Beepbox-Instrument" : this._doc.song.channels[this._doc.channel].name;
+            this._fileName = input$f({ type: "text", style: "width: 10em;", value: this._channelName, maxlength: 250, "autofocus": "autofocus" });
+            this.container = div$i({ class: "prompt noSelection", style: "width: 200px;" }, div$i({ class: "promptTitle" }, h2$h({ class: "export-instrumentExt", style: "text-align: inherit;" }, ""), h2$h({ class: "export-instrumentTitle" }, "Export Instruments Options")), div$i({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "File name:", this._fileName), label$2({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Export all instruments", br$2(), "in channel:", this._exportMultipleBox), div$i({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._exportButton), this._cancelButton);
+            this._close = () => {
+                this._doc.undo();
+            };
+            this.cleanUp = () => {
+                this._cancelButton.removeEventListener("click", this._close);
+                this._exportButton.removeEventListener("click", this._decide_export);
+                this._fileName.removeEventListener("input", InstrumentExportPrompt._validateFileName);
+            };
+            this._decide_export = () => {
+                this._exportMultipleBox.checked ? this._export_multiple() : this._export_single();
+            };
+            this._export_multiple = () => {
+                const channel = this._doc.song.channels[this._doc.channel];
+                const instruments = channel.instruments.map((instrument) => {
+                    const instrumentCopy = instrument.toJsonObject();
+                    instrumentCopy["isDrum"] = this._doc.song.getChannelIsNoise(this._doc.channel);
+                    return instrumentCopy;
+                });
+                const jsonBlob = new Blob([JSON.stringify(instruments)], { type: 'application/json' });
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(jsonBlob);
+                downloadLink.download = this._fileName.value + '.json';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                this._close();
+            };
+            this._export_single = () => {
+                const channel = this._doc.song.channels[this._doc.channel];
+                const instrument = channel.instruments[this._doc.getCurrentInstrument()];
+                const instrumentCopy = instrument.toJsonObject();
+                instrumentCopy["isDrum"] = this._doc.song.getChannelIsNoise(this._doc.channel);
+                const jsonBlob = new Blob([JSON.stringify(instrumentCopy)], { type: 'application/json' });
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(jsonBlob);
+                downloadLink.download = this._fileName.value + '.json';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                this._close();
+            };
+            this._cancelButton.addEventListener("click", this._close);
+            this._exportButton.addEventListener("click", this._decide_export);
+            this._fileName.addEventListener("input", InstrumentExportPrompt._validateFileName);
+        }
+        static _validateFileName(event, use) {
+            let input;
+            if (event != null) {
+                input = event.target;
+            }
+            else if (use != undefined) {
+                input = use;
+            }
+            else {
+                return;
+            }
+            const deleteChars = /[\+\*\$\?\|\{\}\\\/<>#%!`&'"=:@]/gi;
+            if (deleteChars.test(input.value)) {
+                let cursorPos = input.selectionStart;
+                input.value = input.value.replace(deleteChars, "");
+                cursorPos--;
+                input.setSelectionRange(cursorPos, cursorPos);
+            }
+        }
+    }
+
+    const { button: button$h, div: div$h, h2: h2$g, input: input$e, select: select$a, option: option$a, code: code$1 } = HTML;
+    class InstrumentImportPrompt {
+        constructor(_doc) {
+            this._doc = _doc;
+            this._cancelButton = button$h({ class: "cancelButton" });
+            this._importStrategySelect = select$a({ style: "width: 100%;" }, option$a({ value: "append" }, "Append instruments to the end of the list."), option$a({ value: "replace" }, "Replace only the selected instrument."), option$a({ value: "all" }, "Replace all instruments in the channel."));
+            this._fileInput = input$e({ type: "file", accept: ".json,application/json" });
+            this.container = div$h({ class: "prompt noSelection", style: "width: 300px;" }, div$h({ class: "promptTitle" }, h2$g({ class: "import-instrumentExt", style: "text-align: inherit;" }, ""), h2$g({ class: "import-instrumentTitle" }, "Import Instrument(s)")), div$h({ style: "text-align: left;" }, "You must enable either ", code$1("Simultaneous instruments per channel"), " or ", code$1("Different instruments per pattern"), " to change the import strategy."), div$h({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$h({ class: "selectContainer", style: "width: 100%;" }, this._importStrategySelect)), this._fileInput, this._cancelButton);
+            this._whenFileSelected = () => {
+                const file = this._fileInput.files[0];
+                if (!file)
+                    return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    var _a;
+                    try {
+                        const fileParsed = JSON.parse(String((_a = e.target) === null || _a === void 0 ? void 0 : _a.result));
+                        console.log("Processing file:", fileParsed);
+                        if (fileParsed.constructor.name == "Array") {
+                            if ((this._doc.song.patternInstruments || this._doc.song.layeredInstruments) == false) {
+                                alert("Instrument file contains multiple instruments! Please turn on either Simultaneous instruments per channel or Different instruments per pattern!");
+                                return;
+                            }
+                            this._import_multiple(fileParsed);
+                            return;
+                        }
+                        else {
+                            this._import_single(fileParsed);
+                        }
+                    }
+                    catch (error) {
+                        console.error('Error reading file:', error);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            this._close = () => {
+                this._doc.undo();
+            };
+            this.cleanUp = () => {
+                this._fileInput.removeEventListener("change", this._whenFileSelected);
+                this._cancelButton.removeEventListener("click", this._close);
+            };
+            this._import_multiple = (file) => {
+                const channel = this._doc.song.channels[this._doc.channel];
+                const currentInstrum = channel.instruments[this._doc.getCurrentInstrument()];
+                switch (this._importStrategySelect.value) {
+                    case "replace":
+                        window.localStorage.setItem("instrumentImportStrategy", this._importStrategySelect.value);
+                        const firstInstrum = file[0];
+                        this._doc.record(new ChangePasteInstrument(this._doc, currentInstrum, firstInstrum));
+                        for (let i = 1; i < file.length; i++) {
+                            const insturm = file[i];
+                            if (!this._validate_instrument_limit(channel)) {
+                                alert("Max instruments reached! Some instruments were not imported.");
+                                break;
+                            }
+                            this._doc.record(new ChangeAppendInstrument(this._doc, channel, insturm));
+                        }
+                        this._doc.record(new ChangeViewInstrument(this._doc, this._doc.getCurrentInstrument()));
+                        this._doc.prompt = null;
+                        this._doc.notifier.changed();
+                        return;
+                    case "all":
+                        window.localStorage.setItem("instrumentImportStrategy", this._importStrategySelect.value);
+                        channel.instruments.length = 0;
+                        for (let insturm of file) {
+                            if (!this._validate_instrument_limit(channel)) {
+                                alert("Max instruments reached! Some instruments were not imported.");
+                                break;
+                            }
+                            this._doc.record(new ChangeAppendInstrument(this._doc, channel, insturm));
+                        }
+                        this._doc.record(new ChangeViewInstrument(this._doc, channel.instruments.length - 1));
+                        this._doc.prompt = null;
+                        this._doc.notifier.changed();
+                        return;
+                    default:
+                        window.localStorage.setItem("instrumentImportStrategy", this._importStrategySelect.value);
+                        for (let insturm of file) {
+                            if (!this._validate_instrument_limit(channel)) {
+                                alert("Max instruments reached! Some instruments were not imported.");
+                                break;
+                            }
+                            this._doc.record(new ChangeAppendInstrument(this._doc, channel, insturm));
+                        }
+                        this._doc.record(new ChangeViewInstrument(this._doc, channel.instruments.length - 1));
+                        this._doc.prompt = null;
+                        this._doc.notifier.changed();
+                        return;
+                }
+            };
+            this._validate_instrument_limit = (channel) => {
+                if (this._doc.song.getMaxInstrumentsPerChannel() <= channel.instruments.length) {
+                    return false;
+                }
+                return true;
+            };
+            this._import_single = (file) => {
+                const channel = this._doc.song.channels[this._doc.channel];
+                const currentInstrum = channel.instruments[this._doc.getCurrentInstrument()];
+                switch (this._importStrategySelect.value) {
+                    case "replace":
+                        window.localStorage.setItem("instrumentImportStrategy", this._importStrategySelect.value);
+                        this._doc.record(new ChangePasteInstrument(this._doc, currentInstrum, file));
+                        this._doc.record(new ChangeViewInstrument(this._doc, this._doc.getCurrentInstrument()));
+                        this._doc.prompt = null;
+                        this._doc.notifier.changed();
+                        return;
+                    case "all":
+                        window.localStorage.setItem("instrumentImportStrategy", this._importStrategySelect.value);
+                        channel.instruments.length = 1;
+                        const firstInstrum = channel.instruments[0];
+                        this._doc.record(new ChangePasteInstrument(this._doc, firstInstrum, file));
+                        this._doc.record(new ChangeViewInstrument(this._doc, 0));
+                        this._doc.prompt = null;
+                        this._doc.notifier.changed();
+                        return;
+                    default:
+                        if (!this._validate_instrument_limit(channel)) {
+                            alert("Max instruments reached! The instrument was not imported.");
+                            this._doc.prompt = null;
+                            return;
+                        }
+                        window.localStorage.setItem("instrumentImportStrategy", this._importStrategySelect.value);
+                        this._doc.record(new ChangeAppendInstrument(this._doc, channel, file));
+                        this._doc.record(new ChangeViewInstrument(this._doc, channel.instruments.length - 1));
+                        this._doc.prompt = null;
+                        this._doc.notifier.changed();
+                        return;
+                }
+            };
+            if ((_doc.song.patternInstruments || _doc.song.layeredInstruments) == false) {
+                this._importStrategySelect.disabled = true;
+                this._importStrategySelect.value = "replace";
+            }
+            else {
+                const lastStrategy = window.localStorage.getItem("instrumentImportStrategy");
+                if (lastStrategy != null)
+                    this._importStrategySelect.value = lastStrategy;
+            }
+            this._fileInput.addEventListener("change", this._whenFileSelected);
+            this._cancelButton.addEventListener("click", this._close);
         }
     }
 
@@ -28965,7 +34261,7 @@ li.select2-results__option[role=group] > strong:hover {
             this._invertBox = input$d({ type: "checkbox", style: "width: 1em; padding: 0; margin-left: 1em;" });
             this._okayButton = button$g({ class: "okayButton", style: "width: 45%;" }, "Okay");
             this._cancelButton = button$g({ class: "cancelButton" });
-            this.container = div$g({ class: "prompt noSelection", style: "width: 600px;" }, h2$f("Generate Euclidean Rhythm"), div$g({ style: "display: flex; flex-direction: row; align-items: center;" }, this._sequenceButtonContainer), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, div$g({ style: "flex-grow: 0; flex-shrink: 0;" }, this._barPreviewGoToFirstButton, this._barPreviewGoBackButton), this._barPreviewLabel, div$g({ style: "flex-grow: 0; flex-shrink: 0;" }, this._barPreviewGoForwardButton, this._barPreviewGoToLastButton)), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, SVG.svg({ "pointer-events": "none", style: "touch-action: none; overflow: hidden;", width: "100%", height: "20px", viewBox: `0 0 ${this._barPreviewWidth} ${this._barPreviewHeight}`, preserveAspectRatio: "none" }, this._barPreviewBackground, this._barPreviewSteps)), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-evenly;" }, div$g({ style: "max-width: 150px; height: 100%;" }, SVG.svg({ "pointer-events": "none", width: "100%", height: "100%", style: "touch-action: none; overflow: hidden; margin-right: 1.5em; max-width: 150px; height: 100%;", viewBox: `0 0 ${this._clockWidth} ${this._clockHeight}`, preserveAspectRatio: "none" }, this._clockWire, this._clockPoints)), div$g({ style: "display: flex; height: 100%;" }, div$g({ style: "flex-grow: 1; " }, div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Steps"), this._stepsStepper), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Pulses"), this._pulsesStepper), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Rotation"), this._rotationStepper)), div$g({ style: "flex-grow: 1; margin-left: 1em;" }, div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-bottom: 1em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Size"), div$g({ style: "display: flex; flex-direction: column;" }, this._stepSizeNumeratorStepper, this._stepSizeDenominatorStepper)), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Channel"), this._channelStepper), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Pitch"), this._pitchStepper)))), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, div$g({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Generate fading notes"), this._generateFadingNotesBox, div$g({ style: `text-align: right; color: ${ColorConfig.primaryText}; margin-left: 1em;` }, "Invert"), this._invertBox), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, div$g({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Length (in bars)"), this._barAmountStepper, this._extendUntilLoopButton), div$g({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this.container = div$g({ class: "prompt noSelection", style: "width: 600px;" }, div$g({ class: "promptTitle" }, h2$f({ class: "gerExt", style: "text-align: inherit;" }, ""), h2$f({ class: "gerTitle" }, "Generate Euclidean Rhythm")), div$g({ style: "display: flex; flex-direction: row; align-items: center;" }, this._sequenceButtonContainer), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, div$g({ style: "flex-grow: 0; flex-shrink: 0;" }, this._barPreviewGoToFirstButton, this._barPreviewGoBackButton), this._barPreviewLabel, div$g({ style: "flex-grow: 0; flex-shrink: 0;" }, this._barPreviewGoForwardButton, this._barPreviewGoToLastButton)), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, SVG.svg({ "pointer-events": "none", style: "touch-action: none; overflow: hidden;", width: "100%", height: "20px", viewBox: `0 0 ${this._barPreviewWidth} ${this._barPreviewHeight}`, preserveAspectRatio: "none" }, this._barPreviewBackground, this._barPreviewSteps)), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-evenly;" }, div$g({ style: "max-width: 150px; height: 100%;" }, SVG.svg({ "pointer-events": "none", width: "100%", height: "100%", style: "touch-action: none; overflow: hidden; margin-right: 1.5em; max-width: 150px; height: 100%;", viewBox: `0 0 ${this._clockWidth} ${this._clockHeight}`, preserveAspectRatio: "none" }, this._clockWire, this._clockPoints)), div$g({ style: "display: flex; height: 100%;" }, div$g({ style: "flex-grow: 1; " }, div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Steps"), this._stepsStepper), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Pulses"), this._pulsesStepper), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Rotation"), this._rotationStepper)), div$g({ style: "flex-grow: 1; margin-left: 1em;" }, div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-bottom: 1em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Size"), div$g({ style: "display: flex; flex-direction: column;" }, this._stepSizeNumeratorStepper, this._stepSizeDenominatorStepper)), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Channel"), this._channelStepper), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Pitch"), this._pitchStepper)))), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, div$g({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Generate fading notes"), this._generateFadingNotesBox, div$g({ style: `text-align: right; color: ${ColorConfig.primaryText}; margin-left: 1em;` }, "Invert"), this._invertBox), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, div$g({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Length (in bars)"), this._barAmountStepper, this._extendUntilLoopButton), div$g({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this.cleanUp = () => {
                 this._okayButton.removeEventListener("click", this._saveChanges);
                 this._cancelButton.removeEventListener("click", this._close);
@@ -30080,7 +35376,7 @@ li.select2-results__option[role=group] > strong:hover {
             this._outputProgressBar = div$f({ style: `width: 0%; background: ${ColorConfig.loopAccent}; height: 100%; position: absolute; z-index: 2;` });
             this._outputProgressLabel = div$f({ style: `position: relative; top: -1px; z-index: 3;` }, "0%");
             this._outputProgressContainer = div$f({ style: `height: 12px; background: ${ColorConfig.uiWidgetBackground}; display: block; position: relative; z-index: 1;` }, this._outputProgressBar, this._outputProgressLabel);
-            this.container = div$f({ class: "prompt noSelection", style: "width: 200px;" }, h2$e("Export Options"), div$f({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "File name:", this._fileName), div$f({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "Length:", this._computedSamplesLabel), div$f({ style: "display: table; width: 100%;" }, div$f({ style: "display: table-row;" }, div$f({ style: "display: table-cell;" }, "Intro:"), div$f({ style: "display: table-cell;" }, "Loop Count:"), div$f({ style: "display: table-cell;" }, "Outro:")), div$f({ style: "display: table-row;" }, div$f({ style: "display: table-cell; vertical-align: middle;" }, this._enableIntro), div$f({ style: "display: table-cell; vertical-align: middle;" }, this._loopDropDown), div$f({ style: "display: table-cell; vertical-align: middle;" }, this._enableOutro))), div$f({ class: "selectContainer", style: "width: 100%;" }, this._formatSelect), div$f({ style: "text-align: left;" }, "Exporting can be slow. Reloading the page or clicking the X will cancel it. Please be patient."), this._outputProgressContainer, div$f({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._exportButton), this._cancelButton);
+            this.container = div$f({ class: "prompt noSelection", style: "width: 200px;" }, div$f({ class: "promptTitle" }, h2$e({ class: "exportExt", style: "text-align: inherit;" }, ""), h2$e({ class: "exportTitle" }, "Export Options")), div$f({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "File name:", this._fileName), div$f({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "Length:", this._computedSamplesLabel), div$f({ style: "display: table; width: 100%;" }, div$f({ style: "display: table-row;" }, div$f({ style: "display: table-cell;" }, "Intro:"), div$f({ style: "display: table-cell;" }, "Loop Count:"), div$f({ style: "display: table-cell;" }, "Outro:")), div$f({ style: "display: table-row;" }, div$f({ style: "display: table-cell; vertical-align: middle;" }, this._enableIntro), div$f({ style: "display: table-cell; vertical-align: middle;" }, this._loopDropDown), div$f({ style: "display: table-cell; vertical-align: middle;" }, this._enableOutro))), div$f({ class: "selectContainer", style: "width: 100%;" }, this._formatSelect), div$f({ style: "text-align: left;" }, "Exporting can be slow. Reloading the page or clicking the X will cancel it. Please be patient."), this._outputProgressContainer, div$f({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._exportButton), this._cancelButton);
             this._close = () => {
                 if (this.synth != null)
                     this.synth.renderingSong = false;
@@ -30248,6 +35544,7 @@ li.select2-results__option[role=group] > strong:hover {
                     this.synth.goToNextBar();
                 }
             }
+            this.synth.initModFilters(this._doc.song);
             this.synth.computeLatestModValues();
             this.synth.warmUpSynthesizer(this._doc.song);
             this.sampleFrames = this.synth.getTotalSamples(this._enableIntro.checked, this._enableOutro.checked, this.synth.loopRepeatCount);
@@ -30523,13 +35820,13 @@ li.select2-results__option[role=group] > strong:hover {
                                             instrumentProgram = ExportPrompt.midiChipInstruments[instrument.chipWave];
                                         }
                                     }
-                                    else if (instrument.type == 6 || instrument.type == 1 || instrument.type == 10 || instrument.type == 5 || instrument.type == 11) {
+                                    else if (instrument.type == 6 || instrument.type == 1 || instrument.type == 11 || instrument.type == 5 || instrument.type == 8) {
                                         instrumentProgram = 81;
                                     }
                                     else if (instrument.type == 7) {
                                         instrumentProgram = 0x19;
                                     }
-                                    else if (instrument.type == 8) {
+                                    else if (instrument.type == 9) {
                                         instrumentProgram = 81;
                                     }
                                     else {
@@ -30791,6 +36088,7 @@ You should be redirected to the song at:<br /><br />
 				#beepboxEditorContainer {
 					max-width: initial;
 					height: 100vh;
+					padding-top: 0px;
 				}
 				.beepboxEditor {
 					width: 100%;
@@ -30880,6 +36178,7 @@ You should be redirected to the song at:<br /><br />
 				#beepboxEditorContainer {
 					max-width: initial;
 					height: 100vh;
+					padding-top: 0px;
 				}
 				.beepboxEditor {
 					width: 100%;
@@ -30977,6 +36276,7 @@ You should be redirected to the song at:<br /><br />
 				#beepboxEditorContainer {
 					max-width: initial;
 					height: 100vh;
+					padding-top: 0px;
 				}
 				.beepboxEditor {
 					width: 100%;
@@ -31059,6 +36359,7 @@ You should be redirected to the song at:<br /><br />
 				#beepboxEditorContainer {
 					max-width: initial;
 					height: 100vh;
+					padding-top: 0px;
 				}
 				.beepboxEditor {
 					width: 100%;
@@ -31149,6 +36450,7 @@ You should be redirected to the song at:<br /><br />
 				#beepboxEditorContainer {
 					max-width: initial;
 					height: 100vh;
+					padding-top: 0px;
 				}
 				.beepboxEditor {
 					width: 100%;
@@ -31234,11 +36536,12 @@ You should be redirected to the song at:<br /><br />
 				#beepboxEditorContainer {
 					max-width: initial;
 					height: 100vh;
+					padding-top: 0px;
 				}
 				.beepboxEditor {
 					width: 100%;
 					height: 100vh;
-					grid-template-columns: minmax(0, 1fr) 235px; 
+					grid-template-columns: minmax(0, 1fr) 190px; 
 					grid-template-rows: minmax(481px, 1fr) minmax(0, min-content);
 					grid-template-areas: "pattern-area settings-area" "track-area";
 				}
@@ -31316,6 +36619,99 @@ You should be redirected to the song at:<br /><br />
 				}
 			}
 		`,
+        "theatre": `\
+
+		/* Theatre layout */
+		@media (min-width: 711px) {
+			#beepboxEditorContainer {
+				max-width: initial;
+				height: 100vh;
+				padding-top: 0px;
+			}
+			.beepboxEditor {
+				width: 100%;
+				height: 200vh;
+				grid-template-columns: minmax(0, 1fr) 390px;
+				grid-template-rows: minmax(480px, 50%) minmax(0, 50%);
+				grid-template-areas:
+			"pattern-area pattern-area " 
+			"track-area settings-area";
+			  }			
+			.beepboxEditor .pattern-area {
+				width: 100%;
+				height: 100%;
+			}
+			.beepboxEditor .track-area {
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+			}
+			.beepboxEditor .trackAndMuteContainer {
+				width: 100%;
+				min-height: 0;
+				flex: 1;
+				overflow: auto;
+				max-height: 97.5vh;
+			}
+			.beepboxEditor .instrument-settings-area {
+				overflow-y: auto;
+				position: relative;
+			}
+			.beepboxEditor .instrument-settings-area > .editor-controls {
+				position: absolute;
+				width: 100%;
+			}
+			.beepboxEditor .song-settings-area {
+				overflow-y: auto;
+			}
+			
+			.beepboxEditor .settings-area {
+				width: 390px;
+				grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+				grid-template-rows: auto auto auto minmax(0, 1fr);
+				grid-template-areas:
+					"instrument-settings-area version-area"
+					"instrument-settings-area play-pause-area"
+					"instrument-settings-area menu-area"
+					"instrument-settings-area song-settings-area";
+			}
+			
+			.beepboxEditor .barScrollBar {
+				display: none;
+			}
+			.beepboxEditor.selectRow {
+				height: 2em;
+			}
+			.beepboxEditor .operatorRow {
+				heiht: 2em;
+			}
+			.beepboxEditor .trackAndMuteContainer {
+				max-height: 446px;
+			}
+
+			.beepboxEditor .trackContainer {
+				overflow: visible;
+			}
+			.beepboxEditor .trackAndMuteContainer {
+				scrollbar-width: auto;
+				scrollbar-color: ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
+			}
+			.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar {
+				width: 20px;
+				height: 20px;
+			}
+			.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar-track {
+				background: ${ColorConfig.editorBackground};
+			}
+			.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar-thumb {
+				background-color: ${ColorConfig.uiWidgetBackground};
+				border: 3px solid ${ColorConfig.editorBackground};
+			}
+			.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar-corner {
+				background-color: ${ColorConfig.editorBackground};
+			}
+		}
+	`,
     };
     Layout._styleElement = document.head.appendChild(HTML.style({ type: "text/css" }));
 
@@ -31541,6 +36937,9 @@ You should be redirected to the song at:<br /><br />
             this._value = value;
             this.input.value = String(value);
         }
+        getValueBeforeProspectiveChange() {
+            return this._oldValue;
+        }
     }
 
     class ArrayBufferReader {
@@ -31622,13 +37021,13 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$e, p: p$4, div: div$e, h2: h2$d, input: input$b } = HTML;
+    const { button: button$e, p: p$6, div: div$e, h2: h2$d, input: input$b } = HTML;
     class ImportPrompt {
         constructor(_doc) {
             this._doc = _doc;
             this._fileInput = input$b({ type: "file", accept: ".json,application/json,.mid,.midi,audio/midi,audio/x-midi" });
             this._cancelButton = button$e({ class: "cancelButton" });
-            this.container = div$e({ class: "prompt noSelection", style: "width: 300px;" }, h2$d("Import"), p$4({ style: "text-align: left; margin: 0.5em 0;" }, "BeepBox songs can be exported and re-imported as .json files. You could also use other means to make .json files for BeepBox as long as they follow the same structure."), p$4({ style: "text-align: left; margin: 0.5em 0;" }, "BeepBox can also (crudely) import .mid files. There are many tools available for creating .mid files. Shorter and simpler songs are more likely to work well."), this._fileInput, this._cancelButton);
+            this.container = div$e({ class: "prompt noSelection", style: "width: 300px;" }, div$e({ class: "promptTitle" }, h2$d({ class: "importExt", style: "text-align: inherit;" }, ""), h2$d({ class: "importTitle" }, "Import")), p$6({ style: "text-align: left; margin: 0.5em 0;" }, "BeepBox songs can be exported and re-imported as .json files. You could also use other means to make .json files for BeepBox as long as they follow the same structure."), p$6({ style: "text-align: left; margin: 0.5em 0;" }, "BeepBox can also (crudely) import .mid files. There are many tools available for creating .mid files. Shorter and simpler songs are more likely to work well."), this._fileInput, this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -31640,7 +37039,7 @@ You should be redirected to the song at:<br /><br />
                 const file = this._fileInput.files[0];
                 if (!file)
                     return;
-                const extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+                const extension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2).toLowerCase();
                 if (extension == "json") {
                     const reader = new FileReader();
                     reader.addEventListener("load", (event) => {
@@ -32123,7 +37522,7 @@ You should be redirected to the song at:<br /><br />
                                                 instrument.preset = presetValue;
                                             }
                                             else {
-                                                instrument.setTypeAndReset(isModChannel ? 9 : (isNoiseChannel ? 2 : 0), isNoiseChannel, isModChannel);
+                                                instrument.setTypeAndReset(isModChannel ? 10 : (isNoiseChannel ? 2 : 0), isNoiseChannel, isModChannel);
                                                 instrument.chord = 0;
                                             }
                                             instrument.volume = currentInstrumentVolume;
@@ -32413,6 +37812,110 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
+    class Box {
+        constructor(channel, color) {
+            this._text = document.createTextNode("");
+            this._label = HTML.div({ class: "channelBoxLabel" }, this._text);
+            this.container = HTML.div({ class: "channelBox", style: `margin: 1px; height: ${ChannelRow.patternHeight - 2}px;` }, this._label);
+            this._renderedIndex = -1;
+            this._renderedLabelColor = "?";
+            this._renderedBackgroundColor = "?";
+            this.container.style.background = ColorConfig.uiWidgetBackground;
+            this._label.style.color = color;
+        }
+        setWidth(width) {
+            this.container.style.width = (width - 2) + "px";
+        }
+        setHeight(height) {
+            this.container.style.height = (height - 2) + "px";
+        }
+        setIndex(index, selected, dim, color, isNoise, isMod) {
+            if (this._renderedIndex != index) {
+                if (index >= 100) {
+                    this._label.setAttribute("font-size", "16");
+                    this._label.style.setProperty("transform", "translate(0px, -1.5px)");
+                }
+                else {
+                    this._label.setAttribute("font-size", "20");
+                    this._label.style.setProperty("transform", "translate(0px, 0px)");
+                }
+                this._renderedIndex = index;
+                this._text.data = String(index);
+            }
+            let useColor = selected ? ColorConfig.c_invertedText : color;
+            if (this._renderedLabelColor != useColor) {
+                this._label.style.color = useColor;
+                this._renderedLabelColor = useColor;
+            }
+            if (!selected) {
+                if (isNoise)
+                    color = dim ? ColorConfig.c_trackEditorBgNoiseDim : ColorConfig.c_trackEditorBgNoise;
+                else if (isMod)
+                    color = dim ? ColorConfig.c_trackEditorBgModDim : ColorConfig.c_trackEditorBgMod;
+                else
+                    color = dim ? ColorConfig.c_trackEditorBgPitchDim : ColorConfig.c_trackEditorBgPitch;
+            }
+            color = selected ? color : (index == 0) ? "none" : color;
+            if (this._renderedBackgroundColor != color) {
+                this.container.style.background = color;
+                this._renderedBackgroundColor = color;
+            }
+        }
+    }
+    class ChannelRow {
+        constructor(_doc, index) {
+            this._doc = _doc;
+            this.index = index;
+            this._renderedBarWidth = -1;
+            this._renderedBarHeight = -1;
+            this._boxes = [];
+            this.container = HTML.div({ class: "channelRow" });
+        }
+        render() {
+            ChannelRow.patternHeight = this._doc.getChannelHeight();
+            const barWidth = this._doc.getBarWidth();
+            if (this._boxes.length != this._doc.song.barCount) {
+                for (let x = this._boxes.length; x < this._doc.song.barCount; x++) {
+                    const box = new Box(this.index, ColorConfig.getChannelColor(this._doc.song, this.index).secondaryChannel);
+                    box.setWidth(barWidth);
+                    this.container.appendChild(box.container);
+                    this._boxes[x] = box;
+                }
+                for (let x = this._doc.song.barCount; x < this._boxes.length; x++) {
+                    this.container.removeChild(this._boxes[x].container);
+                }
+                this._boxes.length = this._doc.song.barCount;
+            }
+            if (this._renderedBarWidth != barWidth) {
+                this._renderedBarWidth = barWidth;
+                for (let x = 0; x < this._boxes.length; x++) {
+                    this._boxes[x].setWidth(barWidth);
+                }
+            }
+            if (this._renderedBarHeight != ChannelRow.patternHeight) {
+                this._renderedBarHeight = ChannelRow.patternHeight;
+                for (let x = 0; x < this._boxes.length; x++) {
+                    this._boxes[x].setHeight(ChannelRow.patternHeight);
+                }
+            }
+            for (let i = 0; i < this._boxes.length; i++) {
+                const pattern = this._doc.song.getPattern(this.index, i);
+                const selected = (i == this._doc.bar && this.index == this._doc.channel);
+                const dim = (pattern == null || pattern.notes.length == 0);
+                const box = this._boxes[i];
+                if (i < this._doc.song.barCount) {
+                    const colors = ColorConfig.getChannelColor(this._doc.song, this.index);
+                    box.setIndex(this._doc.song.channels[this.index].bars[i], selected, dim, dim && !selected ? colors.secondaryChannel : colors.primaryChannel, this.index >= this._doc.song.pitchChannelCount && this.index < this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount, this.index >= this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount);
+                    box.container.style.visibility = "visible";
+                }
+                else {
+                    box.container.style.visibility = "hidden";
+                }
+            }
+        }
+    }
+    ChannelRow.patternHeight = 28;
+
     const { button: button$d, label: label$1, div: div$d, form, h2: h2$c, input: input$a } = HTML;
     class LayoutPrompt {
         constructor(_doc) {
@@ -32453,9 +37956,9 @@ You should be redirected to the song at:<br /><br />
 				`), div$d("Wide (JB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "AbyssBox Special" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
-						<rect x="2" y="2" width="22" height="2" fill="currentColor"/>
-						<rect x="2" y="5" width="4" height="8" fill="currentColor"/>
-						<rect x="7" y="5" width="17" height="8" fill="currentColor"/>
+						<rect x="7" y="2" width="4" height="11" fill="currentColor"/>
+						<rect x="2" y="2" width="4" height="11" fill="currentColor"/>
+						<rect x="10" y="2" width="14" height="11" fill="currentColor"/>
 						<rect x="2" y="14" width="22" height="4" fill="currentColor"/>
 					</svg>
 				`), div$d("Flipped (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "focus" }), SVG(`\
@@ -32473,8 +37976,16 @@ You should be redirected to the song at:<br /><br />
 						<rect x="20" y="2" width="4" height="16" fill="currentColor"/>
 						<rect x="2" y="13" width="12" height="5" fill="currentColor"/>
 					</svg>
-				`), div$d("Long (AB)")));
-            this.container = div$d({ class: "prompt noSelection", style: "width: 300px;" }, h2$c("Layout"), this._form, div$d({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+				`), div$d("Long (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "theatre" }), SVG(`\
+					<svg viewBox="-1 -1 28 22">
+						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+						<rect x="2" y="2" width="22" height="10" fill="currentColor"></rect>
+						<rect x="2" y="13" width="16" height="5" fill="currentColor"></rect>
+						<rect x="19" y="13" width="2" height="5" fill="currentColor"></rect>
+						<rect x="22" y="13" width="2" height="5" fill="currentColor"></rect>
+					</svg>
+				`), div$d("theatre (AB)")));
+            this.container = div$d({ class: "prompt noSelection", style: "width: 300px;" }, div$d({ class: "promptTitle" }, h2$c({ class: "layoutExt", style: "text-align: inherit;" }, ""), h2$c({ class: "layoutTitle" }, "Layout")), this._form, div$d({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -32911,7 +38422,7 @@ You should be redirected to the song at:<br /><br />
             this._cancelButton = button$c({ class: "cancelButton" });
             this._okayButton = button$c({ class: "okayButton", style: "width:45%;" }, "Okay");
             this._resetButton = button$c({ style: "width:45%;" }, "Reset");
-            this.container = div$c({ class: "prompt noSelection", style: "width: 250px;" }, h2$b("Limiter Options"), div$c({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), div$c({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, this.limiterCanvas.container), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; margin-top: 1.5em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, ""), div$c({ style: `text-align: center; width: 33%; margin-right: 4.5%; color: ${ColorConfig.textSelection};` }, "Boost"), div$c({ style: `text-align: center; width: 33%; margin-right: 0%; color: ${ColorConfig.linkAccent};` }, "Cutoff")), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; margin-top: 0.5em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, "Threshold:"), div$c({ style: `width: 33%; margin-right: 4.5%;` }, this.compressionThresholdSlider), div$c({ style: `width: 33%; margin-right: 0%;` }, this.limitThresholdSlider)), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, "Ratio:"), div$c({ style: `width: 33%; margin-right: 4.5%;` }, this.compressionRatioSlider), div$c({ style: `width: 33%; margin-right: 0%;` }, this.limitRatioSlider)), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Limit Decay:"), this.limitDecaySlider), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Limit Rise:"), this.limitRiseSlider), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Master Gain:"), this.masterGainSlider), div$c({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton, this._resetButton), this._cancelButton);
+            this.container = div$c({ class: "prompt noSelection", style: "width: 250px;" }, div$c({ class: "promptTitle" }, h2$b({ class: "limiterExt", style: "text-align: inherit;" }, ""), h2$b({ class: "limiterTitle" }, "Limiter Options")), div$c({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), div$c({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, this.limiterCanvas.container), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; margin-top: 1.5em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, ""), div$c({ style: `text-align: center; width: 33%; margin-right: 4.5%; color: ${ColorConfig.textSelection};` }, "Boost"), div$c({ style: `text-align: center; width: 33%; margin-right: 0%; color: ${ColorConfig.linkAccent};` }, "Cutoff")), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; margin-top: 0.5em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, "Threshold:"), div$c({ style: `width: 33%; margin-right: 4.5%;` }, this.compressionThresholdSlider), div$c({ style: `width: 33%; margin-right: 0%;` }, this.limitThresholdSlider)), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, "Ratio:"), div$c({ style: `width: 33%; margin-right: 4.5%;` }, this.compressionRatioSlider), div$c({ style: `width: 33%; margin-right: 0%;` }, this.limitRatioSlider)), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Limit Decay:"), this.limitDecaySlider), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Limit Rise:"), this.limitRiseSlider), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Master Gain:"), this.masterGainSlider), div$c({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton, this._resetButton), this._cancelButton);
             this._volumeUpdate = () => {
                 this.inVolumeHistoricTimer--;
                 if (this.inVolumeHistoricTimer <= 0) {
@@ -33092,7 +38603,7 @@ You should be redirected to the song at:<br /><br />
             }
             this._okayButton.addEventListener("click", this._saveChanges);
             this._cancelButton.addEventListener("click", this._close);
-            this.container = div$b({ class: "prompt noSelection", style: "width: 250px;" }, h2$a("Custom Scale"), div$b({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, scaleHolder), div$b({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this.container = div$b({ class: "prompt noSelection", style: "width: 250px;" }, div$b({ class: "promptTitle" }, h2$a({ class: "sclaeExt", style: "text-align: inherit;" }, ""), h2$a({ class: "scaleTitle" }, "Custom Scale")), div$b({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, scaleHolder), div$b({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this.container.addEventListener("keydown", this.whenKeyPressed);
         }
     }
@@ -33104,9 +38615,11 @@ You should be redirected to the song at:<br /><br />
             this._startMode = 0;
             this._endMode = 1;
             this._bothMode = 2;
+            this._loopAtPoint = -1;
             this._loop = SVG.path({ fill: "none", stroke: ColorConfig.loopAccent, "stroke-width": 4 });
+            this._barLoop = SVG.path({ fill: "none", stroke: ColorConfig.uiWidgetFocus, "stroke-width": 2 });
             this._highlight = SVG.path({ fill: ColorConfig.hoverPreview, "pointer-events": "none" });
-            this._svg = SVG.svg({ style: `touch-action: pan-y; position: absolute;`, height: this._editorHeight }, this._loop, this._highlight);
+            this._svg = SVG.svg({ style: `touch-action: pan-y; position: absolute;`, height: this._editorHeight }, this._loop, this._highlight, this._barLoop);
             this.container = HTML.div({ class: "loopEditor" }, this._svg);
             this._barWidth = 32;
             this._change = null;
@@ -33122,6 +38635,7 @@ You should be redirected to the song at:<br /><br />
             this._renderedLoopStop = -1;
             this._renderedBarCount = 0;
             this._renderedBarWidth = -1;
+            this._renderedBarLoop = -1;
             this._whenMouseOver = (event) => {
                 if (this._mouseOver)
                     return;
@@ -33326,6 +38840,10 @@ You should be redirected to the song at:<br /><br />
                     `z`);
             }
         }
+        setLoopAt(bar) {
+            this._loopAtPoint = bar;
+            this._render();
+        }
         _render() {
             this._barWidth = this._doc.getBarWidth();
             const radius = this._editorHeight / 2;
@@ -33348,6 +38866,20 @@ You should be redirected to the song at:<br /><br />
                     `A ${radius - 2} ${radius - 2} ${0} ${0} ${1} ${loopStart + radius} ${2} ` +
                     `z`);
             }
+            const barLoopStart = (this._loopAtPoint + 0.5) * this._barWidth;
+            if (this._renderedBarLoop != barLoopStart) {
+                if (barLoopStart < 0) {
+                    this._barLoop.setAttribute("d", "");
+                }
+                else {
+                    this._barLoop.setAttribute("d", `M ${barLoopStart} ${radius * 1.5} ` +
+                        `L ${barLoopStart - radius} ${radius}` +
+                        `L ${barLoopStart} ${radius * 0.5}` +
+                        `L ${barLoopStart + radius} ${radius}` +
+                        `z`);
+                }
+                this._renderedBarLoop = barLoopStart;
+            }
             this._updatePreview();
         }
     }
@@ -33360,7 +38892,7 @@ You should be redirected to the song at:<br /><br />
             this._conversionStrategySelect = select$8({ style: "width: 100%;" }, option$8({ value: "overflow" }, "Overflow notes across bars."), option$8({ value: "wrapAround" }, "Wrap notes around within bars."));
             this._cancelButton = button$a({ class: "cancelButton" });
             this._okayButton = button$a({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$a({ class: "prompt noSelection", style: "width: 250px;" }, h2$9("Move Notes Sideways"), div$a({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$a({ style: "text-align: right;" }, "Beats to move:", br$1(), span$4({ style: `font-size: smaller; color: ${ColorConfig.secondaryText};` }, "(Negative is left, positive is right)")), this._beatsStepper), div$a({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$a({ class: "selectContainer", style: "width: 100%;" }, this._conversionStrategySelect)), div$a({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this.container = div$a({ class: "prompt noSelection", style: "width: 250px;" }, div$a({ class: "promptTitle" }, h2$9({ class: "mnsExt", style: "text-align: inherit;" }, ""), h2$9({ class: "mnsTitle" }, "Move Notes Sideways")), div$a({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$a({ style: "text-align: right;" }, "Beats to move:", br$1(), span$4({ style: `font-size: smaller; color: ${ColorConfig.secondaryText};` }, "(Negative is left, positive is right)")), this._beatsStepper), div$a({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$a({ class: "selectContainer", style: "width: 100%;" }, this._conversionStrategySelect)), div$a({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -33411,14 +38943,13 @@ You should be redirected to the song at:<br /><br />
             this._channelCounts = [];
             this._channelNameDisplay = HTML.div({ style: `background-color: ${ColorConfig.uiWidgetFocus}; white-space:nowrap; display: none; transform:translate(20px); width: auto; pointer-events: none; position: absolute; border-radius: 0.2em; z-index: 2;`, "color": ColorConfig.primaryText }, "");
             this._channelNameInput = new InputBox(HTML.input({ style: `color: ${ColorConfig.primaryText}; background-color: ${ColorConfig.uiWidgetFocus}; margin-top: -2px; display: none; width: 6em; position: absolute; border-radius: 0.2em; z-index: 2;`, "color": ColorConfig.primaryText }, ""), this._doc, (oldValue, newValue) => new ChangeChannelName(this._doc, oldValue, newValue));
-            this._channelDropDown = HTML.select({ style: "width: 0px; left: 19px; height: 19px; position:absolute; opacity:0" }, HTML.option({ value: "rename" }, "Rename..."), HTML.option({ value: "chnUp" }, "Move Channel Up"), HTML.option({ value: "chnDown" }, "Move Channel Down"), HTML.option({ value: "chnMute" }, "Mute Channel"), HTML.option({ value: "chnSolo" }, "Solo Channel"), HTML.option({ value: "chnInsert" }, "Insert Channel Below"), HTML.option({ value: "chnDelete" }, "Delete This Channel"));
+            this._channelDropDown = HTML.select({ style: "width: 14px; left: 19px; height: 28px; position:absolute; opacity:0" }, HTML.option({ value: "rename" }, "Rename..."), HTML.option({ value: "chnUp" }, "Move Channel Up"), HTML.option({ value: "chnDown" }, "Move Channel Down"), HTML.option({ value: "chnMute" }, "Mute Channel"), HTML.option({ value: "chnSolo" }, "Solo Channel"), HTML.option({ value: "chnInsert" }, "Insert Channel Below"), HTML.option({ value: "chnDelete" }, "Delete This Channel"));
             this.container = HTML.div({ class: "muteEditor", style: "position: sticky; padding-top: " + Config.barEditorHeight + "px;" }, this._channelNameDisplay, this._channelNameInput.input, this._channelDropDown);
             this._editorHeight = 128;
-            this._renderedChannelCount = 0;
             this._renderedPitchChannels = 0;
             this._renderedNoiseChannels = 0;
-            this._renderedModChannels = 0;
             this._renderedChannelHeight = -1;
+            this._renderedModChannels = 0;
             this._channelDropDownChannel = 0;
             this._channelDropDownOpen = false;
             this._channelDropDownLastState = false;
@@ -33445,7 +38976,7 @@ You should be redirected to the song at:<br /><br />
             };
             this._channelDropDownGetOpenedPosition = (event) => {
                 this._channelDropDownLastState = this._channelDropDownOpen;
-                this._channelDropDownChannel = Math.floor(Math.min(this._renderedChannelCount, Math.max(0, parseInt(this._channelDropDown.style.getPropertyValue("top")) / this._renderedChannelHeight)));
+                this._channelDropDownChannel = Math.floor(Math.min(this._buttons.length, Math.max(0, parseInt(this._channelDropDown.style.getPropertyValue("top")) / ChannelRow.patternHeight)));
                 this._doc.muteEditorChannel = this._channelDropDownChannel;
                 this._channelNameDisplay.style.setProperty("display", "");
                 if ((this._channelDropDownChannel < this._doc.song.pitchChannelCount && this._doc.song.pitchChannelCount == Config.pitchChannelCountMax)
@@ -33558,11 +39089,14 @@ You should be redirected to the song at:<br /><br />
                     }
                     return;
                 }
+                if (this._channelDropDownOpen && this._channelNameDisplay.style.getPropertyValue("display") == "none" && this._channelNameInput.input.style.getPropertyValue("display") == "none") {
+                    this._channelDropDownOpen = false;
+                }
                 let xPos = event.clientX - this._buttons[0].getBoundingClientRect().left;
                 if (xPos >= 21.0) {
                     if (!this._channelDropDownOpen) {
                         this._channelDropDown.style.setProperty("display", "");
-                        var height = this._doc.getChannelHeight();
+                        var height = ChannelRow.patternHeight;
                         this._channelNameDisplay.style.setProperty("transform", "translate(20px, " + (height / 4 + height * index) + "px)");
                         if (this._doc.song.channels[index].name != "") {
                             this._channelNameDisplay.textContent = this._doc.song.channels[index].name;
@@ -33580,7 +39114,7 @@ You should be redirected to the song at:<br /><br />
                             }
                             this._channelNameDisplay.style.setProperty("display", "none");
                         }
-                        this._channelDropDown.style.top = (Config.barEditorHeight + 2 + index * this._renderedChannelHeight) + "px";
+                        this._channelDropDown.style.top = (Config.barEditorHeight + 2 + index * ChannelRow.patternHeight) + "px";
                         this._channelDropDown.style.setProperty("width", "15px");
                     }
                 }
@@ -33626,12 +39160,12 @@ You should be redirected to the song at:<br /><br />
         render() {
             if (!this._doc.prefs.enableChannelMuting)
                 return;
-            const channelHeight = this._doc.getChannelHeight();
-            if (this._renderedChannelCount != this._doc.song.getChannelCount()) {
-                for (let y = this._renderedChannelCount; y < this._doc.song.getChannelCount(); y++) {
+            let startingChannelCount = this._buttons.length;
+            if (this._buttons.length != this._doc.song.getChannelCount()) {
+                for (let y = this._buttons.length; y < this._doc.song.getChannelCount(); y++) {
                     const channelCountText = HTML.div({ class: "noSelection muteButtonText", style: "display: table-cell; -webkit-text-stroke: 1.5px; vertical-align: middle; text-align: center; -webkit-user-select: none; -webkit-touch-callout: none; -moz-user-select: none; -ms-user-select: none; user-select: none; pointer-events: none; width: 12px; height: 20px; transform: translate(0px, 1px);" });
                     const muteButton = HTML.div({ class: "mute-button", title: "Mute (M), Mute All (⇧M), Solo (S), Exclude (⇧S)", style: `display: block; pointer-events: none; width: 16px; height: 20px; transform: translate(2px, 1px);` });
-                    const muteContainer = HTML.div({ style: "align-items: center; height: 20px; margin: 0px; display: table; flex-direction: row; justify-content: space-between;" }, [
+                    const muteContainer = HTML.div({ style: `align-items: center; height: 20px; margin: 0px; display: table; flex-direction: row; justify-content: space-between;` }, [
                         muteButton,
                         channelCountText,
                     ]);
@@ -33639,7 +39173,7 @@ You should be redirected to the song at:<br /><br />
                     this._buttons[y] = muteContainer;
                     this._channelCounts[y] = channelCountText;
                 }
-                for (let y = this._doc.song.getChannelCount(); y < this._renderedChannelCount; y++) {
+                for (let y = this._doc.song.getChannelCount(); y < this._buttons.length; y++) {
                     this.container.removeChild(this._buttons[y]);
                 }
                 this._buttons.length = this._doc.song.getChannelCount();
@@ -33665,13 +39199,13 @@ You should be redirected to the song at:<br /><br />
                         this._channelCounts[y].style.color = ColorConfig.trackEditorBgMod;
                 }
             }
-            if (this._renderedChannelHeight != channelHeight || this._renderedChannelCount != this._doc.song.getChannelCount()) {
+            if (this._renderedChannelHeight != ChannelRow.patternHeight || startingChannelCount != this._buttons.length) {
                 for (let y = 0; y < this._doc.song.getChannelCount(); y++) {
-                    this._buttons[y].style.marginTop = ((channelHeight - 20) / 2) + "px";
-                    this._buttons[y].style.marginBottom = ((channelHeight - 20) / 2) + "px";
+                    this._buttons[y].style.marginTop = ((ChannelRow.patternHeight - 20) / 2) + "px";
+                    this._buttons[y].style.marginBottom = ((ChannelRow.patternHeight - 20) / 2) + "px";
                 }
             }
-            if (this._renderedModChannels != this._doc.song.modChannelCount || this._renderedChannelCount != this._doc.song.getChannelCount()) {
+            if (this._renderedModChannels != this._doc.song.modChannelCount || startingChannelCount != this._buttons.length) {
                 for (let y = 0; y < this._doc.song.getChannelCount(); y++) {
                     if (y < this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount) {
                         this._buttons[y].children[0].classList.remove("modMute");
@@ -33703,18 +39237,17 @@ You should be redirected to the song at:<br /><br />
                 this._renderedNoiseChannels = this._doc.song.noiseChannelCount;
                 this._renderedModChannels = this._doc.song.modChannelCount;
             }
-            if (this._renderedChannelHeight != channelHeight || this._renderedChannelCount != this._doc.song.getChannelCount()) {
-                this._renderedChannelHeight = channelHeight;
-                this._renderedChannelCount = this._doc.song.getChannelCount();
-                this._editorHeight = Config.barEditorHeight + this._doc.song.getChannelCount() * channelHeight;
+            if (startingChannelCount != this._buttons.length || this._renderedChannelHeight != ChannelRow.patternHeight) {
+                this._renderedChannelHeight = ChannelRow.patternHeight;
+                this._editorHeight = Config.barEditorHeight + this._doc.song.getChannelCount() * ChannelRow.patternHeight;
                 this._channelNameDisplay.style.setProperty("display", "none");
                 this.container.style.height = (this._editorHeight + 16) + "px";
-                if (this._renderedChannelHeight < 27) {
+                if (ChannelRow.patternHeight < 27) {
                     this._channelNameDisplay.style.setProperty("margin-top", "-2px");
                     this._channelDropDown.style.setProperty("margin-top", "-4px");
                     this._channelNameInput.input.style.setProperty("margin-top", "-4px");
                 }
-                else if (this._renderedChannelHeight < 30) {
+                else if (ChannelRow.patternHeight < 30) {
                     this._channelNameDisplay.style.setProperty("margin-top", "-1px");
                     this._channelDropDown.style.setProperty("margin-top", "-3px");
                     this._channelNameInput.input.style.setProperty("margin-top", "-3px");
@@ -34424,9 +39957,22 @@ You should be redirected to the song at:<br /><br />
                     this._doc.notifier.notifyWatchers();
                 }
                 const playheadBar = Math.floor(this._doc.synth.playhead);
+                const noteFlashElements = this._svgNoteContainer.querySelectorAll('.note-flash');
                 if (this._doc.synth.playing && ((this._pattern != null && this._doc.song.getPattern(this._doc.channel, Math.floor(this._doc.synth.playhead)) == this._pattern) || Math.floor(this._doc.synth.playhead) == this._doc.bar + this._barOffset)) {
                     this._svgPlayhead.setAttribute("visibility", "visible");
                     const modPlayhead = this._doc.synth.playhead - playheadBar;
+                    for (var i = 0; i < noteFlashElements.length; i++) {
+                        var element = noteFlashElements[i];
+                        const noteStart = Number(element.getAttribute("note-start")) / (this._doc.song.beatsPerBar * Config.partsPerBeat);
+                        const noteEnd = Number(element.getAttribute("note-end")) / (this._doc.song.beatsPerBar * Config.partsPerBeat);
+                        if ((modPlayhead >= noteStart) && this._doc.prefs.notesFlashWhenPlayed) {
+                            const dist = noteEnd - noteStart;
+                            element.style.opacity = String((1 - (((modPlayhead - noteStart) - (dist / 2)) / (dist / 2))));
+                        }
+                        else {
+                            element.style.opacity = "0";
+                        }
+                    }
                     if (Math.abs(modPlayhead - this._playheadX) > 0.1) {
                         this._playheadX = modPlayhead;
                     }
@@ -34437,6 +39983,10 @@ You should be redirected to the song at:<br /><br />
                 }
                 else {
                     this._svgPlayhead.setAttribute("visibility", "hidden");
+                    for (var i = 0; i < noteFlashElements.length; i++) {
+                        var element = noteFlashElements[i];
+                        element.style.opacity = "0";
+                    }
                 }
                 if (this._doc.synth.playing && (this._doc.synth.recording || this._doc.prefs.autoFollow) && this._followPlayheadBar != playheadBar) {
                     new ChangeChannelBar(this._doc, this._doc.channel, playheadBar);
@@ -34606,7 +40156,12 @@ You should be redirected to the song at:<br /><br />
             }
             this.resetCopiedPins();
         }
+        _getMaxPitch() {
+            return this._doc.song.getChannelIsMod(this._doc.channel) ? Config.modCount - 1 : (this._doc.song.getChannelIsNoise(this._doc.channel) ? Config.drumCount - 1 : Config.maxPitch);
+        }
         _getMaxDivision() {
+            if (this.controlMode && this._mouseHorizontal)
+                return Config.partsPerBeat;
             const rhythmStepsPerBeat = Config.rhythms[this._doc.song.rhythm].stepsPerBeat;
             if (rhythmStepsPerBeat % 4 == 0) {
                 return Config.partsPerBeat / 2;
@@ -34620,6 +40175,8 @@ You should be redirected to the song at:<br /><br />
             return Config.partsPerBeat;
         }
         _getMinDivision() {
+            if (this.controlMode && this._mouseHorizontal)
+                return 1;
             return Config.partsPerBeat / Config.rhythms[this._doc.song.rhythm].stepsPerBeat;
         }
         _snapToMinDivision(input) {
@@ -34764,9 +40321,7 @@ You should be redirected to the song at:<br /><br />
                     }
                 }
                 mousePitch -= interval;
-                const maxPitch = this._doc.song.getChannelIsNoise(this._doc.channel) ? Config.drumCount - 1 :
-                    this._doc.song.getChannelIsMod(this._doc.channel) ? Config.modCount - 1 : Config.maxPitch;
-                this._cursor.pitch = this._snapToPitch(mousePitch, -minInterval, maxPitch - maxInterval);
+                this._cursor.pitch = this._snapToPitch(mousePitch, -minInterval, this._getMaxPitch() - maxInterval);
                 if (!this._doc.song.getChannelIsNoise(this._doc.channel) && !this._doc.song.getChannelIsMod(this._doc.channel)) {
                     let nearest = error;
                     for (let i = 0; i < this._cursor.curNote.pitches.length; i++) {
@@ -34785,9 +40340,7 @@ You should be redirected to the song at:<br /><br />
                 }
             }
             else {
-                const maxPitch = this._doc.song.getChannelIsNoise(this._doc.channel) ? Config.drumCount - 1 :
-                    this._doc.song.getChannelIsMod(this._doc.channel) ? Config.modCount : Config.maxPitch;
-                this._cursor.pitch = this._snapToPitch(mousePitch, 0, maxPitch);
+                this._cursor.pitch = this._snapToPitch(mousePitch, 0, this._getMaxPitch());
                 const defaultLength = this._copiedPins[this._copiedPins.length - 1].time;
                 const fullBeats = Math.floor(this._cursor.part / Config.partsPerBeat);
                 const maxDivision = this._getMaxDivision();
@@ -34836,8 +40389,14 @@ You should be redirected to the song at:<br /><br />
                     }
                 }
                 if (this._cursor.end - this._cursor.start == defaultLength) {
-                    this._copiedPins = this._copiedPinChannels[this._doc.channel];
-                    this._cursor.pins = this._copiedPins;
+                    if (this._copiedPinChannels.length > this._doc.channel) {
+                        this._copiedPins = this._copiedPinChannels[this._doc.channel];
+                        this._cursor.pins = this._copiedPins;
+                    }
+                    else {
+                        const cap = this._doc.song.getVolumeCap(false);
+                        this._cursor.pins = [makeNotePin(0, 0, cap), makeNotePin(0, maxDivision, cap)];
+                    }
                 }
                 else {
                     this._cursor.pins = [];
@@ -34954,6 +40513,729 @@ You should be redirected to the song at:<br /><br />
                 return true;
             }
             return false;
+        }
+        setModSettingsForChange(change, songEditor) {
+            const thisRef = this;
+            const timeQuantum = Math.max(4, (Config.partsPerBeat / Config.rhythms[this._doc.song.rhythm].stepsPerBeat));
+            const currentBar = Math.floor(this._doc.synth.playhead);
+            const realPart = this._doc.synth.getCurrentPart();
+            let changedPatterns = false;
+            const currentPart = (realPart < timeQuantum / 2) ? 0 : Math.ceil(realPart / timeQuantum) * timeQuantum;
+            function getMatchingInstrumentAndMod(applyToMod, modChannel, modInsIndex, modFilterIndex) {
+                let startIndex = (modInsIndex == undefined) ? 0 : modInsIndex;
+                let endIndex = (modInsIndex == undefined) ? modChannel.instruments.length - 1 : modInsIndex;
+                for (let instrumentIndex = startIndex; instrumentIndex <= endIndex; instrumentIndex++) {
+                    let instrument = modChannel.instruments[instrumentIndex];
+                    for (let mod = 0; mod < Config.modCount; mod++) {
+                        if (instrument.modulators[mod] == applyToMod && !Config.modulators[instrument.modulators[mod]].forSong && (instrument.modChannels[mod] == thisRef._doc.channel)) {
+                            if (thisRef._doc.getCurrentInstrument() == instrument.modInstruments[mod]
+                                || instrument.modInstruments[mod] >= thisRef._doc.song.channels[thisRef._doc.channel].instruments.length) {
+                                if (modFilterIndex != undefined && (applyToMod == Config.modulators.dictionary["eq filter"].index || applyToMod == Config.modulators.dictionary["note filter"].index)) {
+                                    if (instrument.modFilterTypes[mod] == modFilterIndex)
+                                        return [instrumentIndex, mod];
+                                }
+                                else
+                                    return [instrumentIndex, mod];
+                            }
+                        }
+                        else if (instrument.modulators[mod] == applyToMod && Config.modulators[instrument.modulators[mod]].forSong && (instrument.modChannels[mod] == -1)) {
+                            return [instrumentIndex, mod];
+                        }
+                    }
+                }
+                return [-1, -1];
+            }
+            function sanitizeInterval(doc, startPart, endPart, pattern, forMod, sequence) {
+                if (startPart >= endPart)
+                    return;
+                for (let noteIndex = 0; noteIndex < pattern.notes.length; noteIndex++) {
+                    const note = pattern.notes[noteIndex];
+                    if (note.pitches[0] != forMod)
+                        continue;
+                    if (note.start < endPart && note.end > startPart) {
+                        let couldIntersectStart = false;
+                        let intersectsEnd = false;
+                        let firstInteriorPin = -1;
+                        let interiorPinCount = 0;
+                        if (note.start <= startPart && note.end >= endPart) {
+                            for (let pinIndex = 0; pinIndex < note.pins.length; pinIndex++) {
+                                const pin = note.pins[pinIndex];
+                                if (note.start + pin.time > startPart && note.start + pin.time < endPart) {
+                                    if (firstInteriorPin < 0)
+                                        firstInteriorPin = pinIndex;
+                                    interiorPinCount++;
+                                }
+                            }
+                            if (interiorPinCount > 0)
+                                note.pins.splice(firstInteriorPin, interiorPinCount);
+                            return;
+                        }
+                        for (let pinIndex = 0; pinIndex < note.pins.length; pinIndex++) {
+                            const pin = note.pins[pinIndex];
+                            if (note.start + pin.time >= startPart && note.start + pin.time <= endPart) {
+                                if (firstInteriorPin < 0)
+                                    firstInteriorPin = pinIndex;
+                                interiorPinCount++;
+                            }
+                            else {
+                                if (interiorPinCount == 0)
+                                    couldIntersectStart = true;
+                                if (interiorPinCount > 0)
+                                    intersectsEnd = true;
+                            }
+                        }
+                        if (couldIntersectStart && interiorPinCount > 0) {
+                            note.pins[firstInteriorPin].time = startPart - note.start;
+                            firstInteriorPin++;
+                            interiorPinCount--;
+                        }
+                        if (intersectsEnd && interiorPinCount > 0) {
+                            note.pins[firstInteriorPin + interiorPinCount - 1].time = endPart - note.start;
+                            interiorPinCount--;
+                        }
+                        note.pins.splice(firstInteriorPin, interiorPinCount);
+                        if (note.pins.length < 2) {
+                            sequence.append(new ChangeNoteAdded(doc, pattern, note, noteIndex, true));
+                            noteIndex--;
+                            continue;
+                        }
+                        let timeAdjust = 0;
+                        timeAdjust = note.pins[0].time;
+                        note.start += timeAdjust;
+                        for (let i = 0; i < note.pins.length; i++) {
+                            note.pins[i].time -= timeAdjust;
+                        }
+                        note.end = note.start + note.pins[note.pins.length - 1].time;
+                        if (note.end <= note.start) {
+                            sequence.append(new ChangeNoteAdded(doc, pattern, note, noteIndex, true));
+                            noteIndex--;
+                        }
+                    }
+                }
+            }
+            const sequence = new ChangeSequence();
+            const instrument = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()];
+            let applyToMods = [];
+            let applyToFilterTargets = [];
+            let applyValues = [];
+            let toApply = true;
+            let slider = null;
+            if (change == null) {
+                var modulator = Config.modulators.dictionary["song volume"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(this._doc.prefs.volume - modulator.convertRealFactor);
+            }
+            else if (change instanceof ChangeTempo) {
+                var modulator = Config.modulators.dictionary["tempo"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(this._doc.song.tempo - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    this._doc.song.tempo = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeVolume) {
+                var modulator = Config.modulators.dictionary["mix volume"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.volume - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null)
+                    instrument.volume = slider.getValueBeforeProspectiveChange();
+            }
+            else if (change instanceof ChangePan) {
+                var modulator = Config.modulators.dictionary["pan"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.pan - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.pan = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeReverb) {
+                var modulator = Config.modulators.dictionary["reverb"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.reverb - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.reverb = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeDistortion) {
+                var modulator = Config.modulators.dictionary["distortion"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.distortion - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.distortion = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeOperatorAmplitude) {
+                var modulator = Config.modulators.dictionary["fm slider " + (change.operatorIndex + 1)];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.operators[change.operatorIndex].amplitude - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.operators[change.operatorIndex].amplitude = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeFeedbackAmplitude) {
+                var modulator = Config.modulators.dictionary["fm feedback"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.feedbackAmplitude - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.feedbackAmplitude = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangePulseWidth) {
+                var modulator = Config.modulators.dictionary["pulse width"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.pulseWidth - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.pulseWidth = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeDecimalOffset) {
+                var modulator = Config.modulators.dictionary["decimal offset"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.decimalOffset - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.decimalOffset = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeDetune) {
+                var modulator = Config.modulators.dictionary["detune"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.detune - modulator.convertRealFactor - Config.detuneCenter);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.detune = slider.getValueBeforeProspectiveChange() + Config.detuneCenter;
+                }
+            }
+            else if (change instanceof ChangeVibratoDepth) {
+                var modulator = Config.modulators.dictionary["vibrato depth"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.vibratoDepth * 25 - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.vibratoDepth = slider.getValueBeforeProspectiveChange() / 25;
+                }
+            }
+            else if (change instanceof ChangeVibratoSpeed) {
+                var modulator = Config.modulators.dictionary["vibrato speed"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.vibratoSpeed - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.vibratoSpeed = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeVibratoDelay) {
+                var modulator = Config.modulators.dictionary["vibrato delay"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.vibratoDelay - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.vibratoDelay = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeArpeggioSpeed) {
+                var modulator = Config.modulators.dictionary["arp speed"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.arpeggioSpeed - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.arpeggioSpeed = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangePanDelay) {
+                var modulator = Config.modulators.dictionary["pan delay"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.panDelay - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.panDelay = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeSequence && change.checkFirst() instanceof ChangeFilterMovePoint && !change.isCommitted()) {
+                const useChange = change.checkFirst();
+                const preMoveData = useChange.getMoveData(true);
+                const postMoveData = useChange.getMoveData(false);
+                let useFilter = instrument.eqFilter;
+                var modulatorIndex;
+                if (useChange.useNoteFilter) {
+                    modulatorIndex = Config.modulators.dictionary["note filter"].index;
+                    useFilter = instrument.noteFilter;
+                    if (instrument.tmpNoteFilterEnd == null) {
+                        instrument.tmpNoteFilterStart = new FilterSettings();
+                        instrument.tmpNoteFilterStart.fromJsonObject(instrument.noteFilter.toJsonObject());
+                        instrument.tmpNoteFilterEnd = instrument.tmpNoteFilterStart;
+                    }
+                    const modifyPoint = instrument.tmpNoteFilterEnd.controlPoints[useChange.pointIndex];
+                    if (modifyPoint != null && modifyPoint.type == useChange.pointType) {
+                        modifyPoint.freq = postMoveData.freq;
+                        modifyPoint.gain = postMoveData.gain;
+                    }
+                }
+                else {
+                    modulatorIndex = Config.modulators.dictionary["eq filter"].index;
+                    if (instrument.tmpEqFilterEnd == null) {
+                        instrument.tmpEqFilterStart = new FilterSettings();
+                        instrument.tmpEqFilterStart.fromJsonObject(instrument.eqFilter.toJsonObject());
+                        instrument.tmpEqFilterEnd = instrument.tmpEqFilterStart;
+                    }
+                    const modifyPoint = instrument.tmpEqFilterEnd.controlPoints[useChange.pointIndex];
+                    if (modifyPoint != null && modifyPoint.type == useChange.pointType) {
+                        modifyPoint.freq = postMoveData.freq;
+                        modifyPoint.gain = postMoveData.gain;
+                    }
+                }
+                applyToMods.push(modulatorIndex);
+                applyToMods.push(modulatorIndex);
+                if (toApply)
+                    applyValues.push(postMoveData.freq);
+                if (toApply)
+                    applyValues.push(postMoveData.gain);
+                applyToFilterTargets.push(1 + useChange.pointIndex * 2);
+                applyToFilterTargets.push(1 + useChange.pointIndex * 2 + 1);
+                for (let i = 0; i < useFilter.controlPointCount; i++) {
+                    var point = useFilter.controlPoints[i];
+                    if (Object.is(point, preMoveData.point)) {
+                        point.freq = preMoveData.freq;
+                        point.gain = preMoveData.gain;
+                    }
+                }
+            }
+            else if (change instanceof ChangeBitcrusherQuantization) {
+                var modulator = Config.modulators.dictionary["bit crush"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.bitcrusherQuantization - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.bitcrusherQuantization = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeBitcrusherFreq) {
+                var modulator = Config.modulators.dictionary["freq crush"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.bitcrusherFreq - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.bitcrusherFreq = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeEchoSustain) {
+                var modulator = Config.modulators.dictionary["echo"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.echoSustain - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.echoSustain = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeChorus) {
+                var modulator = Config.modulators.dictionary["chorus"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.chorus - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.chorus = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeEQFilterSimpleCut) {
+                var modulator = Config.modulators.dictionary["eq filt cut"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.eqFilterSimpleCut - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.eqFilterSimpleCut = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeEQFilterSimplePeak) {
+                var modulator = Config.modulators.dictionary["eq filt peak"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.eqFilterSimplePeak - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.eqFilterSimplePeak = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeNoteFilterSimpleCut) {
+                var modulator = Config.modulators.dictionary["note filt cut"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.noteFilterSimpleCut - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.noteFilterSimpleCut = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeNoteFilterSimplePeak) {
+                var modulator = Config.modulators.dictionary["note filt peak"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.noteFilterSimplePeak - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.noteFilterSimplePeak = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangePitchShift) {
+                var modulator = Config.modulators.dictionary["pitch shift"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.pitchShift - Config.pitchShiftCenter - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.pitchShift = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeStringSustain) {
+                var modulator = Config.modulators.dictionary["sustain"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.stringSustain - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.stringSustain = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeEnvelopeSpeed) {
+                var modulator = Config.modulators.dictionary["envelope speed"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.envelopeSpeed - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.envelopeSpeed = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeSupersawDynamism) {
+                var modulator = Config.modulators.dictionary["dynamism"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.supersawDynamism - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.supersawDynamism = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeSupersawSpread) {
+                var modulator = Config.modulators.dictionary["spread"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.supersawSpread - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.supersawSpread = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            else if (change instanceof ChangeSupersawShape) {
+                var modulator = Config.modulators.dictionary["saw shape"];
+                applyToMods.push(modulator.index);
+                if (toApply)
+                    applyValues.push(instrument.supersawShape - modulator.convertRealFactor);
+                slider = songEditor.getSliderForModSetting(modulator.index);
+                if (slider != null) {
+                    instrument.supersawShape = slider.getValueBeforeProspectiveChange();
+                }
+            }
+            for (let applyIndex = 0; applyIndex < applyValues.length; applyIndex++) {
+                applyValues[applyIndex] = Math.round(applyValues[applyIndex]);
+            }
+            if (this._doc.continuingModRecordingChange != null && applyToFilterTargets.length == 0) {
+                if (slider == null && this._doc.continuingModRecordingChange.storedSlider != null)
+                    slider = this._doc.continuingModRecordingChange.storedSlider;
+                if (slider != null && +slider.input.value == slider.getValueBeforeProspectiveChange()) {
+                    applyValues = this._doc.continuingModRecordingChange.storedValues;
+                    toApply = false;
+                }
+                this._doc.continuingModRecordingChange = null;
+            }
+            if (slider != null)
+                slider.updateValue(slider.getValueBeforeProspectiveChange());
+            for (let applyIndex = 0; applyIndex < applyToMods.length; applyIndex++) {
+                let usedPatterns = [];
+                let usedInstruments = [];
+                let usedInstrumentIndices = [];
+                let usedModIndices = [];
+                for (let channelIndex = this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount; channelIndex < this._doc.song.getChannelCount(); channelIndex++) {
+                    const channel = this._doc.song.channels[channelIndex];
+                    let pattern = this._doc.song.getPattern(channelIndex, currentBar);
+                    let useInstrumentIndex = 0;
+                    let useModIndex = 0;
+                    if (pattern == null) {
+                        var rtn;
+                        if (applyToFilterTargets.length > applyIndex)
+                            rtn = getMatchingInstrumentAndMod(applyToMods[applyIndex], channel, undefined, applyToFilterTargets[applyIndex]);
+                        else
+                            rtn = getMatchingInstrumentAndMod(applyToMods[applyIndex], channel);
+                        useInstrumentIndex = rtn[0];
+                        useModIndex = rtn[1];
+                        if (useInstrumentIndex != -1) {
+                            sequence.append(new ChangeEnsurePatternExists(this._doc, channelIndex, currentBar));
+                            new ChangeDuplicateSelectedReusedPatterns(this._doc, currentBar, 1, channelIndex, 1);
+                            pattern = this._doc.song.getPattern(channelIndex, currentBar);
+                            pattern.instruments[0] = useInstrumentIndex;
+                            changedPatterns = true;
+                        }
+                    }
+                    else {
+                        var rtn;
+                        if (applyToFilterTargets.length > applyIndex)
+                            rtn = getMatchingInstrumentAndMod(applyToMods[applyIndex], channel, pattern.instruments[0], applyToFilterTargets[applyIndex]);
+                        else
+                            rtn = getMatchingInstrumentAndMod(applyToMods[applyIndex], channel, pattern.instruments[0]);
+                        useInstrumentIndex = rtn[0];
+                        useModIndex = rtn[1];
+                        if (useInstrumentIndex != -1) {
+                            new ChangeDuplicateSelectedReusedPatterns(this._doc, currentBar, 1, channelIndex, 1);
+                            pattern = this._doc.song.getPattern(channelIndex, currentBar);
+                            changedPatterns = true;
+                        }
+                    }
+                    if (useInstrumentIndex != -1) {
+                        usedPatterns.push(pattern);
+                        usedInstrumentIndices.push(useInstrumentIndex);
+                        usedInstruments.push(channel.instruments[useInstrumentIndex]);
+                        usedModIndices.push(useModIndex);
+                    }
+                }
+                if (usedInstrumentIndices.length == 0) {
+                    for (let channelIndex = this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount; channelIndex < this._doc.song.getChannelCount(); channelIndex++) {
+                        const channel = this._doc.song.channels[channelIndex];
+                        let pattern = this._doc.song.getPattern(channelIndex, currentBar);
+                        let useInstrument = -1;
+                        if (pattern != null) {
+                            useInstrument = pattern.instruments[0];
+                        }
+                        else {
+                            for (let instrumentIndex = 0; instrumentIndex < channel.instruments.length; instrumentIndex++) {
+                                for (let mod = 0; mod < Config.modCount; mod++) {
+                                    if (channel.instruments[instrumentIndex].modulators[mod] == Config.modulators.dictionary["none"].index) {
+                                        useInstrument = instrumentIndex;
+                                        sequence.append(new ChangeEnsurePatternExists(this._doc, channelIndex, currentBar));
+                                        pattern = this._doc.song.getPattern(channelIndex, currentBar);
+                                        pattern.instruments[0] = instrumentIndex;
+                                        mod = Config.modCount;
+                                        instrumentIndex = channel.instruments.length;
+                                        channelIndex = this._doc.song.getChannelCount();
+                                        changedPatterns = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (useInstrument != -1) {
+                            let instrument = channel.instruments[useInstrument];
+                            for (let mod = 0; mod < Config.modCount; mod++) {
+                                if (instrument.modulators[mod] == Config.modulators.dictionary["none"].index) {
+                                    instrument.modulators[mod] = applyToMods[applyIndex];
+                                    if (Config.modulators[applyToMods[applyIndex]].forSong) {
+                                        instrument.modChannels[mod] = -1;
+                                    }
+                                    else {
+                                        instrument.modChannels[mod] = this._doc.channel;
+                                        if (this._doc.song.channels[this._doc.channel].instruments.length > 1)
+                                            instrument.modInstruments[mod] = this._doc.song.channels[this._doc.channel].instruments.length + 1;
+                                        else
+                                            instrument.modInstruments[mod] = 0;
+                                        if (applyToFilterTargets.length > applyIndex) {
+                                            instrument.modFilterTypes[mod] = applyToFilterTargets[applyIndex];
+                                        }
+                                    }
+                                    usedPatterns.push(pattern);
+                                    usedInstrumentIndices.push(useInstrument);
+                                    usedInstruments.push(instrument);
+                                    usedModIndices.push(mod);
+                                    mod = Config.modCount;
+                                    channelIndex = this._doc.song.getChannelCount();
+                                }
+                            }
+                        }
+                    }
+                }
+                for (let i = 0; i < usedPatterns.length; i++) {
+                    const addLength = (applyToFilterTargets.length == 0) ? 0 : 24;
+                    const newNoteDist = +(timeQuantum >= 6) * 6 + 12;
+                    let latestPart = -1;
+                    let latestNote = null;
+                    let latestPin = null;
+                    let latestPinIdx = -1;
+                    let prevNotePart = -1;
+                    let prevNote = null;
+                    JSON.parse(JSON.stringify(usedPatterns[i].notes));
+                    const modNoteIndex = Config.modCount - 1 - usedModIndices[i];
+                    const usedInstrument = usedInstruments[i];
+                    if (usedInstrument.modChannels[usedModIndices[i]] >= -1) {
+                        let usedNewInstrumentIndices = [];
+                        if (Config.modulators[applyToMods[applyIndex]].forSong) {
+                            usedNewInstrumentIndices.push(0);
+                        }
+                        else {
+                            if (usedInstrument.modInstruments[usedModIndices[i]] == this._doc.synth.song.channels[usedInstrument.modChannels[usedModIndices[i]]].instruments.length) {
+                                for (let k = 0; k < this._doc.synth.song.channels[usedInstrument.modChannels[usedModIndices[i]]].instruments.length; k++) {
+                                    usedNewInstrumentIndices.push(k);
+                                }
+                            }
+                            else if (usedInstrument.modInstruments[usedModIndices[i]] > this._doc.synth.song.channels[usedInstrument.modChannels[usedModIndices[i]]].instruments.length) {
+                                if (this._doc.synth.song.getPattern(usedInstrument.modChannels[usedModIndices[i]], currentBar) != null)
+                                    usedNewInstrumentIndices = this._doc.synth.song.getPattern(usedInstrument.modChannels[usedModIndices[i]], currentBar).instruments;
+                            }
+                            else {
+                                usedNewInstrumentIndices.push(usedInstrument.modInstruments[usedModIndices[i]]);
+                            }
+                        }
+                        for (let instrumentIndex = 0; instrumentIndex < usedNewInstrumentIndices.length; instrumentIndex++) {
+                            this._doc.synth.setModValue(applyValues[applyIndex], applyValues[applyIndex], usedInstruments[i].modChannels[usedModIndices[i]], usedNewInstrumentIndices[instrumentIndex], applyToMods[applyIndex]);
+                            this._doc.synth.forceHoldMods(applyValues[applyIndex], usedInstruments[i].modChannels[usedModIndices[i]], usedNewInstrumentIndices[instrumentIndex], applyToMods[applyIndex]);
+                        }
+                    }
+                    for (let j = 0; j < usedPatterns[i].notes.length; j++) {
+                        const note = usedPatterns[i].notes[j];
+                        if (note.pitches[0] == modNoteIndex && note.start <= currentPart) {
+                            for (let pinIdx = 0; pinIdx < note.pins.length; pinIdx++) {
+                                const pin = note.pins[pinIdx];
+                                if (note.start + pin.time <= currentPart && (note.start + pin.time > latestPart || (note.start == latestPart))) {
+                                    latestPart = note.start + pin.time;
+                                    latestPin = pin;
+                                    latestPinIdx = pinIdx;
+                                    latestNote = note;
+                                }
+                            }
+                        }
+                        if (note.pitches[0] == modNoteIndex && note.end <= currentPart && note.end > prevNotePart) {
+                            prevNotePart = note.end;
+                            prevNote = note;
+                        }
+                    }
+                    let prevPart = Math.max(0, currentPart - timeQuantum);
+                    let endPart = Math.min(currentPart + timeQuantum + addLength, Config.partsPerBeat * this._doc.song.beatsPerBar);
+                    let continuous = (toApply == false);
+                    if (latestNote == null || currentPart - latestNote.end >= newNoteDist) {
+                        if (currentPart == endPart)
+                            continue;
+                        sanitizeInterval(this._doc, currentPart, endPart, usedPatterns[i], modNoteIndex, sequence);
+                        latestNote = new Note(modNoteIndex, currentPart, endPart, applyValues[applyIndex], this._doc.song.getChannelIsNoise(this._doc.channel));
+                        sequence.append(new ChangeNoteAdded(this._doc, usedPatterns[i], latestNote, usedPatterns[i].notes.length));
+                    }
+                    else if (latestPart == currentPart) {
+                        sanitizeInterval(this._doc, prevPart, currentPart, usedPatterns[i], modNoteIndex, sequence);
+                        sanitizeInterval(this._doc, currentPart, endPart, usedPatterns[i], modNoteIndex, sequence);
+                        latestPin.size = applyValues[applyIndex];
+                        if (continuous) {
+                            for (let usePin = 0; usePin < latestNote.pins.length; usePin++) {
+                                if (latestNote.pins[usePin].time >= prevPart && latestNote.pins[usePin].time <= currentPart)
+                                    latestNote.pins[usePin].size = applyValues[applyIndex];
+                            }
+                        }
+                        if (prevNote != null && prevNote.pins.length >= 2) {
+                            if (prevNote.end == currentPart) {
+                                prevNote.pins[prevNote.pins.length - 1].size = applyValues[applyIndex];
+                                if (continuous) {
+                                    for (let usePin = 0; usePin < prevNote.pins.length; usePin++) {
+                                        if (prevNote.pins[usePin].time + prevNote.start >= prevPart)
+                                            prevNote.pins[usePin].size = applyValues[applyIndex];
+                                    }
+                                }
+                            }
+                            else if (prevNote.end == prevPart && latestNote.start == currentPart) {
+                                prevNote.pins.push(makeNotePin(0, currentPart - prevNote.start, applyValues[applyIndex]));
+                                prevNote.end = currentPart;
+                            }
+                        }
+                    }
+                    else if (currentPart - latestPart < 8 && latestNote.pins[latestPinIdx].size == applyValues[applyIndex]) {
+                        if (continuous) {
+                            for (let usePin = 0; usePin < latestNote.pins.length; usePin++) {
+                                if (latestNote.pins[usePin].time >= prevPart && latestNote.pins[usePin].time <= currentPart)
+                                    latestNote.pins[usePin].size = applyValues[applyIndex];
+                            }
+                        }
+                    }
+                    else {
+                        if (latestNote.pins.length - 1 > latestPinIdx) {
+                            sanitizeInterval(this._doc, prevPart, currentPart, usedPatterns[i], modNoteIndex, sequence);
+                            sanitizeInterval(this._doc, currentPart, endPart, usedPatterns[i], modNoteIndex, sequence);
+                            let k;
+                            let usePin = null;
+                            for (k = 0; k < latestNote.pins.length; k++) {
+                                if (latestNote.pins[k].time == currentPart - latestNote.start) {
+                                    usePin = latestNote.pins[k];
+                                    break;
+                                }
+                                else if (latestNote.pins[k].time > currentPart - latestNote.start)
+                                    break;
+                            }
+                            if (usePin != null)
+                                usePin.size = applyValues[applyIndex];
+                            else
+                                latestNote.pins.splice(k, 0, makeNotePin(0, currentPart - latestNote.start, applyValues[applyIndex]));
+                        }
+                        else {
+                            sanitizeInterval(this._doc, prevPart, currentPart, usedPatterns[i], modNoteIndex, sequence);
+                            sanitizeInterval(this._doc, currentPart, endPart, usedPatterns[i], modNoteIndex, sequence);
+                            latestNote.pins.push(makeNotePin(0, currentPart - latestNote.start, applyValues[applyIndex]));
+                            latestNote.end = currentPart;
+                        }
+                        if (continuous) {
+                            for (let usePin = 0; usePin < latestNote.pins.length; usePin++) {
+                                if (latestNote.pins[usePin].time >= prevPart && latestNote.pins[usePin].time <= currentPart)
+                                    latestNote.pins[usePin].size = applyValues[applyIndex];
+                            }
+                        }
+                    }
+                    let lastNoteEnds = [-1, -1, -1, -1, -1, -1];
+                    usedPatterns[i].notes.sort(function (a, b) { return (a.start == b.start) ? a.pitches[0] - b.pitches[0] : a.start - b.start; });
+                    for (let checkIndex = 0; checkIndex < usedPatterns[i].notes.length; checkIndex++) {
+                        const note = usedPatterns[i].notes[checkIndex];
+                        if (note.start < lastNoteEnds[note.pitches[0]])
+                            throw new Error("Error in mod note recording!");
+                        lastNoteEnds[note.pitches[0]] = note.end;
+                        if (note.pins.length < 2 || note.pins[0].time > 0 || note.start == note.end
+                            || note.pins[note.pins.length - 1].time != note.end - note.start) {
+                            throw new Error("Error in mod note recording!");
+                        }
+                        let latestPinTime = -1;
+                        for (let k = 0; k < note.pins.length; k++) {
+                            if (note.pins[k].time <= latestPinTime) {
+                                throw new Error("Error in mod note recording!");
+                            }
+                            latestPinTime = note.pins[k].time;
+                        }
+                    }
+                }
+            }
+            if (this._doc.channel >= this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount) {
+                this._doc.currentPatternIsDirty = true;
+            }
+            if (applyValues.length > 0) {
+                this._doc.continuingModRecordingChange = new ChangeHoldingModRecording(this._doc, change, applyValues, slider);
+            }
+            return changedPatterns;
         }
         stopEditingModLabel(discardChanges) {
             if (this.editingModLabel) {
@@ -35314,7 +41596,7 @@ You should be redirected to the song at:<br /><br />
                                 bendSize = 0;
                             if (bendSize > cap)
                                 bendSize = cap;
-                            bendInterval = this._snapToPitch(prevPin.interval * (1.0 - sizeRatio) + nextPin.interval * sizeRatio + this._cursor.curNote.pitches[0], 0, Config.maxPitch) - this._cursor.curNote.pitches[0];
+                            bendInterval = this._snapToPitch(prevPin.interval * (1.0 - sizeRatio) + nextPin.interval * sizeRatio + this._cursor.curNote.pitches[0], 0, this._getMaxPitch()) - this._cursor.curNote.pitches[0];
                             break;
                         }
                         if (this._doc.song.getChannelIsMod(this._doc.channel) && this.controlMode) {
@@ -35400,7 +41682,7 @@ You should be redirected to the song at:<br /><br />
                         minPitch -= this._cursor.curNote.pitches[this._cursor.pitchIndex];
                         maxPitch -= this._cursor.curNote.pitches[this._cursor.pitchIndex];
                         if (!this._doc.song.getChannelIsMod(this._doc.channel)) {
-                            const bendTo = this._snapToPitch(this._findMousePitch(this._mouseY), -minPitch, (this._doc.song.getChannelIsNoise(this._doc.channel) ? Config.drumCount - 1 : Config.maxPitch) - maxPitch);
+                            const bendTo = this._snapToPitch(this._findMousePitch(this._mouseY), -minPitch, this._getMaxPitch() - maxPitch);
                             sequence.append(new ChangePitchBend(this._doc, this._cursor.curNote, bendStart, bendEnd, bendTo, this._cursor.pitchIndex));
                             this._dragPitch = bendTo;
                         }
@@ -35507,12 +41789,14 @@ You should be redirected to the song at:<br /><br />
         }
         render() {
             const nextPattern = this._doc.getCurrentPattern(this._barOffset);
-            if (this._pattern != nextPattern && this._pattern != null) {
+            if (this._pattern != nextPattern) {
                 if (this._doc.song.getChannelIsMod(this._doc.channel) && this._interactive && nextPattern != null) {
                     nextPattern.notes.sort(function (a, b) { return (a.start == b.start) ? a.pitches[0] - b.pitches[0] : a.start - b.start; });
                 }
-                this._dragChange = null;
-                this._whenCursorReleased(null);
+                if (this._pattern != null) {
+                    this._dragChange = null;
+                    this._whenCursorReleased(null);
+                }
             }
             this._pattern = nextPattern;
             this._editorWidth = this.container.clientWidth;
@@ -35647,11 +41931,23 @@ You should be redirected to the song at:<br /><br />
                         const octaveOffset = this._doc.getBaseVisibleOctave(channel) * Config.pitchesPerOctave;
                         for (const note of pattern2.notes) {
                             for (const pitch of note.pitches) {
-                                const notePath = SVG.path();
+                                var notePath = SVG.path();
                                 notePath.setAttribute("fill", ColorConfig.getChannelColor(this._doc.song, channel).secondaryNote);
                                 notePath.setAttribute("pointer-events", "none");
                                 this._drawNote(notePath, pitch, note.start, note.pins, this._pitchHeight * 0.19, false, octaveOffset);
                                 this._svgNoteContainer.appendChild(notePath);
+                                if (this._doc.prefs.notesFlashWhenPlayed) {
+                                    notePath = SVG.path();
+                                    const noteFlashColor = ColorConfig.getComputed("--note-flash-secondary") !== "" ? "var(--note-flash-secondary)" : "#ffffff77";
+                                    notePath.setAttribute("fill", noteFlashColor);
+                                    notePath.setAttribute("pointer-events", "none");
+                                    this._drawNote(notePath, pitch, note.start, note.pins, this._pitchHeight * 0.19, false, octaveOffset);
+                                    this._svgNoteContainer.appendChild(notePath);
+                                    notePath.classList.add('note-flash');
+                                    notePath.style.opacity = "0";
+                                    notePath.setAttribute('note-start', String(note.start));
+                                    notePath.setAttribute('note-end', String(note.end));
+                                }
                             }
                         }
                     }
@@ -35684,6 +41980,18 @@ You should be redirected to the song at:<br /><br />
                         notePath.setAttribute("pointer-events", "none");
                         this._drawNote(notePath, pitch, note.start, note.pins, (this._pitchHeight - this._pitchBorder) / 2 + 1, true, this._octaveOffset);
                         this._svgNoteContainer.appendChild(notePath);
+                        if (this._doc.prefs.notesFlashWhenPlayed && !disabled) {
+                            notePath = SVG.path();
+                            const noteFlashColor = ColorConfig.getComputed("--note-flash") !== "" ? "var(--note-flash)" : "#ffffff";
+                            notePath.setAttribute("fill", noteFlashColor);
+                            notePath.setAttribute("pointer-events", "none");
+                            this._drawNote(notePath, pitch, note.start, note.pins, (this._pitchHeight - this._pitchBorder) / 2 + 1, true, this._octaveOffset);
+                            this._svgNoteContainer.appendChild(notePath);
+                            notePath.classList.add('note-flash');
+                            notePath.style.opacity = "0";
+                            notePath.setAttribute('note-start', String(note.start));
+                            notePath.setAttribute('note-end', String(note.end));
+                        }
                         let indicatorOffset = 2;
                         if (note.continuesLastPattern) {
                             const arrowHeight = Math.min(this._pitchHeight, 20);
@@ -35786,6 +42094,10 @@ You should be redirected to the song at:<br /><br />
             this._renderedScale = -1;
             this._documentChanged();
         }
+        static getBassCutoffPitch(doc) {
+            const octaveOffset = doc.getBaseVisibleOctave(doc.channel);
+            return octaveOffset * Config.pitchesPerOctave + Math.floor(doc.getVisiblePitchCount() / (Config.pitchesPerOctave * 2)) * Config.pitchesPerOctave;
+        }
         constructor(_doc) {
             this._doc = _doc;
             this._pianoContainer = HTML.div({ style: "width: 100%; height: 100%; display: flex; flex-direction: column-reverse; align-items: stretch;" });
@@ -35882,13 +42194,20 @@ You should be redirected to the song at:<br /><br />
             this._onAnimationFrame = () => {
                 window.requestAnimationFrame(this._onAnimationFrame);
                 let liveInputChanged = false;
-                const liveInputPitchCount = !this._doc.performance.pitchesAreTemporary() ? this._doc.synth.liveInputPitches.length : 0;
+                let liveInputPitchCount = !this._doc.performance.pitchesAreTemporary() ? this._doc.synth.liveInputPitches.length : 0;
+                liveInputPitchCount += !this._doc.performance.bassPitchesAreTemporary() ? this._doc.synth.liveBassInputPitches.length : 0;
                 if (this._renderedLiveInputPitches.length != liveInputPitchCount) {
                     liveInputChanged = true;
                 }
-                for (let i = 0; i < liveInputPitchCount; i++) {
+                for (let i = 0; i < this._doc.synth.liveInputPitches.length; i++) {
                     if (this._renderedLiveInputPitches[i] != this._doc.synth.liveInputPitches[i]) {
                         this._renderedLiveInputPitches[i] = this._doc.synth.liveInputPitches[i];
+                        liveInputChanged = true;
+                    }
+                }
+                for (let i = this._doc.synth.liveInputPitches.length; i < liveInputPitchCount; i++) {
+                    if (this._renderedLiveInputPitches[i] != this._doc.synth.liveBassInputPitches[i - this._doc.synth.liveInputPitches.length]) {
+                        this._renderedLiveInputPitches[i] = this._doc.synth.liveBassInputPitches[i - this._doc.synth.liveInputPitches.length];
                         liveInputChanged = true;
                     }
                 }
@@ -36283,7 +42602,7 @@ You should be redirected to the song at:<br /><br />
             this._positionSelect = select$7({ style: "width: 100%;" }, option$7({ value: "end" }, "Apply change at end of song."), option$7({ value: "beginning" }, "Apply change at beginning of song."));
             this._cancelButton = button$9({ class: "cancelButton" });
             this._okayButton = button$9({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$9({ class: "prompt noSelection", style: "width: 250px;" }, h2$8("Song Length"), div$9({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$9({ style: "display: inline-block; text-align: right;" }, "Bars per song:", br(), span$3({ style: `font-size: smaller; color: ${ColorConfig.secondaryText};` }, "(Multiples of 4 are recommended)")), this._barsStepper), div$9({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$9({ class: "selectContainer", style: "width: 100%;" }, this._positionSelect)), div$9({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this.container = div$9({ class: "prompt noSelection", style: "width: 250px;" }, div$9({ class: "promptTitle" }, h2$8({ class: "song-lengthExt", style: "text-align: inherit;" }, ""), h2$8({ class: "song-lengthTitle" }, "Song Length")), div$9({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$9({ style: "display: inline-block; text-align: right;" }, "Bars per song:", br(), span$3({ style: `font-size: smaller; color: ${ColorConfig.secondaryText};` }, "(Multiples of 4 are recommended)")), this._barsStepper), div$9({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$9({ class: "selectContainer", style: "width: 100%;" }, this._positionSelect)), div$9({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -36338,6 +42657,47 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
+    const { button: button$8, div: div$8, h2: h2$7, p: p$5, select: select$6, option: option$6 } = HTML;
+    class SustainPrompt {
+        constructor(_doc) {
+            this._doc = _doc;
+            this._typeSelect = select$6({ style: "width: 100%;" }, option$6({ value: "acoustic" }, "(A) Acoustic"), option$6({ value: "bright" }, "(B) Bright"));
+            this._cancelButton = button$8({ class: "cancelButton" });
+            this._okayButton = button$8({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$8({ class: "prompt", style: "width: 300px;" }, div$8(h2$7("String Sustain"), p$5("This setting controls how quickly the picked string vibration decays."), p$5("Unlike most of BeepBox's instrument synthesizer features, a picked string cannot change frequency suddenly while maintaining its decay. If a tone's pitch changes suddenly (e.g. if the chord type is set to \"arpeggio\" or the transition type is set to \"continues\") then the string will be re-picked and start decaying from the beginning again, even if the envelopes don't otherwise restart.")), div$8({ style: { display: Config.enableAcousticSustain ? undefined : "none" } }, p$5("BeepBox comes with two slightly different sustain designs. You can select one here and press \"Okay\" to confirm it."), div$8({ class: "selectContainer", style: "width: 100%;" }, this._typeSelect)), div$8({ style: { display: Config.enableAcousticSustain ? "flex" : "none", "flex-direction": "row-reverse", "justify-content": "space-between" } }, this._okayButton), this._cancelButton);
+            this._close = () => {
+                this._doc.undo();
+            };
+            this.cleanUp = () => {
+                this._okayButton.removeEventListener("click", this._saveChanges);
+                this._cancelButton.removeEventListener("click", this._close);
+                this.container.removeEventListener("keydown", this._whenKeyPressed);
+            };
+            this._whenKeyPressed = (event) => {
+                if (event.target.tagName != "BUTTON" && event.keyCode == 13) {
+                    this._saveChanges();
+                }
+            };
+            this._saveChanges = () => {
+                if (Config.enableAcousticSustain) {
+                    const group = new ChangeGroup();
+                    group.append(new ChangeStringSustainType(this._doc, Config.sustainTypeNames.indexOf(this._typeSelect.value)));
+                    this._doc.prompt = null;
+                    this._doc.record(group, true);
+                }
+                else {
+                    this._close();
+                }
+            };
+            const instrument = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()];
+            this._typeSelect.value = Config.sustainTypeNames[instrument.stringSustainType];
+            setTimeout(() => this._cancelButton.focus());
+            this._okayButton.addEventListener("click", this._saveChanges);
+            this._cancelButton.addEventListener("click", this._close);
+            this.container.addEventListener("keydown", this._whenKeyPressed);
+        }
+    }
+
     const versionPrefix = "songVersion: ";
     const maximumSongCount = 8;
     const maximumWorkPerVersion = 3 * 60 * 1000;
@@ -36356,6 +42716,10 @@ You should be redirected to the song at:<br /><br />
     }
     function compareSongs(a, b) {
         return b.versions[0].time - a.versions[0].time;
+    }
+    function errorAlert(error) {
+        console.warn(error);
+        window.alert("Whoops, the song data appears to have been corrupted! Please try to recover the last working version of the song from the \"Recover Recent Song...\" option in BeepBox's \"File\" menu.");
     }
     function compareVersions(a, b) {
         return b.time - a.time;
@@ -36395,7 +42759,7 @@ You should be redirected to the song at:<br /><br />
                     this._song.fromBase64String(songData);
                 }
                 catch (error) {
-                    window.alert("Whoops, the song data appears to have been corrupted! Please try to recover the last working version of the song from the \"Recover Recent Song...\" option in BeepBox's \"File\" menu.");
+                    errorAlert(error);
                     return;
                 }
                 const songs = SongRecovery.getAllRecoveredSongs();
@@ -36463,13 +42827,13 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$8, div: div$8, h2: h2$7, p: p$3, select: select$6, option: option$6, iframe } = HTML;
+    const { button: button$7, div: div$7, h2: h2$6, p: p$4, select: select$5, option: option$5, iframe } = HTML;
     class SongRecoveryPrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._songContainer = div$8();
-            this._cancelButton = button$8({ class: "cancelButton" });
-            this.container = div$8({ class: "prompt", style: "width: 300px;" }, h2$7("Song Recovery"), div$8({ style: "max-height: 385px; overflow-y: auto;" }, p$3("This is a TEMPORARY list of songs you have recently modified. Please keep your own backups of songs you care about! SONGS THAT USE SAMPLES WILL TAKE A WHILE TO LOAD, so be patient!"), this._songContainer, p$3("(If \"Display Song Data in URL\" is enabled in your preferences, then you may also be able to find song versions in your browser history. However, song recovery won't work if you were browsing in private/incognito mode.)")), this._cancelButton);
+            this._songContainer = div$7();
+            this._cancelButton = button$7({ class: "cancelButton" });
+            this.container = div$7({ class: "prompt", style: "width: 300px;" }, h2$6("Song Recovery"), div$7({ style: "max-height: 385px; overflow-y: auto;" }, p$4("This is a TEMPORARY list of songs you have recently modified. Please keep your own backups of songs you care about! SONGS THAT USE SAMPLES WILL TAKE A WHILE TO LOAD, so be patient!"), this._songContainer, p$4("(If \"Display Song Data in URL\" is enabled in your preferences, then you may also be able to find song versions in your browser history. However, song recovery won't work if you were browsing in private/incognito mode.)")), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -36479,16 +42843,16 @@ You should be redirected to the song at:<br /><br />
             this._cancelButton.addEventListener("click", this._close);
             const songs = SongRecovery.getAllRecoveredSongs();
             if (songs.length == 0) {
-                this._songContainer.appendChild(p$3("There are no recovered songs available yet. Try making a song!"));
+                this._songContainer.appendChild(p$4("There are no recovered songs available yet. Try making a song!"));
             }
             for (const song of songs) {
-                const versionMenu = select$6({ style: "width: 100%;" });
+                const versionMenu = select$5({ style: "width: 100%;" });
                 for (const version of song.versions) {
-                    versionMenu.appendChild(option$6({ value: version.time }, version.name + ": " + new Date(version.time).toLocaleString()));
+                    versionMenu.appendChild(option$5({ value: version.time }, version.name + ": " + new Date(version.time).toLocaleString()));
                 }
                 const player = iframe({ style: "width: 100%; height: 60px; border: none; display: block;" });
                 player.src = "player/#song=" + window.localStorage.getItem(versionToKey(song.versions[0]));
-                const container = div$8({ style: "margin: 4px 0;" }, div$8({ class: "selectContainer", style: "width: 100%; margin: 2px 0;" }, versionMenu), player);
+                const container = div$7({ style: "margin: 4px 0;" }, div$7({ class: "selectContainer", style: "width: 100%; margin: 2px 0;" }, versionMenu), player);
                 this._songContainer.appendChild(container);
                 versionMenu.addEventListener("change", () => {
                     const version = song.versions[versionMenu.selectedIndex];
@@ -36499,22 +42863,23 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$7, label, div: div$7, p: p$2, a: a$1, h2: h2$6, input: input$5, select: select$5, option: option$5 } = HTML;
+    const { button: button$6, label, div: div$6, p: p$3, a: a$2, h2: h2$5, input: input$5, select: select$4, option: option$4 } = HTML;
     class RecordingSetupPrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._keyboardMode = select$5({ style: "width: 100%;" }, option$5({ value: "useCapsLockForNotes" }, "simple shortcuts, use caps lock to play notes"), option$5({ value: "pressControlForShortcuts" }, "simple notes, press " + EditorConfig.ctrlName + " for shortcuts"));
-            this._keyboardLayout = select$5({ style: "width: 100%;" }, option$5({ value: "wickiHayden" }, "Wicki-Hayden"), option$5({ value: "songScale" }, "selected song scale"), option$5({ value: "pianoAtC" }, "piano starting at C :)"), option$5({ value: "pianoAtA" }, "piano starting at A :("), option$5({ value: "pianoTransposingC" }, "piano transposing C :) to song key"), option$5({ value: "pianoTransposingA" }, "piano transposing A :( to song key"));
-            this._keyboardLayoutPreview = div$7({ style: "display: grid; row-gap: 4px; margin: 4px auto; font-size: 10px;" });
+            this._keyboardMode = select$4({ style: "width: 100%;" }, option$4({ value: "useCapsLockForNotes" }, "simple shortcuts, use caps lock to play notes"), option$4({ value: "pressControlForShortcuts" }, "simple notes, press " + EditorConfig.ctrlName + " for shortcuts"));
+            this._keyboardLayout = select$4({ style: "width: 100%;" }, option$4({ value: "wickiHayden" }, "Wicki-Hayden"), option$4({ value: "songScale" }, "selected song scale"), option$4({ value: "pianoAtC" }, "piano starting at C :)"), option$4({ value: "pianoAtA" }, "piano starting at A :("), option$4({ value: "pianoTransposingC" }, "piano transposing C :) to song key"), option$4({ value: "pianoTransposingA" }, "piano transposing A :( to song key"));
+            this._bassOffset = select$4({ style: "width: 100%;" }, option$4({ value: "0" }, "disabled"), option$4({ value: "-1" }, "before"), option$4({ value: "1" }, "after"));
+            this._keyboardLayoutPreview = div$6({ style: "display: grid; row-gap: 4px; margin: 4px auto; font-size: 10px;" });
             this._enableMidi = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._showRecordButton = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._snapRecordedNotesToRhythm = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._ignorePerformedNotesNotInScale = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._metronomeCountIn = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._metronomeWhileRecording = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
-            this._okayButton = button$7({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this._cancelButton = button$7({ class: "cancelButton" });
-            this.container = div$7({ class: "prompt noSelection recordingSetupPrompt", style: "width: 333px; text-align: right; max-height: 90%;" }, h2$6("Note Recording Setup"), div$7({ style: "display: grid; overflow-y: auto; overflow-x: hidden; flex-shrink: 1;" }, p$2("BeepBox can record notes as you perform them. You can start recording by pressing Ctrl+Space (or " + EditorConfig.ctrlSymbol + "P)."), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Add ● record button next to ▶ play button:", this._showRecordButton), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Snap recorded notes to the song's rhythm:", this._snapRecordedNotesToRhythm), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Ignore notes not in the song's scale:", this._ignorePerformedNotesNotInScale), p$2("While recording, you can perform notes on your keyboard!"), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Keyboard layout:", div$7({ class: "selectContainer", style: "width: 65%; margin-left: 1em;" }, this._keyboardLayout)), this._keyboardLayoutPreview, p$2("When not recording, you can use the computer keyboard either for shortcuts (like C and V for copy and paste) or for performing notes, depending on this mode:"), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$7({ class: "selectContainer", style: "width: 100%;" }, this._keyboardMode)), p$2("Performing music takes practice! Try slowing the tempo and using this metronome to help you keep a rhythm."), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Hear metronome while recording:", this._metronomeWhileRecording), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Count-in 1 bar of metronome before recording:", this._metronomeCountIn), p$2("If you have a ", a$1({ href: "https://caniuse.com/midi", target: "_blank" }, "compatible browser"), " on a device connected to a MIDI keyboard, you can use it to perform notes in BeepBox! (Or you could buy ", a$1({ href: "https://imitone.com/", target: "_blank" }, "Imitone"), " or ", a$1({ href: "https://vochlea.com/", target: "_blank" }, "Dubler"), " to hum notes into a microphone while wearing headphones!)"), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Enable MIDI performance:", this._enableMidi), p$2("Tip: Recorded notes often overlap such that one note ends after the next note already started. In BeepBox, these notes get split into two notes which may sound different when re-played than they did when you were recording. To fix the sound, you can either manually clean up the notes in the pattern editor, or you could try enabling the \"transition type\" effect on the instrument and setting it to \"continue\"."), div$7({ style: `width: 100%; height: 80px; background: linear-gradient(rgba(0,0,0,0), ${ColorConfig.editorBackground}); position: sticky; bottom: 0; pointer-events: none;` })), label({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._okayButton = button$6({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this._cancelButton = button$6({ class: "cancelButton" });
+            this.container = div$6({ class: "prompt noSelection recordingSetupPrompt", style: "width: 600px; text-align: right; max-height: 90%;" }, div$6({ class: "promptTitle" }, h2$5({ class: "nrsExt", style: "text-align: inherit;" }, ""), h2$5({ class: "nrsTitle" }, "Note Recording Setup")), div$6({ style: "display: grid; overflow-y: auto; overflow-x: hidden; flex-shrink: 1;" }, p$3("AbyssBox can record notes as you perform them. You can start recording by pressing Ctrl+Space (or " + EditorConfig.ctrlSymbol + "P)."), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Add ● record button next to ▶ play button:", this._showRecordButton), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Snap recorded notes to the song's rhythm:", this._snapRecordedNotesToRhythm), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Ignore notes not in the song's scale:", this._ignorePerformedNotesNotInScale), p$3("While recording, you can perform notes on your keyboard!"), label({ style: "display: flex; flex-direction: row; align-items: center; margin-top: 0.5em; margin-bottom: 0.5em; height: 2em; justify-content: center;" }, "Keyboard layout:", div$6({ class: "selectContainer", style: "width: 65%; margin-left: 1em;" }, this._keyboardLayout)), this._keyboardLayoutPreview, p$3("When not recording, you can use the computer keyboard either for shortcuts (like C and V for copy and paste) or for performing notes, depending on this mode:"), label({ style: "display: flex; margin-top: 0.5em; margin-bottom: 0.5em; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, div$6({ class: "selectContainer", style: "width: 50%;" }, this._keyboardMode)), p$3("Performing music takes practice! Try slowing the tempo and using this metronome to help you keep a rhythm."), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Hear metronome while recording:", this._metronomeWhileRecording), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Count-in 1 bar of metronome before recording:", this._metronomeCountIn), p$3("If you have a ", a$2({ href: "https://caniuse.com/midi", target: "_blank" }, "compatible browser"), " on a device connected to a MIDI keyboard, you can use it to perform notes in AbyssBox! (Or you could buy ", a$2({ href: "https://imitone.com/", target: "_blank" }, "Imitone"), " or ", a$2({ href: "https://vochlea.com/", target: "_blank" }, "Dubler"), " to hum notes into a microphone while wearing headphones!)"), label({ style: "display: flex; flex-direction: row; align-items: center; margin-top: 0.5em; height: 2em; justify-content: center;" }, "Enable MIDI performance:", this._enableMidi), p$3("The range of pitches available to play via your computer keyboard is affected by the octave scrollbar of the currently selected channel."), p$3("If you set the channel offset below to 'before' or 'after', notes below the middle octave in the view will be 'bass' notes, and placed in the channel before or after the viewed one. Using this, you can play bass and lead at the same time!"), label({ style: "display: flex; flex-direction: row; align-items: center; margin-top: 0.5em; margin-bottom: 0.5em; height: 2em; justify-content: center;" }, "Bass Offset:", div$6({ class: "selectContainer", style: "width: 50%; margin-left: 1em;" }, this._bassOffset)), p$3("Once you enable the setting, the keyboard layout above will darken to denote the new bass notes. The notes will be recorded with independent timing and this works with MIDI devices, too. Be aware that the octave offset of both used channels will impact how high/low the bass/lead are relative to one another."), p$3("Recorded notes often overlap such that one note ends after the next note already started. In UltraBox, these notes get split into multiple notes which may sound different when re-played than they did when you were recording. To fix the sound, you can either manually clean up the notes in the pattern editor, or you could try enabling the \"transition type\" effect on the instrument and setting it to \"continue\"."), div$6({ style: `width: 100%; height: 80px; background: linear-gradient(rgba(0,0,0,0), ${ColorConfig.editorBackground}); position: sticky; bottom: 0; pointer-events: none;` })), div$6({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -36531,6 +42896,7 @@ You should be redirected to the song at:<br /><br />
             this._confirm = () => {
                 this._doc.prefs.pressControlForShortcuts = (this._keyboardMode.value == "pressControlForShortcuts");
                 this._doc.prefs.keyboardLayout = this._keyboardLayout.value;
+                this._doc.prefs.bassOffset = Number(this._bassOffset.value);
                 this._doc.prefs.enableMidi = this._enableMidi.checked;
                 this._doc.prefs.showRecordButton = this._showRecordButton.checked;
                 this._doc.prefs.snapRecordedNotesToRhythm = this._snapRecordedNotesToRhythm.checked;
@@ -36547,12 +42913,12 @@ You should be redirected to the song at:<br /><br />
                 const rowLengths = [12, 12, 11, 10];
                 const scale = Config.scales[this._doc.song.scale].flags;
                 for (let rowIndex = 0; rowIndex < 4; rowIndex++) {
-                    const row = div$7({ style: "display: flex;" });
+                    const row = div$6({ style: "display: flex;" });
                     this._keyboardLayoutPreview.appendChild(row);
-                    const spacer = div$7({ style: "width: " + (rowIndex * 12) + "px; height: 20px; flex-shrink: 0;" });
+                    const spacer = div$6({ style: "width: " + (rowIndex * 12) + "px; height: 20px; flex-shrink: 0;" });
                     row.appendChild(spacer);
                     for (let colIndex = 0; colIndex < rowLengths[rowIndex]; colIndex++) {
-                        const key = div$7({ style: `width: 20px; height: 20px; margin: 0 2px; box-sizing: border-box; flex-shrink: 0; display: flex; justify-content: center; align-items: center;` });
+                        const key = div$6({ style: `width: 20px; height: 20px; margin: 0 2px; box-sizing: border-box; flex-shrink: 0; display: flex; justify-content: center; align-items: center;` });
                         row.appendChild(key);
                         const pitch = KeyboardLayout.keyPosToPitch(this._doc, colIndex, 3 - rowIndex, this._keyboardLayout.value);
                         if (pitch != null) {
@@ -36571,6 +42937,12 @@ You should be redirected to the song at:<br /><br />
                             else {
                                 key.style.border = "2px solid " + ColorConfig.pitchBackground;
                             }
+                            if (this._bassOffset.selectedIndex != 0 && pitch <= Piano.getBassCutoffPitch(this._doc)) {
+                                key.style.setProperty("filter", "hue-rotate(60deg) brightness(0.5)");
+                            }
+                            else {
+                                key.style.setProperty("filter", "");
+                            }
                             const pitchNameIndex = (scalePitch + Config.keys[this._doc.song.key].basePitch) % Config.pitchesPerOctave;
                             key.textContent = Piano.getPitchName(pitchNameIndex, scalePitch, Math.floor(pitch / 12));
                         }
@@ -36580,6 +42952,7 @@ You should be redirected to the song at:<br /><br />
             this._keyboardMode.value = this._doc.prefs.pressControlForShortcuts ? "pressControlForShortcuts" : "useCapsLockForNotes";
             this._keyboardLayout.value = this._doc.prefs.keyboardLayout;
             this._enableMidi.checked = this._doc.prefs.enableMidi;
+            this._bassOffset.value = String(this._doc.prefs.bassOffset);
             this._showRecordButton.checked = this._doc.prefs.showRecordButton;
             this._snapRecordedNotesToRhythm.checked = this._doc.prefs.snapRecordedNotesToRhythm;
             this._ignorePerformedNotesNotInScale.checked = this._doc.prefs.ignorePerformedNotesNotInScale;
@@ -36591,6 +42964,7 @@ You should be redirected to the song at:<br /><br />
             this.container.addEventListener("keydown", this._whenKeyPressed);
             this._renderKeyboardLayoutPreview();
             this._keyboardLayout.addEventListener("change", this._renderKeyboardLayoutPreview);
+            this._bassOffset.addEventListener("change", this._renderKeyboardLayoutPreview);
         }
     }
 
@@ -36758,134 +43132,148 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$6, div: div$6, h2: h2$5, input: input$4, p: p$1, option: option$4, select: select$4 } = HTML;
-    const _pageMarginTest = ColorConfig.getComputed("--page-margin");
+    const t={id:"",classname:"",theme:"light",toggle:!0,popover:!0,position:"bottom-start",margin:4,preset:!0,color:"#000",default:"#000",target:"",disabled:!1,format:"rgb",singleInput:!1,inputs:!0,opacity:!0,preview:!0,copy:!0,swatches:[],toggleSwatches:!1,closeOnScroll:!1,i18n:{palette:"Color picker",buttons:{copy:"Copy color to clipboard",changeFormat:"Change color format",swatch:"Color swatch",toggleSwatches:"Toggle Swatches"},sliders:{hue:"Change hue",alpha:"Change opacity"}}},e="alwan",s=`${e}__container`,o=`${e}__palette`,r=`${e}__marker`,n=`${e}__preview`,i=`${e}__button `,a$1=`${e}__copy-button`,l=`${e}__slider `,h=`${e}__hue`,c=`${e}__alpha`,p$2=`${e}__input`,g=`${e}__inputs`,u=`${e}__swatch`,d=`${e}__swatches`,_=`${e}__reference `,b=`${e}__backdrop`,w=`${e}__toggle-button`,f=`${e}--open`,$$1=`${e}--collapse`,y=parseInt,{min:v,max:m,abs:x,round:A,PI:C}=Math,S=(t,e=100,s=0)=>t>e?e:t<s?s:t,k=t=>A((t%=360)<0?t+360:t),H=document,L=H.documentElement,M="button",O="open",V="close",z="color",B="click",E="pointerdown",I="keydown",j="input",D="change",F="blur",P="rgb",T="hsl",Z=["hex",P,T],K="afterbegin",N="afterend",R="beforeend",U="aria-label",q={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowRight:[1,0],ArrowLeft:[-1,0]},G={deg:1,turn:360,rad:180/C,grad:.9},J=/^#[0-9a-f]{6}$/i,Q=/^hsla?\(\s*([+-]?\d*\.?\d+)(\w*)?\s*[\s,]\s*([+-]?\d*\.?\d+)%?\s*,?\s*([+-]?\d*\.?\d+)%?(?:\s*[\/,]\s*([+-]?\d*\.?\d+)(%)?)?\s*\)?$/,W=(t,e,s,o)=>{t.addEventListener(e,s,o);},X=(t,e,s)=>{t.removeEventListener(e,s);},Y=t=>"string"==typeof t,tt=t=>null!=t,et=t=>t instanceof Element,st=t=>Number.isFinite(Y(t)&&""!==t.trim()?+t:t),{keys:ot,assign:rt,setPrototypeOf:nt,prototype:it}=Object,{from:at,isArray:lt}=Array,ht=t=>tt(t)&&"object"==typeof t&&!lt(t)&&!et(t),ct=(t,e)=>ot(t).forEach((s=>e(s,t[s]))),pt=(t,e)=>(ht(t)||(t={}),ct(e,((e,s)=>{tt(s)&&rt(t,{[e]:ht(s)?pt(t[e]||{},s):s});})),t),gt=()=>H.body,ut=(t,e=gt())=>Y(t)&&t.trim()?at(e.querySelectorAll(t)):et(t)&&gt().contains(t)&&t!==gt()?[t]:[],dt=t=>ut(`${j},${M},[tabindex]`,t),_t=(t,e,s=R)=>{t&&e&&e.insertAdjacentElement(s,t);},bt=(t,e)=>{t.innerHTML=e;},wt=(t,e,s)=>{t&&t.setAttribute(e,s+"");},ft=(t,e,s,o,r,n)=>{const i=H.createElement(t);return e&&(i.className=e),o&&bt(i,o),ct(r||{},((t,e)=>{tt(e)&&wt(i,t,e);})),s&&_t(i,s,n),i},$t=(t,e,s,o)=>ft("div",t,e,"",s,o),yt=t=>(t&&t.remove(),null),vt=(t,e)=>(t.replaceWith(e),e),mt=(t,e,s,o,r,n,a)=>ft(M,i+t,e,s,rt({type:M,[U]:r,title:n||r},o),a),xt=(t,e,s,o=1)=>ft(j,l+t,e,"",{max:s,step:o,type:"range"}),At=(t,e)=>$t(s,t,{},e),Ct=(t,e,s)=>{t&&t.style.setProperty("--"+e,s+"");},St=(t,e,s)=>t.classList.toggle(e,s),kt=(t,e,s)=>{t.style.transform=`translate(${e}px,${s}px)`;},Ht=(t,e=[H])=>(t&&(t=t.parentElement),t&&t!==gt()?(/auto|scroll|overflow|clip|hidden/.test(getComputedStyle(t).overflow)&&e.push(t),Ht(t,e)):e),Lt=t=>{let e,s,o,r,n,i;return et(t)?({x:e,y:s,width:o,height:r,right:n,bottom:i}=t.getBoundingClientRect()):(e=s=0,o=n=L.clientWidth,r=i=L.clientHeight),[e,s,o,r,n,i]},Mt='<svg width="18" height="18" viewBox="0 0 24 24" aria-role="none"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg>',Ot=(t,e=P)=>{let s=t.a,o="",r=e;return s<1&&(o+=", "+s,r+="a"),e===P?r+`(${t.r}, ${t.g}, ${t.b+o})`:r+`(${t.h}, ${t.s}%, ${t.l}%${o})`},Vt=ft("canvas").getContext("2d");function zt(t,e){let s,o,r="";Y(t)?r=t.trim():ht(t)&&(s=[P,T].find((e=>e.split("").every((e=>st(t[e]))))),s&&(r=Ot(t,s)));const[n,i,a,l,h,c="1",p]=Q.exec(r)||[];if(n)o={h:k(+i*(G[a]?G[a]:1)),s:S(+l),l:S(+h),a:S(+c/(p?100:1),1)},s=T;else if(s=P,Vt.fillStyle="#000",Vt.fillStyle=r,r=Vt.fillStyle,J.test(r))o={r:y(r.slice(1,3),16),g:y(r.slice(3,5),16),b:y(r.slice(5,7),16),a:1};else {const[t,e,s,n]=/\((.+)\)/.exec(r)[1].split(",").map((t=>+t));o={r:t,g:e,b:s,a:n};}return o.a=A(100*o.a)/100,r=Ot(o,s),e?r:[o,s,r]}const Bt={top:[1,5,4,0],bottom:[5,1,4,0],right:[4,0,1,5],left:[0,4,1,5]},Et={start:[0,1,2],center:[1,0,2],end:[2,1,0]},It=(t,e,s,{margin:o,position:r,toggle:n,closeOnScroll:i},{t:a,o:l})=>{o=st(o)?+o:0;const[h,c]=Y(r)?r.split("-"):[],p=Bt[h]||Bt.bottom,g=Et[c]||Et.center,u=Ht(t),d=e.style,_=()=>{d.height="";const s=Lt(H),r=Lt(t),n=Lt(e),i=[null,null];p.some((t=>{let e=t%2;const a=s[t],l=r[t],h=o+n[e+2];if(h<=x(a-l)){i[e]=l+(t<=1?-h:o),e=(e+1)%2;const a=n[e+2],c=r[e],p=r[e+4],u=s[e+4]-c,d=(a+r[e+2])/2;return g.some((t=>0===t&&a<=u?(i[e]=c,!0):1===t&&d<=p&&d<=u?(i[e]=p-d,!0):2===t&&a<=p&&(i[e]=p-a,!0))),!0}})),kt(e,...i.map(((t,e)=>(e&&null===t&&n[3]>s[5]&&(d.height=s[5]-6+"px",n[3]=s[5]-3),A(tt(t)?t:(s[e+4]-n[e+2])/2)))));},b=()=>{!a()&&n||(((t,e)=>e.every((e=>{const[s,o,,,r,n]=Lt(t),[i,a,,,l,h]=Lt(e);return o<h&&n>a&&s<l&&r>i})))(t,u)?a()?(_(),i&&l(!1)):l(!0,!0):l(!1,!0));},w=t=>{if(a()){const{target:o,key:r,shiftKey:n}=t;if("Escape"===r)l(!1);else if("Tab"===r){const r=dt(e),i=r[0],a=r.pop(),l=o!==s||n?n&&o===i||!n&&o===a?s:null:i;l&&(t.preventDefault(),l.focus());}}},f=({target:t})=>{!a()||t===s||e.contains(t)||at(s.labels||[]).some((e=>e.contains(t)))||l(!1);},$=t=>{u.forEach((e=>{t(e,"scroll",b);})),t(window,"resize",b),t(H,I,w),t(H,E,f);};return _(),$(W),{i:_,p:()=>{$(X),e.style.transform="";}}},jt=(t,s)=>{const l=t.config,y=$t(e,gt()),x=((t,e)=>{let s=e||mt("",gt());const o=()=>{t.u.o();};return {_:()=>s,$({preset:t,classname:r}){e&&t!==(e!==s)&&(t?(s=vt(e,mt()),e.id&&(s.id=e.id)):s=vt(s,e)),W(s,B,o),e&&!t||!Y(r)||(s.className=(i+_+r).trim());},p(){e?e!==s&&vt(s,e):yt(s);}}})(t,ut(s)[0]),A=(({v:t},e)=>{let s,n,i,a;const l=$t(o,e),h=$t(r,l),c=(e,[o,r]=[0,0])=>{let a,l,[c,p,g,u]=i;e?(s=e.clientX-c,n=e.clientY-p):(s+=o*g/100,n+=r*u/100),s=S(s,g),n=S(n,u),kt(h,s,n),a=1-n/u,l=a*(1-s/(2*g)),t.i({s:1===l||0===l?0:(a-l)/v(l,1-l)*100,l:100*l},1);},p=t=>{t.buttons?c(t):d(!1);},g=()=>{t.m(),d(!1);},u=()=>{t.m();},d=t=>{St(L,b,t),(t?W:X)(H,"pointermove",p),(t?W:X)(window,F,u);};return W(l,E,(e=>{a||(t.A(),i=Lt(l),c(e),d(!0),W(H,"pointerup",g,{once:!0}));})),W(l,I,(e=>{const s=q[e.key];s&&(e.preventDefault(),i=Lt(l),t.A(),c(null,s),t.m());})),{el:l,$({i18n:t,disabled:e}){wt(l,U,t.palette),wt(l,"tabindex",e?"":0),a=e;},C(t,e){let o=e+t*v(e,1-e);i=Lt(l),s=(o?2*(1-e/o):0)*i[2],n=(1-o)*i[3],kt(h,s,n);}}})(t,y),C=At(y),k=((t,e)=>{let s,o,r=!1;const i=t=>{r=t,bt(o,t?'<svg width="18" height="18" viewBox="0 0 24 24" aria-role="none"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"></path></svg>':Mt);},l=t=>{const e=ft(j,"",L,"",{value:t});e.select(),H.execCommand("copy"),yt(e),o.focus(),i(!0);},h=()=>{if(!r){const e=navigator.clipboard,s=t.v.S();e?e.writeText(s).then((()=>i(!0))).catch((()=>l(s))):l(s);}};return {$({preview:t,copy:l,i18n:c}){s=yt(s),o=yt(o),t&&(s=$t(n,e,{},K)),l&&(o=mt(a$1,s||e,Mt,{},c.buttons.copy,"",K),W(o,B,h),W(o,F,(()=>r&&i(!1))),W(o,"mouseout",(()=>o.blur())));}}})(t,C),M=(({v:t,k:e},s)=>{let o;const r=$t("",s),n=xt(h,r,360);return W(n,j,(()=>t.i({h:+n.value},2))),W(r,D,(()=>e.H(D))),{$({opacity:e,i18n:{sliders:s}}){o=yt(o),e?(o=xt(c,r,1,.01),W(o,j,(()=>t.i({a:+o.value},2)))):t.i({a:1}),wt(n,U,s.hue),wt(o,U,s.alpha);},L(t,e){n.value=t+"",o&&(o.value=e+"");}}})(t,C),T=((t,e)=>{let s,o,r,n,i,{config:a,v:l}=t,h=[],c=!1;const u=()=>a.singleInput||"hex"===h[n],d=t=>{let e=t.target.value,s={};c||(l.A(),c=!0),u()||(ct(i,((t,e)=>{s[t]=+e.value;})),e=Ot(s,h[n])),l.M(e,3,!1,!0);},_=()=>{i={},yt(o),o=$t(g,s,{},K);const e=h[n],r=u()?[e]:(e+(a.opacity?"a":"")).split(""),_=l.O;r.forEach((t=>{const e=ft("label","",o);i[t]=ft(j,p$2,e,"",{type:"text",value:_[t]}),ft("span","",e,t);})),W(o,j,d),W(o,D,(()=>{l.m(),c=!1;})),W(o,"focusin",(t=>t.target.select())),W(o,I,(e=>"Enter"===e.key&&t.u.o(!1)));},b=()=>{n=(n+1)%h.length,l.V(h[n]),_();};return {$({inputs:t,format:o,i18n:i}){s=yt(s),r=yt(r),h=Z,!0!==t&&(t=t||{},h=h.filter((e=>t[e])));const a=h.length;a||(h=Z),n=m(h.indexOf(o),0),l.V(h[n]),a&&(s=At(e,N),_(),a>1&&(r=mt("",s,'<svg width="15" height="15" viewBox="0 0 20 20" aria-role="none"><path d="M10 1L5 8h10l-5-7zm0 18l5-7H5l5 7z"></path></svg>',{},i.buttons.changeFormat),W(r,B,b)));},L(t){ct(i||{},((e,s)=>{s.value=t[e]+"";}));}}})(t,C),G=((t,e)=>{let s,o;return {$({swatches:r,toggleSwatches:n,i18n:{buttons:i}}){lt(r)&&(s=yt(s),o=yt(o),r.length&&(s=$t(d,e),r.forEach((t=>{Ct(mt(u,s,"",{},i.swatch,Y(t)?t:zt(t,!0)),z,zt(t,!0));})),n&&(o=mt(w,e,'<svg width="20" height="20" viewBox="0 0 24 24" aria-role="none"><path d="M6.984 14.016l5.016-5.016 5.016 5.016h-10.031z"></path></svg>',{},i.toggleSwatches),W(o,B,(()=>{St(s,$$1),t.u.B();}))),W(s,B,(({target:e})=>{e!==s&&t.v.M(e.style.getPropertyValue("--"+z),0,!0,!0);}))));}}})(t,y);let J,Q=!1,et=null;return {I(e){e=e||{};const s=this,o=y.dataset,r=t.v,{id:n,color:i}=e,{theme:a,toggle:h,popover:c,target:p,disabled:g}=pt(l,e);[x,A,k,M,T,G].forEach((t=>t.$(l))),J=x._();let u=ut(p)[0]||J;Y(n)&&(y.id=n),o.theme=a,o.display=c?"popover":"block",h||s.o(!0,!0),J.style.display=c||h?"":"none",et&&(et.p(),et=null),c?et=It(u,y,J,l,s):_t(y,u,u===J?N:R),tt(i)?r.M(i):r.i({}),[J,...dt(y)].forEach((t=>{t.disabled=!!g;})),g&&(c?s.o(!1,!0):h||s.o(!0,!0));},i(t,e){const{r:s,g:o,b:r,a:n,h:i,s:a,l:l,rgb:h}=t;Ct(J,z,h),Ct(y,P,`${s},${o},${r}`),Ct(y,"a",n),Ct(A.el,"h",i),1!==e&&2!==e&&(A.C(a/100,l/100),M.L(i,n)),3!==e&&T.L(t);},o(e=!Q,s=!1){e===Q||l.disabled&&(!s||e&&l.popover)||!l.toggle&&!s||(e&&et&&et.i(),Q=e,St(y,f,e),t.k.H(Q?O:V));},t:()=>Q,B(){et&&et.i();},p(){yt(y),et&&et.p(),x.p();}}},Dt=t=>(t<16?"0":"")+t.toString(16),Ft=(t,e,s)=>(t%=12,A(255*(s-e*v(s,1-s)*m(-1,v(t-3,9-t,1))))),Pt=t=>{const e={h:0,s:0,l:0,r:0,g:0,b:0,a:1,rgb:"",hsl:"",hex:""},s=t.k.H;let o,r,n;return {O:e,i(o,r,i=!0,a){n=e.hex,rt(e,o),rt(e,a||(({h:t,s:e,l:s})=>({r:Ft(t/=30,e/=100,s/=100),g:Ft(t+8,e,s),b:Ft(t+4,e,s)}))(e)),e.s=A(e.s),e.l=A(e.l),e.rgb=Ot(e),e.hsl=Ot(e,T),e.hex=(({r:t,g:e,b:s,a:o})=>"#"+Dt(t)+Dt(e)+Dt(s)+(o<1?Dt(A(255*o)):""))(e),t.u.i(e,r),i&&n!==e.hex&&s(z,e);},M(t,o,r,n){const[i,a,l]=zt(t);let h,c;e[a]!==l&&(a===P?(h=i,c=(({r:t,g:e,b:s,a:o})=>{const r=m(t/=255,e/=255,s/=255),n=v(t,e,s),i=r-n,a=(r+n)/2;return {h:k(60*(0===i?0:r===t?(e-s)/i%6:r===e?(s-t)/i+2:r===s?(t-e)/i+4:0)),s:i?i/(1-x(2*a-1))*100:0,l:100*a,a:o}})(h)):c=i,this.i(c,o,n,h),r&&s(D,e));},A(){r=e[o];},m(){r!==e[o]&&s(D,e);},V(e){o=t.config.format=e;},S:()=>e[o]}};class Tt{static version(){return "2.0.2"}static setDefaults(e){pt(t,e);}constructor(e,s){this.config=pt({},t),this.k=(t=>{const e={[O]:[],[V]:[],[D]:[],[z]:[]};return {H(s,o=t.v.O){t.config.disabled||(e[s]||[]).forEach((e=>{e(rt({type:s,source:t},o));}));},j(t,s){e[t]&&!e[t].includes(s)&&"function"==typeof s&&e[t].push(s);},D(t,s){tt(t)?e[t]&&(tt(s)?e[t]=e[t].filter((t=>t!==s)):e[t]=[]):ct(e,(t=>{e[t]=[];}));}}})(this),this.v=Pt(this),this.u=jt(this,e),this.u.I(s);}setOptions(t){this.u.I(t);}setColor(t){return this.v.M(t),this}getColor(){return {...this.v.O}}isOpen(){return this.u.t()}open(){this.u.o(!0);}close(){this.u.o(!1);}toggle(){this.u.o();}on(t,e){this.k.j(t,e);}off(t,e){this.k.D(t,e);}addSwatches(...t){this.u.I({swatches:this.config.swatches.concat(t)});}removeSwatches(...t){this.u.I({swatches:this.config.swatches.filter(((e,s)=>!t.some((t=>st(t)?+t===s:t===e))))});}enable(){this.u.I({disabled:!1});}disable(){this.u.I({disabled:!0});}reset(){this.v.M(this.config.default);}reposition(){this.u.B();}trigger(t){this.k.H(t);}destroy(){this.u.p(),ct(this,(t=>delete this[t])),nt(this,it);}}
+
+    const { button: button$5, div: div$5, h2: h2$4, input: input$4, p: p$1, option: option$3, select: select$3 } = HTML;
     let doReload = false;
-    class CustomPrompt {
+    class ThemePrompt {
         constructor(_doc, _pattern, _pattern2, _pattern3) {
             this._doc = _doc;
             this._pattern = _pattern;
             this._pattern2 = _pattern2;
             this._pattern3 = _pattern3;
+            this._themeSelect = select$3({ style: "width: 100%;" }, option$3({ value: "AbyssBox Classic" }, "AbyssBox Classic"), option$3({ value: "AbyssBox Competitive" }, "AbyssBox Competitive"), option$3({ value: "AbyssBox Light" }, "AbyssBox Light"), option$3({ value: "Half-Life" }, "Half-Life"), option$3({ value: "Half-Life: Source" }, "Half-Life: Source"), option$3({ value: "Doom 1993" }, "Doom 1993"), option$3({ value: "Undertale" }, "Undertale"), option$3({ value: "Scratch" }, "Scratch"), option$3({ value: "Scratch Addons" }, "Scratch Addons"), option$3({ value: "Windows Xp" }, "Windows Xp"), option$3({ value: "Frutiger Aero" }, "Frutiger Aero"), option$3({ value: "Glyde" }, "Glyde"), option$3({ value: "Terminal 2.0 (AB)" }, "Terminal 2.0 (AB)"), option$3({ value: "dark classic" }, "BeepBox Dark"), option$3({ value: "light classic" }, "BeepBox Light"), option$3({ value: "dark competition" }, "BeepBox Competition Dark"), option$3({ value: "jummbox classic" }, "JummBox Dark"), option$3({ value: "jummbox light" }, "Gold Light"), option$3({ value: "forest" }, "Forest"), option$3({ value: "forest 2" }, "Forest 2"), option$3({ value: "canyon" }, "Canyon"), option$3({ value: "midnight" }, "Midnight"), option$3({ value: "beachcombing" }, "Beachcombing"), option$3({ value: "violet verdant" }, "Violet Verdant"), option$3({ value: "sunset" }, "Sunset"), option$3({ value: "autumn" }, "Autumn"), option$3({ value: "fruit" }, "Shadowfruit"), option$3({ value: "toxic" }, "Toxic"), option$3({ value: "roe" }, "Roe"), option$3({ value: "moonlight" }, "Moonlight"), option$3({ value: "portal" }, "Portal"), option$3({ value: "fusion" }, "Fusion"), option$3({ value: "inverse" }, "Inverse"), option$3({ value: "nebula" }, "Nebula"), option$3({ value: "Nebula 2" }, "Nebula 2"), option$3({ value: "roe light" }, "Roe Light"), option$3({ value: "amoled dark" }, "High Contrast Dark"), option$3({ value: "energized" }, "Energized"), option$3({ value: "neapolitan" }, "Neapolitan"), option$3({ value: "mono" }, "Poly"), option$3({ value: "blutonium" }, "Blutonium"), option$3({ value: "azur lane" }, "Azur Lane"), option$3({ value: "modbox classic" }, "Modbox"), option$3({ value: "sandbox classic" }, "Sandbox"), option$3({ value: "harrybox" }, "Haileybox"), option$3({ value: "brucebox" }, "Brucebox"), option$3({ value: "shitbox 3.0" }, "Shitbox 1.0/3.0"), option$3({ value: "shitbox 2.0" }, "Shitbox 2.0"), option$3({ value: "nerdbox" }, "NerdBox"), option$3({ value: "zefbox" }, "Zefbox"), option$3({ value: "cardboardbox classic" }, "Cardboardbox"), option$3({ value: "blubox classic" }, "Blubox"), option$3({ value: "dogebox classic" }, "Dogebox"), option$3({ value: "wackybox" }, "Wackybox"), option$3({ value: "todbox dark mode" }, "Todbox Dark Mode"), option$3({ value: "mainbox 1.0" }, "Mainbox"), option$3({ value: "microbox" }, "MicroBox"), option$3({ value: "paandorasbox" }, "PaandorasBox"), option$3({ value: "foxbox" }, "FoxBox"), option$3({ value: "midbox" }, "Midbox"), option$3({ value: "dogebox2" }, "Dogebox2"), option$3({ value: "nepbox" }, "Nepbox"), option$3({ value: "WeebBox" }, "WeebBox"), option$3({ value: "AWeebyssBox" }, "AWeebyssBox"), option$3({ value: "Deuteranopia" }, "Deuteranopia"), option$3({ value: "Protanopia" }, "Protanopia"), option$3({ value: "Tritanopia" }, "Tritanopia"), option$3({ value: "2012 Video Tutorial" }, "2012 Video Tutorial"), option$3({ value: "I am on fire" }, "I am on fire"), option$3({ value: "custom" }, "Custom"));
+            this._currentThemeProperty = "--page-margin";
             this._fileInput = input$4({ type: "file", accept: ".png,.jpg,.jpeg", text: "choose editor background image" });
             this._fileInput2 = input$4({ type: "file", accept: ".png,.jpg,.jpeg", text: "choose website background image" });
-            this._colorpicker = input$4({ type: "color", id: "colorPicker", value: (_pageMarginTest), style: "width: 100%; height: 30px;" });
-            this._currentThemeProperty = "--page-margin";
-            this._colorMenu = select$4({ style: "width: 100%;" }, option$4({ selected: true, disabled: true, hidden: false }, "Select an asset to change"), option$4({ value: "--page-margin" }, "Page Margin"), option$4({ value: "--editor-background" }, "Editor Background"), option$4({ value: "--primary-text" }, "Primary Text"), option$4({ value: "--secondary-text" }, "Secondary Text"), option$4({ value: "--inverted-text" }, "Inverted Text"), option$4({ value: "--loop-accent" }, "Loop Accent"), option$4({ value: "--link-accent" }, "Link Accent"), option$4({ value: "--ui-widget-background" }, "UI Widget Background"), option$4({ value: "--ui-widget-focus" }, "UI Widget Focus"), option$4({ value: "--pitch-background" }, "Pitch Background"), option$4({ value: "--tonic" }, "Tonic"), option$4({ value: "--fifth-note" }, "Fifth note"), option$4({ value: "--white-piano-key" }, "White Piano Key"), option$4({ value: "--black-piano-key" }, "Black Piano Key"), option$4({ value: "--track-editor-bg-pitch" }, "Track Editor Pitch BG"), option$4({ value: "--track-editor-bg-pitch-dim" }, "Empty Track Editor Pitch BG"), option$4({ value: "--track-editor-bg-noise" }, "Track Editor Noise BG"), option$4({ value: "--track-editor-bg-noise-dim" }, "Empty Track Editor Noise BG"), option$4({ value: "--track-editor-bg-mod" }, "Track Editor Mod BG"), option$4({ value: "--track-editor-bg-mod-dim" }, "Empty Track Editor Mod BG"), option$4({ value: "--multiplicative-mod-slider" }, "Multiplicative Mod Slider"), option$4({ value: "--overwriting-mod-slider" }, "Overwriting Mod Slider"), option$4({ value: "--indicator-primary" }, "Primary Indicator"), option$4({ value: "--indicator-secondary" }, "Secondary Indicator"), option$4({ value: "--select2-opt-group" }, "Preset Catagory Background"), option$4({ value: "--input-box-outline" }, "Input Box Outline"), option$4({ value: "--mute-button-normal" }, "Mute Button (Normal)"), option$4({ value: "--mute-button-mod" }, "Mute Button (Mod)"), option$4({ value: "--mod-label-primary" }, "Mod Label Primary"), option$4({ value: "--mod-label-secondary-text" }, "Mod Label Secondary"), option$4({ value: "--mod-label-primary-text" }, "Mod Label Primary Text"));
+            this._colorMenu = select$3({ style: "width: 100%;" }, option$3({ selected: true, disabled: true, hidden: false }, "Select an asset to change"), option$3({ selected: false, disabled: true, hidden: false }, "General Items"), option$3({ value: "--page-margin" }, "Page Margin"), option$3({ value: "--editor-background" }, "Editor Background"), option$3({ value: "--primary-text" }, "Primary Text"), option$3({ value: "--secondary-text" }, "Secondary Text"), option$3({ value: "--inverted-text" }, "Inverted Text"), option$3({ value: "--loop-accent" }, "Loop Accent"), option$3({ value: "--link-accent" }, "Link Accent"), option$3({ value: "--ui-widget-background" }, "UI Widget Background"), option$3({ value: "--ui-widget-focus" }, "UI Widget Focus"), option$3({ value: "--pitch-background" }, "Pitch Background"), option$3({ value: "--tonic" }, "Tonic"), option$3({ value: "--fifth-note" }, "Fifth note"), option$3({ value: "--white-piano-key" }, "White Piano Key"), option$3({ value: "--black-piano-key" }, "Black Piano Key"), option$3({ value: "--white-piano-key-text" }, "White Piano Key Text"), option$3({ value: "--black-piano-key-text" }, "Black Piano Key Text"), option$3({ selected: false, disabled: true, hidden: false }, "Track Editor Backgrounds"), option$3({ value: "--track-editor-bg-pitch" }, "Track Editor Pitch BG"), option$3({ value: "--track-editor-bg-pitch-dim" }, "Empty Track Editor Pitch BG"), option$3({ value: "--track-editor-bg-noise" }, "Track Editor Noise BG"), option$3({ value: "--track-editor-bg-noise-dim" }, "Empty Track Editor Noise BG"), option$3({ value: "--track-editor-bg-mod" }, "Track Editor Mod BG"), option$3({ value: "--track-editor-bg-mod-dim" }, "Empty Track Editor Mod BG"), option$3({ selected: false, disabled: true, hidden: false }, "Extras"), option$3({ value: "--multiplicative-mod-slider" }, "Multiplicative Mod Slider"), option$3({ value: "--overwriting-mod-slider" }, "Overwriting Mod Slider"), option$3({ value: "--indicator-primary" }, "Primary Indicator"), option$3({ value: "--indicator-secondary" }, "Secondary Indicator"), option$3({ value: "--select2-opt-group" }, "Preset Catagory Background"), option$3({ value: "--input-box-outline" }, "Input Box Outline"), option$3({ value: "--mute-button-normal" }, "Mute Button (Normal)"), option$3({ value: "--mute-button-mod" }, "Mute Button (Mod)"), option$3({ value: "--mod-label-primary" }, "Mod Label Primary"), option$3({ value: "--mod-label-secondary-text" }, "Mod Label Secondary"), option$3({ value: "--mod-label-primary-text" }, "Mod Label Primary Text"), option$3({ value: "--note-flash" }, "Note Flash"), option$3({ value: "--note-flash-secondary" }, "Note Flash Secondary"));
             this._colorInput = input$4({ type: "text", value: localStorage.getItem("customColors") || `:root {
-		--page-margin: #040410;
-		--editor-background: #040410;
-		--hover-preview: white;
-		--playhead: rgba(255, 255, 255, 0.9);
-		--primary-text: white;
-		--secondary-text: #84859a;
-		--inverted-text: black;
-		--text-selection: rgba(119,68,255,0.99);
-		--box-selection-fill: #044b94;
-		--loop-accent: #74f;
-		--link-accent: #98f;
-		--ui-widget-background: #393e4f;
-		--ui-widget-focus: #6d6886;
-		--pitch-background: #393e4f99;
-		--tonic: #725491;
-		--fifth-note: #54547a;
-		--white-piano-key: #eee;
-		--black-piano-key: #666;
-		--use-color-formula: true;
-		--track-editor-bg-pitch: #393e4f;
-		--track-editor-bg-pitch-dim: #1c1d28;
-		--track-editor-bg-noise: #3d3535;
-		--track-editor-bg-noise-dim: #161313;
-		--track-editor-bg-mod: #283560;
-		--track-editor-bg-mod-dim: #0a101f;
-		--multiplicative-mod-slider: #606c9f;
-		--overwriting-mod-slider: #6850b5;
-		--indicator-primary: #9c64f7;
-		--indicator-secondary: #393e4f;
-		--select2-opt-group: #5d576f;
-		--input-box-outline: #222;
-		--mute-button-normal: #dda85d;
-		--mute-button-mod: #886eae;
-		--mod-label-primary: #282840;
-		--mod-label-secondary-text: rgb(87, 86, 120);
-		--mod-label-primary-text: white;
-		--pitch-secondary-channel-hue: 0;
-		--pitch-secondary-channel-hue-scale: 6.1;
-		--pitch-secondary-channel-sat: 83.3;
-		--pitch-secondary-channel-sat-scale: 0.1;
-		--pitch-secondary-channel-lum: 40;
-		--pitch-secondary-channel-lum-scale: 0.05;
-		--pitch-primary-channel-hue: 0;
-		--pitch-primary-channel-hue-scale: 6.1;
-		--pitch-primary-channel-sat: 100;
-		--pitch-primary-channel-sat-scale: 0.1;
-		--pitch-primary-channel-lum: 67.5;
-		--pitch-primary-channel-lum-scale: 0.05;
-		--pitch-secondary-note-hue: 0;
-		--pitch-secondary-note-hue-scale: 6.1;
-		--pitch-secondary-note-sat: 93.9;
-		--pitch-secondary-note-sat-scale: 0.1;
-		--pitch-secondary-note-lum: 25;
-		--pitch-secondary-note-lum-scale: 0.05;
-		--pitch-primary-note-hue: 0;
-		--pitch-primary-note-hue-scale: 6.1;
-		--pitch-primary-note-sat: 100;
-		--pitch-primary-note-sat-scale: 0.05;
-		--pitch-primary-note-lum: 85.6;
-		--pitch-primary-note-lum-scale: 0.025;
-		--noise-secondary-channel-hue: 0;
-		--noise-secondary-channel-hue-scale: 2;
-		--noise-secondary-channel-sat: 25;
-		--noise-secondary-channel-sat-scale: 0;
-		--noise-secondary-channel-lum: 42;
-		--noise-secondary-channel-lum-scale: 0;
-		--noise-primary-channel-hue: 0;
-		--noise-primary-channel-hue-scale: 2;
-		--noise-primary-channel-sat: 33;
-		--noise-primary-channel-sat-scale: 0;
-		--noise-primary-channel-lum: 63.5;
-		--noise-primary-channel-lum-scale: 0;
-		--noise-secondary-note-hue: 0;
-		--noise-secondary-note-hue-scale: 2;
-		--noise-secondary-note-sat: 33.5;
-		--noise-secondary-note-sat-scale: 0;
-		--noise-secondary-note-lum: 55;
-		--noise-secondary-note-lum-scale: 0;
-		--noise-primary-note-hue: 0;
-		--noise-primary-note-hue-scale: 2;
-		--noise-primary-note-sat: 46.5;
-		--noise-primary-note-sat-scale: 0;
-		--noise-primary-note-lum: 74;
-		--noise-primary-note-lum-scale: 0;
-		--mod-secondary-channel-hue: 192;
-		--mod-secondary-channel-hue-scale: 1.5;
-		--mod-secondary-channel-sat: 88;
-		--mod-secondary-channel-sat-scale: 0;
-		--mod-secondary-channel-lum: 50;
-		--mod-secondary-channel-lum-scale: 0;
-		--mod-primary-channel-hue: 192;
-		--mod-primary-channel-hue-scale: 1.5;
-		--mod-primary-channel-sat: 96;
-		--mod-primary-channel-sat-scale: 0;
-		--mod-primary-channel-lum: 80;
-		--mod-primary-channel-lum-scale: 0;
-		--mod-secondary-note-hue: 192;
-		--mod-secondary-note-hue-scale: 1.5;
-		--mod-secondary-note-sat: 92;
-		--mod-secondary-note-sat-scale: 0;
-		--mod-secondary-note-lum: 45;
-		--mod-secondary-note-lum-scale: 0;
-		--mod-primary-note-hue: 192;
-		--mod-primary-note-hue-scale: 1.5;
-		--mod-primary-note-sat: 96;
-		--mod-primary-note-sat-scale: 0;
-		--mod-primary-note-lum: 85;
-		--mod-primary-note-lum-scale: 0;
-	}` });
-            this._cancelButton = button$6({ class: "cancelButton" });
-            this._okayButton = button$6({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this._resetButton = button$6({ style: "height: auto; min-height: var(--button-size);" }, "Reset to defaults");
-            this.container = div$6({ class: "prompt noSelection", style: "width: 500px; left: 4;" }, h2$5("Custom Theme Editor"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Thank you to leoV on discord for basically writing the whole system on how this works, without him this wouldn't be possible!"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "To create your custom theme, click the dropdown menu labeled 'Select an asset to change.' After choosing the asset, modify its color by clicking the colored square. All adjustments occur once you press Okay, allowing you to instantly see the effects of color changes."), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "The website and editor background images are being updated. Soon, you'll only need to copy and paste the theme to automatically include the backgrounds!"), p$1({ style: "text-align: center; margin: 1em 0;" }, this._colorMenu), p$1({ style: "text-align: center; margin: 1em 0;" }, "Pick a color: ", this._colorpicker), this._colorInput, div$6({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._resetButton), div$6({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+			--page-margin: black;
+			--editor-background: black;
+			--hover-preview: white;
+			--playhead: white;
+			--primary-text: white;
+			--secondary-text: #999;
+			--inverted-text: black;
+			--text-selection: rgba(119,68,255,0.99);
+			--box-selection-fill: rgba(255,255,255,0.2);
+			--loop-accent: #74f;
+			--link-accent: #98f;
+			--ui-widget-background: #444;
+			--ui-widget-focus: #777;
+			--pitch-background: #444;
+			--tonic: #864;
+			--fifth-note: #468;
+			--white-piano-key: #bbb;
+			--black-piano-key: #444;
+			--white-piano-key-text: #131200;
+			--black-piano-key-text: #fff;
+			--use-color-formula: false;
+			--track-editor-bg-pitch: #444;
+			--track-editor-bg-pitch-dim: #333;
+			--track-editor-bg-noise: #444;
+			--track-editor-bg-noise-dim: #333;
+			--track-editor-bg-mod: #234;
+			--track-editor-bg-mod-dim: #123;
+			--multiplicative-mod-slider: #456;
+			--overwriting-mod-slider: #654;
+			--indicator-primary: #74f;
+			--indicator-secondary: #444;
+			--select2-opt-group: #585858;
+			--input-box-outline: #333;
+			--mute-button-normal: #ffa033;
+			--mute-button-mod: #9a6bff;
+			--mod-label-primary:        #999;
+			--mod-label-secondary-text: #333;
+			--mod-label-primary-text:   black;
+			--disabled-note-primary:    #999;
+			--disabled-note-secondary:  #666;
+			--pitch1-secondary-channel: #0099A1;
+			--pitch1-primary-channel:   #25F3FF;
+			--pitch1-secondary-note:    #00BDC7;
+			--pitch1-primary-note:      #92F9FF;
+			--pitch2-secondary-channel: #A1A100;
+			--pitch2-primary-channel:   #FFFF25;
+			--pitch2-secondary-note:    #C7C700;
+			--pitch2-primary-note:      #FFFF92;
+			--pitch3-secondary-channel: #C75000;
+			--pitch3-primary-channel:   #FF9752;
+			--pitch3-secondary-note:    #FF771C;
+			--pitch3-primary-note:      #FFCDAB;
+			--pitch4-secondary-channel: #00A100;
+			--pitch4-primary-channel:   #50FF50;
+			--pitch4-secondary-note:    #00C700;
+			--pitch4-primary-note:      #A0FFA0;
+			--pitch5-secondary-channel: #D020D0;
+			--pitch5-primary-channel:   #FF90FF;
+			--pitch5-secondary-note:    #E040E0;
+			--pitch5-primary-note:      #FFC0FF;
+			--pitch6-secondary-channel: #7777B0;
+			--pitch6-primary-channel:   #A0A0FF;
+			--pitch6-secondary-note:    #8888D0;
+			--pitch6-primary-note:      #D0D0FF;
+			--pitch7-secondary-channel: #8AA100;
+			--pitch7-primary-channel:   #DEFF25;
+			--pitch7-secondary-note:    #AAC700;
+			--pitch7-primary-note:      #E6FF92;
+			--pitch8-secondary-channel: #DF0019;
+			--pitch8-primary-channel:   #FF98A4;
+			--pitch8-secondary-note:    #FF4E63;
+			--pitch8-primary-note:      #FFB2BB;
+			--pitch9-secondary-channel: #00A170;
+			--pitch9-primary-channel:   #50FFC9;
+			--pitch9-secondary-note:    #00C78A;
+			--pitch9-primary-note:      #83FFD9;
+			--pitch10-secondary-channel:#A11FFF;
+			--pitch10-primary-channel:  #CE8BFF;
+			--pitch10-secondary-note:   #B757FF;
+			--pitch10-primary-note:     #DFACFF;
+			--noise1-secondary-channel: #6F6F6F;
+			--noise1-primary-channel:   #AAAAAA;
+			--noise1-secondary-note:    #A7A7A7;
+			--noise1-primary-note:      #E0E0E0;
+			--noise2-secondary-channel: #996633;
+			--noise2-primary-channel:   #DDAA77;
+			--noise2-secondary-note:    #CC9966;
+			--noise2-primary-note:      #F0D0BB;
+			--noise3-secondary-channel: #4A6D8F;
+			--noise3-primary-channel:   #77AADD;
+			--noise3-secondary-note:    #6F9FCF;
+			--noise3-primary-note:      #BBD7FF;
+			--noise4-secondary-channel: #7A4F9A;
+			--noise4-primary-channel:   #AF82D2;
+			--noise4-secondary-note:    #9E71C1;
+			--noise4-primary-note:      #D4C1EA;
+			--noise5-secondary-channel: #607837;
+			--noise5-primary-channel:   #A2BB77;
+			--noise5-secondary-note:    #91AA66;
+			--noise5-primary-note:      #C5E2B2;
+	  --mod1-secondary-channel:   #339955;
+				--mod1-primary-channel:     #77fc55;
+				--mod1-secondary-note:      #77ff8a;
+				--mod1-primary-note:        #cdffee;
+				--mod2-secondary-channel:   #993355;
+				--mod2-primary-channel:     #f04960;
+				--mod2-secondary-note:      #f057a0;
+				--mod2-primary-note:        #ffb8de;
+				--mod3-secondary-channel:   #553399;
+				--mod3-primary-channel:     #8855fc;
+				--mod3-secondary-note:      #aa64ff;
+				--mod3-primary-note:	    #f8ddff;
+				--mod4-secondary-channel:   #a86436;
+				--mod4-primary-channel:     #c8a825;
+				--mod4-secondary-note:      #e8ba46;
+				--mod4-primary-note:        #fff6d3;
+			--note-flash: #ffffff;
+			--note-flash-secondary: #badfe6;
+		}` });
+            this._colorpickerInput = input$4({ type: "color", id: "colorPicker", value: "#000000", style: "width: 50%; height: 30px;" });
+            this._hexColorInput = input$4({ type: "text", value: "#000000", style: "width: 25%; height: 30px;" });
+            this._cancelButton = button$5({ class: "cancelButton" });
+            this._okayButton = button$5({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this._resetButton = button$5({ style: "height: auto; min-height: var(--button-size);" }, "Reset to defaults");
+            this.container = div$5({ class: "prompt noSelection", style: "width: 500px; left: 4;" }, div$5({ class: "promptTitle" }, h2$4({ class: "set-themeExt", style: "text-align: inherit;" }, ""), h2$4({ class: "set-themeTitle" }, "Set Theme")), div$5({ style: "display: flex; flex-direction: row; align-items: center; height: 1em; justify-content: flex-end;" }, div$5({ class: "selectContainer", style: "width: 40%; margin: 0 auto;" }, this._themeSelect)), h2$4("Custom Theme Editor"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Thank you to leoV on discord for basically writing the whole system on how this works, without him this wouldn't be possible!"), p$1({ style: "text-align: left; margin: 0em auto; font-size: 26px; color: red;" }, "PLEASE READ THIS!"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Before you use the Custom Theme Editor! Setting your theme above and changing one of the assets causes your custom theme to be overwritten! Do NOT change an asset unless your current custom theme is custom or your theme will be lost!"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "To use the custom theme editor, simply use the options below!"), div$5(), p$1({ style: "text-align: left; margin: 0;" }, "Editor Background Image:", this._fileInput), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Website Background Image:", this._fileInput2), div$5(), p$1({ style: "text-align: center; margin: 1em 0;" }, this._colorMenu), p$1({ style: "text-align: center; margin: 1em 0;" }, "Pick a color: ", this._colorpickerInput), div$5({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._resetButton), p$1({ style: "text-align: center; margin: 1em 0;" }, this._colorInput), div$5({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this.lastTheme = window.localStorage.getItem("colorTheme");
             this._close = () => {
                 this._doc.prompt = null;
                 this._doc.undo();
@@ -36914,6 +43302,21 @@ You should be redirected to the song at:<br /><br />
                 doReload = true;
                 this._close();
             };
+            this._whenKeyPressed = (event) => {
+                if (event.target.tagName != "BUTTON" && event.keyCode == 13) {
+                    this._saveChanges();
+                }
+            };
+            this._saveChanges = () => {
+                window.localStorage.setItem("colorTheme", this._themeSelect.value);
+                this._doc.prompt = null;
+                this._doc.prefs.colorTheme = this._themeSelect.value;
+                this._doc.undo();
+            };
+            this._previewTheme = () => {
+                ColorConfig.setTheme(this._themeSelect.value);
+                this._doc.notifier.changed();
+            };
             this._whenColorsChanged = () => {
                 localStorage.setItem("customColors", this._colorInput.value);
                 window.localStorage.setItem("colorTheme", "custom");
@@ -36935,8 +43338,14 @@ You should be redirected to the song at:<br /><br />
                 });
                 reader.readAsDataURL(file);
             };
-            this._whenColorsPicked = () => {
-                ColorConfig.setThemeProperty(this._currentThemeProperty, this._colorpicker.value);
+            this._whenColorsPicked = (ev) => {
+                ColorConfig.setThemeProperty(this._currentThemeProperty, ev.hex);
+                this._colorInput.value = ColorConfig.getThemeProperties();
+                this._colorInput.dispatchEvent(new Event("change"));
+                this._hexColorInput.value = ev.hex;
+            };
+            this._whenHexColorsPicked = () => {
+                ColorConfig.setThemeProperty(this._currentThemeProperty, this._hexColorInput.value);
                 this._colorInput.value = ColorConfig.getThemeProperties();
                 this._colorInput.dispatchEvent(new Event("change"));
             };
@@ -36962,55 +43371,21 @@ You should be redirected to the song at:<br /><br />
                 });
                 reader.readAsDataURL(file);
             };
+            setTimeout(() => {
+                this._colorpicker = new Tt(this._colorpickerInput, {
+                    theme: 'dark',
+                    format: 'hex',
+                });
+                this._colorpicker.on("change", this._whenColorsPicked);
+            }, 0);
             this._fileInput.addEventListener("change", this._whenFileSelected);
             this._fileInput2.addEventListener("change", this._whenFileSelected2);
             this._colorInput.addEventListener("change", this._whenColorsChanged);
             this._okayButton.addEventListener("click", this._close);
             this._cancelButton.addEventListener("click", this._close);
             this._resetButton.addEventListener("click", this._reset);
-            this._colorpicker.addEventListener("change", this._whenColorsPicked);
+            this._hexColorInput.addEventListener("change", this._whenHexColorsPicked);
             this._colorMenu.addEventListener("change", this._whenMenuChanged);
-        }
-    }
-
-    const { button: button$5, div: div$5, h2: h2$4, select: select$3, option: option$3 } = HTML;
-    class ThemePrompt {
-        constructor(_doc) {
-            this._doc = _doc;
-            this._themeSelect = select$3({ style: "width: 100%;" }, option$3({ value: "AbyssBox Classic" }, "AbyssBox Classic"), option$3({ value: "AbyssBox Competative" }, "AbyssBox Competative"), option$3({ value: "AbyssBox Light" }, "AbyssBox Light"), option$3({ value: "Half-Life" }, "Half-Life"), option$3({ value: "Doom 1993" }, "Doom 1993"), option$3({ value: "Windows Xp" }, "Windows Xp"), option$3({ value: "dark classic" }, "BeepBox Dark"), option$3({ value: "light classic" }, "BeepBox Light"), option$3({ value: "dark competition" }, "BeepBox Competition Dark"), option$3({ value: "jummbox classic" }, "JummBox Dark"), option$3({ value: "jummbox light" }, "Gold Light"), option$3({ value: "forest" }, "Forest"), option$3({ value: "canyon" }, "Canyon"), option$3({ value: "midnight" }, "Midnight"), option$3({ value: "beachcombing" }, "Beachcombing"), option$3({ value: "violet verdant" }, "Violet Verdant"), option$3({ value: "sunset" }, "Sunset"), option$3({ value: "autumn" }, "Autumn"), option$3({ value: "fruit" }, "Shadowfruit"), option$3({ value: "toxic" }, "Toxic"), option$3({ value: "roe" }, "Roe"), option$3({ value: "moonlight" }, "Moonlight"), option$3({ value: "portal" }, "Portal"), option$3({ value: "fusion" }, "Fusion"), option$3({ value: "inverse" }, "Inverse"), option$3({ value: "nebula" }, "Nebula"), option$3({ value: "roe light" }, "Roe Light"), option$3({ value: "amoled dark" }, "High Contrast Dark"), option$3({ value: "energized" }, "Energized"), option$3({ value: "neapolitan" }, "Neapolitan"), option$3({ value: "mono" }, "Mono"), option$3({ value: "slushie" }, "Slushie"), option$3({ value: "azur lane" }, "Azur Lane"), option$3({ value: "modbox classic" }, "Modbox"), option$3({ value: "sandbox classic" }, "Sandbox"), option$3({ value: "harrybox" }, "Haileybox"), option$3({ value: "brucebox" }, "Brucebox"), option$3({ value: "shitbox 3.0" }, "Shitbox 1.0/3.0"), option$3({ value: "shitbox 2.0" }, "Shitbox 2.0"), option$3({ value: "nerdbox" }, "NerdBox"), option$3({ value: "zefbox" }, "Zefbox"), option$3({ value: "cardboardbox classic" }, "Cardboardbox"), option$3({ value: "blubox classic" }, "Blubox"), option$3({ value: "dogebox classic" }, "Dogebox"), option$3({ value: "wackybox" }, "Wackybox"), option$3({ value: "todbox dark mode" }, "Todbox Dark Mode"), option$3({ value: "mainbox 1.0" }, "Mainbox"), option$3({ value: "microbox" }, "MicroBox"), option$3({ value: "paandorasbox" }, "PaandorasBox"), option$3({ value: "foxbox" }, "FoxBox"), option$3({ value: "midbox" }, "Midbox"), option$3({ value: "dogebox2" }, "Dogebox2"), option$3({ value: "Deuteranopia" }, "Deuteranopia"), option$3({ value: "Protanopia" }, "Protanopia"), option$3({ value: "Tritanopia" }, "Tritanopia"), option$3({ value: "custom" }, "Custom"));
-            this._cancelButton = button$5({ class: "cancelButton" });
-            this._okayButton = button$5({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$5({ class: "prompt noSelection", style: "width: 220px;" }, h2$4("Set Theme"), div$5({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$5({ class: "selectContainer", style: "width: 100%;" }, this._themeSelect)), div$5({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
-            this.lastTheme = window.localStorage.getItem("colorTheme");
-            this._close = () => {
-                if (this.lastTheme != null) {
-                    ColorConfig.setTheme(this.lastTheme);
-                }
-                else {
-                    ColorConfig.setTheme("dark classic");
-                }
-                this._doc.undo();
-            };
-            this.cleanUp = () => {
-                this._okayButton.removeEventListener("click", this._saveChanges);
-                this._cancelButton.removeEventListener("click", this._close);
-                this.container.removeEventListener("keydown", this._whenKeyPressed);
-            };
-            this._whenKeyPressed = (event) => {
-                if (event.target.tagName != "BUTTON" && event.keyCode == 13) {
-                    this._saveChanges();
-                }
-            };
-            this._saveChanges = () => {
-                window.localStorage.setItem("colorTheme", this._themeSelect.value);
-                this._doc.prompt = null;
-                this._doc.prefs.colorTheme = this._themeSelect.value;
-                this._doc.undo();
-            };
-            this._previewTheme = () => {
-                ColorConfig.setTheme(this._themeSelect.value);
-                this._doc.notifier.changed();
-            };
             if (this.lastTheme != null) {
                 this._themeSelect.value = this.lastTheme;
             }
@@ -37066,7 +43441,7 @@ You should be redirected to the song at:<br /><br />
                     break;
                 case "instrumentIndex":
                     {
-                        message = div$4(h2$3("Instrument Number"), p("In the \"Channel Settings\" option from UltraBox's \"File\" menu, there are a few ways to enable multiple instruments per channel."), p("First, you could enable multiple simultaneous instruments per channel. All of the channel's instruments will play all of the notes in the channel at the same time, and you can click an instrument number to view and edit its settings."), p("Second, you could enable different instruments per pattern. Only one of the instruments will play at any given time, but you can click the instrument number to change which instrument is used for the currently selected pattern(s)."), p("Finally, you can enable them both, in which case you can click an instrument number once to view it, and again to toggle whether the instrument is used for the currently selected pattern(s)."), p("Either way, you can click the + button to add more instruments to a channel, and you can press shift and a number key on your keyboard to select an instrument as if you had clicked the corresponding button here."));
+                        message = div$4(h2$3("Instrument Number"), p("In the \"Channel Settings\" option from UltraBox's \"Edit\" menu, there are a few ways to enable multiple instruments per channel."), p("First, you could enable multiple simultaneous instruments per channel. All of the channel's instruments will play all of the notes in the channel at the same time, and you can click an instrument number to view and edit its settings."), p("Second, you could enable different instruments per pattern. Only one of the instruments will play at any given time, but you can click the instrument number to change which instrument is used for the currently selected pattern(s)."), p("Finally, you can enable them both, in which case you can click an instrument number once to view it, and again to toggle whether the instrument is used for the currently selected pattern(s)."), p("Either way, you can click the + button to add more instruments to a channel, and you can press shift and a number key on your keyboard to select an instrument as if you had clicked the corresponding button here."));
                     }
                     break;
                 case "instrumentVolume":
@@ -37279,14 +43654,19 @@ You should be redirected to the song at:<br /><br />
                         message = div$4(h2$3("Frequency Quantization"), p("The bitcrusher effect comes with an additional frequency quantization effect! This is a fun one to play with, especially when combined with the note filter effect."), p("Every other notch on this slider is aligned with the currently selected key of the song, and the in-between notches are aligned with the tritones of the key."));
                     }
                     break;
-                case "stringSustain":
-                    {
-                        message = div$4(h2$3("String sustain"), p("This setting controls how quickly the picked string vibration decays."), p("Unlike most of UltraBox's instrument synthesizer features, a picked string cannot change frequency suddenly while maintaining its decay. If a tone's pitch changes suddenly (e.g. if the chord type is set to \"arpeggio\" or the transition type is set to \"continues\") then the string will be re-picked and start decaying from the beginning again, even if the envelopes don't otherwise restart."));
-                    }
-                    break;
                 case "envelopes":
                     {
                         message = div$4(h2$3("Envelopes"), p("Envelopes are a way to dynamically adjust various other settings over time, usually based on how long the note lasts. Press the + button to add an envelope, then use the menus below to select which setting to control and the curve of the envelope. Try different combinations to see how they sound!"), p("Most envelope curves restart from the beginning every time a new note plays. The \"note size\" option is based on the note width as drawn in the pattern editor."), p("Envelope curves move in the range from 0 to 1 (or vice versa), where 0 means as quiet as possible and 1 is the same as the corresponding position selected in the instrument settings above. If multiple envelopes are targetting the same setting, they are multiplied before applying to the setting."));
+                    }
+                    break;
+                case "discreteEnvelope":
+                    {
+                        message = div$4(h2$3("Use Discrete Envelopes?"), p("Envelopes are usually interpolated, meaning they change continuously and smoothly. This setting, when ticked, makes envelopes not interpolate. It's a small difference, but can be helpful for some chip noises, and it's most noticeable with the 'blip' transitions."));
+                    }
+                    break;
+                case "envelopeSpeed":
+                    {
+                        message = div$4(h2$3("Envelope Speed"), p("This setting controls the speed of ALL envelopes for the instrument. Each envelope 'plays' at a certain speed, and this slider can scale it to play faster or slower. Use this to fine-tune your tremolo or how fast something decays to get just the right effect."), p("Note that, while this setting is limited in the sense that it controls all envelopes at once, you can still achieve a variety of outcomes by trying combinations of modes of each envelope type, which typically differ only in speed."));
                     }
                     break;
                 case "usedInstrument":
@@ -37391,27 +43771,27 @@ You should be redirected to the song at:<br /><br />
                     break;
                 case "unisonVoices":
                     {
-                        message = div$4(h2$3("Unison Voices"), p("This setting controls how many voices there are in a unison."));
+                        message = div$4(h2$3("Unison Voices"), p("This setting controls how many voices there are in a unison. Unisons such as \"none\" or \"detune\" use 1 voice, while most other unisons use 2 voices."));
                     }
                     break;
                 case "unisonSpread":
                     {
-                        message = div$4(h2$3("Unison Spread"), p("This setting controls the distance between the two voices."));
+                        message = div$4(h2$3("Unison Spread"), p("This setting controls the distance between the two voices, in semitones. A small amount of spread causes the voice's waves to shift in and out from each other, causing a shimmering effect. Larger spread will cause the voices to act like separate notes."), p("This setting will only work correctly with two voices."));
                     }
                     break;
                 case "unisonOffset":
                     {
-                        message = div$4(h2$3("Unison Offset"), p("This setting controls the pitch offset."));
+                        message = div$4(h2$3("Unison Offset"), p("This setting controls the detune applied to BOTH voices, in semitones."));
                     }
                     break;
                 case "unisonExpression":
                     {
-                        message = div$4(h2$3("Unison Expression"), p("This setting controls the unison volume."));
+                        message = div$4(h2$3("Unison Expression"), p("This setting controls the unison volume. Use this if the unison makes your instrument too loud in comparison to other instruments."));
                     }
                     break;
                 case "unisonSign":
                     {
-                        message = div$4(h2$3("Unison Sign"), p("This setting is a multiplier applied to the second voice (if applicable)."));
+                        message = div$4(h2$3("Unison Sign"), p("This setting is a volume multiplier applied to the second voice. This setting will only work correctly with two voices."));
                     }
                     break;
                 default:
@@ -37439,105 +43819,12 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    class Box {
-        constructor(channel, _x, _y, color) {
-            this._x = _x;
-            this._y = _y;
-            this._text = document.createTextNode("1");
-            this._label = SVG.text({ "font-family": "var(--track-font)", "font-size": 20, "text-anchor": "middle", "font-weight": "bold", fill: "red" }, this._text);
-            this._rect = SVG.rect({ x: 1, y: 1 });
-            this.container = SVG.svg(this._rect, this._label);
-            this._renderedIndex = 1;
-            this._renderedDim = true;
-            this._renderedSelected = false;
-            this._renderedColor = "";
-            this._rect.setAttribute("fill", ColorConfig.uiWidgetBackground);
-            this._label.setAttribute("fill", color);
-        }
-        setSize(width, height) {
-            this.container.setAttribute("x", "" + (this._x * width));
-            this.container.setAttribute("y", "" + (Config.barEditorHeight + this._y * height));
-            this._rect.setAttribute("width", "" + (width - 2));
-            this._rect.setAttribute("height", "" + (height - 2));
-            this._label.setAttribute("x", "" + (width / 2));
-            this._label.setAttribute("y", "" + Math.round(height / 2 + 7));
-        }
-        setIndex(index, dim, selected, color, isNoise, isMod) {
-            if (this._renderedIndex != index) {
-                if (!this._renderedSelected && ((index == 0) != (this._renderedIndex == 0))) {
-                    if (index == 0) {
-                        this._rect.setAttribute("fill", "none");
-                    }
-                    else {
-                        if (isNoise)
-                            this._rect.setAttribute("fill", dim ? ColorConfig.trackEditorBgNoiseDim : ColorConfig.trackEditorBgNoise);
-                        else if (isMod)
-                            this._rect.setAttribute("fill", dim ? ColorConfig.trackEditorBgModDim : ColorConfig.trackEditorBgMod);
-                        else
-                            this._rect.setAttribute("fill", dim ? ColorConfig.trackEditorBgPitchDim : ColorConfig.trackEditorBgPitch);
-                    }
-                }
-                if (index >= 100) {
-                    this._label.setAttribute("font-size", "16");
-                    this._label.setAttribute("style", "transform: translate(0px, -1.5px);");
-                }
-                else {
-                    this._label.setAttribute("font-size", "20");
-                    this._label.setAttribute("style", "transform: translate(0px, 0px);");
-                }
-                this._renderedIndex = index;
-                this._text.data = "" + index;
-            }
-            if (this._renderedDim != dim || this._renderedColor != color) {
-                this._renderedDim = dim;
-                if (selected) {
-                    this._label.setAttribute("fill", ColorConfig.invertedText);
-                }
-                else {
-                    this._label.setAttribute("fill", color);
-                    if (this._renderedIndex == 0) {
-                        this._rect.setAttribute("fill", ColorConfig.editorBackground);
-                    }
-                    else {
-                        if (isNoise)
-                            this._rect.setAttribute("fill", dim ? ColorConfig.trackEditorBgNoiseDim : ColorConfig.trackEditorBgNoise);
-                        else if (isMod)
-                            this._rect.setAttribute("fill", dim ? ColorConfig.trackEditorBgModDim : ColorConfig.trackEditorBgMod);
-                        else
-                            this._rect.setAttribute("fill", dim ? ColorConfig.trackEditorBgPitchDim : ColorConfig.trackEditorBgPitch);
-                    }
-                }
-            }
-            if (this._renderedSelected != selected || this._renderedColor != color) {
-                this._renderedSelected = selected;
-                if (selected) {
-                    this._rect.setAttribute("fill", color);
-                    this._label.setAttribute("fill", ColorConfig.invertedText);
-                }
-                else {
-                    this._label.setAttribute("fill", color);
-                    if (this._renderedIndex == 0) {
-                        this._rect.setAttribute("fill", ColorConfig.editorBackground);
-                    }
-                    else {
-                        if (isNoise)
-                            this._rect.setAttribute("fill", dim ? ColorConfig.trackEditorBgNoiseDim : ColorConfig.trackEditorBgNoise);
-                        else if (isMod)
-                            this._rect.setAttribute("fill", dim ? ColorConfig.trackEditorBgModDim : ColorConfig.trackEditorBgMod);
-                        else
-                            this._rect.setAttribute("fill", dim ? ColorConfig.trackEditorBgPitchDim : ColorConfig.trackEditorBgPitch);
-                    }
-                }
-            }
-            this._renderedColor = color;
-        }
-    }
     class TrackEditor {
         constructor(_doc, _songEditor) {
             this._doc = _doc;
             this._songEditor = _songEditor;
             this._barDropDown = HTML.select({ style: "width: 32px; height: " + Config.barEditorHeight + "px; top: 0px; position: absolute; opacity: 0" }, HTML.option({ value: "barBefore" }, "Insert Bar Before"), HTML.option({ value: "barAfter" }, "Insert Bar After"), HTML.option({ value: "deleteBar" }, "Delete This Bar"));
-            this._boxContainer = SVG.g();
+            this._channelRowContainer = HTML.div({ style: `display: flex; flex-direction: column; padding-top: ${Config.barEditorHeight}px` });
             this._barNumberContainer = SVG.g();
             this._playhead = SVG.rect({ fill: ColorConfig.playhead, x: 0, y: 0, width: 4, height: 128 });
             this._boxHighlight = SVG.rect({ fill: "none", stroke: ColorConfig.hoverPreview, "stroke-width": 2, "pointer-events": "none", x: 1, y: 1, width: 30, height: 30 });
@@ -37545,10 +43832,10 @@ You should be redirected to the song at:<br /><br />
             this._downHighlight = SVG.path({ fill: ColorConfig.invertedText, stroke: ColorConfig.invertedText, "stroke-width": 1, "pointer-events": "none" });
             this._barEditorPath = SVG.path({ fill: ColorConfig.uiWidgetBackground, stroke: ColorConfig.uiWidgetBackground, "stroke-width": 1, "pointer-events": "none" });
             this._selectionRect = SVG.rect({ class: "dashed-line dash-move", fill: ColorConfig.boxSelectionFill, stroke: ColorConfig.hoverPreview, "stroke-width": 2, "stroke-dasharray": "5, 3", "fill-opacity": "0.4", "pointer-events": "none", visibility: "hidden", x: 1, y: 1, width: 62, height: 62 });
-            this._svg = SVG.svg({ style: `background-color: ${ColorConfig.editorBackground}; position: absolute;`, height: 128 }, this._boxContainer, this._barEditorPath, this._selectionRect, this._barNumberContainer, this._boxHighlight, this._upHighlight, this._downHighlight, this._playhead);
+            this._svg = SVG.svg({ style: `position: absolute; top: 0;` }, this._barEditorPath, this._selectionRect, this._barNumberContainer, this._boxHighlight, this._upHighlight, this._downHighlight, this._playhead);
             this._select = HTML.select({ class: "trackSelectBox", style: "background: none; border: none; appearance: none; border-radius: initial; box-shadow: none; color: transparent; position: absolute; touch-action: none;" });
-            this.container = HTML.div({ class: "noSelection", style: "height: 128px; position: relative; overflow:hidden;" }, this._svg, this._select, this._barDropDown);
-            this._grid = [];
+            this.container = HTML.div({ class: "noSelection", style: `background-color: ${ColorConfig.editorBackground}; position: relative; overflow: hidden;` }, this._channelRowContainer, this._svg, this._select, this._barDropDown);
+            this._channels = [];
             this._barNumbers = [];
             this._mouseX = 0;
             this._mouseY = 0;
@@ -37560,13 +43847,11 @@ You should be redirected to the song at:<br /><br />
             this._mousePressed = false;
             this._mouseDragging = false;
             this._barWidth = 32;
-            this._channelHeight = 32;
-            this._renderedChannelCount = 0;
-            this._renderedBarCount = 0;
+            this._renderedBarCount = -1;
+            this._renderedEditorWidth = -1;
+            this._renderedEditorHeight = -1;
             this._renderedPatternCount = 0;
             this._renderedPlayhead = -1;
-            this._renderedBarWidth = -1;
-            this._renderedChannelHeight = -1;
             this._touchMode = isMobile;
             this._barDropDownBar = 0;
             this._lastScrollTime = 0;
@@ -37672,7 +43957,7 @@ You should be redirected to the song at:<br /><br />
             this._whenMouseReleased = (event) => {
                 if (this._mousePressed && !this._mouseDragging) {
                     if (this._doc.channel == this._mouseChannel && this._doc.bar == this._mouseBar) {
-                        const up = ((this._mouseY - Config.barEditorHeight) % this._channelHeight) < this._channelHeight / 2;
+                        const up = ((this._mouseY - Config.barEditorHeight) % ChannelRow.patternHeight) < ChannelRow.patternHeight / 2;
                         const patternCount = this._doc.song.patternsPerChannel;
                         this._doc.selection.setPattern((this._doc.song.channels[this._mouseChannel].bars[this._mouseBar] + (up ? 1 : patternCount)) % (patternCount + 1));
                     }
@@ -37731,14 +44016,14 @@ You should be redirected to the song at:<br /><br />
             if (isNaN(this._mouseY))
                 this._mouseY = 0;
             this._mouseBar = Math.floor(Math.min(this._doc.song.barCount - 1, Math.max(0, this._mouseX / this._barWidth)));
-            this._mouseChannel = Math.floor(Math.min(this._doc.song.getChannelCount() - 1, Math.max(0, (this._mouseY - Config.barEditorHeight) / this._channelHeight)));
+            this._mouseChannel = Math.floor(Math.min(this._doc.song.getChannelCount() - 1, Math.max(0, (this._mouseY - Config.barEditorHeight) / ChannelRow.patternHeight)));
         }
         _updateMousePos(event) {
             const boundingRect = this._svg.getBoundingClientRect();
             this._mouseX = (event.clientX || event.pageX) - boundingRect.left;
             this._mouseY = (event.clientY || event.pageY) - boundingRect.top;
             this._mouseBar = Math.floor(Math.min(this._doc.song.barCount - 1, Math.max(0, this._mouseX / this._barWidth)));
-            this._mouseChannel = Math.floor(Math.min(this._doc.song.getChannelCount() - 1, Math.max(0, (this._mouseY - Config.barEditorHeight) / this._channelHeight)));
+            this._mouseChannel = Math.floor(Math.min(this._doc.song.getChannelCount() - 1, Math.max(0, (this._mouseY - Config.barEditorHeight) / ChannelRow.patternHeight)));
         }
         _updatePreview() {
             let channel = this._mouseChannel;
@@ -37763,8 +44048,8 @@ You should be redirected to the song at:<br /><br />
             }
             if (this._mouseOver && !this._mousePressed && !selected && overTrackEditor) {
                 this._boxHighlight.setAttribute("x", "" + (1 + this._barWidth * bar));
-                this._boxHighlight.setAttribute("y", "" + (1 + Config.barEditorHeight + (this._channelHeight * channel)));
-                this._boxHighlight.setAttribute("height", "" + (this._channelHeight - 2));
+                this._boxHighlight.setAttribute("y", "" + (1 + Config.barEditorHeight + ChannelRow.patternHeight * channel));
+                this._boxHighlight.setAttribute("height", "" + (ChannelRow.patternHeight - 2));
                 this._boxHighlight.setAttribute("width", "" + (this._barWidth - 2));
                 this._boxHighlight.style.visibility = "visible";
             }
@@ -37778,12 +44063,12 @@ You should be redirected to the song at:<br /><br />
                 this._boxHighlight.style.visibility = "hidden";
             }
             if ((this._mouseOver || this._touchMode) && selected && overTrackEditor) {
-                const up = ((this._mouseY - Config.barEditorHeight) % this._channelHeight) < this._channelHeight / 2;
+                const up = ((this._mouseY - Config.barEditorHeight) % ChannelRow.patternHeight) < ChannelRow.patternHeight / 2;
                 const center = this._barWidth * (bar + 0.8);
-                const middle = Config.barEditorHeight + this._channelHeight * (channel + 0.5);
-                const base = this._channelHeight * 0.1;
-                const tip = this._channelHeight * 0.4;
-                const width = this._channelHeight * 0.175;
+                const middle = Config.barEditorHeight + ChannelRow.patternHeight * (channel + 0.5);
+                const base = ChannelRow.patternHeight * 0.1;
+                const tip = ChannelRow.patternHeight * 0.4;
+                const width = ChannelRow.patternHeight * 0.175;
                 this._upHighlight.setAttribute("fill", up && !this._touchMode ? ColorConfig.hoverPreview : ColorConfig.invertedText);
                 this._downHighlight.setAttribute("fill", !up && !this._touchMode ? ColorConfig.hoverPreview : ColorConfig.invertedText);
                 this._upHighlight.setAttribute("d", `M ${center} ${middle - tip} L ${center + width} ${middle - base} L ${center - width} ${middle - base} z`);
@@ -37796,11 +44081,11 @@ You should be redirected to the song at:<br /><br />
                 this._downHighlight.style.visibility = "hidden";
             }
             this._selectionRect.style.left = (this._barWidth * this._doc.bar) + "px";
-            this._selectionRect.style.top = (Config.barEditorHeight + (this._channelHeight * this._doc.channel)) + "px";
+            this._selectionRect.style.top = (Config.barEditorHeight + (ChannelRow.patternHeight * this._doc.channel)) + "px";
             this._select.style.left = (this._barWidth * this._doc.bar) + "px";
             this._select.style.width = this._barWidth + "px";
-            this._select.style.top = (Config.barEditorHeight + this._channelHeight * this._doc.channel) + "px";
-            this._select.style.height = this._channelHeight + "px";
+            this._select.style.top = (Config.barEditorHeight + ChannelRow.patternHeight * this._doc.channel) + "px";
+            this._select.style.height = ChannelRow.patternHeight + "px";
             this._barDropDown.style.left = (this._barWidth * bar) + "px";
             const patternCount = this._doc.song.patternsPerChannel + 1;
             for (let i = this._renderedPatternCount; i < patternCount; i++) {
@@ -37816,38 +44101,28 @@ You should be redirected to the song at:<br /><br />
         }
         render() {
             this._barWidth = this._doc.getBarWidth();
-            this._channelHeight = this._doc.getChannelHeight();
-            if (this._renderedChannelCount != this._doc.song.getChannelCount()) {
-                for (let y = this._renderedChannelCount; y < this._doc.song.getChannelCount(); y++) {
-                    this._grid[y] = [];
-                    for (let x = 0; x < this._renderedBarCount; x++) {
-                        const box = new Box(y, x, y, ColorConfig.getChannelColor(this._doc.song, y).secondaryChannel);
-                        box.setSize(this._barWidth, this._channelHeight);
-                        this._boxContainer.appendChild(box.container);
-                        this._grid[y][x] = box;
-                    }
+            if (this._channels.length != this._doc.song.getChannelCount()) {
+                for (let y = this._channels.length; y < this._doc.song.getChannelCount(); y++) {
+                    const channelRow = new ChannelRow(this._doc, y);
+                    this._channels[y] = channelRow;
+                    this._channelRowContainer.appendChild(channelRow.container);
                 }
-                for (let y = this._doc.song.getChannelCount(); y < this._renderedChannelCount; y++) {
-                    for (let x = 0; x < this._renderedBarCount; x++) {
-                        this._boxContainer.removeChild(this._grid[y][x].container);
-                    }
+                for (let y = this._doc.song.getChannelCount(); y < this._channels.length; y++) {
+                    this._channelRowContainer.removeChild(this._channels[y].container);
                 }
-                this._grid.length = this._doc.song.getChannelCount();
+                this._channels.length = this._doc.song.getChannelCount();
                 this._mousePressed = false;
             }
-            if (this._renderedBarCount != this._doc.song.barCount || this._renderedBarWidth != this._barWidth) {
-                for (let y = 0; y < this._doc.song.getChannelCount(); y++) {
-                    for (let x = this._renderedBarCount; x < this._doc.song.barCount; x++) {
-                        const box = new Box(y, x, y, ColorConfig.getChannelColor(this._doc.song, y).secondaryChannel);
-                        box.setSize(this._barWidth, this._channelHeight);
-                        this._boxContainer.appendChild(box.container);
-                        this._grid[y][x] = box;
-                    }
-                    for (let x = this._doc.song.barCount; x < this._renderedBarCount; x++) {
-                        this._boxContainer.removeChild(this._grid[y][x].container);
-                    }
-                    this._grid[y].length = this._doc.song.barCount;
-                }
+            for (let j = 0; j < this._doc.song.getChannelCount(); j++) {
+                this._channels[j].render();
+            }
+            const editorWidth = this._barWidth * this._doc.song.barCount;
+            if (this._renderedEditorWidth != editorWidth) {
+                this._renderedEditorWidth = editorWidth;
+                this._channelRowContainer.style.width = editorWidth + "px";
+                this.container.style.width = editorWidth + "px";
+                this._svg.setAttribute("width", editorWidth + "");
+                this._mousePressed = false;
                 var pathString = "";
                 for (let x = 0; x < this._doc.song.barCount; x++) {
                     var pathLeft = x * this._barWidth + 2;
@@ -37866,6 +44141,8 @@ You should be redirected to the song at:<br /><br />
                         }
                         this._barNumberContainer.appendChild(this._barNumbers[pos]);
                     }
+                    this._renderedBarCount = this._doc.song.barCount;
+                    this._renderedBarCount = this._doc.song.barCount;
                 }
                 else if (this._renderedBarCount > this._doc.song.barCount) {
                     for (var pos = this._renderedBarCount - 1; pos >= this._doc.song.barCount; pos--) {
@@ -37873,56 +44150,28 @@ You should be redirected to the song at:<br /><br />
                     }
                     this._barNumbers.length = this._doc.song.barCount;
                 }
-                if (this._renderedBarWidth != this._barWidth) {
-                    for (var pos = 0; pos < this._barNumbers.length; pos++) {
-                        this._barNumbers[pos].setAttribute("x", (pos * this._barWidth + this._barWidth / 2) + "px");
-                    }
+                for (var pos = 0; pos < this._barNumbers.length; pos++) {
+                    this._barNumbers[pos].setAttribute("x", (pos * this._barWidth + this._barWidth / 2) + "px");
                 }
-                this._renderedBarCount = this._doc.song.barCount;
-                const editorWidth = this._barWidth * this._doc.song.barCount;
+                this._renderedEditorWidth = editorWidth;
+                this._channelRowContainer.style.width = editorWidth + "px";
                 this.container.style.width = editorWidth + "px";
                 this._svg.setAttribute("width", editorWidth + "");
                 this._mousePressed = false;
             }
-            if (this._renderedChannelHeight != this._channelHeight || this._renderedBarWidth != this._barWidth) {
-                this._renderedBarWidth = this._barWidth;
-                for (let y = 0; y < this._doc.song.getChannelCount(); y++) {
-                    for (let x = 0; x < this._renderedBarCount; x++) {
-                        this._grid[y][x].setSize(this._barWidth, this._channelHeight);
-                    }
-                }
-                this._mousePressed = false;
-            }
-            if (this._renderedChannelHeight != this._channelHeight || this._renderedChannelCount != this._doc.song.getChannelCount()) {
-                this._renderedChannelHeight = this._channelHeight;
-                this._renderedChannelCount = this._doc.song.getChannelCount();
-                const editorHeight = Config.barEditorHeight + this._doc.song.getChannelCount() * this._channelHeight;
-                this._svg.setAttribute("height", "" + editorHeight);
-                this._playhead.setAttribute("height", "" + editorHeight);
-                this.container.style.height = editorHeight + "px";
-            }
-            for (let j = 0; j < this._doc.song.getChannelCount(); j++) {
-                for (let i = 0; i < this._renderedBarCount; i++) {
-                    const pattern = this._doc.song.getPattern(j, i);
-                    const selected = (i == this._doc.bar && j == this._doc.channel);
-                    const dim = (pattern == null || pattern.notes.length == 0);
-                    const box = this._grid[j][i];
-                    if (i < this._doc.song.barCount) {
-                        const colors = ColorConfig.getChannelColor(this._doc.song, j);
-                        box.setIndex(this._doc.song.channels[j].bars[i], dim, selected, dim && !selected ? colors.secondaryChannel : colors.primaryChannel, j >= this._doc.song.pitchChannelCount && j < this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount, j >= this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount);
-                        box.container.style.visibility = "visible";
-                    }
-                    else {
-                        box.container.style.visibility = "hidden";
-                    }
-                }
+            const editorHeight = this._doc.song.getChannelCount() * ChannelRow.patternHeight;
+            if (this._renderedEditorHeight != editorHeight) {
+                this._renderedEditorHeight = editorHeight;
+                this._svg.setAttribute("height", "" + editorHeight + Config.barEditorHeight);
+                this._playhead.setAttribute("height", "" + editorHeight + Config.barEditorHeight);
+                this.container.style.height = (editorHeight + Config.barEditorHeight) + "px";
             }
             this._select.style.display = this._touchMode ? "" : "none";
             if (this._doc.selection.boxSelectionActive) {
                 this._selectionRect.setAttribute("x", String(this._barWidth * this._doc.selection.boxSelectionBar + 1));
-                this._selectionRect.setAttribute("y", String(Config.barEditorHeight + this._channelHeight * this._doc.selection.boxSelectionChannel + 1));
+                this._selectionRect.setAttribute("y", String(Config.barEditorHeight + ChannelRow.patternHeight * this._doc.selection.boxSelectionChannel + 1));
                 this._selectionRect.setAttribute("width", String(this._barWidth * this._doc.selection.boxSelectionWidth - 2));
-                this._selectionRect.setAttribute("height", String(this._channelHeight * this._doc.selection.boxSelectionHeight - 2));
+                this._selectionRect.setAttribute("height", String(ChannelRow.patternHeight * this._doc.selection.boxSelectionHeight - 2));
                 this._selectionRect.setAttribute("visibility", "visible");
             }
             else {
@@ -38222,7 +44471,7 @@ You should be redirected to the song at:<br /><br />
             this._okayButton = button$3({ class: "okayButton", style: "width: 25%;" }, "Okay");
             this._sampleIsLoadingMessage = div$3({ style: "margin-bottom: 0.5em; display: none;" }, "Sample is loading");
             this._loopControlsContainer = div$3(div$3({ style: "display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, div$3({ style: `width: 100%; margin-bottom: 0.5em; text-align: center; color: ${ColorConfig.secondaryText};` }, "You can also zoom by dragging horizontally on the waveform.")), this._startOffsetHandle.canvas, this._waveformContainer, this._loopStartHandle.canvas, this._loopEndHandle.canvas, div$3({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, this._viewportOffsetSlider, this._zoomInButton, this._zoomOutButton, this._zoom100Button), div$3({ style: "display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$3({ style: `flex-shrink: 0; text-align: right: color: ${ColorConfig.primaryText}; align-self: center;` }, "Loop Mode"), this._loopModeSelect), div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$3({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Offset"), this._startOffsetStepper), div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$3({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Loop Start"), this._loopStartStepper), div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$3({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Loop End"), this._loopEndStepper), div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$3({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Backwards"), this._playBackwardsBox), div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em; justify-content: center;" }, this._playSongButton)));
-            this.container = div$3({ class: "prompt noSelection", style: "width: 500px;" }, div$3(h2$2({ style: "margin-bottom: 0.5em;" }, "Loop Controls"), this._sampleIsLoadingMessage, this._loopControlsContainer, div$3({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton)), this._cancelButton);
+            this.container = div$3({ class: "prompt noSelection", style: "width: 500px;" }, div$3(div$3({ class: "promptTitle" }, h2$2({ class: "loop-controlsExt", style: "text-align: inherit;" }, ""), h2$2({ class: "loop-controlsTitle" }, "Loop Controls")), this._sampleIsLoadingMessage, this._loopControlsContainer, div$3({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton)), this._cancelButton);
             this.gotMouseUp = false;
             this._waveformSampleLookup = (x) => {
                 const n = this._waveformDataLength;
@@ -38826,8 +45075,8 @@ You should be redirected to the song at:<br /><br />
             this._instructionsLink = a({ href: "#" }, "Wanna add your own samples? Click here!");
             this._description = div$1(div$1({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "Before you ask: "), div$1({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "legacySamples", " = Pandoras Box's Samples "), div$1({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "nintariboxSamples", " = nintaribox's Samples "), div$1({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "marioPaintboxSamples", " = MarioPaintBox's Samples."), div$1({ style: "margin-bottom: 0.5em;" }, "The order of these samples is important - if you change it you'll break your song!", "Since they're sorted by which ones you added first, changing the position of the sample in the list will", "change your instruments' sample to a different sample!"), div$1({ style: "margin-bottom: 0.5em;" }, this._instructionsLink));
             this._closeInstructionsButton = button$1({ style: "height: auto; min-height: var(--button-size); width: 100%;" }, "Close instructions");
-            this._instructionsArea = div$1({ style: "display: none; margin-top: 0; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text; overflow-y: auto;" }, h2("Add Samples"), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "In UB and in turn AB, custom samples are loaded from arbitrary URLs."), div$1({ style: `margin-top: 0.5em; margin-bottom: 0.5em; color: ${ColorConfig.secondaryText};` }, "(Technically, the web server behind the URL needs to support ", a({ href: "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS", target: "_blank", }, "CORS"), ", but you don't need to know about that: ", " the sample just won't load if that's not the case)"), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, details(summary("Why arbitrary URLs?"), a({ href: "https://pandoras-box-archive.neptendo.repl.co/" }, "A certain BeepBox mod"), " did this with one central server, but it went down, taking down", " the samples with it, though thankfully it got archived.", " This is always an issue with servers: it may run out of space,", " stop working, and so on. With arbitrary URLs, you can always ", " change them to different ones if they stop working.")), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "As for where to upload your samples, here are some suggestions:", ul({ style: "text-align: left;" }, li(a({ href: "https://filegarden.com" }, "File Garden")), li(a({ href: "https://catbox.moe/" }, "Catbox")), li(a({ href: "https://www.dropbox.com" }, "Dropbox"), " (domain needs to be ", code("https://dl.dropboxusercontent.com"), ")"))), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "Static website hosting services may also work (such as ", a({ href: "https://pages.github.com" }, "GitHub Pages"), ")", " but those require a bit more setup."), div$1({ style: "margin-top: 0.5em; margin-bottom: 1em;" }, "Finally, if have a soundfont you'd like to get samples from, consider using this ", a({ href: "./sample_extractor.html", target: "_blank" }, "sample extractor"), "!"), div$1({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between; margin-top: 0.5em;" }, this._closeInstructionsButton));
-            this._addSamplesArea = div$1({ style: "overflow-y: auto;" }, h2("Add Samples"), div$1({ style: "display: flex; flex-direction: column; align-items: center; margin-bottom: 0.5em;" }, this._description, div$1({ style: "width: 100%; max-height: 450px; overflow-y: scroll;" }, this._entryContainer), this._addSamplesAreaBottom), div$1({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton));
+            this._instructionsArea = div$1({ style: "display: none; margin-top: 0; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text; overflow-y: auto;" }, div$1({ class: "promptTitle" }, h2({ class: "samplesExt", style: "text-align: inherit;" }, ""), h2({ class: "samplesTitle", style: "margin-bottom: 0.5em;" }, "Add Samples")), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "In UB and in turn AB, custom samples are loaded from arbitrary URLs."), div$1({ style: `margin-top: 0.5em; margin-bottom: 0.5em; color: ${ColorConfig.secondaryText};` }, "(Technically, the web server behind the URL needs to support ", a({ href: "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS", target: "_blank", }, "CORS"), ", but you don't need to know about that: ", " the sample just won't load if that's not the case)"), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, details(summary("Why arbitrary URLs?"), a({ href: "https://pandoras-box-archive.neptendo.repl.co/" }, "A certain BeepBox mod"), " did this with one central server, but it went down, taking down", " the samples with it, though thankfully it got archived.", " This is always an issue with servers: it may run out of space,", " stop working, and so on. With arbitrary URLs, you can always ", " change them to different ones if they stop working.")), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "As for where to upload your samples, here are some suggestions:", ul({ style: "text-align: left;" }, li(a({ href: "https://filegarden.com" }, "File Garden")), li(a({ href: "https://catbox.moe/" }, "Catbox")), li(a({ href: "https://www.dropbox.com" }, "Dropbox"), " (domain needs to be ", code("https://dl.dropboxusercontent.com"), ")"))), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "Static website hosting services may also work (such as ", a({ href: "https://pages.github.com" }, "GitHub Pages"), ")", " but those require a bit more setup."), div$1({ style: "margin-top: 0.5em; margin-bottom: 1em;" }, "Finally, if have a soundfont you'd like to get samples from, consider using this ", a({ href: "./sample_extractor.html", target: "_blank" }, "sample extractor"), "!"), div$1({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between; margin-top: 0.5em;" }, this._closeInstructionsButton));
+            this._addSamplesArea = div$1({ style: "overflow-y: auto;" }, div$1({ class: "promptTitle" }, h2({ class: "samplesExt", style: "text-align: inherit;" }, ""), h2({ class: "samplesTitle", style: "margin-bottom: 0.5em;" }, "Add Samples")), div$1({ style: "display: flex; flex-direction: column; align-items: center; margin-bottom: 0.5em;" }, this._description, div$1({ style: "width: 100%; max-height: 450px; overflow-y: scroll;" }, this._entryContainer), this._addSamplesAreaBottom), div$1({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton));
             this._bulkAddTextarea = textarea({
                 style: "width: 100%; height: 100%; resize: none; box-sizing: border-box;",
             });
@@ -39406,6 +45655,7 @@ You should be redirected to the song at:<br /><br />
     }
 
     const { button, div, input, select, span, optgroup, option, canvas } = HTML;
+    const beepboxEditorContainer$1 = document.getElementById("beepboxEditorContainer");
     function buildOptions(menu, items) {
         for (let index = 0; index < items.length; index++) {
             menu.appendChild(option({ value: index }, items[index]));
@@ -39428,11 +45678,11 @@ You should be redirected to the song at:<br /><br />
         }
         else {
             menu.appendChild(option({ value: 0 }, EditorConfig.valueToPreset(0).name));
-            menu.appendChild(option({ value: 8 }, EditorConfig.valueToPreset(8).name));
+            menu.appendChild(option({ value: 9 }, EditorConfig.valueToPreset(9).name));
             menu.appendChild(option({ value: 6 }, EditorConfig.valueToPreset(6).name));
             menu.appendChild(option({ value: 1 }, EditorConfig.valueToPreset(1).name));
-            menu.appendChild(option({ value: 10 }, EditorConfig.instrumentToPreset(10).name));
             menu.appendChild(option({ value: 11 }, EditorConfig.instrumentToPreset(11).name));
+            menu.appendChild(option({ value: 8 }, EditorConfig.valueToPreset(8).name));
             menu.appendChild(option({ value: 5 }, EditorConfig.valueToPreset(5).name));
             menu.appendChild(option({ value: 7 }, EditorConfig.valueToPreset(7).name));
             menu.appendChild(option({ value: 3 }, EditorConfig.valueToPreset(3).name));
@@ -39471,6 +45721,8 @@ You should be redirected to the song at:<br /><br />
             }
             if (category.name == "Keyboard Presets" && foundAny) {
                 let moveGrandPiano2 = group.removeChild(group.children[9]);
+                let moveGrandPiano3 = group.removeChild(group.children[9]);
+                group.insertBefore(moveGrandPiano3, group.children[1]);
                 group.insertBefore(moveGrandPiano2, group.children[1]);
             }
             if (foundAny)
@@ -39483,12 +45735,13 @@ You should be redirected to the song at:<br /><br />
         }
         return menu;
     }
-    function setSelectedValue(menu, value) {
+    function setSelectedValue(menu, value, isSelect2 = false) {
         const stringValue = value.toString();
-        if (menu.value != stringValue)
+        if (menu.value != stringValue) {
             menu.value = stringValue;
-        if ($(menu).data('select2')) {
-            $(menu).val(value).trigger('change.select2');
+            if (isSelect2) {
+                $(menu).val(value).trigger('change.select2');
+            }
         }
     }
     class CustomChipCanvas {
@@ -39580,9 +45833,28 @@ You should be redirected to the song at:<br /><br />
             this.lastX = 0;
             this.lastY = 0;
             this.newArray = new Float32Array(64);
+            this.renderedArray = new Float32Array(64);
+            this.renderedColor = "";
             this.redrawCanvas();
         }
         redrawCanvas() {
+            const chipData = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].customChipWave;
+            const renderColor = ColorConfig.getComputedChannelColor(this._doc.song, this._doc.channel).primaryNote;
+            let needsRedraw = false;
+            if (renderColor != this.renderedColor) {
+                needsRedraw = true;
+            }
+            else
+                for (let i = 0; i < 64; i++) {
+                    if (chipData[i] != this.renderedArray[i]) {
+                        needsRedraw = true;
+                        i = 64;
+                    }
+                }
+            if (!needsRedraw) {
+                return;
+            }
+            this.renderedArray.set(chipData);
             var ctx = this.canvas.getContext("2d");
             ctx.fillStyle = ColorConfig.getComputed("--editor-background");
             ctx.fillRect(0, 0, 128, 52);
@@ -39591,9 +45863,9 @@ You should be redirected to the song at:<br /><br />
             ctx.fillStyle = ColorConfig.getComputed("--track-editor-bg-pitch-dim");
             ctx.fillRect(0, 13, 128, 1);
             ctx.fillRect(0, 39, 128, 1);
-            ctx.fillStyle = ColorConfig.getComputedChannelColor(this._doc.song, this._doc.channel).primaryNote;
+            ctx.fillStyle = renderColor;
             for (let x = 0; x < 64; x++) {
-                var y = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].customChipWave[x] + 26;
+                var y = chipData[x] + 26;
                 ctx.fillRect(x * 2, y - 2, 2, 4);
                 this.newArray[x] = y - 26;
             }
@@ -39962,9 +46234,9 @@ You should be redirected to the song at:<br /><br />
             this._defs = SVG.defs({}, this._gradient);
             this._volumeBarContainer = SVG.svg({ style: `touch-action: none; overflow: visible; margin: auto; max-width: 20vw;`, width: "160px", height: "100%", preserveAspectRatio: "none", viewBox: "0 0 160 12" }, this._defs, this._outVolumeBarBg, this._outVolumeBar, this._outVolumeCap);
             this._volumeBarBox = div({ class: "playback-volume-bar", style: "height: 12px; align-self: center;" }, this._volumeBarContainer);
-            this._fileMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "File"), option({ value: "new" }, "+ New Blank Song"), option({ value: "import" }, "↑ Import Song... (" + EditorConfig.ctrlSymbol + "O)"), option({ value: "export" }, "↓ Export Song... (" + EditorConfig.ctrlSymbol + "S)"), option({ value: "copyUrl" }, "⎘ Copy Song URL"), option({ value: "shareUrl" }, "⤳ Share Song URL"), option({ value: "shortenUrl" }, "… Shorten Song URL"), option({ value: "viewPlayer" }, "▶ View in Song Player"), option({ value: "copyEmbed" }, "⎘ Copy HTML Embed Code"), option({ value: "songRecovery" }, "⚠ Recover Recent Song..."));
-            this._editMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Edit"), option({ value: "undo" }, "Undo (Z)"), option({ value: "redo" }, "Redo (Y)"), option({ value: "copy" }, "Copy Pattern (C)"), option({ value: "pasteNotes" }, "Paste Pattern Notes (V)"), option({ value: "pasteNumbers" }, "Paste Pattern Numbers (" + EditorConfig.ctrlSymbol + "⇧V)"), option({ value: "insertBars" }, "Insert Bar (⏎)"), option({ value: "deleteBars" }, "Delete Selected Bars (⌫)"), option({ value: "insertChannel" }, "Insert Channel (" + EditorConfig.ctrlSymbol + "⏎)"), option({ value: "deleteChannel" }, "Delete Selected Channels (" + EditorConfig.ctrlSymbol + "⌫)"), option({ value: "selectChannel" }, "Select Channel (⇧A)"), option({ value: "selectAll" }, "Select All (A)"), option({ value: "duplicatePatterns" }, "Duplicate Reused Patterns (D)"), option({ value: "transposeUp" }, "Move Notes Up (+ or ⇧+)"), option({ value: "transposeDown" }, "Move Notes Down (- or ⇧-)"), option({ value: "moveNotesSideways" }, "Move All Notes Sideways... (W)"), option({ value: "generateEuclideanRhythm" }, "Generate Euclidean Rhythm... (E)"), option({ value: "beatsPerBar" }, "Change Beats Per Bar... (B)"), option({ value: "barCount" }, "Change Song Length... (L)"), option({ value: "channelSettings" }, "Channel Settings... (Q)"), option({ value: "limiterSettings" }, "Limiter Settings... (⇧L)"), option({ value: "addExternal" }, "Add Custom Samples... (⇧Q)"));
-            this._optionsMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Preferences"), option({ value: "autoPlay" }, "Auto Play on Load"), option({ value: "autoFollow" }, "Keep Current Pattern Selected"), option({ value: "enableNotePreview" }, "Hear Preview of Added Notes"), option({ value: "showLetters" }, "Show Piano Keys"), option({ value: "showFifth" }, 'Highlight "Fifth" of Song Key'), option({ value: "notesOutsideScale" }, "Allow Adding Notes Not in Scale"), option({ value: "setDefaultScale" }, "Use Current Scale as Default"), option({ value: "showChannels" }, "Show Notes From All Channels"), option({ value: "showScrollBar" }, "Show Octave Scroll Bar"), option({ value: "alwaysFineNoteVol" }, "Always Fine Note Volume"), option({ value: "enableChannelMuting" }, "Enable Channel Muting"), option({ value: "displayBrowserUrl" }, "Display Song Data in URL"), option({ value: "displayVolumeBar" }, "Show Playback Volume"), option({ value: "showOscilloscope" }, "Show Oscilloscope"), option({ value: "showSampleLoadingStatus" }, "Show Sample Loading Status"), option({ value: "closePromptByClickoff" }, "Close prompts on click off"), option({ value: "layout" }, "Set Layout..."), option({ value: "colorTheme" }, "Set Theme..."), option({ value: "customTheme" }, "Custom Theme..."), option({ value: "recordingSetup" }, "Set Up Note Recording..."));
+            this._fileMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "File"), option({ value: "new" }, "+ New Blank Song"), option({ value: "import" }, "↑ > Import Song (" + EditorConfig.ctrlSymbol + "O)"), option({ value: "export" }, "↓ > Export Song (" + EditorConfig.ctrlSymbol + "S)"), option({ value: "copyUrl" }, "⎘ Copy Song URL"), option({ value: "shareUrl" }, "⤳ Share Song URL"), option({ value: "shortenUrl" }, "… Shorten Song URL"), option({ value: "viewPlayer" }, "▶ View in Song Player"), option({ value: "copyEmbed" }, "⎘ Copy HTML Embed Code"), option({ value: "songRecovery" }, "⚠ > Recover Recent Song"));
+            this._editMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Edit"), option({ value: "undo" }, "Undo (Z)"), option({ value: "redo" }, "Redo (Y)"), option({ value: "copy" }, "Copy Pattern (C)"), option({ value: "pasteNotes" }, "Paste Pattern Notes (V)"), option({ value: "pasteNumbers" }, "Paste Pattern Numbers (" + EditorConfig.ctrlSymbol + "⇧V)"), option({ value: "insertBars" }, "Insert Bar (⏎)"), option({ value: "deleteBars" }, "Delete Selected Bars (⌫)"), option({ value: "insertChannel" }, "Insert Channel (" + EditorConfig.ctrlSymbol + "⏎)"), option({ value: "deleteChannel" }, "Delete Selected Channels (" + EditorConfig.ctrlSymbol + "⌫)"), option({ value: "selectChannel" }, "Select Channel (⇧A)"), option({ value: "selectAll" }, "Select All (A)"), option({ value: "duplicatePatterns" }, "Duplicate Reused Patterns (D)"), option({ value: "transposeUp" }, "Move Notes Up (+ or ⇧+)"), option({ value: "transposeDown" }, "Move Notes Down (- or ⇧-)"), option({ value: "moveNotesSideways" }, "> Move All Notes Sideways (W)"), option({ value: "generateEuclideanRhythm" }, "> Generate Euclidean Rhythm (E)"), option({ value: "beatsPerBar" }, "> Change Beats Per Bar (B)"), option({ value: "barCount" }, "> Change Song Length (L)"), option({ value: "channelSettings" }, "> Channel Settings (Q)"), option({ value: "limiterSettings" }, "> Limiter Settings (⇧L)"), option({ value: "addExternal" }, "> Add Custom Samples (⇧Q)"));
+            this._optionsMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Preferences"), option({ value: "autoPlay" }, "Auto Play on Load"), option({ value: "autoFollow" }, "Auto Follow Playhead"), option({ value: "enableNotePreview" }, "Hear Added Notes"), option({ value: "notesOutsideScale" }, "Place Notes Out of Scale"), option({ value: "setDefaultScale" }, "Set Current Scale as Default"), option({ value: "alwaysFineNoteVol" }, "Always Fine Note Volume"), option({ value: "enableChannelMuting" }, "Enable Channel Muting"), option({ value: "instrumentCopyPaste" }, "Enable Copy/Paste Buttons"), option({ value: "instrumentImportExport" }, "Enable Import/Export Buttons"), option({ value: "displayBrowserUrl" }, "Enable Song Data in URL"), option({ value: "closePromptByClickoff" }, "Close prompts on click off"), option({ value: "showFifth" }, 'Highlight "Fifth" Note'), option({ value: "notesFlashWhenPlayed" }, "Notes Flash When Played (DB2)"), option({ value: "showChannels" }, "Show All Channels"), option({ value: "showScrollBar" }, "Show Octave Scroll Bar"), option({ value: "showLetters" }, "Show Piano Keys"), option({ value: "displayVolumeBar" }, "Show Playback Volume"), option({ value: "showOscilloscope" }, "Show Oscilloscope"), option({ value: "showSampleLoadingStatus" }, "Show Sample Loading Status"), option({ value: "showDescription" }, "Show Description"), option({ value: "layout" }, "> Set Layout"), option({ value: "colorTheme" }, "> Set Theme"), option({ value: "recordingSetup" }, "> Note Recording"));
             this._scaleSelect = buildOptions(select(), Config.scales.map(scale => scale.name));
             this._keySelect = buildOptions(select(), Config.keys.map(key => key.name).reverse());
             this._octaveStepper = input({ type: "number", min: Config.octaveMin, max: Config.octaveMax, value: "0" });
@@ -39991,13 +46263,13 @@ You should be redirected to the song at:<br /><br />
             this._instrumentVolumeSlider = new Slider(input({ style: "margin: 0; position: sticky;", type: "range", min: Math.floor(-Config.volumeRange / 2), max: Math.floor(Config.volumeRange / 2), value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeVolume(this._doc, oldValue, newValue), true);
             this._instrumentVolumeSliderInputBox = input({ style: "width: 4em; font-size: 80%", id: "volumeSliderInputBox", type: "number", step: "1", min: Math.floor(-Config.volumeRange / 2), max: Math.floor(Config.volumeRange / 2), value: "0" });
             this._instrumentVolumeSliderTip = div({ class: "selectRow", style: "height: 1em" }, span({ class: "tip", style: "font-size: smaller;", onclick: () => this._openPrompt("instrumentVolume") }, "Volume: "));
-            this._instrumentVolumeSliderRow = div({ class: "selectRow" }, div({}, div({ style: "color: " + ColorConfig.secondaryText + ";" }, span({ class: "tip" }, this._instrumentVolumeSliderTip)), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._instrumentVolumeSliderInputBox)), this._instrumentVolumeSlider.container);
+            this._instrumentVolumeSliderRow = div({ class: "selectRow" }, div({}, div({ style: `color: ${ColorConfig.secondaryText};` }, span({ class: "tip" }, this._instrumentVolumeSliderTip)), div({ style: `color: ${ColorConfig.secondaryText}; margin-top: -3px;` }, this._instrumentVolumeSliderInputBox)), this._instrumentVolumeSlider.container);
             this._panSlider = new Slider(input({ style: "margin: 0; position: sticky;", type: "range", min: "0", max: Config.panMax, value: Config.panCenter, step: "1" }), this._doc, (oldValue, newValue) => new ChangePan(this._doc, oldValue, newValue), true);
             this._panDropdown = button({ style: "margin-left:0em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(1) }, "▼");
             this._panSliderInputBox = input({ style: "width: 4em; font-size: 80%; ", id: "panSliderInputBox", type: "number", step: "1", min: "0", max: "100", value: "0" });
             this._panSliderRow = div({ class: "selectRow" }, div({}, span({ class: "tip", tabindex: "0", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("pan") }, "Pan: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._panSliderInputBox)), this._panDropdown, this._panSlider.container);
             this._panDelaySlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.modulators.dictionary["pan delay"].maxRawVol, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangePanDelay(this._doc, oldValue, newValue), false);
-            this._panDelayRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("panDelay") }, "Delay:"), this._panDelaySlider.container);
+            this._panDelayRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("panDelay") }, "‣ Delay:"), this._panDelaySlider.container);
             this._panDropdownGroup = div({ class: "editor-controls", style: "display: none;" }, this._panDelayRow);
             this._chipWaveSelect = buildOptions(select(), Config.chipWaves.map(wave => wave.name));
             this._chipNoiseSelect = buildOptions(select(), Config.chipNoises.map(wave => wave.name));
@@ -40023,7 +46295,7 @@ You should be redirected to the song at:<br /><br />
             this._transitionDropdown = button({ style: "margin-left:0em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(3) }, "▼");
             this._transitionRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("transition") }, "Transition:"), this._transitionDropdown, div({ class: "selectContainer", style: "width: 52.5%;" }, this._transitionSelect));
             this._clicklessTransitionBox = input({ type: "checkbox", style: "width: 1em; padding: 0; margin-right: 4em;" });
-            this._clicklessTransitionRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("clicklessTransition") }, "Clickless:"), this._clicklessTransitionBox);
+            this._clicklessTransitionRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("clicklessTransition") }, "‣ Clickless:"), this._clicklessTransitionBox);
             this._transitionDropdownGroup = div({ class: "editor-controls", style: "display: none;" }, this._clicklessTransitionRow);
             this._effectsSelect = select(option({ selected: true, disabled: true, hidden: false }));
             this._eqFilterSimpleButton = button({ style: "font-size: x-small; width: 50%; height: 40%", class: "no-underline", onclick: () => this._switchEQFilterType(true) }, "simple");
@@ -40042,21 +46314,22 @@ You should be redirected to the song at:<br /><br />
             this._noteFilterEditor = new FilterEditor(this._doc, true);
             this._noteFilterZoom = button({ style: "margin-left:0em; padding-left:0.2em; height:1.5em; max-width: 12px;", onclick: () => this._openPrompt("customNoteFilterSettings") }, "+");
             this._noteFilterRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("noteFilter") }, "Note Filt:"), this._noteFilterZoom, this._noteFilterEditor.container);
+            this._noteFilterSimpleCutSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.filterSimpleCutRange - 1, value: "6", step: "1" }), this._doc, (oldValue, newValue) => new ChangeNoteFilterSimpleCut(this._doc, oldValue, newValue), false);
+            this._noteFilterSimpleCutRow = div({ class: "selectRow", title: "Low-pass Filter Cutoff Frequency" }, span({ class: "tip", onclick: () => this._openPrompt("filterCutoff") }, "Filter Cut:"), this._noteFilterSimpleCutSlider.container);
+            this._noteFilterSimplePeakSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.filterSimplePeakRange - 1, value: "6", step: "1" }), this._doc, (oldValue, newValue) => new ChangeNoteFilterSimplePeak(this._doc, oldValue, newValue), false);
+            this._noteFilterSimplePeakRow = div({ class: "selectRow", title: "Low-pass Filter Peak Resonance" }, span({ class: "tip", onclick: () => this._openPrompt("filterResonance") }, "Filter Peak:"), this._noteFilterSimplePeakSlider.container);
             this._supersawDynamismSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.supersawDynamismMax, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeSupersawDynamism(this._doc, oldValue, newValue), false);
             this._supersawDynamismRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("supersawDynamism") }, "Dynamism:"), this._supersawDynamismSlider.container);
             this._supersawSpreadSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.supersawSpreadMax, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeSupersawSpread(this._doc, oldValue, newValue), false);
             this._supersawSpreadRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("supersawSpread") }, "Spread:"), this._supersawSpreadSlider.container);
             this._supersawShapeSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.supersawShapeMax, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeSupersawShape(this._doc, oldValue, newValue), false);
-            this._supersawShapeRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("supersawShape") }, "Saw↔Pulse:"), this._supersawShapeSlider.container);
-            this._noteFilterSimpleCutSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.filterSimpleCutRange - 1, value: "6", step: "1" }), this._doc, (oldValue, newValue) => new ChangeNoteFilterSimpleCut(this._doc, oldValue, newValue), false);
-            this._noteFilterSimpleCutRow = div({ class: "selectRow", title: "Low-pass Filter Cutoff Frequency" }, span({ class: "tip", onclick: () => this._openPrompt("filterCutoff") }, "Filter Cut:"), this._noteFilterSimpleCutSlider.container);
-            this._noteFilterSimplePeakSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.filterSimplePeakRange - 1, value: "6", step: "1" }), this._doc, (oldValue, newValue) => new ChangeNoteFilterSimplePeak(this._doc, oldValue, newValue), false);
-            this._noteFilterSimplePeakRow = div({ class: "selectRow", title: "Low-pass Filter Peak Resonance" }, span({ class: "tip", onclick: () => this._openPrompt("filterResonance") }, "Filter Peak:"), this._noteFilterSimplePeakSlider.container);
+            this._supersawShapeRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("supersawShape"), style: "overflow: clip;" }, "Saw↔Pulse:"), this._supersawShapeSlider.container);
             this._pulseWidthSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "1", max: Config.pulseWidthRange, value: "1", step: "1" }), this._doc, (oldValue, newValue) => new ChangePulseWidth(this._doc, oldValue, newValue), false);
             this._pulseWidthDropdown = button({ style: "margin-right:10px; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(5) }, "▼");
-            this._pulseWidthRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("pulseWidth") }, "Pulse Width:"), this._pulseWidthDropdown, this._pulseWidthSlider.container);
+            this._pwmSliderInputBox = input({ style: "width: 4em; font-size: 80%;", id: "pwmSliderInputBox", type: "number", step: "1", min: "1", max: Config.pulseWidthRange, value: "1" });
+            this._pulseWidthRow = div({ class: "selectRow" }, div({}, span({ class: "tip", tabindex: "0", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("pulseWidth") }, "Pulse", div, "Width:"), div({ style: `color: ${ColorConfig.secondaryText}; margin-top: -3px;` }, this._pwmSliderInputBox)), this._pulseWidthDropdown, this._pulseWidthSlider.container);
             this._decimalOffsetSlider = new Slider(input({ style: "margin: 0; transform: scaleX(-1);", type: "range", min: "0", max: "99", value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeDecimalOffset(this._doc, oldValue, newValue), false);
-            this._decimalOffsetRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("decimalOffset") }, "Offset:"), this._decimalOffsetSlider.container);
+            this._decimalOffsetRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("decimalOffset") }, "‣ Offset:"), this._decimalOffsetSlider.container);
             this._pulseWidthDropdownGroup = div({ class: "editor-controls", style: "display: none;" }, this._decimalOffsetRow);
             this._pitchShiftSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.pitchShiftRange - 1, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangePitchShift(this._doc, oldValue, newValue), true);
             this._pitchShiftTonicMarkers = [div({ class: "pitchShiftMarker", style: { color: ColorConfig.tonic } }), div({ class: "pitchShiftMarker", style: { color: ColorConfig.tonic, left: "50%" } }), div({ class: "pitchShiftMarker", style: { color: ColorConfig.tonic, left: "100%" } })];
@@ -40065,7 +46338,7 @@ You should be redirected to the song at:<br /><br />
             this._pitchShiftRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("pitchShift") }, "Pitch Shift:"), this._pitchShiftMarkerContainer);
             this._detuneSlider = new Slider(input({ style: "margin: 0;", type: "range", min: Config.detuneMin - Config.detuneCenter, max: Config.detuneMax - Config.detuneCenter, value: 0, step: "4" }), this._doc, (oldValue, newValue) => new ChangeDetune(this._doc, oldValue, newValue), true);
             this._detuneSliderInputBox = input({ style: "width: 4em; font-size: 80%; ", id: "detuneSliderInputBox", type: "number", step: "1", min: Config.detuneMin - Config.detuneCenter, max: Config.detuneMax - Config.detuneCenter, value: 0 });
-            this._detuneSliderRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("detune") }, "Detune: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._detuneSliderInputBox)), this._detuneSlider.container);
+            this._detuneSliderRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("detune") }, "Detune: "), div({ style: `color: ${ColorConfig.secondaryText}; margin-top: -3px;` }, this._detuneSliderInputBox)), this._detuneSlider.container);
             this._distortionSlider = new Slider(input({ style: "margin: 0; position: sticky;", type: "range", min: "0", max: Config.distortionRange - 1, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeDistortion(this._doc, oldValue, newValue), false);
             this._distortionRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("distortion") }, "Distortion:"), this._distortionSlider.container);
             this._aliasingBox = input({ type: "checkbox", style: "width: 1em; padding: 0; margin-right: 4em;" });
@@ -40075,41 +46348,44 @@ You should be redirected to the song at:<br /><br />
             this._bitcrusherFreqSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.bitcrusherFreqRange - 1, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeBitcrusherFreq(this._doc, oldValue, newValue), false);
             this._bitcrusherFreqRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("bitcrusherFreq") }, "Freq Crush:"), this._bitcrusherFreqSlider.container);
             this._stringSustainSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.stringSustainRange - 1, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeStringSustain(this._doc, oldValue, newValue), false);
-            this._stringSustainRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("stringSustain") }, "Sustain:"), this._stringSustainSlider.container);
+            this._stringSustainLabel = span({ class: "tip", onclick: () => this._openPrompt("stringSustain") }, "Sustain:");
+            this._stringSustainRow = div({ class: "selectRow" }, this._stringSustainLabel, this._stringSustainSlider.container);
             this._unisonDropdown = button({ style: "margin-left:0em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(6) }, "▼");
             this._unisonSelect = buildOptions(select(), Config.unisons.map(unison => unison.name));
             this._unisonSelectRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("unison") }, "Unison:"), this._unisonDropdown, div({ class: "selectContainer", style: "width: 61.5%;" }, this._unisonSelect));
             this._unisonVoicesInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonVoicesInputBox", type: "number", step: "1", min: 1, max: 2, value: 1 });
-            this._unisonVoicesRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonVoices") }, "Voices: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonVoicesInputBox)));
+            this._unisonVoicesRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonVoices") }, "‣ Voices: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonVoicesInputBox)));
             this._unisonSpreadInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonSpreadInputBox", type: "number", step: "0.001", min: -96, max: 96, value: 0.0 });
-            this._unisonSpreadRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonSpread") }, "Spread: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonSpreadInputBox)));
+            this._unisonSpreadRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonSpread") }, "‣ Spread: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonSpreadInputBox)));
             this._unisonOffsetInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonOffsetInputBox", type: "number", step: "0.001", min: -96, max: 96, value: 0.0 });
-            this._unisonOffsetRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonOffset") }, "Offset: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonOffsetInputBox)));
+            this._unisonOffsetRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonOffset") }, "‣ Offset: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonOffsetInputBox)));
             this._unisonExpressionInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonExpressionInputBox", type: "number", step: "0.001", min: -2, max: 2, value: 1.4 });
-            this._unisonExpressionRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonExpression") }, "Expression: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonExpressionInputBox)));
+            this._unisonExpressionRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonExpression") }, "‣ Expression: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonExpressionInputBox)));
             this._unisonSignInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonSignInputBox", type: "number", step: "0.001", min: -2, max: 2, value: 1.0 });
-            this._unisonSignRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonSign") }, "Sign: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonSignInputBox)));
+            this._unisonSignRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonSign") }, "‣ Sign: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonSignInputBox)));
             this._unisonDropdownGroup = div({ class: "editor-controls", style: "display: none;" }, this._unisonVoicesRow, this._unisonSpreadRow, this._unisonOffsetRow, this._unisonExpressionRow, this._unisonSignRow);
             this._chordSelect = buildOptions(select(), Config.chords.map(chord => chord.name));
             this._chordDropdown = button({ style: "margin-left:0em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(2) }, "▼");
             this._chordSelectRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("chords") }, "Chords:"), this._chordDropdown, div({ class: "selectContainer" }, this._chordSelect));
+            this._arpeggioSpeedDisplay = span({ style: `color: ${ColorConfig.secondaryText}; font-size: smaller; text-overflow: clip;` }, "x1");
             this._arpeggioSpeedSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.modulators.dictionary["arp speed"].maxRawVol, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeArpeggioSpeed(this._doc, oldValue, newValue), false);
-            this._arpeggioSpeedRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("arpeggioSpeed") }, "Speed:"), this._arpeggioSpeedSlider.container);
+            this._arpeggioSpeedRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("arpeggioSpeed") }, "‣ Spd:"), this._arpeggioSpeedDisplay, this._arpeggioSpeedSlider.container);
             this._twoNoteArpBox = input({ type: "checkbox", style: "width: 1em; padding: 0; margin-right: 4em;" });
-            this._twoNoteArpRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("twoNoteArpeggio") }, "Fast Two-Note:"), this._twoNoteArpBox);
+            this._twoNoteArpRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("twoNoteArpeggio") }, "‣ Fast Two-Note:"), this._twoNoteArpBox);
             this._chordDropdownGroup = div({ class: "editor-controls", style: "display: none;" }, this._arpeggioSpeedRow, this._twoNoteArpRow);
             this._vibratoSelect = buildOptions(select(), Config.vibratos.map(vibrato => vibrato.name));
             this._vibratoDropdown = button({ style: "margin-left:0em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(0) }, "▼");
             this._vibratoSelectRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("vibrato") }, "Vibrato:"), this._vibratoDropdown, div({ class: "selectContainer", style: "width: 61.5%;" }, this._vibratoSelect));
             this._vibratoDepthSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.modulators.dictionary["vibrato depth"].maxRawVol, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeVibratoDepth(this._doc, oldValue, newValue), false);
-            this._vibratoDepthRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("vibratoDepth") }, "Depth:"), this._vibratoDepthSlider.container);
-            this._vibratoSpeedSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.modulators.dictionary["vibrato speed"].maxRawVol, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeVibratoSpeed(this._doc, oldValue, newValue), false);
-            this._vibratoSpeedRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("vibratoSpeed") }, "Speed:"), this._vibratoSpeedSlider.container);
+            this._vibratoDepthRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("vibratoDepth") }, "‣ Depth:"), this._vibratoDepthSlider.container);
+            this._vibratoSpeedDisplay = span({ style: `color: ${ColorConfig.secondaryText}; font-size: smaller; text-overflow: clip;` }, "x1");
+            this._vibratoSpeedSlider = new Slider(input({ style: "margin: 0; text-overflow: clip;", type: "range", min: "0", max: Config.modulators.dictionary["vibrato speed"].maxRawVol, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeVibratoSpeed(this._doc, oldValue, newValue), false);
+            this._vibratoSpeedRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("vibratoSpeed") }, "‣ Spd:"), this._vibratoSpeedDisplay, this._vibratoSpeedSlider.container);
             this._vibratoDelaySlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.modulators.dictionary["vibrato delay"].maxRawVol, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeVibratoDelay(this._doc, oldValue, newValue), false);
-            this._vibratoDelayRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("vibratoDelay") }, "Delay:"), this._vibratoDelaySlider.container);
+            this._vibratoDelayRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("vibratoDelay") }, "‣ Delay:"), this._vibratoDelaySlider.container);
             this._vibratoTypeSelect = buildOptions(select(), Config.vibratoTypes.map(vibrato => vibrato.name));
-            this._vibratoTypeSelectRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("vibratoType") }, "Type:"), div({ class: "selectContainer", style: "width: 61.5%;" }, this._vibratoTypeSelect));
-            this._vibratoDropdownGroup = div({ class: "editor-controls", style: "display: none;" }, this._vibratoDepthRow, this._vibratoSpeedRow, this._vibratoDelayRow, this._vibratoTypeSelectRow);
+            this._vibratoTypeSelectRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("vibratoType") }, "‣ Type:"), div({ class: "selectContainer", style: "width: 61.5%;" }, this._vibratoTypeSelect));
+            this._vibratoDropdownGroup = div({ class: "editor-controls", style: `display: none;` }, this._vibratoDepthRow, this._vibratoSpeedRow, this._vibratoDelayRow, this._vibratoTypeSelectRow);
             this._phaseModGroup = div({ class: "editor-controls" });
             this._feedbackTypeSelect = buildOptions(select(), Config.feedbacks.map(feedback => feedback.name));
             this._feedbackRow1 = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("feedbackType") }, "Feedback:"), div({ class: "selectContainer" }, this._feedbackTypeSelect));
@@ -40118,6 +46394,13 @@ You should be redirected to the song at:<br /><br />
             this._harmonicsEditor = new HarmonicsEditor(this._doc);
             this._harmonicsRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("harmonics") }, "Harmonics:"), this._harmonicsEditor.container);
             this._envelopeEditor = new EnvelopeEditor(this._doc);
+            this._discreteEnvelopeBox = input({ type: "checkbox", style: "width: 1em; padding: 0; margin-right: 4em;" });
+            this._discreteEnvelopeRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("discreteEnvelope") }, "‣ Discrete:"), this._discreteEnvelopeBox);
+            this._envelopeSpeedDisplay = span({ style: `color: ${ColorConfig.secondaryText}; font-size: smaller; text-overflow: clip;` }, "x1");
+            this._envelopeSpeedSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.modulators.dictionary["envelope speed"].maxRawVol, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeEnvelopeSpeed(this._doc, oldValue, newValue), false);
+            this._envelopeSpeedRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("envelopeSpeed") }, "‣ Spd:"), this._envelopeSpeedDisplay, this._envelopeSpeedSlider.container);
+            this._envelopeDropdownGroup = div({ class: "editor-controls", style: "display: none;" }, this._discreteEnvelopeRow, this._envelopeSpeedRow);
+            this._envelopeDropdown = button({ style: "margin-left:0em; margin-right: 1em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(7) }, "▼");
             this._drumsetGroup = div({ class: "editor-controls" });
             this._modulatorGroup = div({ class: "editor-controls" });
             this._feedback6OpTypeSelect = buildOptions(select(), Config.feedbacks6Op.map(feedback => feedback.name));
@@ -40126,17 +46409,29 @@ You should be redirected to the song at:<br /><br />
             this._customAlgorithmCanvas = new CustomAlgorythmCanvas(canvas({ width: 144, height: 144, style: "border:2px solid " + ColorConfig.uiWidgetBackground, id: "customAlgorithmCanvas" }), this._doc, (newArray, carry, mode) => new ChangeCustomAlgorythmorFeedback(this._doc, newArray, carry, mode));
             this._algorithm6OpSelect = buildOptions(select(), Config.algorithms6Op.map(algorithm => algorithm.name));
             this._algorithm6OpSelectRow = div(div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("algorithm") }, "Algorithm: "), div({ class: "selectContainer" }, this._algorithm6OpSelect)), div({ style: "height:144px; display:flex; flex-direction: row; align-items:center; justify-content:center;" }, div({ style: "display:block; width:10px; margin-right: 0.2em" }, this._algorithmCanvasSwitch), div({ style: "width:144px; height:144px;" }, this._customAlgorithmCanvas.canvas)));
-            this._instrumentCopyButton = button({ style: "max-width:86px; width: 86px;", class: "copyButton" }, [
+            this._instrumentCopyButton = button({ style: "max-width:86px; width: 86px;", class: "copyButton", title: "Copy Instrument (⇧C)" }, [
                 "Copy",
                 SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "-5 -21 26 26" }, [
                     SVG.path({ d: "M 0 -15 L 1 -15 L 1 0 L 13 0 L 13 1 L 0 1 L 0 -15 z M 2 -1 L 2 -17 L 10 -17 L 14 -13 L 14 -1 z M 3 -2 L 13 -2 L 13 -12 L 9 -12 L 9 -16 L 3 -16 z", fill: "currentColor" }),
                 ]),
             ]);
-            this._instrumentPasteButton = button({ style: "max-width:86px;", class: "pasteButton" }, [
+            this._instrumentPasteButton = button({ style: "max-width:86px;", class: "pasteButton", title: "Paste Instrument (⇧V)" }, [
                 "Paste",
                 SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "0 0 26 26" }, [
                     SVG.path({ d: "M 8 18 L 6 18 L 6 5 L 17 5 L 17 7 M 9 8 L 16 8 L 20 12 L 20 22 L 9 22 z", stroke: "currentColor", fill: "none" }),
                     SVG.path({ d: "M 9 3 L 14 3 L 14 6 L 9 6 L 9 3 z M 16 8 L 20 12 L 16 12 L 16 8 z", fill: "currentColor", }),
+                ]),
+            ]);
+            this._instrumentExportButton = button({ style: "max-width:86px; width: 86px;", class: "exportInstrumentButton" }, [
+                "Export",
+                SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "0 -960 960 960" }, [
+                    SVG.path({ d: "M200-120v-40h560v40H200Zm279.231-150.769L254.615-568.462h130.769V-840h188.462v271.538h130.77L479.231-270.769Zm0-65.385 142.923-191.538h-88.308V-800H425.385v272.308h-88.308l142.154 191.538ZM480-527.692Z", fill: "currentColor" }),
+                ]),
+            ]);
+            this._instrumentImportButton = button({ style: "max-width:86px;", class: "importInstrumentButton" }, [
+                "Import",
+                SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "0 -960 960 960" }, [
+                    SVG.path({ d: "M200-120v-40h560v40H200Zm185.384-150.769v-271.539H254.615L480-840l224.616 297.692h-130.77v271.539H385.384Zm40.001-40h108.461v-272.308h88.308L480-774.615 337.077-583.077h88.308v272.308ZM480-583.077Z", fill: "currentColor" }),
                 ]),
             ]);
             this._globalOscscope = new oscilascopeCanvas(canvas({ width: 144, height: 32, style: `border: 2px solid ${ColorConfig.uiWidgetBackground}; position: static;`, id: "oscilascopeAll" }), 1);
@@ -40148,12 +46443,13 @@ You should be redirected to the song at:<br /><br />
                 div({ style: "height:54px; display:flex; justify-content:center;" }, [this._customWaveDrawCanvas.canvas]),
                 div({ style: "margin-top:5px; display:flex; justify-content:center;" }, [this._customWavePresetDrop, this._customWaveZoom]),
             ]);
-            this._songTitleInputBox = new InputBox(input({ style: "font-weight:bold; border:none; width: 100%; background-color:${ColorConfig.editorBackground}; color:${ColorConfig.primaryText}; text-align:center", maxlength: "30", type: "text", value: EditorConfig.versionDisplayName }), this._doc, (oldValue, newValue) => new ChangeSongTitle(this._doc, oldValue, newValue));
+            this._songTitleInputBox = new InputBox(input({ style: "font-weight:bold; border:none; width: 98%; background-color:${ColorConfig.editorBackground}; color:${ColorConfig.primaryText}; text-align:center", maxlength: "30", type: "text", value: EditorConfig.versionDisplayName }), this._doc, (oldValue, newValue) => new ChangeSongTitle(this._doc, oldValue, newValue));
             this._feedbackAmplitudeSlider = new Slider(input({ type: "range", min: "0", max: Config.operatorAmplitudeMax, value: "0", step: "1", title: "Feedback Amplitude" }), this._doc, (oldValue, newValue) => new ChangeFeedbackAmplitude(this._doc, oldValue, newValue), false);
             this._feedbackRow2 = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("feedbackVolume") }, "Fdback Vol:"), this._feedbackAmplitudeSlider.container);
             this._addEnvelopeButton = button({ type: "button", class: "add-envelope" });
-            this._customInstrumentSettingsGroup = div({ class: "editor-controls" }, this._panSliderRow, this._panDropdownGroup, this._chipWaveSelectRow, this._chipNoiseSelectRow, this._useChipWaveAdvancedLoopControlsRow, this._chipWaveLoopModeSelectRow, this._chipWaveLoopStartRow, this._chipWaveLoopEndRow, this._chipWaveStartOffsetRow, this._chipWavePlayBackwardsRow, this._customWaveDraw, this._eqFilterTypeRow, this._eqFilterRow, this._eqFilterSimpleCutRow, this._eqFilterSimplePeakRow, this._fadeInOutRow, this._algorithmSelectRow, this._algorithm6OpSelectRow, this._phaseModGroup, this._feedbackRow1, this._feedback6OpRow1, this._feedbackRow2, this._spectrumRow, this._harmonicsRow, this._drumsetGroup, this._supersawDynamismRow, this._supersawSpreadRow, this._supersawShapeRow, this._pulseWidthRow, this._pulseWidthDropdownGroup, this._stringSustainRow, this._unisonSelectRow, this._unisonDropdownGroup, div({ style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("effects") }, "Effects")), div({ class: "effects-menu" }, this._effectsSelect)), this._transitionRow, this._transitionDropdownGroup, this._chordSelectRow, this._chordDropdownGroup, this._pitchShiftRow, this._detuneSliderRow, this._vibratoSelectRow, this._vibratoDropdownGroup, this._noteFilterTypeRow, this._noteFilterRow, this._noteFilterSimpleCutRow, this._noteFilterSimplePeakRow, this._distortionRow, this._aliasingRow, this._bitcrusherQuantizationRow, this._bitcrusherFreqRow, this._chorusRow, this._echoSustainRow, this._echoDelayRow, this._reverbRow, div({ style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("envelopes") }, "Envelopes")), this._addEnvelopeButton), this._envelopeEditor.container);
+            this._customInstrumentSettingsGroup = div({ class: "editor-controls" }, this._panSliderRow, this._panDropdownGroup, this._chipWaveSelectRow, this._chipNoiseSelectRow, this._useChipWaveAdvancedLoopControlsRow, this._chipWaveLoopModeSelectRow, this._chipWaveLoopStartRow, this._chipWaveLoopEndRow, this._chipWaveStartOffsetRow, this._chipWavePlayBackwardsRow, this._customWaveDraw, this._eqFilterTypeRow, this._eqFilterRow, this._eqFilterSimpleCutRow, this._eqFilterSimplePeakRow, this._fadeInOutRow, this._algorithmSelectRow, this._algorithm6OpSelectRow, this._phaseModGroup, this._feedbackRow1, this._feedback6OpRow1, this._feedbackRow2, this._spectrumRow, this._harmonicsRow, this._drumsetGroup, this._supersawDynamismRow, this._supersawSpreadRow, this._supersawShapeRow, this._pulseWidthRow, this._pulseWidthDropdownGroup, this._stringSustainRow, this._unisonSelectRow, this._unisonDropdownGroup, div({ style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("effects") }, "Effects")), div({ class: "effects-menu" }, this._effectsSelect)), this._transitionRow, this._transitionDropdownGroup, this._chordSelectRow, this._chordDropdownGroup, this._pitchShiftRow, this._detuneSliderRow, this._vibratoSelectRow, this._vibratoDropdownGroup, this._noteFilterTypeRow, this._noteFilterRow, this._noteFilterSimpleCutRow, this._noteFilterSimplePeakRow, this._distortionRow, this._aliasingRow, this._bitcrusherQuantizationRow, this._bitcrusherFreqRow, this._chorusRow, this._echoSustainRow, this._echoDelayRow, this._reverbRow, div({ style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("envelopes") }, "Envelopes")), this._envelopeDropdown, this._addEnvelopeButton), this._envelopeDropdownGroup, this._envelopeEditor.container);
             this._instrumentCopyGroup = div({ class: "editor-controls" }, div({ class: "selectRow" }, this._instrumentCopyButton, this._instrumentPasteButton));
+            this._instrumentExportGroup = div({ class: "editor-controls" }, div({ class: "selectRow" }, this._instrumentExportButton, this._instrumentImportButton));
             this._instrumentSettingsTextRow = div({ id: "instrumentSettingsText", style: `padding: 3px 0; max-width: 15em; text-align: center; color: ${ColorConfig.secondaryText};` }, "Instrument Settings");
             this._instrumentTypeSelectRow = div({ class: "selectRow", id: "typeSelectRow" }, span({ class: "tip", onclick: () => this._openPrompt("instrumentType") }, "Type:"), div(div({ class: "pitchSelect" }, this._pitchedPresetSelect), div({ class: "drumSelect" }, this._drumPresetSelect)));
             this._instrumentSettingsGroup = div({ class: "editor-controls" }, this._instrumentSettingsTextRow, this._instrumentsButtonRow, this._instrumentTypeSelectRow, this._instrumentVolumeSliderRow, this._customInstrumentSettingsGroup);
@@ -40169,12 +46465,24 @@ You should be redirected to the song at:<br /><br />
             this._promptContainer = div({ class: "promptContainer", style: "display: none;" });
             this._zoomInButton = button({ class: "zoomInButton", type: "button", title: "Zoom In" });
             this._zoomOutButton = button({ class: "zoomOutButton", type: "button", title: "Zoom Out" });
+            this._undoButton = button({ class: "undoButton", type: "button", title: "Undo Changes" });
+            this._redoButton = button({ class: "redoButton", type: "button", title: "Redo Changes" });
+            this._copyPatternButton = button({ class: "copyPatternButton", type: "button", title: "Copy Selected Notes" });
+            this._pastePatternButton = button({ class: "pastePatternButton", type: "button", title: "Paste Selected Notes" });
+            this._insertChannelButton = button({ class: "insertChannelButton", type: "button", title: "Insert Channel Below" });
+            this._deleteChannelButton = button({ class: "deleteChannelButton", type: "button", title: "Delete Selected Channel" });
+            this._selectAllButton = button({ class: "selectAllButton", type: "button", title: "Select All" });
+            this._duplicateButton = button({ class: "duplicateButton", type: "button", title: "Duplicate Selected Pattern" });
+            this._notesUpButton = button({ class: "notesUpButton", type: "button", title: "Move Notes Up" });
+            this._notesDownButton = button({ class: "notesDownButton", type: "button", title: "Move Notes Down" });
+            this._loopBarButton = button({ class: "loopBarButton", type: "button", title: "Loop only on the Currently Selected Bar" });
+            this._fullscreenButton = button({ class: "fullscreenButton", type: "button", title: "Make the screen fit fully in your browser (Mobile Only)" });
             this._patternEditorRow = div({ style: "flex: 1; height: 100%; display: flex; overflow: hidden; justify-content: center;" }, this._patternEditorPrev.container, this._patternEditor.container, this._patternEditorNext.container);
-            this._patternArea = div({ class: "pattern-area" }, this._piano.container, this._patternEditorRow, this._octaveScrollBar.container, this._zoomInButton, this._zoomOutButton);
+            this._patternArea = div({ class: "pattern-area" }, this._piano.container, this._patternEditorRow, this._octaveScrollBar.container, this._zoomInButton, this._zoomOutButton, this._undoButton, this._redoButton, this._copyPatternButton, this._pastePatternButton, this._insertChannelButton, this._deleteChannelButton, this._selectAllButton, this._duplicateButton, this._notesUpButton, this._notesDownButton, this._loopBarButton, this._fullscreenButton);
             this._trackContainer = div({ class: "trackContainer" }, this._trackEditor.container, this._loopEditor.container);
             this._trackVisibleArea = div({ style: "position: absolute; width: 100%; height: 100%; pointer-events: none;" });
             this._trackAndMuteContainer = div({ class: "trackAndMuteContainer" }, this._muteEditor.container, this._trackContainer, this._trackVisibleArea);
-            this._barScrollBar = new BarScrollBar(this._doc, this._trackAndMuteContainer);
+            this._barScrollBar = new BarScrollBar(this._doc);
             this._trackArea = div({ class: "track-area" }, this._trackAndMuteContainer, this._barScrollBar.container);
             this._menuArea = div({ class: "menu-area" }, div({ class: "selectContainer menu file" }, this._fileMenu), div({ class: "selectContainer menu edit" }, this._editMenu), div({ class: "selectContainer menu preferences" }, this._optionsMenu));
             this._sampleLoadingBar = div({ style: `width: 0%; height: 100%; background-color: ${ColorConfig.indicatorPrimary};` });
@@ -40193,6 +46501,7 @@ You should be redirected to the song at:<br /><br />
             this._renderedShowRecordButton = false;
             this._renderedCtrlHeld = false;
             this._ctrlHeld = false;
+            this._shiftHeld = false;
             this._deactivatedInstruments = false;
             this._operatorRows = [];
             this._operatorAmplitudeSliders = [];
@@ -40211,6 +46520,7 @@ You should be redirected to the song at:<br /><br />
             this._hasActiveModSliders = false;
             this._openPanDropdown = false;
             this._openVibratoDropdown = false;
+            this._openEnvelopeDropdown = false;
             this._openChordDropdown = false;
             this._openTransitionDropdown = false;
             this._openOperatorDropdowns = [];
@@ -40219,6 +46529,8 @@ You should be redirected to the song at:<br /><br />
             this.outVolumeHistoricTimer = 0;
             this.outVolumeHistoricCap = 0;
             this.lastOutVolumeCap = 0;
+            this.patternUsed = false;
+            this._modRecTimeout = -1;
             this._whenSampleLoadingStatusClicked = () => {
                 this._openPrompt("sampleLoadingStatus");
             };
@@ -40239,7 +46551,7 @@ You should be redirected to the song at:<br /><br />
                 this._muteEditor.container.style.display = prefs.enableChannelMuting ? "" : "none";
                 const trackBounds = this._trackVisibleArea.getBoundingClientRect();
                 this._doc.trackVisibleBars = Math.floor((trackBounds.right - trackBounds.left - (prefs.enableChannelMuting ? 32 : 0)) / this._doc.getBarWidth());
-                this._doc.trackVisibleChannels = Math.floor((trackBounds.bottom - trackBounds.top - 30) / this._doc.getChannelHeight());
+                this._doc.trackVisibleChannels = Math.floor((trackBounds.bottom - trackBounds.top - 30) / ChannelRow.patternHeight);
                 for (let i = this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount; i < this._doc.song.channels.length; i++) {
                     const channel = this._doc.song.channels[i];
                     for (let j = 0; j < channel.instruments.length; j++) {
@@ -40247,8 +46559,10 @@ You should be redirected to the song at:<br /><br />
                     }
                 }
                 this._barScrollBar.render();
-                this._muteEditor.render();
                 this._trackEditor.render();
+                this._muteEditor.render();
+                this._trackAndMuteContainer.scrollLeft = this._doc.barScrollPos * this._doc.getBarWidth();
+                this._trackAndMuteContainer.scrollTop = this._doc.channelScrollPos * ChannelRow.patternHeight;
                 if (document.activeElement != this._patternEditor.modDragValueLabel && this._patternEditor.editingModLabel) {
                     this._patternEditor.stopEditingModLabel(false);
                 }
@@ -40259,58 +46573,157 @@ You should be redirected to the song at:<br /><br />
                 this._globalOscscopeContainer.style.display = this._doc.prefs.showOscilloscope ? "" : "none";
                 this._doc.synth.oscEnabled = this._doc.prefs.showOscilloscope;
                 this._sampleLoadingStatusContainer.style.display = this._doc.prefs.showSampleLoadingStatus ? "" : "none";
-                if (this._doc.getFullScreen()) {
-                    const semitoneHeight = this._patternEditorRow.clientHeight / this._doc.getVisiblePitchCount();
-                    const targetBeatWidth = semitoneHeight * 5;
-                    const minBeatWidth = this._patternEditorRow.clientWidth / (this._doc.song.beatsPerBar * 3);
-                    const maxBeatWidth = this._patternEditorRow.clientWidth / (this._doc.song.beatsPerBar + 2);
-                    const beatWidth = Math.max(minBeatWidth, Math.min(maxBeatWidth, targetBeatWidth));
-                    const patternEditorWidth = beatWidth * this._doc.song.beatsPerBar;
-                    this._patternEditorPrev.container.style.width = patternEditorWidth + "px";
-                    this._patternEditor.container.style.width = patternEditorWidth + "px";
-                    this._patternEditorNext.container.style.width = patternEditorWidth + "px";
-                    this._patternEditorPrev.container.style.flexShrink = "0";
-                    this._patternEditor.container.style.flexShrink = "0";
-                    this._patternEditorNext.container.style.flexShrink = "0";
-                    this._patternEditorPrev.container.style.display = "";
-                    this._patternEditorNext.container.style.display = "";
-                    this._patternEditorPrev.render();
-                    this._patternEditorNext.render();
-                    this._zoomInButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._zoomOutButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._zoomInButton.style.right = prefs.showScrollBar ? "24px" : "4px";
-                    this._zoomOutButton.style.right = prefs.showScrollBar ? "24px" : "4px";
+                this._instrumentCopyGroup.style.display = this._doc.prefs.instrumentCopyPaste ? "" : "none";
+                this._instrumentExportGroup.style.display = this._doc.prefs.instrumentImportExport ? "" : "none";
+                if (document.getElementById('text-content'))
+                    document.getElementById('text-content').style.display = this._doc.prefs.showDescription ? "" : "none";
+                if (!isMobile) {
+                    if (this._doc.getFullScreen()) {
+                        const semitoneHeight = this._patternEditorRow.clientHeight / this._doc.getVisiblePitchCount();
+                        const targetBeatWidth = semitoneHeight * 5;
+                        const minBeatWidth = this._patternEditorRow.clientWidth / (this._doc.song.beatsPerBar * 3);
+                        const maxBeatWidth = this._patternEditorRow.clientWidth / (this._doc.song.beatsPerBar + 2);
+                        const beatWidth = Math.max(minBeatWidth, Math.min(maxBeatWidth, targetBeatWidth));
+                        const patternEditorWidth = beatWidth * this._doc.song.beatsPerBar;
+                        this._patternEditorPrev.container.style.width = patternEditorWidth + "px";
+                        this._patternEditor.container.style.width = patternEditorWidth + "px";
+                        this._patternEditorNext.container.style.width = patternEditorWidth + "px";
+                        this._patternEditorPrev.container.style.flexShrink = "0";
+                        this._patternEditor.container.style.flexShrink = "0";
+                        this._patternEditorNext.container.style.flexShrink = "0";
+                        this._patternEditorPrev.container.style.display = "";
+                        this._patternEditorNext.container.style.display = "";
+                        this._patternEditorPrev.render();
+                        this._patternEditorNext.render();
+                        this._zoomInButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._zoomOutButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._zoomInButton.style.right = prefs.showScrollBar ? "24px" : "4px";
+                        this._zoomOutButton.style.right = prefs.showScrollBar ? "24px" : "4px";
+                        this._undoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._redoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._copyPatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._pastePatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._insertChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._deleteChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._selectAllButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._duplicateButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._loopBarButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._undoButton.style.left = prefs.showScrollBar ? "40px" : "40px";
+                        this._redoButton.style.left = prefs.showScrollBar ? "70px" : "70px";
+                        this._copyPatternButton.style.left = prefs.showScrollBar ? "40px" : "40px";
+                        this._pastePatternButton.style.left = prefs.showScrollBar ? "70px" : "70px";
+                        this._insertChannelButton.style.left = prefs.showScrollBar ? "40px" : "40px";
+                        this._deleteChannelButton.style.left = prefs.showScrollBar ? "70px" : "70px";
+                        this._selectAllButton.style.left = prefs.showScrollBar ? "40px" : "40px";
+                        this._duplicateButton.style.left = prefs.showScrollBar ? "70px" : "70px";
+                        this._notesUpButton.style.left = prefs.showScrollBar ? "40px" : "40px";
+                        this._notesDownButton.style.left = prefs.showScrollBar ? "70px" : "70px";
+                        this._loopBarButton.style.left = prefs.showScrollBar ? "40px" : "40px";
+                        this._fullscreenButton.style.display = "none";
+                    }
+                    else {
+                        this._patternEditor.container.style.width = "";
+                        this._patternEditor.container.style.flexShrink = "";
+                        this._patternEditorPrev.container.style.display = "none";
+                        this._patternEditorNext.container.style.display = "none";
+                        this._zoomInButton.style.display = "none";
+                        this._zoomOutButton.style.display = "none";
+                        this._undoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._redoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._copyPatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._pastePatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._insertChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._deleteChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._selectAllButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._duplicateButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._notesUpButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._notesDownButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._loopBarButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        this._undoButton.style.left = prefs.showScrollBar ? "-80px" : "-80px";
+                        this._redoButton.style.left = prefs.showScrollBar ? "-50px" : "-50px";
+                        this._copyPatternButton.style.left = prefs.showScrollBar ? "-80px" : "-80px";
+                        this._pastePatternButton.style.left = prefs.showScrollBar ? "-50px" : "-50px";
+                        this._insertChannelButton.style.left = prefs.showScrollBar ? "-80px" : "-80px";
+                        this._deleteChannelButton.style.left = prefs.showScrollBar ? "-50px" : "-50px";
+                        this._selectAllButton.style.left = prefs.showScrollBar ? "-80px" : "-80px";
+                        this._duplicateButton.style.left = prefs.showScrollBar ? "-50px" : "-50px";
+                        this._notesUpButton.style.left = prefs.showScrollBar ? "-80px" : "-80px";
+                        this._notesDownButton.style.left = prefs.showScrollBar ? "-50px" : "-50px";
+                        this._loopBarButton.style.left = prefs.showScrollBar ? "-50px" : "-50px";
+                        this._fullscreenButton.style.display = "none";
+                    }
                 }
                 else {
                     this._patternEditor.container.style.width = "";
                     this._patternEditor.container.style.flexShrink = "";
                     this._patternEditorPrev.container.style.display = "none";
                     this._patternEditorNext.container.style.display = "none";
+                    this._undoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._redoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._copyPatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._pastePatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._insertChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._deleteChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._selectAllButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._duplicateButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._notesUpButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._notesDownButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._loopBarButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._undoButton.style.top = prefs.showScrollBar ? "0px" : "0px";
+                    this._undoButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._redoButton.style.top = prefs.showScrollBar ? "30px" : "30px";
+                    this._redoButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._copyPatternButton.style.top = prefs.showScrollBar ? "60px" : "60px";
+                    this._copyPatternButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._pastePatternButton.style.top = prefs.showScrollBar ? "90px" : "90px";
+                    this._pastePatternButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._insertChannelButton.style.top = prefs.showScrollBar ? "120px" : "120px";
+                    this._insertChannelButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._deleteChannelButton.style.top = prefs.showScrollBar ? "150px" : "150px";
+                    this._deleteChannelButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._selectAllButton.style.top = prefs.showScrollBar ? "180px" : "180px";
+                    this._selectAllButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._duplicateButton.style.top = prefs.showScrollBar ? "210px" : "210px";
+                    this._duplicateButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._notesUpButton.style.top = prefs.showScrollBar ? "240px" : "240px";
+                    this._notesUpButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._notesDownButton.style.top = prefs.showScrollBar ? "270px" : "270px";
+                    this._notesDownButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._loopBarButton.style.top = prefs.showScrollBar ? "300px" : "300px";
+                    this._loopBarButton.style.left = prefs.showScrollBar ? "2px" : "2px";
+                    this._fullscreenButton.style.display = "none";
                     this._zoomInButton.style.display = "none";
                     this._zoomOutButton.style.display = "none";
+                    this._patternArea.style.paddingLeft = prefs.showScrollBar ? "32px" : "32px";
+                    beepboxEditorContainer$1.style.paddingTop = "0px";
                 }
                 this._patternEditor.render();
+                const textOnIcon = ColorConfig.getComputed("--text-enabled-icon") !== "" ? ColorConfig.getComputed("--text-enabled-icon") : "✓ ";
+                const textOffIcon = ColorConfig.getComputed("--text-disabled-icon") !== "" ? ColorConfig.getComputed("--text-disabled-icon") : "　";
                 const optionCommands = [
-                    (prefs.autoPlay ? "✓ " : "　") + "Auto Play on Load",
-                    (prefs.autoFollow ? "✓ " : "　") + "Keep Current Pattern Selected",
-                    (prefs.enableNotePreview ? "✓ " : "　") + "Hear Preview of Added Notes",
-                    (prefs.showLetters ? "✓ " : "　") + "Show Piano Keys",
-                    (prefs.showFifth ? "✓ " : "　") + 'Highlight "Fifth" of Song Key',
-                    (prefs.notesOutsideScale ? "✓ " : "　") + "Allow Adding Notes Not in Scale",
-                    (prefs.defaultScale == this._doc.song.scale ? "✓ " : "　") + "Use Current Scale as Default",
-                    (prefs.showChannels ? "✓ " : "　") + "Show Notes From All Channels",
-                    (prefs.showScrollBar ? "✓ " : "　") + "Show Octave Scroll Bar",
-                    (prefs.alwaysFineNoteVol ? "✓ " : "　") + "Always Fine Note Volume",
-                    (prefs.enableChannelMuting ? "✓ " : "　") + "Enable Channel Muting",
-                    (prefs.displayBrowserUrl ? "✓ " : "　") + "Display Song Data in URL",
-                    (prefs.displayVolumeBar ? "✓ " : "　") + "Show Playback Volume",
-                    (prefs.showOscilloscope ? "✓ " : "　") + "Show Oscilloscope",
-                    (prefs.showSampleLoadingStatus ? "✓ " : "　") + "Show Sample Loading Status",
-                    (prefs.closePromptByClickoff ? "✓ " : "　") + "Close prompts on click off",
-                    "　Set Layout...",
-                    "　Set Theme...",
-                    "　Custom Theme...",
-                    "　Set Up Note Recording...",
+                    (prefs.autoPlay ? textOnIcon : textOffIcon) + "Auto Play on Load",
+                    (prefs.autoFollow ? textOnIcon : textOffIcon) + "Auto Follow Playhead",
+                    (prefs.enableNotePreview ? textOnIcon : textOffIcon) + "Hear Added Notes",
+                    (prefs.notesOutsideScale ? textOnIcon : textOffIcon) + "Place Notes Out of Scale",
+                    (prefs.defaultScale == this._doc.song.scale ? textOnIcon : textOffIcon) + "Set Current Scale as Default",
+                    (prefs.alwaysFineNoteVol ? textOnIcon : textOffIcon) + "Always Fine Note Volume",
+                    (prefs.enableChannelMuting ? textOnIcon : textOffIcon) + "Enable Channel Muting",
+                    (prefs.instrumentCopyPaste ? textOnIcon : textOffIcon) + "Enable Copy/Paste Buttons",
+                    (prefs.instrumentImportExport ? textOnIcon : textOffIcon) + "Enable Import/Export Buttons",
+                    (prefs.displayBrowserUrl ? textOnIcon : textOffIcon) + "Enable Song Data in URL",
+                    (prefs.closePromptByClickoff ? textOnIcon : textOffIcon) + "Close Prompts on Click Off",
+                    (prefs.showFifth ? textOnIcon : textOffIcon) + 'Highlight "Fifth" Note',
+                    (prefs.notesFlashWhenPlayed ? textOnIcon : textOffIcon) + "Notes Flash When Played (DB2)",
+                    (prefs.showChannels ? textOnIcon : textOffIcon) + "Show All Channels",
+                    (prefs.showScrollBar ? textOnIcon : textOffIcon) + "Show Octave Scroll Bar",
+                    (prefs.showLetters ? textOnIcon : textOffIcon) + "Show Piano Keys",
+                    (prefs.displayVolumeBar ? textOnIcon : textOffIcon) + "Show Playback Volume",
+                    (prefs.showOscilloscope ? textOnIcon : textOffIcon) + "Show Oscilloscope",
+                    (prefs.showSampleLoadingStatus ? textOnIcon : textOffIcon) + "Show Sample Loading Status",
+                    (prefs.showDescription ? textOnIcon : textOffIcon) + "Show Description",
+                    "> Set Layout",
+                    "> Set Theme",
+                    "> Note Recording",
                 ];
                 for (let i = 0; i < optionCommands.length; i++) {
                     const option = this._optionsMenu.children[i + 1];
@@ -40330,7 +46743,7 @@ You should be redirected to the song at:<br /><br />
                 for (let i = 0; i < Config.effectOrder.length; i++) {
                     let effectFlag = Config.effectOrder[i];
                     const selected = ((instrument.effects & (1 << effectFlag)) != 0);
-                    const label = (selected ? "✓ " : "　") + Config.effectNames[effectFlag];
+                    const label = (selected ? textOnIcon : textOffIcon) + Config.effectNames[effectFlag];
                     const option = this._effectsSelect.children[i + 1];
                     if (option.textContent != label)
                         option.textContent = label;
@@ -40368,7 +46781,8 @@ You should be redirected to the song at:<br /><br />
                     this._detuneSliderRow.style.display = "";
                     this._instrumentVolumeSliderRow.style.display = "";
                     this._instrumentTypeSelectRow.style.setProperty("display", "");
-                    this._instrumentSettingsGroup.appendChild(this._instrumentCopyGroup);
+                    this._instrumentSettingsGroup.insertBefore(this._instrumentExportGroup, this._instrumentSettingsGroup.firstChild);
+                    this._instrumentSettingsGroup.insertBefore(this._instrumentCopyGroup, this._instrumentSettingsGroup.firstChild);
                     this._instrumentSettingsGroup.insertBefore(this._instrumentsButtonRow, this._instrumentSettingsGroup.firstChild);
                     this._instrumentSettingsGroup.insertBefore(this._instrumentSettingsTextRow, this._instrumentSettingsGroup.firstChild);
                     if (this._doc.song.channels[this._doc.channel].name == "") {
@@ -40384,14 +46798,14 @@ You should be redirected to the song at:<br /><br />
                         this._drumPresetSelect.style.display = "";
                         $("#pitchPresetSelect").parent().hide();
                         $("#drumPresetSelect").parent().show();
-                        setSelectedValue(this._drumPresetSelect, instrument.preset);
+                        setSelectedValue(this._drumPresetSelect, instrument.preset, true);
                     }
                     else {
                         this._pitchedPresetSelect.style.display = "";
                         this._drumPresetSelect.style.display = "none";
                         $("#pitchPresetSelect").parent().show();
                         $("#drumPresetSelect").parent().hide();
-                        setSelectedValue(this._pitchedPresetSelect, instrument.preset);
+                        setSelectedValue(this._pitchedPresetSelect, instrument.preset, true);
                     }
                     if (instrument.type == 2) {
                         this._chipWaveSelectRow.style.display = "none";
@@ -40402,7 +46816,7 @@ You should be redirected to the song at:<br /><br />
                         this._chipWaveStartOffsetRow.style.display = "none";
                         this._chipWavePlayBackwardsRow.style.display = "none";
                         this._chipNoiseSelectRow.style.display = "";
-                        setSelectedValue(this._chipNoiseSelect, instrument.chipNoise);
+                        setSelectedValue(this._chipNoiseSelect, instrument.chipNoise, true);
                     }
                     else {
                         this._chipNoiseSelectRow.style.display = "none";
@@ -40445,6 +46859,7 @@ You should be redirected to the song at:<br /><br />
                         this._chipWavePlayBackwardsRow.style.display = "none";
                         this._stringSustainRow.style.display = "";
                         this._stringSustainSlider.updateValue(instrument.stringSustain);
+                        this._stringSustainLabel.textContent = Config.enableAcousticSustain ? "Sustain (" + Config.sustainTypeNames[instrument.stringSustainType].substring(0, 1).toUpperCase() + "):" : "Sustain:";
                     }
                     else {
                         this._stringSustainRow.style.display = "none";
@@ -40494,7 +46909,7 @@ You should be redirected to the song at:<br /><br />
                         this._chipWaveStartOffsetStepper.value = instrument.chipWaveStartOffset + "";
                         this._chipWavePlayBackwardsBox.checked = instrument.chipWavePlayBackwards ? true : false;
                     }
-                    if (instrument.type == 8) {
+                    if (instrument.type == 9) {
                         this._customWaveDraw.style.display = "";
                         this._chipWaveSelectRow.style.display = "none";
                         this._useChipWaveAdvancedLoopControlsRow.style.display = "none";
@@ -40507,7 +46922,20 @@ You should be redirected to the song at:<br /><br />
                     else {
                         this._customWaveDraw.style.display = "none";
                     }
-                    if (instrument.type == 6) {
+                    if (instrument.type == 8) {
+                        this._supersawDynamismRow.style.display = "";
+                        this._supersawSpreadRow.style.display = "";
+                        this._supersawShapeRow.style.display = "";
+                        this._supersawDynamismSlider.updateValue(instrument.supersawDynamism);
+                        this._supersawSpreadSlider.updateValue(instrument.supersawSpread);
+                        this._supersawShapeSlider.updateValue(instrument.supersawShape);
+                    }
+                    else {
+                        this._supersawDynamismRow.style.display = "none";
+                        this._supersawSpreadRow.style.display = "none";
+                        this._supersawShapeRow.style.display = "none";
+                    }
+                    if (instrument.type == 6 || instrument.type == 8) {
                         this._chipWaveSelectRow.style.display = "none";
                         this._useChipWaveAdvancedLoopControlsRow.style.display = "none";
                         this._chipWaveLoopModeSelectRow.style.display = "none";
@@ -40526,7 +46954,7 @@ You should be redirected to the song at:<br /><br />
                         this._pulseWidthRow.style.display = "none";
                         this._pulseWidthDropdownGroup.style.display = "none";
                     }
-                    if (instrument.type == 1 || instrument.type == 10) {
+                    if (instrument.type == 1 || instrument.type == 11) {
                         this._phaseModGroup.style.display = "";
                         this._feedbackRow2.style.display = "";
                         this._chipWaveSelectRow.style.display = "none";
@@ -40539,7 +46967,7 @@ You should be redirected to the song at:<br /><br />
                         setSelectedValue(this._algorithmSelect, instrument.algorithm);
                         setSelectedValue(this._feedbackTypeSelect, instrument.feedbackType);
                         this._feedbackAmplitudeSlider.updateValue(instrument.feedbackAmplitude);
-                        for (let i = 0; i < Config.operatorCount + (instrument.type == 10 ? 2 : 0); i++) {
+                        for (let i = 0; i < Config.operatorCount + (instrument.type == 11 ? 2 : 0); i++) {
                             const isCarrier = instrument.type == 1 ? (i < Config.algorithms[instrument.algorithm].carrierCount) : (i < instrument.customAlgorithm.carrierCount);
                             this._operatorRows[i].style.color = isCarrier ? ColorConfig.primaryText : "";
                             setSelectedValue(this._operatorFrequencySelects[i], instrument.operators[i].frequency);
@@ -40561,7 +46989,7 @@ You should be redirected to the song at:<br /><br />
                                 this._operatorWaveformHints[i].style.display = "";
                             }
                         }
-                        if (instrument.type == 10) {
+                        if (instrument.type == 11) {
                             setSelectedValue(this._algorithm6OpSelect, instrument.algorithm6Op);
                             setSelectedValue(this._feedback6OpTypeSelect, instrument.feedbackType6Op);
                             this._customAlgorithmCanvas.redrawCanvas();
@@ -40593,35 +47021,7 @@ You should be redirected to the song at:<br /><br />
                         this._feedbackRow1.style.display = "none";
                         this._feedbackRow2.style.display = "none";
                     }
-                    if (instrument.type == 11) {
-                        this._chipWaveSelectRow.style.display = "none";
-                        this._useChipWaveAdvancedLoopControlsRow.style.display = "none";
-                        this._supersawDynamismRow.style.display = "";
-                        this._supersawSpreadRow.style.display = "";
-                        this._supersawShapeRow.style.display = "";
-                        this._supersawDynamismSlider.updateValue(instrument.supersawDynamism);
-                        this._supersawSpreadSlider.updateValue(instrument.supersawSpread);
-                        this._supersawShapeSlider.updateValue(instrument.supersawShape);
-                    }
-                    else {
-                        this._supersawDynamismRow.style.display = "none";
-                        this._supersawSpreadRow.style.display = "none";
-                        this._supersawShapeRow.style.display = "none";
-                    }
-                    if (instrument.type == 6 || instrument.type == 11) {
-                        this._pulseWidthRow.style.display = "";
-                        this._pulseWidthSlider.input.title = prettyNumber(getPulseWidthRatio(instrument.pulseWidth) * 100) + "%";
-                        this._pulseWidthSlider.updateValue(instrument.pulseWidth);
-                        this._pulseWidthRow.style.display = "";
-                        this._pulseWidthSlider.input.title = prettyNumber(instrument.pulseWidth) + "%";
-                        this._pulseWidthSlider.updateValue(instrument.pulseWidth);
-                        this._decimalOffsetSlider.input.title = (Number(prettyNumber(instrument.decimalOffset)) / 100) <= 0 ? "none" : "-" + (Number(prettyNumber(instrument.decimalOffset)) / 100) + "%";
-                        this._decimalOffsetSlider.updateValue(instrument.decimalOffset);
-                        this._pulseWidthDropdownGroup.style.display = (this._openPulseWidthDropdown ? "" : "none");
-                    }
-                    else {
-                        this._pulseWidthRow.style.display = "none";
-                    }
+                    this._pulseWidthSlider.input.title = prettyNumber(instrument.pulseWidth) + "%";
                     if (effectsIncludeTransition(instrument.effects)) {
                         this._transitionRow.style.display = "";
                         if (this._openTransitionDropdown)
@@ -40678,7 +47078,12 @@ You should be redirected to the song at:<br /><br />
                         this._noteFilterTypeRow.style.setProperty("--background-color-lit", colors.primaryChannel);
                         this._noteFilterTypeRow.style.setProperty("--background-color-dim", colors.secondaryChannel);
                         this._noteFilterTypeRow.style.display = "";
-                        this._noteFilterEditor.render();
+                        if (this._doc.synth.isFilterModActive(true, this._doc.channel, this._doc.getCurrentInstrument())) {
+                            this._noteFilterEditor.render(true, this._ctrlHeld || this._shiftHeld);
+                        }
+                        else {
+                            this._noteFilterEditor.render();
+                        }
                         if (instrument.noteFilterType) {
                             this._noteFilterSimpleButton.classList.remove("deactivated");
                             this._noteFilterAdvancedButton.classList.add("deactivated");
@@ -40702,7 +47107,7 @@ You should be redirected to the song at:<br /><br />
                     }
                     if (effectsIncludeDistortion(instrument.effects)) {
                         this._distortionRow.style.display = "";
-                        if (instrument.type == 0 || instrument.type == 8 || instrument.type == 6)
+                        if (instrument.type == 0 || instrument.type == 9 || instrument.type == 6 || instrument.type == 8)
                             this._aliasingRow.style.display = "";
                         else
                             this._aliasingRow.style.display = "none";
@@ -40757,7 +47162,7 @@ You should be redirected to the song at:<br /><br />
                     else {
                         this._reverbRow.style.display = "none";
                     }
-                    if (instrument.type == 0 || instrument.type == 8 || instrument.type == 5 || instrument.type == 7) {
+                    if (instrument.type == 0 || instrument.type == 9 || instrument.type == 5 || instrument.type == 7) {
                         this._unisonSelectRow.style.display = "";
                         setSelectedValue(this._unisonSelect, instrument.unison);
                         this._unisonVoicesInputBox.value = instrument.unisonVoices + "";
@@ -40771,6 +47176,10 @@ You should be redirected to the song at:<br /><br />
                         this._unisonSelectRow.style.display = "none";
                         this._unisonDropdownGroup.style.display = "none";
                     }
+                    if (this._openEnvelopeDropdown)
+                        this._envelopeDropdownGroup.style.display = "";
+                    else
+                        this._envelopeDropdownGroup.style.display = "none";
                     this._envelopeEditor.render();
                     for (let chordIndex = 0; chordIndex < Config.chords.length; chordIndex++) {
                         let hidden = (!Config.instrumentTypeHasSpecialInterval[instrument.type] && Config.chords[chordIndex].customInterval);
@@ -40790,6 +47199,7 @@ You should be redirected to the song at:<br /><br />
                     setSelectedValue(this._vibratoTypeSelect, instrument.vibratoType);
                     setSelectedValue(this._chordSelect, instrument.chord);
                     this._panSliderInputBox.value = instrument.pan + "";
+                    this._pwmSliderInputBox.value = instrument.pulseWidth + "";
                     this._detuneSliderInputBox.value = (instrument.detune - Config.detuneCenter) + "";
                     this._instrumentVolumeSlider.updateValue(instrument.volume);
                     this._instrumentVolumeSliderInputBox.value = "" + (instrument.volume);
@@ -40801,14 +47211,19 @@ You should be redirected to the song at:<br /><br />
                     this._panDelaySlider.updateValue(instrument.panDelay);
                     this._vibratoDelaySlider.input.title = "" + Math.round(instrument.vibratoDelay);
                     this._vibratoDepthSlider.input.title = "" + instrument.vibratoDepth;
-                    this._vibratoSpeedSlider.input.title = "" + instrument.vibratoSpeed;
+                    this._vibratoSpeedSlider.input.title = "x" + instrument.vibratoSpeed / 10;
+                    this._vibratoSpeedDisplay.textContent = "x" + instrument.vibratoSpeed / 10;
                     this._panDelaySlider.input.title = "" + instrument.panDelay;
                     this._arpeggioSpeedSlider.input.title = "x" + prettyNumber(Config.arpSpeedScale[instrument.arpeggioSpeed]);
+                    this._arpeggioSpeedDisplay.textContent = "x" + prettyNumber(Config.arpSpeedScale[instrument.arpeggioSpeed]);
                     this._eqFilterSimpleCutSlider.updateValue(instrument.eqFilterSimpleCut);
                     this._eqFilterSimplePeakSlider.updateValue(instrument.eqFilterSimplePeak);
                     this._noteFilterSimpleCutSlider.updateValue(instrument.noteFilterSimpleCut);
                     this._noteFilterSimplePeakSlider.updateValue(instrument.noteFilterSimplePeak);
-                    if (instrument.type == 8) {
+                    this._envelopeSpeedSlider.updateValue(instrument.envelopeSpeed);
+                    this._envelopeSpeedSlider.input.title = "x" + prettyNumber(Config.arpSpeedScale[instrument.envelopeSpeed]);
+                    this._envelopeSpeedDisplay.textContent = "x" + prettyNumber(Config.arpSpeedScale[instrument.envelopeSpeed]);
+                    if (instrument.type == 9) {
                         this._customWaveDrawCanvas.redrawCanvas();
                         if (this.prompt instanceof CustomChipPrompt) {
                             this.prompt.customChipCanvas.render();
@@ -40822,7 +47237,8 @@ You should be redirected to the song at:<br /><br />
                     this._drumPresetSelect.style.display = "none";
                     $("#pitchPresetSelect").parent().hide();
                     $("#drumPresetSelect").parent().hide();
-                    this._modulatorGroup.appendChild(this._instrumentCopyGroup);
+                    this._modulatorGroup.insertBefore(this._instrumentExportGroup, this._modulatorGroup.firstChild);
+                    this._modulatorGroup.insertBefore(this._instrumentCopyGroup, this._modulatorGroup.firstChild);
                     this._modulatorGroup.insertBefore(this._instrumentsButtonRow, this._modulatorGroup.firstChild);
                     this._modulatorGroup.insertBefore(this._instrumentSettingsTextRow, this._modulatorGroup.firstChild);
                     if (this._doc.song.channels[this._doc.channel].name == "") {
@@ -40846,6 +47262,9 @@ You should be redirected to the song at:<br /><br />
                     this._chordDropdownGroup.style.display = "none";
                     this._drumsetGroup.style.display = "none";
                     this._customWaveDraw.style.display = "none";
+                    this._supersawDynamismRow.style.display = "none";
+                    this._supersawSpreadRow.style.display = "none";
+                    this._supersawShapeRow.style.display = "none";
                     this._algorithmSelectRow.style.display = "none";
                     this._phaseModGroup.style.display = "none";
                     this._feedbackRow1.style.display = "none";
@@ -40853,6 +47272,7 @@ You should be redirected to the song at:<br /><br />
                     this._pulseWidthRow.style.display = "none";
                     this._vibratoSelectRow.style.display = "none";
                     this._vibratoDropdownGroup.style.display = "none";
+                    this._envelopeDropdownGroup.style.display = "none";
                     this._detuneSliderRow.style.display = "none";
                     this._panSliderRow.style.display = "none";
                     this._panDropdownGroup.style.display = "none";
@@ -40867,7 +47287,6 @@ You should be redirected to the song at:<br /><br />
                         if (modInstrument >= this._doc.song.channels[modChannel].instruments.length + 2 || (modInstrument > 0 && this._doc.song.channels[modChannel].instruments.length <= 1)) {
                             modInstrument = 0;
                             instrument.modInstruments[mod] = 0;
-                            instrument.modulators[mod] = 0;
                         }
                         if (modChannel >= this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount) {
                             instrument.modInstruments[mod] = 0;
@@ -40944,7 +47363,7 @@ You should be redirected to the song at:<br /><br />
                                 settingList.push("note volume");
                                 settingList.push("mix volume");
                                 let tgtInstrumentTypes = [];
-                                let anyInstrumentAdvancedEQ = false, anyInstrumentSimpleEQ = false, anyInstrumentAdvancedNote = false, anyInstrumentSimpleNote = false, anyInstrumentArps = false, anyInstrumentPitchShifts = false, anyInstrumentDetunes = false, anyInstrumentVibratos = false, anyInstrumentNoteFilters = false, anyInstrumentDistorts = false, anyInstrumentBitcrushes = false, anyInstrumentPans = false, anyInstrumentChorus = false, anyInstrumentEchoes = false, anyInstrumentReverbs = false;
+                                let anyInstrumentAdvancedEQ = false, anyInstrumentSimpleEQ = false, anyInstrumentAdvancedNote = false, anyInstrumentSimpleNote = false, anyInstrumentArps = false, anyInstrumentPitchShifts = false, anyInstrumentDetunes = false, anyInstrumentVibratos = false, anyInstrumentNoteFilters = false, anyInstrumentDistorts = false, anyInstrumentBitcrushes = false, anyInstrumentPans = false, anyInstrumentChorus = false, anyInstrumentEchoes = false, anyInstrumentReverbs = false, anyInstrumentHasEnvelopes = false;
                                 let allInstrumentNoteFilters = true, allInstrumentDetunes = true, allInstrumentVibratos = true, allInstrumentDistorts = true, allInstrumentBitcrushes = true, allInstrumentPans = true, allInstrumentChorus = true, allInstrumentEchoes = true, allInstrumentReverbs = true;
                                 let instrumentCandidates = [];
                                 if (modInstrument >= channel.instruments.length) {
@@ -41027,6 +47446,9 @@ You should be redirected to the song at:<br /><br />
                                     else {
                                         allInstrumentReverbs = false;
                                     }
+                                    if (channel.instruments[instrumentIndex].envelopes.length > 0) {
+                                        anyInstrumentHasEnvelopes = true;
+                                    }
                                 }
                                 if (anyInstrumentAdvancedEQ) {
                                     settingList.push("eq filter");
@@ -41042,7 +47464,7 @@ You should be redirected to the song at:<br /><br />
                                     settingList.push("fm slider 4");
                                     settingList.push("fm feedback");
                                 }
-                                if (tgtInstrumentTypes.includes(10)) {
+                                if (tgtInstrumentTypes.includes(11)) {
                                     settingList.push("fm slider 1");
                                     settingList.push("fm slider 2");
                                     settingList.push("fm slider 3");
@@ -41051,18 +47473,17 @@ You should be redirected to the song at:<br /><br />
                                     settingList.push("fm slider 6");
                                     settingList.push("fm feedback");
                                 }
-                                if (tgtInstrumentTypes.includes(6)) {
+                                if (tgtInstrumentTypes.includes(6) || tgtInstrumentTypes.includes(8)) {
                                     settingList.push("pulse width");
                                     settingList.push("decimal offset");
                                 }
-                                if (tgtInstrumentTypes.includes(7)) {
-                                    settingList.push("sustain");
-                                }
-                                if (tgtInstrumentTypes.includes(11)) {
-                                    settingList.push("pulse width");
+                                if (tgtInstrumentTypes.includes(8)) {
                                     settingList.push("dynamism");
                                     settingList.push("spread");
-                                    settingList.push("shape");
+                                    settingList.push("saw shape");
+                                }
+                                if (tgtInstrumentTypes.includes(7)) {
+                                    settingList.push("sustain");
                                 }
                                 if (anyInstrumentArps) {
                                     settingList.push("arp speed");
@@ -41139,6 +47560,9 @@ You should be redirected to the song at:<br /><br />
                                 if (!allInstrumentReverbs) {
                                     unusedSettingList.push("+ reverb");
                                 }
+                                if (anyInstrumentHasEnvelopes) {
+                                    settingList.push("envelope speed");
+                                }
                             }
                             buildOptions(this._modSetBoxes[mod], settingList);
                             if (unusedSettingList.length > 0) {
@@ -41209,8 +47633,8 @@ You should be redirected to the song at:<br /><br />
                                 }
                             }
                             let dotCount = (filterType == "eq filter")
-                                ? channel.instruments[useInstrument].eqFilter.controlPointCount
-                                : channel.instruments[useInstrument].noteFilter.controlPointCount;
+                                ? channel.instruments[useInstrument].getLargestControlPointCount(false)
+                                : channel.instruments[useInstrument].getLargestControlPointCount(true);
                             const isSimple = (filterType == "eq filter" ? channel.instruments[useInstrument].eqFilterType : channel.instruments[useInstrument].noteFilterType);
                             if (isSimple)
                                 dotCount = 0;
@@ -41267,13 +47691,19 @@ You should be redirected to the song at:<br /><br />
                     this._renderInstrumentBar(channel, instrumentIndex, colors);
                 }
                 this._instrumentSettingsGroup.style.color = colors.primaryNote;
-                this._eqFilterEditor.render();
+                if (this._doc.synth.isFilterModActive(false, this._doc.channel, this._doc.getCurrentInstrument())) {
+                    this._eqFilterEditor.render(true, this._ctrlHeld || this._shiftHeld);
+                }
+                else {
+                    this._eqFilterEditor.render();
+                }
                 this._instrumentVolumeSlider.updateValue(instrument.volume);
                 this._detuneSlider.updateValue(instrument.detune - Config.detuneCenter);
                 this._twoNoteArpBox.checked = instrument.fastTwoNoteArp ? true : false;
                 this._clicklessTransitionBox.checked = instrument.clicklessTransition ? true : false;
                 this._aliasingBox.checked = instrument.aliases ? true : false;
                 this._addEnvelopeButton.disabled = (instrument.envelopeCount >= Config.maxEnvelopeCount);
+                this._discreteEnvelopeBox.checked = instrument.discreteEnvelope ? true : false;
                 this._volumeSlider.updateValue(prefs.volume);
                 if (wasActive && activeElement != null && activeElement.clientWidth == 0) {
                     this.refocusStage();
@@ -41295,6 +47725,7 @@ You should be redirected to the song at:<br /><br />
                     this._settingsArea.scrollTop = this._settingsArea.scrollHeight;
                     this._doc.addedEnvelope = false;
                 }
+                this.handleModRecording();
             };
             this.updatePlayButton = () => {
                 if (this._renderedIsPlaying != this._doc.synth.playing || this._renderedIsRecording != this._doc.synth.recording || this._renderedShowRecordButton != this._doc.prefs.showRecordButton || this._renderedCtrlHeld != this._ctrlHeld) {
@@ -41358,6 +47789,9 @@ You should be redirected to the song at:<br /><br />
                 }
                 window.requestAnimationFrame(this.updatePlayButton);
             };
+            this._onTrackAreaScroll = (event) => {
+                this._doc.barScrollPos = (this._trackAndMuteContainer.scrollLeft / this._doc.getBarWidth());
+            };
             this._disableCtrlContextMenu = (event) => {
                 if (event.ctrlKey) {
                     event.preventDefault();
@@ -41389,6 +47823,7 @@ You should be redirected to the song at:<br /><br />
             };
             this._whenKeyPressed = (event) => {
                 this._ctrlHeld = event.ctrlKey;
+                this._shiftHeld = event.shiftKey;
                 if (this.prompt) {
                     if (this.prompt instanceof CustomChipPrompt || this.prompt instanceof LimiterPrompt || this.prompt instanceof CustomScalePrompt || this.prompt instanceof CustomFilterPrompt) {
                         this.prompt.whenKeyPressed(event);
@@ -41406,6 +47841,7 @@ You should be redirected to the song at:<br /><br />
                     return;
                 }
                 if (document.activeElement == this._panSliderInputBox
+                    || document.activeElement == this._pwmSliderInputBox
                     || document.activeElement == this._detuneSliderInputBox
                     || document.activeElement == this._instrumentVolumeSliderInputBox
                     || document.activeElement == this._chipWaveLoopStartStepper
@@ -41464,6 +47900,8 @@ You should be redirected to the song at:<br /><br />
                                 if (!this._doc.synth.playing)
                                     this._doc.performance.play();
                             }
+                            this._doc.synth.loopBar = -1;
+                            this._loopEditor.setLoopAt(this._doc.synth.loopBar);
                         }
                         else {
                             this.togglePlay();
@@ -41476,6 +47914,8 @@ You should be redirected to the song at:<br /><br />
                             break;
                         if (event.ctrlKey || event.metaKey) {
                             this._toggleRecord();
+                            this._doc.synth.loopBar = -1;
+                            this._loopEditor.setLoopAt(this._doc.synth.loopBar);
                             event.preventDefault();
                             this.refocusStage();
                         }
@@ -41528,6 +47968,38 @@ You should be redirected to the song at:<br /><br />
                         this._doc.redo();
                         event.preventDefault();
                         break;
+                    case 66:
+                        if (canPlayNotes)
+                            break;
+                        if (needControlForShortcuts == (event.ctrlKey || event.metaKey)) {
+                            if (event.shiftKey) {
+                                if (this._doc.synth.loopBar != this._doc.bar) {
+                                    this._doc.synth.loopBar = this._doc.bar;
+                                    if (!this._doc.synth.playing) {
+                                        this._doc.synth.snapToBar();
+                                        this._doc.performance.play();
+                                    }
+                                }
+                                else {
+                                    this._doc.synth.loopBar = -1;
+                                }
+                                if (this._doc.bar != Math.floor(this._doc.synth.playhead) && this._doc.synth.loopBar != -1) {
+                                    this._doc.synth.goToBar(this._doc.bar);
+                                    this._doc.synth.snapToBar();
+                                    this._doc.synth.initModFilters(this._doc.song);
+                                    this._doc.synth.computeLatestModValues();
+                                    if (this._doc.prefs.autoFollow) {
+                                        this._doc.selection.setChannelBar(this._doc.channel, Math.floor(this._doc.synth.playhead));
+                                    }
+                                }
+                                this._loopEditor.setLoopAt(this._doc.synth.loopBar);
+                            }
+                            else {
+                                this._openPrompt("beatsPerBar");
+                            }
+                        }
+                        event.preventDefault();
+                        break;
                     case 67:
                         if (canPlayNotes)
                             break;
@@ -41542,6 +48014,8 @@ You should be redirected to the song at:<br /><br />
                         event.preventDefault();
                         break;
                     case 13:
+                        this._doc.synth.loopBar = -1;
+                        this._loopEditor.setLoopAt(this._doc.synth.loopBar);
                         if (event.ctrlKey || event.metaKey) {
                             this._doc.selection.insertChannel();
                         }
@@ -41551,6 +48025,8 @@ You should be redirected to the song at:<br /><br />
                         event.preventDefault();
                         break;
                     case 8:
+                        this._doc.synth.loopBar = -1;
+                        this._loopEditor.setLoopAt(this._doc.synth.loopBar);
                         if (event.ctrlKey || event.metaKey) {
                             this._doc.selection.deleteChannel();
                         }
@@ -41594,7 +48070,10 @@ You should be redirected to the song at:<br /><br />
                         if (canPlayNotes)
                             break;
                         if (needControlForShortcuts == (event.ctrlKey || event.metaKey)) {
+                            this._doc.synth.loopBar = -1;
+                            this._loopEditor.setLoopAt(this._doc.synth.loopBar);
                             this._doc.synth.snapToStart();
+                            this._doc.synth.initModFilters(this._doc.song);
                             this._doc.synth.computeLatestModValues();
                             if (this._doc.prefs.autoFollow) {
                                 this._doc.selection.setChannelBar(this._doc.channel, Math.floor(this._doc.synth.playhead));
@@ -41606,8 +48085,13 @@ You should be redirected to the song at:<br /><br />
                         if (canPlayNotes)
                             break;
                         if (needControlForShortcuts == (event.ctrlKey || event.metaKey)) {
+                            if (this._doc.synth.loopBar != this._doc.bar) {
+                                this._doc.synth.loopBar = -1;
+                                this._loopEditor.setLoopAt(this._doc.synth.loopBar);
+                            }
                             this._doc.synth.goToBar(this._doc.bar);
                             this._doc.synth.snapToBar();
+                            this._doc.synth.initModFilters(this._doc.song);
                             this._doc.synth.computeLatestModValues();
                             if (this._doc.prefs.autoFollow) {
                                 this._doc.selection.setChannelBar(this._doc.channel, Math.floor(this._doc.synth.playhead));
@@ -41679,6 +48163,10 @@ You should be redirected to the song at:<br /><br />
                                     group.append(new ChangePatternsPerChannel(this._doc, nextEmpty));
                                 }
                                 group.append(new ChangePatternNumbers(this._doc, nextEmpty, this._doc.bar, this._doc.channel, 1, 1));
+                                if (this._doc.channel >= this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount) {
+                                    this._doc.viewedInstrument[this._doc.channel] = this._doc.recentPatternInstruments[this._doc.channel][0];
+                                }
+                                group.append(new ChangeSetPatternInstruments(this._doc, this._doc.channel, this._doc.recentPatternInstruments[this._doc.channel], this._doc.song.channels[this._doc.channel].patterns[nextEmpty - 1]));
                             }
                         }
                         else {
@@ -41691,6 +48179,10 @@ You should be redirected to the song at:<br /><br />
                                     group.append(new ChangePatternsPerChannel(this._doc, nextUnused));
                                 }
                                 group.append(new ChangePatternNumbers(this._doc, nextUnused, this._doc.bar, this._doc.channel, 1, 1));
+                                if (this._doc.channel >= this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount) {
+                                    this._doc.viewedInstrument[this._doc.channel] = this._doc.recentPatternInstruments[this._doc.channel][0];
+                                }
+                                group.append(new ChangeSetPatternInstruments(this._doc, this._doc.channel, this._doc.recentPatternInstruments[this._doc.channel], this._doc.song.channels[this._doc.channel].patterns[nextUnused - 1]));
                             }
                         }
                         this._doc.record(group);
@@ -41798,7 +48290,11 @@ You should be redirected to the song at:<br /><br />
                         if (canPlayNotes)
                             break;
                         if (needControlForShortcuts == (event.ctrlKey || event.metaKey)) {
+                            this._doc.synth.loopBar = -1;
+                            this._loopEditor.setLoopAt(this._doc.synth.loopBar);
                             this._doc.synth.goToPrevBar();
+                            this._doc.synth.initModFilters(this._doc.song);
+                            this._doc.synth.computeLatestModValues();
                             if (this._doc.prefs.autoFollow) {
                                 this._doc.selection.setChannelBar(this._doc.channel, Math.floor(this._doc.synth.playhead));
                             }
@@ -41809,7 +48305,11 @@ You should be redirected to the song at:<br /><br />
                         if (canPlayNotes)
                             break;
                         if (needControlForShortcuts == (event.ctrlKey || event.metaKey)) {
+                            this._doc.synth.loopBar = -1;
+                            this._loopEditor.setLoopAt(this._doc.synth.loopBar);
                             this._doc.synth.goToNextBar();
+                            this._doc.synth.initModFilters(this._doc.song);
+                            this._doc.synth.computeLatestModValues();
                             if (this._doc.prefs.autoFollow) {
                                 this._doc.selection.setChannelBar(this._doc.channel, Math.floor(this._doc.synth.playhead));
                             }
@@ -41963,11 +48463,6 @@ You should be redirected to the song at:<br /><br />
                         this._renderInstrumentBar(this._doc.song.channels[this._doc.channel], this._doc.getCurrentInstrument(), ColorConfig.getChannelColor(this._doc.song, this._doc.channel));
                         event.preventDefault();
                         break;
-                    case 66:
-                        if (canPlayNotes)
-                            break;
-                        this._openPrompt("beatsPerBar");
-                        break;
                     default:
                         this._doc.selection.digits = "";
                         this._doc.selection.instrumentDigits = "";
@@ -41987,13 +48482,18 @@ You should be redirected to the song at:<br /><br />
                     this._patternEditor.shiftMode = false;
                 }
                 this._ctrlHeld = event.ctrlKey;
+                this._shiftHeld = event.shiftKey;
                 this._keyboardLayout.handleKeyEvent(event, false);
             };
             this._whenPrevBarPressed = () => {
+                this._doc.synth.loopBar = -1;
+                this._loopEditor.setLoopAt(this._doc.synth.loopBar);
                 this._doc.synth.goToPrevBar();
                 this._barScrollBar.animatePlayhead();
             };
             this._whenNextBarPressed = () => {
+                this._doc.synth.loopBar = -1;
+                this._loopEditor.setLoopAt(this._doc.synth.loopBar);
                 this._doc.synth.goToNextBar();
                 this._barScrollBar.animatePlayhead();
             };
@@ -42022,10 +48522,10 @@ You should be redirected to the song at:<br /><br />
                 }
                 this._barScrollBar.animatePlayhead();
                 if (this._doc.synth.isFilterModActive(false, this._doc.channel, this._doc.getCurrentInstrument())) {
-                    this._eqFilterEditor.render(true);
+                    this._eqFilterEditor.render(true, this._ctrlHeld || this._shiftHeld);
                 }
                 if (this._doc.synth.isFilterModActive(true, this._doc.channel, this._doc.getCurrentInstrument())) {
-                    this._noteFilterEditor.render(true);
+                    this._noteFilterEditor.render(true, this._ctrlHeld || this._shiftHeld);
                 }
                 window.requestAnimationFrame(this._animate);
             };
@@ -42044,7 +48544,26 @@ You should be redirected to the song at:<br /><br />
                 }
             };
             this._setVolumeSlider = () => {
-                this._doc.setVolume(Number(this._volumeSlider.input.value));
+                if ((this._ctrlHeld || this._shiftHeld) && this._doc.synth.playing) {
+                    const prevVol = this._doc.prefs.volume;
+                    this._doc.prefs.volume = Math.round(Number(this._volumeSlider.input.value) * 4 / 3);
+                    const changedPatterns = this._patternEditor.setModSettingsForChange(null, this);
+                    const useVol = this._doc.prefs.volume;
+                    window.clearTimeout(this._modRecTimeout);
+                    this._modRecTimeout = window.setTimeout(() => { this._recordVolumeSlider(useVol); }, 10);
+                    this._doc.recordingModulators = true;
+                    this._doc.prefs.volume = prevVol;
+                    this._volumeSlider.updateValue(this._doc.prefs.volume);
+                    if (changedPatterns)
+                        this._trackEditor.render();
+                }
+                else {
+                    this._doc.setVolume(Number(this._volumeSlider.input.value));
+                    if (this._doc.recordingModulators) {
+                        this._doc.recordingModulators = false;
+                        this._doc.record(new ChangeHoldingModRecording(this._doc, null, null, null));
+                    }
+                }
             };
             this._copyInstrument = () => {
                 const channel = this._doc.song.channels[this._doc.channel];
@@ -42062,6 +48581,12 @@ You should be redirected to the song at:<br /><br />
                     this._doc.record(new ChangePasteInstrument(this._doc, instrument, instrumentCopy));
                 }
                 this.refocusStage();
+            };
+            this._exportInstruments = () => {
+                this._openPrompt("exportInstrument");
+            };
+            this._importInstruments = () => {
+                this._openPrompt("importInstrument");
             };
             this._whenSetTempo = () => {
                 this._doc.record(new ChangeTempo(this._doc, -1, parseInt(this._tempoStepper.value) | 0));
@@ -42291,6 +48816,62 @@ You should be redirected to the song at:<br /><br />
                 this._doc.notifier.changed();
                 this.refocusStage();
             };
+            this._undo = () => {
+                this._doc.undo();
+            };
+            this._redo = () => {
+                this._doc.redo();
+            };
+            this._copy = () => {
+                this._doc.selection.copy();
+            };
+            this._paste = () => {
+                this._doc.selection.pasteNotes();
+            };
+            this._insertChannel = () => {
+                this._doc.selection.insertChannel();
+            };
+            this._deleteChannel = () => {
+                this._doc.selection.deleteChannel();
+            };
+            this._selectAll = () => {
+                this._doc.selection.selectAll();
+            };
+            this._duplicate = () => {
+                this._doc.selection.duplicatePatterns();
+            };
+            this._notesUp = () => {
+                this._doc.selection.transpose(true, false);
+            };
+            this._notesDown = () => {
+                this._doc.selection.transpose(false, false);
+            };
+            this._loopBar = () => {
+                if (this._doc.synth.loopBar != this._doc.bar) {
+                    this._doc.synth.loopBar = this._doc.bar;
+                    if (!this._doc.synth.playing) {
+                        this._doc.synth.snapToBar();
+                        this._doc.performance.play();
+                    }
+                }
+                else {
+                    this._doc.synth.loopBar = -1;
+                }
+                if (this._doc.bar != Math.floor(this._doc.synth.playhead) && this._doc.synth.loopBar != -1) {
+                    this._doc.synth.goToBar(this._doc.bar);
+                    this._doc.synth.snapToBar();
+                    this._doc.synth.initModFilters(this._doc.song);
+                    this._doc.synth.computeLatestModValues();
+                    if (this._doc.prefs.autoFollow) {
+                        this._doc.selection.setChannelBar(this._doc.channel, Math.floor(this._doc.synth.playhead));
+                    }
+                }
+                this._loopEditor.setLoopAt(this._doc.synth.loopBar);
+            };
+            this._goFullscreen = () => {
+                this.isMobileFullscreen = !this.isMobileFullscreen;
+                this._doc.notifier.changed();
+            };
             this._fileMenuHandler = (event) => {
                 switch (this._fileMenu.value) {
                     case "new":
@@ -42440,6 +49021,9 @@ You should be redirected to the song at:<br /><br />
                     case "displayVolumeBar":
                         this._doc.prefs.displayVolumeBar = !this._doc.prefs.displayVolumeBar;
                         break;
+                    case "notesFlashWhenPlayed":
+                        this._doc.prefs.notesFlashWhenPlayed = !this._doc.prefs.notesFlashWhenPlayed;
+                        break;
                     case "layout":
                         this._openPrompt("layout");
                         break;
@@ -42455,11 +49039,20 @@ You should be redirected to the song at:<br /><br />
                     case "showOscilloscope":
                         this._doc.prefs.showOscilloscope = !this._doc.prefs.showOscilloscope;
                         break;
+                    case "showDescription":
+                        this._doc.prefs.showDescription = !this._doc.prefs.showDescription;
+                        break;
                     case "showSampleLoadingStatus":
                         this._doc.prefs.showSampleLoadingStatus = !this._doc.prefs.showSampleLoadingStatus;
                         break;
                     case "closePromptByClickoff":
                         this._doc.prefs.closePromptByClickoff = !this._doc.prefs.closePromptByClickoff;
+                        break;
+                    case "instrumentCopyPaste":
+                        this._doc.prefs.instrumentCopyPaste = !this._doc.prefs.instrumentCopyPaste;
+                        break;
+                    case "instrumentImportExport":
+                        this._doc.prefs.instrumentImportExport = !this._doc.prefs.instrumentImportExport;
                         break;
                 }
                 this._optionsMenu.selectedIndex = 0;
@@ -42496,6 +49089,7 @@ You should be redirected to the song at:<br /><br />
                 this._doc.prefs.save();
             };
             this._doc.notifier.watch(this.whenUpdated);
+            this._doc.modRecordingHandler = () => { this.handleModRecording(); };
             new MidiInputHandler(this._doc);
             window.addEventListener("resize", this.whenUpdated);
             window.requestAnimationFrame(this.updatePlayButton);
@@ -42645,6 +49239,18 @@ You should be redirected to the song at:<br /><br />
             this._volumeSlider.input.addEventListener("input", this._setVolumeSlider);
             this._zoomInButton.addEventListener("click", this._zoomIn);
             this._zoomOutButton.addEventListener("click", this._zoomOut);
+            this._undoButton.addEventListener("click", this._undo);
+            this._redoButton.addEventListener("click", this._redo);
+            this._copyPatternButton.addEventListener("click", this._copy);
+            this._pastePatternButton.addEventListener("click", this._paste);
+            this._insertChannelButton.addEventListener("click", this._insertChannel);
+            this._deleteChannelButton.addEventListener("click", this._deleteChannel);
+            this._selectAllButton.addEventListener("click", this._selectAll);
+            this._duplicateButton.addEventListener("click", this._duplicate);
+            this._notesUpButton.addEventListener("click", this._notesUp);
+            this._notesDownButton.addEventListener("click", this._notesDown);
+            this._loopBarButton.addEventListener("click", this._loopBar);
+            this._fullscreenButton.addEventListener("click", this._goFullscreen);
             this._patternArea.addEventListener("mousedown", this._refocusStageNotEditing);
             this._trackArea.addEventListener("mousedown", this.refocusStage);
             this._volumeSlider.container.style.setProperty("flex-grow", "1");
@@ -42685,9 +49291,12 @@ You should be redirected to the song at:<br /><br />
             this.mainLayer.addEventListener("focusin", this._onFocusIn);
             this._instrumentCopyButton.addEventListener("click", this._copyInstrument.bind(this));
             this._instrumentPasteButton.addEventListener("click", this._pasteInstrument.bind(this));
+            this._instrumentExportButton.addEventListener("click", this._exportInstruments.bind(this));
+            this._instrumentImportButton.addEventListener("click", this._importInstruments.bind(this));
             sampleLoadEvents.addEventListener("sampleloaded", this._updateSampleLoadingBar.bind(this));
             this._instrumentVolumeSliderInputBox.addEventListener("input", () => { this._doc.record(new ChangeVolume(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].volume, Math.min(25.0, Math.max(-25.0, Math.round(+this._instrumentVolumeSliderInputBox.value))))); });
             this._panSliderInputBox.addEventListener("input", () => { this._doc.record(new ChangePan(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].pan, Math.min(100.0, Math.max(0.0, Math.round(+this._panSliderInputBox.value))))); });
+            this._pwmSliderInputBox.addEventListener("input", () => { this._doc.record(new ChangePulseWidth(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].pulseWidth, Math.min(Config.pulseWidthRange, Math.max(1.0, Math.round(+this._pwmSliderInputBox.value))))); });
             this._detuneSliderInputBox.addEventListener("input", () => { this._doc.record(new ChangeDetune(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].detune, Math.min(Config.detuneMax - Config.detuneCenter, Math.max(Config.detuneMin - Config.detuneCenter, Math.round(+this._detuneSliderInputBox.value))))); });
             this._unisonVoicesInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonVoices(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonVoices, Math.min(2.0, Math.max(1.0, Math.round(+this._unisonVoicesInputBox.value))))); });
             this._unisonSpreadInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonSpread(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonSpread, Math.min(96.0, Math.max(-96.0, +this._unisonSpreadInputBox.value)))); });
@@ -42698,6 +49307,7 @@ You should be redirected to the song at:<br /><br />
             this._twoNoteArpBox.addEventListener("input", () => { this._doc.record(new ChangeFastTwoNoteArp(this._doc, this._twoNoteArpBox.checked)); });
             this._clicklessTransitionBox.addEventListener("input", () => { this._doc.record(new ChangeClicklessTransition(this._doc, this._clicklessTransitionBox.checked)); });
             this._aliasingBox.addEventListener("input", () => { this._doc.record(new ChangeAliasing(this._doc, this._aliasingBox.checked)); });
+            this._discreteEnvelopeBox.addEventListener("input", () => { this._doc.record(new ChangeDiscreteEnvelope(this._doc, this._discreteEnvelopeBox.checked)); });
             this._promptContainer.addEventListener("click", (event) => {
                 if (this._doc.prefs.closePromptByClickoff === true) {
                     if (this.prompt != null && this.prompt.gotMouseUp === true)
@@ -42707,6 +49317,7 @@ You should be redirected to the song at:<br /><br />
                     }
                 }
             });
+            this._trackAndMuteContainer.addEventListener("scroll", this._onTrackAreaScroll, { capture: false, passive: true });
             if (isMobile) {
                 const autoPlayOption = this._optionsMenu.querySelector("[value=autoPlay]");
                 autoPlayOption.disabled = true;
@@ -42741,6 +49352,11 @@ You should be redirected to the song at:<br /><br />
             let target = this._vibratoDropdown;
             let group = this._vibratoDropdownGroup;
             switch (dropdown) {
+                case 7:
+                    target = this._envelopeDropdown;
+                    this._openEnvelopeDropdown = this._openEnvelopeDropdown ? false : true;
+                    group = this._envelopeDropdownGroup;
+                    break;
                 case 0:
                     target = this._vibratoDropdown;
                     this._openVibratoDropdown = this._openVibratoDropdown ? false : true;
@@ -42786,8 +49402,18 @@ You should be redirected to the song at:<br /><br />
                 else if (instrument.chord == Config.chords.dictionary["arpeggio"].index) {
                     group.style.display = "";
                 }
+                for (let i = 0; i < group.children.length; i++) {
+                    setTimeout(() => {
+                        group.children[i].style.animationDelay = '0.17s';
+                        group.children[i].style.opacity = '1';
+                    });
+                }
             }
             else {
+                for (let i = 0; i < group.children.length; i++) {
+                    group.children[i].style.animationDelay = '0s';
+                    group.children[i].style.opacity = '0';
+                }
                 target.textContent = "▼";
                 group.style.display = "none";
             }
@@ -42799,7 +49425,7 @@ You should be redirected to the song at:<br /><br />
                     if (this._showModSliders[setting] == true) {
                         this._showModSliders[setting] = false;
                         this._newShowModSliders[setting] = false;
-                        let slider = this._getSliderForModSetting(setting);
+                        let slider = this.getSliderForModSetting(setting);
                         if (slider != null) {
                             slider.container.classList.remove("modSlider");
                         }
@@ -42824,7 +49450,7 @@ You should be redirected to the song at:<br /><br />
                     }
                     for (let setting = 0; setting < Config.modulators.length; setting++) {
                         this._newShowModSliders[setting] = this._showModSliders[setting];
-                        let slider = this._getSliderForModSetting(setting);
+                        let slider = this.getSliderForModSetting(setting);
                         if (slider != null) {
                             this._newShowModSliders[setting] = updateModSlider(this, slider, setting, this._doc.channel, instrument);
                         }
@@ -42840,7 +49466,7 @@ You should be redirected to the song at:<br /><br />
                     for (let setting = 0; setting < Config.modulators.length; setting++) {
                         if (this._newShowModSliders[setting] != this._showModSliders[setting]) {
                             this._showModSliders[setting] = this._newShowModSliders[setting];
-                            let slider = this._getSliderForModSetting(setting);
+                            let slider = this.getSliderForModSetting(setting);
                             if (slider != null) {
                                 if (this._showModSliders[setting] == true) {
                                     slider.container.classList.add("modSlider");
@@ -42857,7 +49483,7 @@ You should be redirected to the song at:<br /><br />
                 }
             }
         }
-        _getSliderForModSetting(setting) {
+        getSliderForModSetting(setting) {
             switch (setting) {
                 case Config.modulators.dictionary["pan"].index:
                     return this._panSlider;
@@ -42927,6 +49553,14 @@ You should be redirected to the song at:<br /><br />
                     return this._operatorAmplitudeSliders[4];
                 case Config.modulators.dictionary["fm slider 6"].index:
                     return this._operatorAmplitudeSliders[5];
+                case Config.modulators.dictionary["envelope speed"].index:
+                    return this._envelopeSpeedSlider;
+                case Config.modulators.dictionary["dynamism"].index:
+                    return this._supersawDynamismSlider;
+                case Config.modulators.dictionary["spread"].index:
+                    return this._supersawSpreadSlider;
+                case Config.modulators.dictionary["saw shape"].index:
+                    return this._supersawShapeSlider;
                 default:
                     return null;
             }
@@ -42940,7 +49574,7 @@ You should be redirected to the song at:<br /><br />
                 return;
             this._currentPromptName = promptName;
             if (this.prompt) {
-                if (this._wasPlaying && !(this.prompt instanceof TipPrompt || this.prompt instanceof LimiterPrompt || this.prompt instanceof CustomScalePrompt || this.prompt instanceof CustomChipPrompt || this.prompt instanceof CustomFilterPrompt || this.prompt instanceof VisualLoopControlsPrompt)) {
+                if (this._wasPlaying && !(this.prompt instanceof TipPrompt || this.prompt instanceof LimiterPrompt || this.prompt instanceof CustomScalePrompt || this.prompt instanceof CustomChipPrompt || this.prompt instanceof CustomFilterPrompt || this.prompt instanceof VisualLoopControlsPrompt || this.prompt instanceof SustainPrompt)) {
                     this._doc.performance.play();
                 }
                 this._wasPlaying = false;
@@ -42989,13 +49623,22 @@ You should be redirected to the song at:<br /><br />
                         this.prompt = new CustomFilterPrompt(this._doc, this, true);
                         break;
                     case "theme":
-                        this.prompt = new ThemePrompt(this._doc);
+                        this.prompt = new ThemePrompt(this._doc, this._patternEditor, this._trackArea, document.getElementById("beepboxEditorContainer"));
                         break;
                     case "layout":
                         this.prompt = new LayoutPrompt(this._doc);
                         break;
                     case "recordingSetup":
                         this.prompt = new RecordingSetupPrompt(this._doc);
+                        break;
+                    case "exportInstrument":
+                        this.prompt = new InstrumentExportPrompt(this._doc);
+                        break;
+                    case "importInstrument":
+                        this.prompt = new InstrumentImportPrompt(this._doc);
+                        break;
+                    case "stringSustain":
+                        this.prompt = new SustainPrompt(this._doc);
                         break;
                     case "addExternal":
                         this.prompt = new AddSamplesPrompt(this._doc);
@@ -43004,7 +49647,6 @@ You should be redirected to the song at:<br /><br />
                         this.prompt = new EuclideanRhythmPrompt(this._doc);
                         break;
                     case "custom":
-                        this.prompt = new CustomPrompt(this._doc, this._patternEditor, this._trackArea, document.getElementById("beepboxEditorContainer"));
                         break;
                     case "visualLoopControls":
                         this.prompt = new VisualLoopControlsPrompt(this._doc, this);
@@ -43017,7 +49659,7 @@ You should be redirected to the song at:<br /><br />
                         break;
                 }
                 if (this.prompt) {
-                    if (!(this.prompt instanceof TipPrompt || this.prompt instanceof LimiterPrompt || this.prompt instanceof CustomChipPrompt || this.prompt instanceof CustomFilterPrompt || this.prompt instanceof VisualLoopControlsPrompt)) {
+                    if (!(this.prompt instanceof TipPrompt || this.prompt instanceof LimiterPrompt || this.prompt instanceof CustomChipPrompt || this.prompt instanceof CustomFilterPrompt || this.prompt instanceof VisualLoopControlsPrompt || this.prompt instanceof SustainPrompt)) {
                         this._wasPlaying = this._doc.synth.playing;
                         this._doc.performance.pause();
                     }
@@ -43028,6 +49670,23 @@ You should be redirected to the song at:<br /><br />
         }
         changeBarScrollPos(offset) {
             this._barScrollBar.changePos(offset);
+        }
+        handleModRecording() {
+            window.clearTimeout(this._modRecTimeout);
+            const lastChange = this._doc.checkLastChange();
+            if ((this._ctrlHeld || this._shiftHeld) && lastChange != null && this._doc.synth.playing) {
+                const changedPatterns = this._patternEditor.setModSettingsForChange(lastChange, this);
+                if (this._doc.continuingModRecordingChange != null) {
+                    this._modRecTimeout = window.setTimeout(() => { this.handleModRecording(); }, 10);
+                    this._doc.recordingModulators = true;
+                    if (changedPatterns)
+                        this._trackEditor.render();
+                }
+            }
+            else if (this._doc.recordingModulators) {
+                this._doc.recordingModulators = false;
+                this._doc.record(new ChangeHoldingModRecording(this._doc, null, null, null));
+            }
         }
         _renderInstrumentBar(channel, instrumentIndex, colors) {
             if (this._doc.song.layeredInstruments || this._doc.song.patternInstruments) {
@@ -43128,11 +49787,11 @@ You should be redirected to the song at:<br /><br />
                     }
                 }
             }
+            let lowestSelX = Math.min(this._doc.selection.boxSelectionX0, this._doc.selection.boxSelectionX1);
+            let highestSelX = Math.max(this._doc.selection.boxSelectionX0, this._doc.selection.boxSelectionX1);
+            let lowestSelY = Math.min(this._doc.selection.boxSelectionY0, this._doc.selection.boxSelectionY1);
+            let highestSelY = Math.max(this._doc.selection.boxSelectionY0, this._doc.selection.boxSelectionY1);
             if (channel.bars[this._doc.bar] != 0) {
-                let lowestSelX = Math.min(this._doc.selection.boxSelectionX0, this._doc.selection.boxSelectionX1);
-                let highestSelX = Math.max(this._doc.selection.boxSelectionX0, this._doc.selection.boxSelectionX1);
-                let lowestSelY = Math.min(this._doc.selection.boxSelectionY0, this._doc.selection.boxSelectionY1);
-                let highestSelY = Math.max(this._doc.selection.boxSelectionY0, this._doc.selection.boxSelectionY1);
                 for (let i = 0; i < this._doc.song.barCount; i++) {
                     if (channel.bars[i] == channel.bars[this._doc.bar] && i != this._doc.bar &&
                         (i < lowestSelX || i > highestSelX || this._doc.channel < lowestSelY || this._doc.channel > highestSelY)) {
@@ -43140,20 +49799,22 @@ You should be redirected to the song at:<br /><br />
                         i = this._doc.song.barCount;
                     }
                 }
-                for (let i = 0; i < this._doc.song.barCount; i++) {
-                    if (channel.bars[i] != 0 && channel.bars[i] != channel.bars[this._doc.bar] &&
-                        channel.patterns[channel.bars[i] - 1].instruments.includes(instrumentIndex) && i != this._doc.bar &&
-                        (i < lowestSelX || i > highestSelX || this._doc.channel < lowestSelY || this._doc.channel > highestSelY)) {
-                        instrumentUsed = true;
-                        i = this._doc.song.barCount;
-                    }
+            }
+            for (let i = 0; i < this._doc.song.barCount; i++) {
+                if (channel.bars[i] != 0 && channel.bars[i] != channel.bars[this._doc.bar] &&
+                    channel.patterns[channel.bars[i] - 1].instruments.includes(instrumentIndex) && i != this._doc.bar &&
+                    (i < lowestSelX || i > highestSelX || this._doc.channel < lowestSelY || this._doc.channel > highestSelY)) {
+                    instrumentUsed = true;
+                    i = this._doc.song.barCount;
                 }
             }
             if (patternUsed) {
                 this._usedPatternIndicator.style.setProperty("fill", ColorConfig.indicatorPrimary);
+                this.patternUsed = true;
             }
             else {
                 this._usedPatternIndicator.style.setProperty("fill", ColorConfig.indicatorSecondary);
+                this.patternUsed = false;
             }
             if (instrumentUsed) {
                 this._usedInstrumentIndicator.style.setProperty("fill", ColorConfig.indicatorPrimary);
@@ -43197,6 +49858,25 @@ You should be redirected to the song at:<br /><br />
         _animateVolume(outVolumeCap, historicOutCap) {
             this._outVolumeBar.setAttribute("width", "" + Math.min(144, outVolumeCap * 144));
             this._outVolumeCap.setAttribute("x", "" + (8 + Math.min(144, historicOutCap * 144)));
+        }
+        _recordVolumeSlider(useVol) {
+            if ((this._ctrlHeld || this._shiftHeld) && this._doc.synth.playing) {
+                const prevVol = this._doc.prefs.volume;
+                this._doc.prefs.volume = useVol;
+                this._patternEditor.setModSettingsForChange(null, this);
+                window.clearTimeout(this._modRecTimeout);
+                this._modRecTimeout = window.setTimeout(() => { this._recordVolumeSlider(useVol); }, 10);
+                this._doc.recordingModulators = true;
+                this._doc.prefs.volume = prevVol;
+                this._volumeSlider.updateValue(this._doc.prefs.volume);
+            }
+            else {
+                this._doc.setVolume(Number(this._volumeSlider.input.value));
+                if (this._doc.recordingModulators) {
+                    this._doc.recordingModulators = false;
+                    this._doc.record(new ChangeHoldingModRecording(this._doc, null, null, null));
+                }
+            }
         }
         _switchEQFilterType(toSimple) {
             const channel = this._doc.song.channels[this._doc.channel];
@@ -43250,17 +49930,24 @@ You should be redirected to the song at:<br /><br />
             this._channelOctave = -1;
             this._songKey = -1;
             this._pitchesAreTemporary = false;
+            this._bassPitchesAreTemporary = false;
             this._recentlyAddedPitches = [];
+            this._recentlyAddedBassPitches = [];
             this._songLengthWhenRecordingStarted = -1;
             this._playheadPart = -1;
+            this._bassPlayheadPart = -1;
             this._playheadPattern = null;
+            this._bassPlayheadPattern = null;
             this._pitchesChanged = false;
+            this._bassPitchesChanged = false;
             this._lastNote = null;
+            this._lastBassNote = null;
             this._recordingChange = null;
             this._onAnimationFrame = () => {
                 window.requestAnimationFrame(this._onAnimationFrame);
                 if (this._doc.synth.recording) {
-                    const dirty = this._updateRecordedNotes();
+                    let dirty = this._updateRecordedNotes();
+                    dirty = this._updateRecordedBassNotes() ? true : dirty;
                     if (dirty) {
                         this._doc.notifier.notifyWatchers();
                     }
@@ -43269,14 +49956,16 @@ You should be redirected to the song at:<br /><br />
             this._documentChanged = () => {
                 const isDrum = this._doc.song.getChannelIsNoise(this._doc.channel);
                 const octave = this._doc.song.channels[this._doc.channel].octave;
-                if (this._doc.synth.liveInputChannel != this._doc.channel || this._channelIsDrum != isDrum || this._channelOctave != octave || this._songKey != this._doc.song.key) {
+                if (this._doc.synth.liveInputChannel != this._doc.channel || this._doc.synth.liveBassInputChannel != this._getBassOffsetChannel() || this._channelIsDrum != isDrum || this._channelOctave != octave || this._songKey != this._doc.song.key) {
                     this._doc.synth.liveInputChannel = this._doc.channel;
                     this._channelIsDrum = isDrum;
                     this._channelOctave = octave;
                     this._songKey = this._doc.song.key;
                     this.clearAllPitches();
+                    this.clearAllBassPitches();
                 }
                 this._doc.synth.liveInputInstruments = this._doc.recentPatternInstruments[this._doc.channel];
+                this._doc.synth.liveBassInputInstruments = this._doc.recentPatternInstruments[this._doc.synth.liveBassInputChannel];
             };
             this._doc.notifier.watch(this._documentChanged);
             this._documentChanged();
@@ -43290,6 +49979,7 @@ You should be redirected to the song at:<br /><br />
         }
         pause() {
             this.clearAllPitches();
+            this.clearAllBassPitches();
             if (this._recordingChange != null) {
                 if (this._doc.song.barCount > this._songLengthWhenRecordingStarted && !this._lastBarHasPatterns()) {
                     new ChangeDeleteBars(this._doc, this._doc.song.barCount - 1, 1);
@@ -43320,16 +50010,25 @@ You should be redirected to the song at:<br /><br />
                 this.clearAllPitches();
                 this._pitchesAreTemporary = false;
             }
+            if (this._bassPitchesAreTemporary) {
+                this.clearAllBassPitches();
+                this._bassPitchesAreTemporary = false;
+            }
             this._doc.synth.enableMetronome = this._doc.prefs.metronomeWhileRecording;
             this._doc.synth.countInMetronome = this._doc.prefs.metronomeCountIn;
             this._doc.synth.startRecording();
             this._doc.synth.maintainLiveInput();
             this._songLengthWhenRecordingStarted = this._doc.song.barCount;
             this._playheadPart = this._getCurrentPlayheadPart();
+            this._bassPlayheadPart = this._getCurrentPlayheadPart();
             this._playheadPattern = null;
+            this._bassPlayheadPattern = null;
             this._pitchesChanged = false;
+            this._bassPitchesChanged = false;
             this._lastNote = null;
+            this._lastBassNote = null;
             this._recentlyAddedPitches.length = 0;
+            this._recentlyAddedBassPitches.length = 0;
             this._recordingChange = new ChangeGroup();
             this._doc.setProspectiveChange(this._recordingChange);
         }
@@ -43339,6 +50038,14 @@ You should be redirected to the song at:<br /><br />
         }
         pitchesAreTemporary() {
             return this._pitchesAreTemporary;
+        }
+        bassPitchesAreTemporary() {
+            return this._bassPitchesAreTemporary;
+        }
+        _getBassOffsetChannel() {
+            if (this._doc.channel >= this._doc.song.pitchChannelCount)
+                return this._doc.channel;
+            return Math.max(0, Math.min(this._doc.song.pitchChannelCount - 1, this._doc.channel + this._doc.prefs.bassOffset));
         }
         _getMinDivision() {
             if (this._doc.prefs.snapRecordedNotesToRhythm) {
@@ -43391,8 +50098,9 @@ You should be redirected to the song at:<br /><br />
             }
             let dirty = false;
             for (let bar = oldBar; bar <= newBar; bar++) {
-                if (bar != oldBar)
+                if (bar != oldBar) {
                     this._playheadPattern = null;
+                }
                 const startPart = (bar == oldBar) ? oldPart : 0;
                 const endPart = (bar == newBar) ? newPart : partsPerBar;
                 if (startPart == endPart)
@@ -43457,6 +50165,101 @@ You should be redirected to the song at:<br /><br />
             }
             return dirty;
         }
+        _updateRecordedBassNotes() {
+            if (this._recordingChange == null)
+                return false;
+            if (!this._doc.lastChangeWas(this._recordingChange)) {
+                this.abortRecording();
+                return false;
+            }
+            if (this._doc.synth.countInMetronome) {
+                this._recentlyAddedBassPitches.length = 0;
+                this._bassPitchesChanged = false;
+                return false;
+            }
+            const partsPerBar = this._doc.song.beatsPerBar * Config.partsPerBeat;
+            const oldPart = this._bassPlayheadPart % partsPerBar;
+            const oldBar = Math.floor(this._bassPlayheadPart / partsPerBar);
+            const oldPlayheadPart = this._bassPlayheadPart;
+            this._bassPlayheadPart = this._getCurrentPlayheadPart();
+            const newPart = this._bassPlayheadPart % partsPerBar;
+            const newBar = Math.floor(this._bassPlayheadPart / partsPerBar);
+            if (oldPart == newPart && oldBar == newBar)
+                return false;
+            if (this._bassPlayheadPart < oldPlayheadPart) {
+                this._lastBassNote = null;
+                this._bassPlayheadPattern = null;
+                return false;
+            }
+            let dirty = false;
+            for (let bar = oldBar; bar <= newBar; bar++) {
+                if (bar != oldBar) {
+                    this._bassPlayheadPattern = null;
+                }
+                const startPart = (bar == oldBar) ? oldPart : 0;
+                const endPart = (bar == newBar) ? newPart : partsPerBar;
+                if (startPart == endPart)
+                    break;
+                if (this._lastBassNote != null && !this._bassPitchesChanged && startPart > 0 && this._doc.synth.liveBassInputPitches.length > 0) {
+                    this._recordingChange.append(new ChangePinTime(this._doc, this._lastBassNote, 1, endPart, this._lastBassNote.continuesLastPattern));
+                    this._doc.currentPatternIsDirty = true;
+                }
+                else {
+                    if (this._lastBassNote != null) {
+                        this._lastBassNote = null;
+                    }
+                    let noteStartPart = startPart;
+                    let noteEndPart = endPart;
+                    while (noteStartPart < endPart) {
+                        let addedAlreadyReleasedPitch = false;
+                        if (this._recentlyAddedBassPitches.length > 0 || this._doc.synth.liveBassInputPitches.length > 0) {
+                            if (this._bassPlayheadPattern == null) {
+                                this._doc.selection.erasePatternInBar(this._recordingChange, this._doc.synth.liveBassInputChannel, bar);
+                                this._recordingChange.append(new ChangeEnsurePatternExists(this._doc, this._doc.synth.liveBassInputChannel, bar));
+                                this._bassPlayheadPattern = this._doc.song.getPattern(this._doc.synth.liveBassInputChannel, bar);
+                            }
+                            if (this._bassPlayheadPattern == null)
+                                throw new Error();
+                            this._lastBassNote = new Note(-1, noteStartPart, noteEndPart, Config.noteSizeMax, this._doc.song.getChannelIsNoise(this._doc.synth.liveBassInputChannel));
+                            this._lastBassNote.continuesLastPattern = (noteStartPart == 0 && !this._bassPitchesChanged);
+                            this._lastBassNote.pitches.length = 0;
+                            while (this._recentlyAddedBassPitches.length > 0) {
+                                if (this._lastBassNote.pitches.length >= Config.maxChordSize)
+                                    break;
+                                const recentPitch = this._recentlyAddedBassPitches.shift();
+                                if (this._doc.synth.liveBassInputPitches.indexOf(recentPitch) == -1) {
+                                    this._lastBassNote.pitches.push(recentPitch);
+                                    addedAlreadyReleasedPitch = true;
+                                }
+                            }
+                            for (let i = 0; i < this._doc.synth.liveBassInputPitches.length; i++) {
+                                if (this._lastBassNote.pitches.length >= Config.maxChordSize)
+                                    break;
+                                this._lastBassNote.pitches.push(this._doc.synth.liveBassInputPitches[i]);
+                            }
+                            this._recordingChange.append(new ChangeNoteAdded(this._doc, this._bassPlayheadPattern, this._lastBassNote, this._bassPlayheadPattern.notes.length));
+                            if (addedAlreadyReleasedPitch) {
+                                noteEndPart = noteStartPart + this._getMinDivision();
+                                new ChangeNoteLength(this._doc, this._lastBassNote, this._lastBassNote.start, noteEndPart);
+                                this._lastBassNote = null;
+                            }
+                            dirty = true;
+                        }
+                        this._bassPitchesChanged = addedAlreadyReleasedPitch;
+                        noteStartPart = noteEndPart;
+                        noteEndPart = endPart;
+                    }
+                }
+                if (bar == this._doc.song.barCount - 1) {
+                    if (this._lastBarHasPatterns()) {
+                        new ChangeInsertBars(this._doc, this._doc.song.barCount, 1);
+                        this._doc.bar--;
+                        dirty = true;
+                    }
+                }
+            }
+            return dirty;
+        }
         setTemporaryPitches(pitches, duration) {
             this._updateRecordedNotes();
             for (let i = 0; i < pitches.length; i++) {
@@ -43468,42 +50271,95 @@ You should be redirected to the song at:<br /><br />
             this._pitchesAreTemporary = true;
             this._pitchesChanged = true;
         }
+        setTemporaryBassPitches(pitches, duration) {
+            this._updateRecordedBassNotes();
+            for (let i = 0; i < pitches.length; i++) {
+                this._doc.synth.liveBassInputPitches[i] = pitches[i];
+            }
+            this._doc.synth.liveBassInputPitches.length = Math.min(pitches.length, Config.maxChordSize);
+            this._doc.synth.liveBassInputDuration = duration;
+            this._doc.synth.liveBassInputStarted = true;
+            this._bassPitchesAreTemporary = true;
+            this._bassPitchesChanged = true;
+        }
         addPerformedPitch(pitch) {
             this._doc.synth.maintainLiveInput();
-            this._updateRecordedNotes();
-            if (this._pitchesAreTemporary) {
-                this.clearAllPitches();
-                this._pitchesAreTemporary = false;
-            }
-            if (this._doc.prefs.ignorePerformedNotesNotInScale && !Config.scales[this._doc.song.scale].flags[pitch % Config.pitchesPerOctave]) {
-                return;
-            }
-            if (this._doc.synth.liveInputPitches.indexOf(pitch) == -1) {
-                this._doc.synth.liveInputPitches.push(pitch);
-                this._pitchesChanged = true;
-                while (this._doc.synth.liveInputPitches.length > Config.maxChordSize) {
-                    this._doc.synth.liveInputPitches.shift();
+            if (pitch > Piano.getBassCutoffPitch(this._doc) || this._getBassOffsetChannel() == this._doc.channel) {
+                this._updateRecordedNotes();
+                if (this._pitchesAreTemporary) {
+                    this.clearAllPitches();
+                    this._pitchesAreTemporary = false;
                 }
-                this._doc.synth.liveInputDuration = Number.MAX_SAFE_INTEGER;
-                if (this._recordingChange != null) {
-                    const recentIndex = this._recentlyAddedPitches.indexOf(pitch);
-                    if (recentIndex != -1) {
-                        this._recentlyAddedPitches.splice(recentIndex, 1);
+                if (this._doc.prefs.ignorePerformedNotesNotInScale && !Config.scales[this._doc.song.scale].flags[pitch % Config.pitchesPerOctave]) {
+                    return;
+                }
+                if (this._doc.synth.liveInputPitches.indexOf(pitch) == -1) {
+                    this._doc.synth.liveInputPitches.push(pitch);
+                    this._pitchesChanged = true;
+                    while (this._doc.synth.liveInputPitches.length > Config.maxChordSize) {
+                        this._doc.synth.liveInputPitches.shift();
                     }
-                    this._recentlyAddedPitches.push(pitch);
-                    while (this._recentlyAddedPitches.length > Config.maxChordSize * 4) {
-                        this._recentlyAddedPitches.shift();
+                    this._doc.synth.liveInputDuration = Number.MAX_SAFE_INTEGER;
+                    if (this._recordingChange != null) {
+                        const recentIndex = this._recentlyAddedPitches.indexOf(pitch);
+                        if (recentIndex != -1) {
+                            this._recentlyAddedPitches.splice(recentIndex, 1);
+                        }
+                        this._recentlyAddedPitches.push(pitch);
+                        while (this._recentlyAddedPitches.length > Config.maxChordSize * 4) {
+                            this._recentlyAddedPitches.shift();
+                        }
+                    }
+                }
+            }
+            else {
+                this._updateRecordedBassNotes();
+                if (this._bassPitchesAreTemporary) {
+                    this.clearAllBassPitches();
+                    this._bassPitchesAreTemporary = false;
+                }
+                if (this._doc.prefs.ignorePerformedNotesNotInScale && !Config.scales[this._doc.song.scale].flags[pitch % Config.pitchesPerOctave]) {
+                    return;
+                }
+                if (this._doc.synth.liveBassInputPitches.indexOf(pitch) == -1) {
+                    this._doc.synth.liveBassInputPitches.push(pitch);
+                    this._bassPitchesChanged = true;
+                    while (this._doc.synth.liveBassInputPitches.length > Config.maxChordSize) {
+                        this._doc.synth.liveBassInputPitches.shift();
+                    }
+                    this._doc.synth.liveBassInputDuration = Number.MAX_SAFE_INTEGER;
+                    if (this._recordingChange != null) {
+                        const recentIndex = this._recentlyAddedPitches.indexOf(pitch);
+                        if (recentIndex != -1) {
+                            this._recentlyAddedBassPitches.splice(recentIndex, 1);
+                        }
+                        this._recentlyAddedBassPitches.push(pitch);
+                        while (this._recentlyAddedBassPitches.length > Config.maxChordSize * 4) {
+                            this._recentlyAddedBassPitches.shift();
+                        }
                     }
                 }
             }
         }
         removePerformedPitch(pitch) {
-            this._updateRecordedNotes();
-            for (let i = 0; i < this._doc.synth.liveInputPitches.length; i++) {
-                if (this._doc.synth.liveInputPitches[i] == pitch) {
-                    this._doc.synth.liveInputPitches.splice(i, 1);
-                    this._pitchesChanged = true;
-                    i--;
+            if (pitch > Piano.getBassCutoffPitch(this._doc) || this._getBassOffsetChannel() == this._doc.channel) {
+                this._updateRecordedNotes();
+                for (let i = 0; i < this._doc.synth.liveInputPitches.length; i++) {
+                    if (this._doc.synth.liveInputPitches[i] == pitch) {
+                        this._doc.synth.liveInputPitches.splice(i, 1);
+                        this._pitchesChanged = true;
+                        i--;
+                    }
+                }
+            }
+            else {
+                this._updateRecordedBassNotes();
+                for (let i = 0; i < this._doc.synth.liveBassInputPitches.length; i++) {
+                    if (this._doc.synth.liveBassInputPitches[i] == pitch) {
+                        this._doc.synth.liveBassInputPitches.splice(i, 1);
+                        this._bassPitchesChanged = true;
+                        i--;
+                    }
                 }
             }
         }
@@ -43511,6 +50367,11 @@ You should be redirected to the song at:<br /><br />
             this._updateRecordedNotes();
             this._doc.synth.liveInputPitches.length = 0;
             this._pitchesChanged = true;
+        }
+        clearAllBassPitches() {
+            this._updateRecordedBassNotes();
+            this._doc.synth.liveBassInputPitches.length = 0;
+            this._bassPitchesChanged = true;
         }
     }
 
@@ -44254,6 +51115,7 @@ You should be redirected to the song at:<br /><br />
                     const canReplaceLastChange = this._doc.lastChangeWas(this._changeInstrument);
                     this._changeInstrument = new ChangeGroup();
                     const instruments = this._doc.recentPatternInstruments[this._doc.channel];
+                    this._doc.notifier.changed();
                     if (instruments.indexOf(instrument) == -1) {
                         instruments.push(instrument);
                         const maxLayers = this._doc.song.getMaxInstrumentsPerPattern(this._doc.channel);
@@ -44323,6 +51185,7 @@ You should be redirected to the song at:<br /><br />
             this.alwaysFineNoteVol = window.localStorage.getItem("alwaysFineNoteVol") == "true";
             this.displayVolumeBar = window.localStorage.getItem("displayVolumeBar") == "true";
             this.instrumentCopyPaste = window.localStorage.getItem("instrumentCopyPaste") == "true";
+            this.instrumentImportExport = window.localStorage.getItem("instrumentImportExport") == "true";
             this.enableChannelMuting = window.localStorage.getItem("enableChannelMuting") == "true";
             this.displayBrowserUrl = window.localStorage.getItem("displayBrowserUrl") != "false";
             this.pressControlForShortcuts = window.localStorage.getItem("pressControlForShortcuts") == "true";
@@ -44334,7 +51197,10 @@ You should be redirected to the song at:<br /><br />
             this.metronomeWhileRecording = window.localStorage.getItem("metronomeWhileRecording") != "false";
             this.showOscilloscope = window.localStorage.getItem("showOscilloscope") != "false";
             this.showSampleLoadingStatus = window.localStorage.getItem("showSampleLoadingStatus") != "false";
+            this.showDescription = window.localStorage.getItem("showDescription") != "false";
+            this.notesFlashWhenPlayed = window.localStorage.getItem("notesFlashWhenPlayed") != "false";
             this.keyboardLayout = window.localStorage.getItem("keyboardLayout") || "wickiHayden";
+            this.bassOffset = (+window.localStorage.getItem("bassOffset")) || 0;
             this.layout = window.localStorage.getItem("layout") || "small";
             this.colorTheme = window.localStorage.getItem("colorTheme") || "AbyssBox Classic";
             this.customTheme = window.localStorage.getItem("customTheme");
@@ -44366,6 +51232,7 @@ You should be redirected to the song at:<br /><br />
             window.localStorage.setItem("displayVolumeBar", this.displayVolumeBar ? "true" : "false");
             window.localStorage.setItem("enableChannelMuting", this.enableChannelMuting ? "true" : "false");
             window.localStorage.setItem("instrumentCopyPaste", this.instrumentCopyPaste ? "true" : "false");
+            window.localStorage.setItem("instrumentImportExport", this.instrumentImportExport ? "true" : "false");
             window.localStorage.setItem("displayBrowserUrl", this.displayBrowserUrl ? "true" : "false");
             window.localStorage.setItem("pressControlForShortcuts", this.pressControlForShortcuts ? "true" : "false");
             window.localStorage.setItem("enableMidi", this.enableMidi ? "true" : "false");
@@ -44376,7 +51243,10 @@ You should be redirected to the song at:<br /><br />
             window.localStorage.setItem("metronomeWhileRecording", this.metronomeWhileRecording ? "true" : "false");
             window.localStorage.setItem("showOscilloscope", this.showOscilloscope ? "true" : "false");
             window.localStorage.setItem("showSampleLoadingStatus", this.showSampleLoadingStatus ? "true" : "false");
+            window.localStorage.setItem("showDescription", this.showDescription ? "true" : "false");
+            window.localStorage.setItem("notesFlashWhenPlayed", this.notesFlashWhenPlayed ? "true" : "false");
             window.localStorage.setItem("keyboardLayout", this.keyboardLayout);
+            window.localStorage.setItem("bassOffset", String(this.bassOffset));
             window.localStorage.setItem("layout", this.layout);
             window.localStorage.setItem("colorTheme", this.colorTheme);
             window.localStorage.setItem("customTheme", this.customTheme);
@@ -44427,6 +51297,8 @@ You should be redirected to the song at:<br /><br />
             this.bar = 0;
             this.recentPatternInstruments = [];
             this.viewedInstrument = [];
+            this.recordingModulators = false;
+            this.continuingModRecordingChange = null;
             this.trackVisibleBars = 16;
             this.trackVisibleChannels = 4;
             this.barScrollPos = 0;
@@ -44450,7 +51322,12 @@ You should be redirected to the song at:<br /><br />
                     this._sequenceNumber++;
                     this._resetSongRecoveryUid();
                     const state = { canUndo: true, sequenceNumber: this._sequenceNumber, bar: this.bar, channel: this.channel, instrument: this.viewedInstrument[this.channel], recoveryUid: this._recoveryUid, prompt: null, selection: this.selection.toJSON() };
-                    new ChangeSong(this, window.location.hash);
+                    try {
+                        new ChangeSong(this, this._getHash());
+                    }
+                    catch (error) {
+                        errorAlert(error);
+                    }
                     this.prompt = state.prompt;
                     if (this.prefs.displayBrowserUrl) {
                         this._replaceState(state, this.song.toBase64String());
@@ -44474,7 +51351,12 @@ You should be redirected to the song at:<br /><br />
                 this.viewedInstrument[this.channel] = state.instrument;
                 this._sequenceNumber = state.sequenceNumber;
                 this.prompt = state.prompt;
-                new ChangeSong(this, this._getHash());
+                try {
+                    new ChangeSong(this, window.location.hash);
+                }
+                catch (error) {
+                    errorAlert(error);
+                }
                 this._recoveryUid = state.recoveryUid;
                 this.selection.fromJSON(state.selection);
                 this.forgetLastChange();
@@ -44482,6 +51364,13 @@ You should be redirected to the song at:<br /><br />
             };
             this._cleanDocument = () => {
                 this.notifier.notifyWatchers();
+            };
+            this._cleanDocumentIfNotRecordingMods = () => {
+                if (!this.recordingModulators)
+                    this.notifier.notifyWatchers();
+                else {
+                    this.modRecordingHandler();
+                }
             };
             this._validateDocState = () => {
                 const channelCount = this.song.getChannelCount();
@@ -44532,6 +51421,8 @@ You should be redirected to the song at:<br /><br />
                     (this.selection.boxSelectionWidth == 1 && this.selection.boxSelectionHeight == 1)) {
                     this.selection.resetBoxSelection();
                 }
+                this.barScrollPos = Math.max(0, Math.min(this.song.barCount - this.trackVisibleBars, this.barScrollPos));
+                this.channelScrollPos = Math.max(0, Math.min(this.song.getChannelCount() - this.trackVisibleChannels, this.channelScrollPos));
             };
             this._updateHistoryState = () => {
                 this._waitingToUpdateState = false;
@@ -44540,7 +51431,7 @@ You should be redirected to the song at:<br /><br />
                     hash = this.song.toBase64String();
                 }
                 catch (error) {
-                    window.alert("Whoops, the song data appears to have been corrupted! Please try to recover the last working version of the song from the \"Recover Recent Song...\" option in BeepBox's \"File\" menu.");
+                    errorAlert(error);
                     return;
                 }
                 if (this._stateShouldBePushed)
@@ -44573,10 +51464,15 @@ You should be redirected to the song at:<br /><br />
             if (songString == "") {
                 songString = this._getHash();
             }
-            this.song = new Song(songString);
-            if (songString == "" || songString == undefined) {
-                setDefaultInstruments(this.song);
-                this.song.scale = this.prefs.defaultScale;
+            try {
+                this.song = new Song(songString);
+                if (songString == "" || songString == undefined) {
+                    setDefaultInstruments(this.song);
+                    this.song.scale = this.prefs.defaultScale;
+                }
+            }
+            catch (error) {
+                errorAlert(error);
             }
             songString = this.song.toBase64String();
             this.synth = new Synth(this.song);
@@ -44599,14 +51495,20 @@ You should be redirected to the song at:<br /><br />
             this._recoveryUid = state.recoveryUid;
             this.prompt = state.prompt;
             this.selection.fromJSON(state.selection);
-            for (const eventName of ["input", "change", "click", "keyup", "keydown", "mousedown", "mousemove", "mouseup", "touchstart", "touchmove", "touchend", "touchcancel"]) {
+            this.selection.scrollToSelectedPattern();
+            for (const eventName of ["change", "click", "keyup", "mousedown", "mouseup", "touchstart", "touchmove", "touchend", "touchcancel"]) {
                 window.addEventListener(eventName, this._cleanDocument);
+            }
+            for (const eventName of ["keydown", "input", "mousemove"]) {
+                window.addEventListener(eventName, this._cleanDocumentIfNotRecordingMods);
             }
             this._validateDocState();
             this.performance = new SongPerformance(this);
         }
         toggleDisplayBrowserUrl() {
             const state = this._getHistoryState();
+            if (state == null)
+                throw new Error("History state is null.");
             this.prefs.displayBrowserUrl = !this.prefs.displayBrowserUrl;
             this._replaceState(state, this.song.toBase64String());
         }
@@ -44716,7 +51618,7 @@ You should be redirected to the song at:<br /><br />
         }
         undo() {
             const state = this._getHistoryState();
-            if (state.canUndo)
+            if (state == null || state.canUndo)
                 this._back();
         }
         redo() {
@@ -44727,6 +51629,9 @@ You should be redirected to the song at:<br /><br />
         }
         forgetLastChange() {
             this._recentChange = null;
+        }
+        checkLastChange() {
+            return this._recentChange;
         }
         lastChangeWas(change) {
             return change != null && change == this._recentChange;

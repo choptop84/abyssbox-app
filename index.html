@@ -9,6 +9,8 @@
             crossorigin="anonymous"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alwan/dist/js/alwan.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alwan/dist/css/alwan.min.css" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AbyssBox</title>
@@ -37,6 +39,10 @@
             line-height: 1.3;
             color: var(--primary-text, white);
         }
+        
+        .modTitle::before {
+            content: "AbyssBox";
+        }
 
         body {
             margin: auto;
@@ -56,7 +62,7 @@
             padding-left: 30px;
             padding-right: 30px;
         }
-
+        
         #text-content {
             overflow: auto;
             background: var(--editor-background, black);
@@ -81,6 +87,18 @@
             margin-top: 0.5em;
             margin-bottom: 0.5em;
             -webkit-text-stroke-width: 0;
+        }
+
+        .overlay {
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            background-color: rgba(0,0,0, 0);
+            overflow-x: hidden;
+            pointer-events: none;
         }
 
         .centerDiv {
@@ -150,6 +168,10 @@
 	 <!--WIP, DO NOT USE-->
 	 <!--<center>THIS URL IS MEANT FOR TESTING THE CHANGES MADE IN ULTRABOX 2.0. THIS URL WILL BE DELETED WHEN ULTRABOX 2.0 RELEASES, AND ANY SONGS YOU MAKE HERE MAY BE UNRECOVERABLE. YOU'VE BEEN WARNED.</center>-->
 <body id="secondImage">
+
+    <div id="overlay" class="overlay">
+    </div>
+
     <script>
         const image = localStorage.getItem('customTheme2');
         const el  = document.getElementById('secondImage');
@@ -168,8 +190,7 @@
         <section>
 
             <h1>
-                <font>AbyssBox</font>
-                <span id="goldboxPlant" style="display: inline; color:#62a13b"></span>
+                <div class="modTitle"><span id="goldboxPlant" style="display: inline; color:#62a13b"></span></div>
             </h1>
             
             <p id="introduction">
@@ -210,14 +231,42 @@
                     </h2>
                     <p>
                         You can add or remove notes by clicking on the gray rows at the top.
-                        UltraBox automatically plays the notes out loud for you. Try it!
-			    <img id="Hotdog" src="hotdog.png" width="500" height="333" onclick="myFunction()" />
+                        AbyssBox automatically plays the notes out loud for you. Try it!
+			    <img id="Hotdog" src="hotdog.png" width="500" height="333" onclick="changeHotdogSize()"/>
 				<script>
-				function myFunction(){
-					var image = document.getElementById('Hotdog')
-					image.width = Math.random() * (750 - 20) + 20
-					image.height = Math.random() * (499 - 20) + 20
-				}
+				function changeHotdogSize(){
+
+					var image = document.getElementById('Hotdog');
+					image.width = Math.random() * (750 - 20) + 20;
+					image.height = Math.random() * (499 - 20) + 20;
+
+                    var explosion = new Audio('explosion.mp3');
+
+                    function getRandomInt(max) {
+                    return Math.floor(Math.random() * max);
+                    }
+
+                    var shouldExplode = getRandomInt(5);
+                    var hotdogSkin = getRandomInt(15);
+
+                    if (shouldExplode != 1) {
+                        if (hotdogSkin >= 3) {
+                        image.src = ("hotdog.png"); } 
+                        else if (hotdogSkin == 2) {
+                        image.src = ("banana.png"); }
+                        else if (hotdogSkin == 1) {
+                        image.src = ("pizza.png"); }
+                        else if (hotdogSkin == 0) {
+                        image.src = ("donut.png"); }
+                    }
+
+                    if (shouldExplode == 1) {
+                        console.log("Hello! I exploded!");
+                        explosion.play();
+                        image.src = ("explosion.gif");
+                        
+                    }
+                }
 				</script>
 		
                     </p>

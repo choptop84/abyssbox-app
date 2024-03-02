@@ -22,7 +22,7 @@ var beepbox = (function (exports) {
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
     */
-    const TypePresets = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "chip (custom)", "mod", "FM (6-op)", "supersaw",];
+    const TypePresets = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "supersaw", "chip (custom)", "mod", "FM (6-op)"];
     class SampleLoadingState {
         constructor() {
             this.statusTable = {};
@@ -478,8 +478,8 @@ var beepbox = (function (exports) {
         { name: "÷12 (twelfth notes)", stepsPerBeat: 12, roundUpThresholds: null },
         { name: "freehand", stepsPerBeat: 24, roundUpThresholds: null },
     ]);
-    Config.instrumentTypeNames = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "custom chip", "mod", "FM6op", "supersaw",];
-    Config.instrumentTypeHasSpecialInterval = [true, true, false, false, false, true, false, false, false, false];
+    Config.instrumentTypeNames = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "supersaw", "custom chip", "mod", "FM6op"];
+    Config.instrumentTypeHasSpecialInterval = [true, true, false, false, false, true, false, false, false, false, false];
     Config.chipBaseExpression = 0.03375;
     Config.fmBaseExpression = 0.03;
     Config.noiseBaseExpression = 0.19;
@@ -838,6 +838,9 @@ var beepbox = (function (exports) {
         { name: "flutter 1", type: 6, speed: 14.0 },
         { name: "flutter 2", type: 7, speed: 11.0 },
         { name: "water-y flutter", type: 6, speed: 9.0 },
+        { name: "blip 1", type: 13, speed: 6.0 },
+        { name: "blip 2", type: 13, speed: 16.0 },
+        { name: "blip 3", type: 13, speed: 32.0 },
     ]);
     Config.feedbacks = toNameMap([
         { name: "1⟲", indices: [[1], [], [], []] },
@@ -949,6 +952,8 @@ var beepbox = (function (exports) {
     Config.distortionRange = 8;
     Config.stringSustainRange = 15;
     Config.stringDecayRate = 0.12;
+    Config.enableAcousticSustain = false;
+    Config.sustainTypeNames = ["bright", "acoustic"];
     Config.bitcrusherFreqRange = 14;
     Config.bitcrusherOctaveStep = 0.5;
     Config.bitcrusherQuantizationRange = 8;
@@ -957,21 +962,21 @@ var beepbox = (function (exports) {
     Config.instrumentAutomationTargets = toNameMap([
         { name: "none", computeIndex: null, displayName: "none", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: null },
         { name: "noteVolume", computeIndex: 0, displayName: "note volume", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: null },
-        { name: "pulseWidth", computeIndex: 2, displayName: "pulse width", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 11] },
+        { name: "pulseWidth", computeIndex: 2, displayName: "pulse width", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 8] },
         { name: "stringSustain", computeIndex: 3, displayName: "sustain", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [7] },
-        { name: "unison", computeIndex: 4, displayName: "unison", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [0, 5, 7, 8] },
-        { name: "operatorFrequency", computeIndex: 5, displayName: "fm# freq", interleave: true, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 10] },
-        { name: "operatorAmplitude", computeIndex: 11, displayName: "fm# volume", interleave: false, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 10] },
-        { name: "feedbackAmplitude", computeIndex: 17, displayName: "fm feedback", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [1, 10] },
+        { name: "unison", computeIndex: 4, displayName: "unison", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [0, 5, 7, 9] },
+        { name: "operatorFrequency", computeIndex: 5, displayName: "fm# freq", interleave: true, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 11] },
+        { name: "operatorAmplitude", computeIndex: 11, displayName: "fm# volume", interleave: false, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 11] },
+        { name: "feedbackAmplitude", computeIndex: 17, displayName: "fm feedback", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [1, 11] },
         { name: "pitchShift", computeIndex: 18, displayName: "pitch shift", interleave: false, isFilter: false, maxCount: 1, effect: 7, compatibleInstruments: null },
         { name: "detune", computeIndex: 19, displayName: "detune", interleave: false, isFilter: false, maxCount: 1, effect: 8, compatibleInstruments: null },
         { name: "vibratoDepth", computeIndex: 20, displayName: "vibrato range", interleave: false, isFilter: false, maxCount: 1, effect: 9, compatibleInstruments: null },
         { name: "noteFilterAllFreqs", computeIndex: 1, displayName: "n. filter freqs", interleave: false, isFilter: true, maxCount: 1, effect: 5, compatibleInstruments: null },
         { name: "noteFilterFreq", computeIndex: 21, displayName: "n. filter # freq", interleave: false, isFilter: true, maxCount: Config.filterMaxPoints, effect: 5, compatibleInstruments: null },
-        { name: "decimalOffset", computeIndex: 37, displayName: "decimal offset", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6] },
-        { name: "supersawDynamism", computeIndex: 38, displayName: "dynamism", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [11] },
-        { name: "supersawSpread", computeIndex: 39, displayName: "spread", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [11] },
-        { name: "supersawShape", computeIndex: 40, displayName: "saw↔pulse", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [11] },
+        { name: "decimalOffset", computeIndex: 37, displayName: "decimal offset", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 8] },
+        { name: "supersawDynamism", computeIndex: 38, displayName: "dynamism", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
+        { name: "supersawSpread", computeIndex: 39, displayName: "spread", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
+        { name: "supersawShape", computeIndex: 40, displayName: "saw↔pulse", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
     ]);
     Config.operatorWaves = toNameMap([
         { name: "sine", samples: Config.sineWave },
@@ -1037,7 +1042,7 @@ var beepbox = (function (exports) {
             promptName: "Vibrato Speed", promptDesc: ["This setting controls the speed your instrument will vibrato at, just like the slider.", "A setting of $LO means there will be no oscillation, and vibrato will be disabled. Higher settings will increase the speed, up to a dramatic trill at the max value, $HI.", "[OVERWRITING] [$LO - $HI]"] },
         { name: "vibrato delay", pianoName: "Vibrato Delay", maxRawVol: 50, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 9,
             promptName: "Vibrato Delay", promptDesc: ["This setting controls the amount of time vibrato will be held off for before triggering for every new note, just like the slider.", "A setting of $LO means there will be no delay. A setting of 24 corresponds to one full beat of delay. As a sole exception to this scale, setting delay to $HI will completely disable vibrato (as if it had infinite delay).", "[OVERWRITING] [$LO - $HI] [beats ÷24]"] },
-        { name: "arp speed", pianoName: "Arp Speed", maxRawVol: 50, newNoteVol: 10, forSong: false, convertRealFactor: 0, associatedEffect: 11,
+        { name: "arp speed", pianoName: "Arp Speed", maxRawVol: 50, newNoteVol: 12, forSong: false, convertRealFactor: 0, associatedEffect: 11,
             promptName: "Arpeggio Speed", promptDesc: ["This setting controls the speed at which your instrument's chords arpeggiate, just like the arpeggio speed slider.", "Each setting corresponds to a different speed, from the slowest to the fastest. The speeds are listed below.",
                 "[0-4]: x0, x1/16, x⅛, x⅕, x¼,", "[5-9]: x⅓, x⅖, x½, x⅔, x¾,", "[10-14]: x⅘, x0.9, x1, x1.1, x1.2,", "[15-19]: x1.3, x1.4, x1.5, x1.6, x1.7,", "[20-24]: x1.8, x1.9, x2, x2.1, x2.2,", "[25-29]: x2.3, x2.4, x2.5, x2.6, x2.7,", "[30-34]: x2.8, x2.9, x3, x3.1, x3.2,", "[35-39]: x3.3, x3.4, x3.5, x3.6, x3.7,", "[40-44]: x3.8, x3.9, x4, x4.15, x4.3,", "[45-50]: x4.5, x4.8, x5, x5.5, x6, x8", "[OVERWRITING] [$LO - $HI]"] },
         { name: "pan delay", pianoName: "Pan Delay", maxRawVol: 20, newNoteVol: 10, forSong: false, convertRealFactor: 0, associatedEffect: 2,
@@ -1078,13 +1083,16 @@ var beepbox = (function (exports) {
         { name: "fm slider 6", pianoName: "FM 6", maxRawVol: 15, newNoteVol: 15, forSong: false, convertRealFactor: 0, associatedEffect: 12,
             promptName: "FM Slider 6", promptDesc: ["This setting affects the strength of the sixth FM slider, just like the corresponding slider on your instrument.", "It works in a multiplicative way, so at $HI your slider will sound the same is its default value, and at $LO it will sound like it has been moved all the way to the left.", "For the full range of control with this mod, move your underlying slider all the way to the right.", "[MULTIPLICATIVE] [$LO - $HI] [%]"] },
         { name: "decimal offset", pianoName: "Decimal Offset", maxRawVol: 99, newNoteVol: 0, forSong: false, convertRealFactor: 0, optionalModify: "invert-0to99", associatedEffect: 12,
-            promptName: "Decimal Offset", promptDesc: ["This setting controls the decimal offset that is subtracted from the pulse width; use this for creating values like 12.5 or 6.25.", "[$LO - $HI] [%Duty]"] },
+            promptName: "Decimal Offset", promptDesc: ["This setting controls the decimal offset that is subtracted from the pulse width; use this for creating values like 12.5 or 6.25.", "[$LO - $HI]"] },
+        { name: "envelope speed", pianoName: "EnvelopeSpd", maxRawVol: 50, newNoteVol: 12, forSong: false, convertRealFactor: 0, associatedEffect: 12,
+            promptName: "Envelope Speed", promptDesc: ["This setting controls how fast all of the envelopes for the instrument play.", "At $LO, your instrument's envelopes will be frozen, and at values near there they will change very slowly. At 12, the envelopes will work as usual, performing at normal speed. This increases up to $HI, where the envelopes will change very quickly. The speeds are given below:",
+                "[0-4]: x0, x1/16, x⅛, x⅕, x¼,", "[5-9]: x⅓, x⅖, x½, x⅔, x¾,", "[10-14]: x⅘, x0.9, x1, x1.1, x1.2,", "[15-19]: x1.3, x1.4, x1.5, x1.6, x1.7,", "[20-24]: x1.8, x1.9, x2, x2.1, x2.2,", "[25-29]: x2.3, x2.4, x2.5, x2.6, x2.7,", "[30-34]: x2.8, x2.9, x3, x3.1, x3.2,", "[35-39]: x3.3, x3.4, x3.5, x3.6, x3.7,", "[40-44]: x3.8, x3.9, x4, x4.15, x4.3,", "[45-50]: x4.5, x4.8, x5, x5.5, x6, x8", "[OVERWRITING] [$LO - $HI]"] },
         { name: "dynamism", pianoName: "Dynamism", maxRawVol: Config.supersawDynamismMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
-            promptName: "Supersaw Dynamism", promptDesc: ["This setting controls the dynamism of each saw/wave in your supersaw instrument.", "[OVERWRITING] [$LO - $HI]"] },
+            promptName: "Supersaw Dynamism", promptDesc: ["This setting controls the supersaw dynamism of your instrument, just like the dynamism slider.", "At $LO, your instrument will have only a single pulse contributing. Increasing this will raise the contribution of other waves which is similar to a chorus effect. The effect gets more noticeable up to the max value, $HI.", "[OVERWRITING] [$LO - $HI]"] },
         { name: "spread", pianoName: "Spread", maxRawVol: Config.supersawSpreadMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
-            promptName: "Supersaw Spread", promptDesc: ["This setting controls the spread of each saw/wave in your supersaw instrument.", "[OVERWRITING] [$LO - $HI]"] },
-        { name: "shape", pianoName: "Shape", maxRawVol: Config.supersawShapeMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
-            promptName: "Supersaw Shape", promptDesc: ["This setting controls the shape of each wave in your supersaw instrument.", "At the lowest value, each wave will be a sawtooth. At the highest value, each wave will be fully affected by the pulse width slider.", "[OVERWRITING] [$LO - $HI]"] },
+            promptName: "Supersaw Spread", promptDesc: ["This setting controls the supersaw spread of your instrument, just like the spread slider.", "At $LO, all the pulses in your supersaw will be at the same frequency. Increasing this value raises the frequency spread of the contributing waves, up to a dissonant spread at the max value, $HI.", "[OVERWRITING] [$LO - $HI]"] },
+        { name: "saw shape", pianoName: "Saw Shape", maxRawVol: Config.supersawShapeMax, newNoteVol: 0, forSong: false, convertRealFactor: 0, associatedEffect: 12,
+            promptName: "Supersaw Shape", promptDesc: ["This setting controls the supersaw shape of your instrument, just like the Saw↔Pulse slider.", "As the slider's name implies, this effect will give you a sawtooth wave at $LO, and a full pulse width wave at $HI. Values in between will be a blend of the two.", "[OVERWRITING] [$LO - $HI] [%]"] },
     ]);
     function centerWave(wave) {
         let sum = 0.0;
@@ -1198,7 +1206,7 @@ var beepbox = (function (exports) {
             else if (index == 7) {
                 var drumBuffer = 1;
                 for (var i = 0; i < Config.chipNoiseLength; i++) {
-                    wave[i] = (drumBuffer & 1) * 4.0 * (Math.random() * 14 + 1);
+                    wave[i] = (drumBuffer & 1) * 4.0 * (Math.random() * 14 + 1) - 8.0;
                     var newBuffer = drumBuffer >> 1;
                     if (((drumBuffer + newBuffer) & 1) == 1) {
                         newBuffer += 15 << 2;
@@ -1209,7 +1217,7 @@ var beepbox = (function (exports) {
             else if (index == 8) {
                 var drumBuffer = 1;
                 for (var i = 0; i < 32768; i++) {
-                    wave[i] = (drumBuffer & 1) / 2.0 + 0.5;
+                    wave[i] = (drumBuffer & 1) / 2.0 - 0.5;
                     var newBuffer = drumBuffer >> 1;
                     if (((drumBuffer + newBuffer) & 1) == 1) {
                         newBuffer -= 10 << 2;
@@ -1646,7 +1654,7 @@ var beepbox = (function (exports) {
             this.colorLookup.clear();
         }
         static getArbitaryChannelColor(type, channel) {
-            if (getComputedStyle(this._styleElement).getPropertyValue("--use-color-formula").trim() == "false") {
+            if (!this.usesColorFormula) {
                 let base;
                 switch (type) {
                     case ("noise"): {
@@ -1804,7 +1812,7 @@ var beepbox = (function (exports) {
             }
         }
         static getComputedChannelColor(song, channel) {
-            if (getComputedStyle(this._styleElement).getPropertyValue("--use-color-formula").trim() == "false") {
+            if (!this.usesColorFormula) {
                 let base = ColorConfig.getChannelColor(song, channel);
                 var regex = /\(([^)]+)\)/;
                 let newChannelSecondary = ColorConfig.getComputed(regex.exec(base.secondaryChannel)[1]);
@@ -1819,7 +1827,7 @@ var beepbox = (function (exports) {
         }
         ;
         static getChannelColor(song, channel) {
-            if (getComputedStyle(this._styleElement).getPropertyValue("--use-color-formula").trim() == "false") {
+            if (!this.usesColorFormula) {
                 if (channel < song.pitchChannelCount) {
                     return ColorConfig.getComputed("--pitch-channel-limit") == ""
                         ? ColorConfig.pitchChannels[channel % ColorConfig.pitchChannels.length]
@@ -1842,124 +1850,52 @@ var beepbox = (function (exports) {
                 }
                 else {
                     if (channel < song.pitchChannelCount) {
-                        const pitchSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-hue");
-                        const pitchSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-hue-scale");
-                        const pitchSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-sat");
-                        const pitchSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-sat-scale");
-                        const pitchSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-lum");
-                        const pitchSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-lum-scale");
-                        const pitchPrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-hue");
-                        const pitchPrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-hue-scale");
-                        const pitchPrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-sat");
-                        const pitchPrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-sat-scale");
-                        const pitchPrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-lum");
-                        const pitchPrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-lum-scale");
-                        const pitchSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-hue");
-                        const pitchSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-hue-scale");
-                        const pitchSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-sat");
-                        const pitchSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-sat-scale");
-                        const pitchSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-lum");
-                        const pitchSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-lum-scale");
-                        const pitchPrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-hue");
-                        const pitchPrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-hue-scale");
-                        const pitchPrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-sat");
-                        const pitchPrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-sat-scale");
-                        const pitchPrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-lum");
-                        const pitchPrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-lum-scale");
-                        let newChannelSecondary = "hsl(" + ((+pitchSecondaryChannelHue + (channel * +pitchSecondaryChannelHueScale / Config.pitchChannelCountMax) * 256) % 256) + ","
-                            + (+pitchSecondaryChannelSat * (1 - (+pitchSecondaryChannelSatScale * Math.floor(channel / 7)))) + "%,"
-                            + (+pitchSecondaryChannelLum * (1 - (+pitchSecondaryChannelLumScale * Math.floor(channel / 7)))) + "%)";
-                        let newChannelPrimary = "hsl(" + ((+pitchPrimaryChannelHue + (channel * +pitchPrimaryChannelHueScale / Config.pitchChannelCountMax) * 256) % 256) + ","
-                            + (+pitchPrimaryChannelSat * (1 - (+pitchPrimaryChannelSatScale * Math.floor(channel / 7)))) + "%,"
-                            + (+pitchPrimaryChannelLum * (1 - (+pitchPrimaryChannelLumScale * Math.floor(channel / 7)))) + "%)";
-                        let newNoteSecondary = "hsl(" + ((+pitchSecondaryNoteHue + (channel * +pitchSecondaryNoteHueScale / Config.pitchChannelCountMax) * 256) % 256) + ","
-                            + (+pitchSecondaryNoteSat * (1 - (+pitchSecondaryNoteSatScale * Math.floor(channel / 7)))) + "%,"
-                            + (+pitchSecondaryNoteLum * (1 - (+pitchSecondaryNoteLumScale * Math.floor(channel / 7)))) + "%)";
-                        let newNotePrimary = "hsl(" + ((+pitchPrimaryNoteHue + (channel * +pitchPrimaryNoteHueScale / Config.pitchChannelCountMax) * 256) % 256) + ","
-                            + (+pitchPrimaryNoteSat * (1 - (+pitchPrimaryNoteSatScale * Math.floor(channel / 7)))) + "%,"
-                            + (+pitchPrimaryNoteLum * (1 - (+pitchPrimaryNoteLumScale * Math.floor(channel / 7)))) + "%)";
+                        let newChannelSecondary = "hsl(" + ((this.c_pitchSecondaryChannelHue + (channel * this.c_pitchSecondaryChannelHueScale / Config.pitchChannelCountMax) * 256) % 360) + ","
+                            + (this.c_pitchSecondaryChannelSat * (1 - (this.c_pitchSecondaryChannelSatScale * Math.floor(channel / 9)))) + "%,"
+                            + (this.c_pitchSecondaryChannelLum * (1 - (this.c_pitchSecondaryChannelLumScale * Math.floor(channel / 9)))) + "%)";
+                        let newChannelPrimary = "hsl(" + ((this.c_pitchPrimaryChannelHue + (channel * this.c_pitchPrimaryChannelHueScale / Config.pitchChannelCountMax) * 256) % 360) + ","
+                            + (this.c_pitchPrimaryChannelSat * (1 - (this.c_pitchPrimaryChannelSatScale * Math.floor(channel / 9)))) + "%,"
+                            + (this.c_pitchPrimaryChannelLum * (1 - (this.c_pitchPrimaryChannelLumScale * Math.floor(channel / 9)))) + "%)";
+                        let newNoteSecondary = "hsl(" + ((this.c_pitchSecondaryNoteHue + (channel * this.c_pitchSecondaryNoteHueScale / Config.pitchChannelCountMax) * 256) % 360) + ","
+                            + (this.c_pitchSecondaryNoteSat * (1 - (this.c_pitchSecondaryNoteSatScale * Math.floor(channel / 9)))) + "%,"
+                            + (this.c_pitchSecondaryNoteLum * (1 - (this.c_pitchSecondaryNoteLumScale * Math.floor(channel / 9)))) + "%)";
+                        let newNotePrimary = "hsl(" + ((this.c_pitchPrimaryNoteHue + (channel * this.c_pitchPrimaryNoteHueScale / Config.pitchChannelCountMax) * 256) % 360) + ","
+                            + (this.c_pitchPrimaryNoteSat * (1 - (this.c_pitchPrimaryNoteSatScale * Math.floor(channel / 9)))) + "%,"
+                            + (this.c_pitchPrimaryNoteLum * (1 - (this.c_pitchPrimaryNoteLumScale * Math.floor(channel / 9)))) + "%)";
                         let newChannelColors = { secondaryChannel: newChannelSecondary, primaryChannel: newChannelPrimary, secondaryNote: newNoteSecondary, primaryNote: newNotePrimary };
                         ColorConfig.colorLookup.set(channel, newChannelColors);
                         return newChannelColors;
                     }
                     else if (channel < song.pitchChannelCount + song.noiseChannelCount) {
-                        const noiseSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-hue");
-                        const noiseSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-hue-scale");
-                        const noiseSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-sat");
-                        const noiseSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-sat-scale");
-                        const noiseSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-lum");
-                        const noiseSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-lum-scale");
-                        const noisePrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-hue");
-                        const noisePrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-hue-scale");
-                        const noisePrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-sat");
-                        const noisePrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-sat-scale");
-                        const noisePrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-lum");
-                        const noisePrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-lum-scale");
-                        const noiseSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-hue");
-                        const noiseSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-hue-scale");
-                        const noiseSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-sat");
-                        const noiseSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-sat-scale");
-                        const noiseSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-lum");
-                        const noiseSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-lum-scale");
-                        const noisePrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-hue");
-                        const noisePrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-hue-scale");
-                        const noisePrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-sat");
-                        const noisePrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-sat-scale");
-                        const noisePrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-lum");
-                        const noisePrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-lum-scale");
-                        let newChannelSecondary = "hsl(" + ((+noiseSecondaryChannelHue + (((channel - song.pitchChannelCount) * +noiseSecondaryChannelHueScale) / Config.noiseChannelCountMax) * 256) % 256) + ","
-                            + (+noiseSecondaryChannelSat + channel * +noiseSecondaryChannelSatScale) + "%,"
-                            + (+noiseSecondaryChannelLum + channel * +noiseSecondaryChannelLumScale) + "%)";
-                        let newChannelPrimary = "hsl(" + ((+noisePrimaryChannelHue + (((channel - song.pitchChannelCount) * +noisePrimaryChannelHueScale) / Config.noiseChannelCountMax) * 256) % 256) + ","
-                            + (+noisePrimaryChannelSat + channel * +noisePrimaryChannelSatScale) + "%,"
-                            + (+noisePrimaryChannelLum + channel * +noisePrimaryChannelLumScale) + "%)";
-                        let newNoteSecondary = "hsl(" + ((+noiseSecondaryNoteHue + (((channel - song.pitchChannelCount) * +noiseSecondaryNoteHueScale) / Config.noiseChannelCountMax) * 256) % 256) + ","
-                            + (+noiseSecondaryNoteSat + channel * +noiseSecondaryNoteSatScale) + "%,"
-                            + (+noiseSecondaryNoteLum + channel * +noiseSecondaryNoteLumScale) + "%)";
-                        let newNotePrimary = "hsl(" + ((+noisePrimaryNoteHue + (((channel - song.pitchChannelCount) * +noisePrimaryNoteHueScale) / Config.noiseChannelCountMax) * 256) % 256) + ","
-                            + (+noisePrimaryNoteSat + channel * +noisePrimaryNoteSatScale) + "%,"
-                            + (+noisePrimaryNoteLum + channel * +noisePrimaryNoteLumScale) + "%)";
+                        let newChannelSecondary = "hsl(" + ((this.c_noiseSecondaryChannelHue + (((channel - song.pitchChannelCount) * this.c_noiseSecondaryChannelHueScale) / Config.noiseChannelCountMax) * 256) % 360) + ","
+                            + (this.c_noiseSecondaryChannelSat + channel * this.c_noiseSecondaryChannelSatScale) + "%,"
+                            + (this.c_noiseSecondaryChannelLum + channel * this.c_noiseSecondaryChannelLumScale) + "%)";
+                        let newChannelPrimary = "hsl(" + ((this.c_noisePrimaryChannelHue + (((channel - song.pitchChannelCount) * this.c_noisePrimaryChannelHueScale) / Config.noiseChannelCountMax) * 256) % 360) + ","
+                            + (this.c_noisePrimaryChannelSat + channel * this.c_noisePrimaryChannelSatScale) + "%,"
+                            + (this.c_noisePrimaryChannelLum + channel * this.c_noisePrimaryChannelLumScale) + "%)";
+                        let newNoteSecondary = "hsl(" + ((this.c_noiseSecondaryNoteHue + (((channel - song.pitchChannelCount) * this.c_noiseSecondaryNoteHueScale) / Config.noiseChannelCountMax) * 256) % 360) + ","
+                            + (this.c_noiseSecondaryNoteSat + channel * this.c_noiseSecondaryNoteSatScale) + "%,"
+                            + (this.c_noiseSecondaryNoteLum + channel * this.c_noiseSecondaryNoteLumScale) + "%)";
+                        let newNotePrimary = "hsl(" + ((this.c_noisePrimaryNoteHue + (((channel - song.pitchChannelCount) * this.c_noisePrimaryNoteHueScale) / Config.noiseChannelCountMax) * 256) % 360) + ","
+                            + (this.c_noisePrimaryNoteSat + channel * this.c_noisePrimaryNoteSatScale) + "%,"
+                            + (this.c_noisePrimaryNoteLum + channel * this.c_noisePrimaryNoteLumScale) + "%)";
                         let newChannelColors = { secondaryChannel: newChannelSecondary, primaryChannel: newChannelPrimary, secondaryNote: newNoteSecondary, primaryNote: newNotePrimary };
                         ColorConfig.colorLookup.set(channel, newChannelColors);
                         return newChannelColors;
                     }
                     else {
-                        const modSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-hue");
-                        const modSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-hue-scale");
-                        const modSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-sat");
-                        const modSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-sat-scale");
-                        const modSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-lum");
-                        const modSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-lum-scale");
-                        const modPrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-hue");
-                        const modPrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-hue-scale");
-                        const modPrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-sat");
-                        const modPrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-sat-scale");
-                        const modPrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-lum");
-                        const modPrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-lum-scale");
-                        const modSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-hue");
-                        const modSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-hue-scale");
-                        const modSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-sat");
-                        const modSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-sat-scale");
-                        const modSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-lum");
-                        const modSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-lum-scale");
-                        const modPrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-hue");
-                        const modPrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-hue-scale");
-                        const modPrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-sat");
-                        const modPrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-sat-scale");
-                        const modPrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-lum");
-                        const modPrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-lum-scale");
-                        let newChannelSecondary = "hsl(" + ((+modSecondaryChannelHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * +modSecondaryChannelHueScale) / Config.modChannelCountMax) * 256) % 256) + ","
-                            + (+modSecondaryChannelSat + channel * +modSecondaryChannelSatScale) + "%,"
-                            + (+modSecondaryChannelLum + channel * +modSecondaryChannelLumScale) + "%)";
-                        let newChannelPrimary = "hsl(" + ((+modPrimaryChannelHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * +modPrimaryChannelHueScale) / Config.modChannelCountMax) * 256) % 256) + ","
-                            + (+modPrimaryChannelSat + channel * +modPrimaryChannelSatScale) + "%,"
-                            + (+modPrimaryChannelLum + channel * +modPrimaryChannelLumScale) + "%)";
-                        let newNoteSecondary = "hsl(" + ((+modSecondaryNoteHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * +modSecondaryNoteHueScale) / Config.modChannelCountMax) * 256) % 256) + ","
-                            + (+modSecondaryNoteSat + channel * +modSecondaryNoteSatScale) + "%,"
-                            + (+modSecondaryNoteLum + channel * +modSecondaryNoteLumScale) + "%)";
-                        let newNotePrimary = "hsl(" + ((+modPrimaryNoteHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * +modPrimaryNoteHueScale) / Config.modChannelCountMax) * 256) % 256) + ","
-                            + (+modPrimaryNoteSat + channel * +modPrimaryNoteSatScale) + "%,"
-                            + (+modPrimaryNoteLum + channel * +modPrimaryNoteLumScale) + "%)";
+                        let newChannelSecondary = "hsl(" + ((this.c_modSecondaryChannelHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * this.c_modSecondaryChannelHueScale) / Config.modChannelCountMax) * 256) % 360) + ","
+                            + (this.c_modSecondaryChannelSat + channel * this.c_modSecondaryChannelSatScale) + "%,"
+                            + (this.c_modSecondaryChannelLum + channel * this.c_modSecondaryChannelLumScale) + "%)";
+                        let newChannelPrimary = "hsl(" + ((this.c_modPrimaryChannelHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * this.c_modPrimaryChannelHueScale) / Config.modChannelCountMax) * 256) % 360) + ","
+                            + (this.c_modPrimaryChannelSat + channel * this.c_modPrimaryChannelSatScale) + "%,"
+                            + (this.c_modPrimaryChannelLum + channel * this.c_modPrimaryChannelLumScale) + "%)";
+                        let newNoteSecondary = "hsl(" + ((this.c_modSecondaryNoteHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * this.c_modSecondaryNoteHueScale) / Config.modChannelCountMax) * 256) % 360) + ","
+                            + (this.c_modSecondaryNoteSat + channel * this.c_modSecondaryNoteSatScale) + "%,"
+                            + (this.c_modSecondaryNoteLum + channel * this.c_modSecondaryNoteLumScale) + "%)";
+                        let newNotePrimary = "hsl(" + ((this.c_modPrimaryNoteHue + (((channel - song.pitchChannelCount - song.noiseChannelCount) * this.c_modPrimaryNoteHueScale) / Config.modChannelCountMax) * 256) % 360) + ","
+                            + (this.c_modPrimaryNoteSat + channel * this.c_modPrimaryNoteSatScale) + "%,"
+                            + (this.c_modPrimaryNoteLum + channel * this.c_modPrimaryNoteLumScale) + "%)";
                         let newChannelColors = { secondaryChannel: newChannelSecondary, primaryChannel: newChannelPrimary, secondaryNote: newNoteSecondary, primaryNote: newNotePrimary };
                         ColorConfig.colorLookup.set(channel, newChannelColors);
                         return newChannelColors;
@@ -1978,19 +1914,102 @@ var beepbox = (function (exports) {
         static setTheme(name) {
             let theme = this.themes[name];
             if (theme == undefined)
-                theme = this.themes["dark classic"];
+                theme = this.themes["AbyssBox Classic"];
             this._styleElement.textContent = theme;
             const themeColor = document.querySelector("meta[name='theme-color']");
             if (themeColor != null) {
                 themeColor.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue('--ui-widget-background'));
             }
             this.resetColors();
+            this.usesColorFormula = (getComputedStyle(this._styleElement).getPropertyValue("--use-color-formula").trim() == "true");
+            this.c_invertedText = getComputedStyle(this._styleElement).getPropertyValue("--inverted-text");
+            this.c_trackEditorBgNoiseDim = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-noise-dim");
+            this.c_trackEditorBgNoise = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-noise");
+            this.c_trackEditorBgModDim = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-mod-dim");
+            this.c_trackEditorBgMod = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-mod");
+            this.c_trackEditorBgPitchDim = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-pitch-dim");
+            this.c_trackEditorBgPitch = getComputedStyle(this._styleElement).getPropertyValue("--track-editor-bg-pitch");
+            if (this.usesColorFormula) {
+                this.c_pitchSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-hue");
+                this.c_pitchSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-hue-scale");
+                this.c_pitchSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-sat");
+                this.c_pitchSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-sat-scale");
+                this.c_pitchSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-lum");
+                this.c_pitchSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-channel-lum-scale");
+                this.c_pitchPrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-hue");
+                this.c_pitchPrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-hue-scale");
+                this.c_pitchPrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-sat");
+                this.c_pitchPrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-sat-scale");
+                this.c_pitchPrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-lum");
+                this.c_pitchPrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-channel-lum-scale");
+                this.c_pitchSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-hue");
+                this.c_pitchSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-hue-scale");
+                this.c_pitchSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-sat");
+                this.c_pitchSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-sat-scale");
+                this.c_pitchSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-lum");
+                this.c_pitchSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-secondary-note-lum-scale");
+                this.c_pitchPrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-hue");
+                this.c_pitchPrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-hue-scale");
+                this.c_pitchPrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-sat");
+                this.c_pitchPrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-sat-scale");
+                this.c_pitchPrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-lum");
+                this.c_pitchPrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--pitch-primary-note-lum-scale");
+                this.c_noiseSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-hue");
+                this.c_noiseSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-hue-scale");
+                this.c_noiseSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-sat");
+                this.c_noiseSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-sat-scale");
+                this.c_noiseSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-lum");
+                this.c_noiseSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-channel-lum-scale");
+                this.c_noisePrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-hue");
+                this.c_noisePrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-hue-scale");
+                this.c_noisePrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-sat");
+                this.c_noisePrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-sat-scale");
+                this.c_noisePrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-lum");
+                this.c_noisePrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-channel-lum-scale");
+                this.c_noiseSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-hue");
+                this.c_noiseSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-hue-scale");
+                this.c_noiseSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-sat");
+                this.c_noiseSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-sat-scale");
+                this.c_noiseSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-lum");
+                this.c_noiseSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-secondary-note-lum-scale");
+                this.c_noisePrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-hue");
+                this.c_noisePrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-hue-scale");
+                this.c_noisePrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-sat");
+                this.c_noisePrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-sat-scale");
+                this.c_noisePrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-lum");
+                this.c_noisePrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--noise-primary-note-lum-scale");
+                this.c_modSecondaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-hue");
+                this.c_modSecondaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-hue-scale");
+                this.c_modSecondaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-sat");
+                this.c_modSecondaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-sat-scale");
+                this.c_modSecondaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-lum");
+                this.c_modSecondaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-channel-lum-scale");
+                this.c_modPrimaryChannelHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-hue");
+                this.c_modPrimaryChannelHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-hue-scale");
+                this.c_modPrimaryChannelSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-sat");
+                this.c_modPrimaryChannelSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-sat-scale");
+                this.c_modPrimaryChannelLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-lum");
+                this.c_modPrimaryChannelLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-channel-lum-scale");
+                this.c_modSecondaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-hue");
+                this.c_modSecondaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-hue-scale");
+                this.c_modSecondaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-sat");
+                this.c_modSecondaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-sat-scale");
+                this.c_modSecondaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-lum");
+                this.c_modSecondaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-secondary-note-lum-scale");
+                this.c_modPrimaryNoteHue = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-hue");
+                this.c_modPrimaryNoteHueScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-hue-scale");
+                this.c_modPrimaryNoteSat = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-sat");
+                this.c_modPrimaryNoteSatScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-sat-scale");
+                this.c_modPrimaryNoteLum = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-lum");
+                this.c_modPrimaryNoteLumScale = +getComputedStyle(this._styleElement).getPropertyValue("--mod-primary-note-lum-scale");
+            }
         }
         static getComputed(name) {
             return getComputedStyle(this._styleElement).getPropertyValue(name);
         }
     }
     ColorConfig.colorLookup = new Map();
+    ColorConfig.usesColorFormula = false;
     ColorConfig.themes = {
         "AbyssBox Classic": `
 			:root {		
@@ -2008,6 +2027,1643 @@ var beepbox = (function (exports) {
 			--ui-widget-background: #581b3e; 		
 			--ui-widget-focus: #762b4c; 		
 			--pitch-background: #381d24; 		
+			--tonic: #873a51; 		
+			--fifth-note: #75001e; 		
+			--white-piano-key: #cca5c7; 		
+			--black-piano-key: #402f2f;
+			--white-piano-key-text: #131200;		
+			--black-piano-key-text: #fff;		 		
+			--use-color-formula: true; 		
+			--track-editor-bg-pitch: #571c40; 		
+			--track-editor-bg-pitch-dim: #290d0d; 		
+			--track-editor-bg-noise: #571131; 		
+			--track-editor-bg-noise-dim: #330a28; 		
+			--track-editor-bg-mod: #54083c; 		
+			--track-editor-bg-mod-dim: #360426; 		
+			--multiplicative-mod-slider: #9f6082; 		
+			--overwriting-mod-slider: #9e3470; 		
+			--indicator-primary: #b3498f; 		
+			--indicator-secondary: #541d40; 		
+			--select2-opt-group: #4f191e; 		
+			--input-box-outline: #18041a; 		
+			--mute-button-normal: #dd5d94;	 		
+			--mute-button-mod: #ba364c; 		
+			--mod-label-primary: #541625; 		
+			--mod-label-secondary-text: rgb(120, 87, 86); 
+			--mod-label-primary-text: gray; 
+		
+			--pitch-secondary-channel-hue: -80; 		
+			--pitch-secondary-channel-hue-scale 0; 		
+			--pitch-secondary-channel-sat: 43; 		
+			--pitch-secondary-channel-sat-scale: 0.1; 		
+			--pitch-secondary-channel-lum: 40; 		
+			--pitch-secondary-channel-lum-scale: 0.05; 
+		
+			--pitch-primary-channel-hue: -53; 		
+			--pitch-primary-channel-hue-scale: 6.1; 		
+			--pitch-primary-channel-sat: 75; 		
+			--pitch-primary-channel-sat-scale: 0.1; 		
+			--pitch-primary-channel-lum: 67.5; 		
+			--pitch-primary-channel-lum-scale: 0.05; 	
+	
+			--pitch-secondary-note-hue: -34; 		
+			--pitch-secondary-note-hue-scale: 6.1; 		
+			--pitch-secondary-note-sat: 93.9; 		
+			--pitch-secondary-note-sat-scale: 0.1; 		
+			--pitch-secondary-note-lum: 25; 		
+			--pitch-secondary-note-lum-scale: 0.05; 
+		
+			--pitch-primary-note-hue: -53; 		
+			--pitch-primary-note-hue-scale: 6.1; 		
+			--pitch-primary-note-sat: 100; 		
+			--pitch-primary-note-sat-scale: 0.05; 		
+			--pitch-primary-note-lum: 85.6; 		
+			--pitch-primary-note-lum-scale: 0.025; 
+		
+			--noise-secondary-channel-hue: 0; 		
+			--noise-secondary-channel-hue-scale: 2; 		
+			--noise-secondary-channel-sat: 65; 		
+			--noise-secondary-channel-sat-scale: 0; 		
+			--noise-secondary-channel-lum: 42; 		
+			--noise-secondary-channel-lum-scale: 0; 
+		
+			--noise-primary-channel-hue: 0; 		
+			--noise-primary-channel-hue-scale: 1; 		
+			--noise-primary-channel-sat: 100; 		
+			--noise-primary-channel-sat-scale: 1; 		
+			--noise-primary-channel-lum: 63.5; 		
+			--noise-primary-channel-lum-scale: 0; 
+		
+			--noise-secondary-note-hue: 24; 		
+			--noise-secondary-note-hue-scale: 2; 		
+			--noise-secondary-note-sat: 100; 		
+			--noise-secondary-note-sat-scale: 0; 		
+			--noise-secondary-note-lum: 35; 		
+			--noise-secondary-note-lum-scale: 0; 	
+	
+			--noise-primary-note-hue: 24; 		
+			--noise-primary-note-hue-scale: 2; 		
+			--noise-primary-note-sat: 100; 		
+			--noise-primary-note-sat-scale: 1; 		
+			--noise-primary-note-lum: 60; 		
+			--noise-primary-note-lum-scale: 1; 	
+	
+			--mod-secondary-channel-hue: 55; 		
+			--mod-secondary-channel-hue-scale: 1.5; 		
+			--mod-secondary-channel-sat: 100; 		
+			--mod-secondary-channel-sat-scale: 0; 		
+			--mod-secondary-channel-lum: 20; 		
+			--mod-secondary-channel-lum-scale: 0; 
+		
+			--mod-primary-channel-hue: 55; 		
+			--mod-primary-channel-hue-scale: 1.5; 		
+			--mod-primary-channel-sat: 96; 		
+			--mod-primary-channel-sat-scale: 0; 		
+			--mod-primary-channel-lum: 50; 		
+			--mod-primary-channel-lum-scale: 0; 
+		
+			--mod-secondary-note-hue: 55; 		
+			--mod-secondary-note-hue-scale: 1.5; 		
+			--mod-secondary-note-sat: 92; 		
+			--mod-secondary-note-sat-scale: 0; 		
+			--mod-secondary-note-lum: 45; 		
+			--mod-secondary-note-lum-scale: 0; 
+		
+			--mod-primary-note-hue: 55; 		
+			--mod-primary-note-hue-scale: 1.5; 		
+			--mod-primary-note-sat: 96; 		
+			--mod-primary-note-sat-scale: 0; 		
+			--mod-primary-note-lum: 85; 		
+			--mod-primary-note-lum-scale: 0; 	
+
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;
+				}
+		* {
+		cursor: url("abyssbox_cursor.png"), auto;
+		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+		--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+		--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+		--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+		--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+		--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		}
+		
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+ 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			/* sets background image */
+			body {
+			background-image: url("https://choptop84.github.io/abyssbox-source/website/stripesbg.gif") !important;
+			background-position: center;
+			background-repeat: repeat;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+				}
+
+			/*#Hotdog {
+				content: url("https://choptop84.github.io/choptop84s-image-repository/abclassic_hotdog.png");
+			} */
+
+			#text-content {
+    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png");
+    				border-image-slice: 4 fill; 
+   				border-image-width: 8px; 
+				border-image-repeat: stretch; 
+    				padding: 12px; 
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */
+				}
+			#beepboxEditorContainer {
+    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png");
+    				border-image-slice: 4 fill; 
+   				border-image-width: 8px; 
+				border-image-repeat: stretch;
+    				padding: 12px;
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */ 
+				}
+			.beepboxEditor button,
+			button.playButton,
+			button.pauseButton, 
+			button.recordButton, 
+			button.stopButton,
+			button.nextBarButton, 
+			button.prevBarButton, 
+			button.copyButton, 
+			button.pasteButton, 
+			button.exportInstrumentButton, 
+			button.importInstrumentButton, 
+			.beepboxEditor select, 
+			.beepboxEditor .select2-selection__rendered {
+    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png") !important;
+    				border-image-slice: 4 fill !important; 
+   				border-image-width: 4px !important; 
+				border-image-repeat: stretch !important;
+    				padding: 4px !important; 
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */
+
+					cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				}
+
+			div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+				--ui-widget-background: #1e0915 !important;
+				border-image-source:none !important;
+			}
+
+				select.trackSelectBox {
+					border-image: none !important;
+				}
+				
+			@font-face {
+		   font-family: "AbyssType_small";
+		   src:
+ 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			html {
+ 		   	font-family: 'AbyssType';
+			}
+
+			div.channelBoxLabel {
+				font-family: 'AbyssType_small' !important;
+			}
+
+			.beepboxEditor input[type="range"]::-webkit-slider-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="text"],
+			.beepboxEditor input[type="number"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked:after
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			div.selectRow span {
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			`,
+        "AbyssBox Competitive": `
+			:root { 		
+			--page-margin: #000000; 		
+			--editor-background: #000000; 		
+			--hover-preview: white; 		
+			--playhead: rgba(255, 255, 255, 0.9); 		
+			--primary-text: white; 		
+			--secondary-text: #ffcedd; 		
+			--inverted-text: black;	 		
+			--text-selection: rgba(119,68,255,0.99); 		
+			--box-selection-fill: #bf2c5d; 		
+			--loop-accent: #873a51; 		
+			--link-accent: #df88ff; 		
+			--ui-widget-background: #581b3e; 		
+			--ui-widget-focus: #000000; 		
+			--pitch-background: #240f15; 		
+			--tonic: #a34b65; 		
+			--fifth-note: #75001e; 		
+			--white-piano-key: #cca5c7; 		
+			--black-piano-key: #402f2f;
+			--white-piano-key-text: #131200;		
+			--black-piano-key-text: #fff;		 		
+			--use-color-formula: true; 		
+			--track-editor-bg-pitch: #571c40; 		
+			--track-editor-bg-pitch-dim: #290d0d; 		
+			--track-editor-bg-noise: #571131; 		
+			--track-editor-bg-noise-dim: #330a28; 		
+			--track-editor-bg-mod: #54083c; 		
+			--track-editor-bg-mod-dim: #360426; 		
+			--multiplicative-mod-slider: #9f6082; 		
+			--overwriting-mod-slider: #9e3470; 		
+			--indicator-primary: #b3498f; 		
+			--indicator-secondary: #541d40; 		
+			--select2-opt-group: #4f191e; 		
+			--input-box-outline: #18041a; 		
+			--mute-button-normal: #dd5d94;	 		
+			--mute-button-mod: #ba364c; 		
+			--mod-label-primary: #541625; 		
+			--mod-label-secondary-text: rgb(120, 87, 86); 
+			--mod-label-primary-text: gray; 
+		
+			--pitch-secondary-channel-hue: -80; 		
+			--pitch-secondary-channel-hue-scale 0; 		
+			--pitch-secondary-channel-sat: 43; 		
+			--pitch-secondary-channel-sat-scale: 0.1; 		
+			--pitch-secondary-channel-lum: 40; 		
+			--pitch-secondary-channel-lum-scale: 0.05; 
+		
+			--pitch-primary-channel-hue: -53; 		
+			--pitch-primary-channel-hue-scale: 6.1; 		
+			--pitch-primary-channel-sat: 75; 		
+			--pitch-primary-channel-sat-scale: 0.1; 		
+			--pitch-primary-channel-lum: 67.5; 		
+			--pitch-primary-channel-lum-scale: 0.05; 	
+	
+			--pitch-secondary-note-hue: -34; 		
+			--pitch-secondary-note-hue-scale: 6.1; 		
+			--pitch-secondary-note-sat: 93.9; 		
+			--pitch-secondary-note-sat-scale: 0.1; 		
+			--pitch-secondary-note-lum: 25; 		
+			--pitch-secondary-note-lum-scale: 0.05; 
+		
+			--pitch-primary-note-hue: -53; 		
+			--pitch-primary-note-hue-scale: 6.1; 		
+			--pitch-primary-note-sat: 100; 		
+			--pitch-primary-note-sat-scale: 0.05; 		
+			--pitch-primary-note-lum: 85.6; 		
+			--pitch-primary-note-lum-scale: 0.025; 
+		
+			--noise-secondary-channel-hue: 0; 		
+			--noise-secondary-channel-hue-scale: 2; 		
+			--noise-secondary-channel-sat: 65; 		
+			--noise-secondary-channel-sat-scale: 0; 		
+			--noise-secondary-channel-lum: 42; 		
+			--noise-secondary-channel-lum-scale: 0; 
+		
+			--noise-primary-channel-hue: 0; 		
+			--noise-primary-channel-hue-scale: 1; 		
+			--noise-primary-channel-sat: 100; 		
+			--noise-primary-channel-sat-scale: 1; 		
+			--noise-primary-channel-lum: 63.5; 		
+			--noise-primary-channel-lum-scale: 0; 
+		
+			--noise-secondary-note-hue: 24; 		
+			--noise-secondary-note-hue-scale: 2; 		
+			--noise-secondary-note-sat: 100; 		
+			--noise-secondary-note-sat-scale: 0; 		
+			--noise-secondary-note-lum: 35; 		
+			--noise-secondary-note-lum-scale: 0; 	
+	
+			--noise-primary-note-hue: 24; 		
+			--noise-primary-note-hue-scale: 2; 		
+			--noise-primary-note-sat: 100; 		
+			--noise-primary-note-sat-scale: 1; 		
+			--noise-primary-note-lum: 60; 		
+			--noise-primary-note-lum-scale: 1; 	
+	
+			--mod-secondary-channel-hue: 55; 		
+			--mod-secondary-channel-hue-scale: 1.5; 		
+			--mod-secondary-channel-sat: 100; 		
+			--mod-secondary-channel-sat-scale: 0; 		
+			--mod-secondary-channel-lum: 20; 		
+			--mod-secondary-channel-lum-scale: 0; 
+		
+			--mod-primary-channel-hue: 55; 		
+			--mod-primary-channel-hue-scale: 1.5; 		
+			--mod-primary-channel-sat: 96; 		
+			--mod-primary-channel-sat-scale: 0; 		
+			--mod-primary-channel-lum: 50; 		
+			--mod-primary-channel-lum-scale: 0; 
+		
+			--mod-secondary-note-hue: 55; 		
+			--mod-secondary-note-hue-scale: 1.5; 		
+			--mod-secondary-note-sat: 92; 		
+			--mod-secondary-note-sat-scale: 0; 		
+			--mod-secondary-note-lum: 45; 		
+			--mod-secondary-note-lum-scale: 0; 
+		
+			--mod-primary-note-hue: 55; 		
+			--mod-primary-note-hue-scale: 1.5; 		
+			--mod-primary-note-sat: 96; 		
+			--mod-primary-note-sat-scale: 0; 		
+			--mod-primary-note-lum: 85; 		
+			--mod-primary-note-lum-scale: 0; 
+
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;
+				}		
+		/* sets cursor */ 
+		* {
+		cursor: url("abyssbox_cursor.png"), auto !important;
+		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+		--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+		--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+		--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+		--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+		--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		}
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+ 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			@font-face {
+		   font-family: "AbyssType_small";
+		   src:
+ 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			.beepboxEditor button,
+			button.playButton,
+			button.pauseButton, 
+			button.recordButton, 
+			button.stopButton,
+			button.nextBarButton,
+			button.prevBarButton,
+			button.copyButton, 
+			button.pasteButton, 
+			button.exportInstrumentButton, 
+			button.importInstrumentButton, 
+			.beepboxEditor select, 
+			.beepboxEditor .select2-selection__rendered {
+					border-style: double !important;
+					border-radius: 0px !important;
+					--ui-widget-background: black;
+			}
+
+			button.add-envelope::before,
+			button.notesDownButton::before,
+			button.notesUpButton::before,
+			button.copyPatternButton::before,
+			button.pastePatternButton::before,
+			button.undoButton::before,
+			button.redoButton::before,
+			button.loopBarButton::before,
+			button.duplicateButton::before,
+			button.selectAllButton::before,
+			button.deleteChannelButton::before, 
+			button.insertRowButton::before,
+			.delete-envelope::before {
+				left: -3px !important;
+				top: -3px !important;
+			}
+
+			div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+				--ui-widget-background: black !important;
+				border-image-source:none !important;
+				border-style: none !important;
+			}
+
+				select.trackSelectBox {
+					border-image: none !important;
+					border-style: none !important;
+				}
+
+			html {
+ 		   font-family: 'AbyssType';
+			}
+			div.channelBoxLabel {
+				font-family: 'AbyssType_small' !important;
+			}
+
+			.beepboxEditor input[type="range"]::-webkit-slider-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="text"],
+			.beepboxEditor input[type="number"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked:after
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			div.selectRow span {
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			`,
+        "AbyssBox Light": `
+			:root { 		
+			--page-margin: #e0adbc; 		
+			--editor-background: #e0adbc; 		
+			--hover-preview: white; 		
+			--playhead: rgba(255, 255, 255, 0.9); 		
+			--primary-text: #f5f0f1; 		
+			--secondary-text: #eddadf; 		
+			--inverted-text:  #e8bcc9;	 		
+			--text-selection: rgba(119,68,255,0.99); 		
+			--box-selection-fill: #bf2c5d; 		
+			--loop-accent: #8c346a; 		
+			--link-accent: #8c346a; 		
+			--ui-widget-background: #f5e9f0;		
+			--ui-widget-focus: #8c346a; 		
+			--pitch-background: #eddadf; 		
+			--tonic: #f5f0f1; 		
+			--fifth-note: #ffb5c9; 		
+			--white-piano-key: #cca5c7; 		
+			--black-piano-key: #402f2f;
+			--white-piano-key-text: #131200;		
+			--black-piano-key-text: #fff;	 		
+			--use-color-formula: true; 		
+			--track-editor-bg-pitch: #decad8; 		
+			--track-editor-bg-pitch-dim: #bfb0bb; 		
+			--track-editor-bg-noise: #d6a3ca; 		
+			--track-editor-bg-noise-dim: #b389a9; 		
+			--track-editor-bg-mod: #b0649e; 		
+			--track-editor-bg-mod-dim: #915683; 		
+			--multiplicative-mod-slider: #9f6082; 		
+			--overwriting-mod-slider: #9e3470; 		
+			--indicator-primary: #b3498f; 		
+			--indicator-secondary: #541d40; 		
+			--select2-opt-group: #4f191e; 		
+			--input-box-outline: #18041a; 		
+			--mute-button-normal: #dd5d94;	 		
+			--mute-button-mod: #ba364c; 		
+			--mod-label-primary: #541625; 		
+			--mod-label-secondary-text: rgb(120, 87, 86); 
+			--mod-label-primary-text: gray; 
+		
+			--pitch-secondary-channel-hue: -80; 		
+			--pitch-secondary-channel-hue-scale 0; 		
+			--pitch-secondary-channel-sat: 255; 		
+			--pitch-secondary-channel-sat-scale: 0.1; 		
+			--pitch-secondary-channel-lum: 30; 		
+			--pitch-secondary-channel-lum-scale: 0.05; 
+		
+			--pitch-primary-channel-hue: -53; 		
+			--pitch-primary-channel-hue-scale: 6.1; 		
+			--pitch-primary-channel-sat: 255; 		
+			--pitch-primary-channel-sat-scale: 0.1; 		
+			--pitch-primary-channel-lum: 60; 		
+			--pitch-primary-channel-lum-scale: 0.05; 	
+	
+			--pitch-secondary-note-hue: -34; 		
+			--pitch-secondary-note-hue-scale: 6.1; 		
+			--pitch-secondary-note-sat: 255; 		
+			--pitch-secondary-note-sat-scale: 0.1; 		
+			--pitch-secondary-note-lum: 30; 		
+			--pitch-secondary-note-lum-scale: 0.05; 
+		
+			--pitch-primary-note-hue: -53; 		
+			--pitch-primary-note-hue-scale: 6.1; 		
+			--pitch-primary-note-sat: 255; 		
+			--pitch-primary-note-sat-scale: 0.05; 		
+			--pitch-primary-note-lum: 60; 		
+			--pitch-primary-note-lum-scale: 0.025; 
+		
+			--noise-secondary-channel-hue: 0; 		
+			--noise-secondary-channel-hue-scale: 2; 		
+			--noise-secondary-channel-sat: 255; 		
+			--noise-secondary-channel-sat-scale: 0; 		
+			--noise-secondary-channel-lum: 30; 		
+			--noise-secondary-channel-lum-scale: 0; 
+		
+			--noise-primary-channel-hue: 0; 		
+			--noise-primary-channel-hue-scale: 1; 		
+			--noise-primary-channel-sat: 255; 		
+			--noise-primary-channel-sat-scale: 1; 		
+			--noise-primary-channel-lum: 60; 		
+			--noise-primary-channel-lum-scale: 0; 
+		
+			--noise-secondary-note-hue: 24; 		
+			--noise-secondary-note-hue-scale: 2; 		
+			--noise-secondary-note-sat: 255; 		
+			--noise-secondary-note-sat-scale: 0; 		
+			--noise-secondary-note-lum: 30; 		
+			--noise-secondary-note-lum-scale: 0; 	
+	
+			--noise-primary-note-hue: 24; 		
+			--noise-primary-note-hue-scale: 2; 		
+			--noise-primary-note-sat: 255; 		
+			--noise-primary-note-sat-scale: 1; 		
+			--noise-primary-note-lum: 60; 		
+			--noise-primary-note-lum-scale: 1; 	
+	
+			--mod-secondary-channel-hue: 55; 		
+			--mod-secondary-channel-hue-scale: 1.5; 		
+			--mod-secondary-channel-sat: 255; 		
+			--mod-secondary-channel-sat-scale: 0; 		
+			--mod-secondary-channel-lum: 30; 		
+			--mod-secondary-channel-lum-scale: 0; 
+		
+			--mod-primary-channel-hue: 55; 		
+			--mod-primary-channel-hue-scale: 1.5; 		
+			--mod-primary-channel-sat: 255; 		
+			--mod-primary-channel-sat-scale: 0; 		
+			--mod-primary-channel-lum: 60; 		
+			--mod-primary-channel-lum-scale: 0; 
+		
+			--mod-secondary-note-hue: 55; 		
+			--mod-secondary-note-hue-scale: 1.5; 		
+			--mod-secondary-note-sat: 255; 		
+			--mod-secondary-note-sat-scale: 0; 		
+			--mod-secondary-note-lum: 30; 		
+			--mod-secondary-note-lum-scale: 0; 
+		
+			--mod-primary-note-hue: 55; 		
+			--mod-primary-note-hue-scale: 1.5; 		
+			--mod-primary-note-sat: 255; 		
+			--mod-primary-note-sat-scale: 0; 		
+			--mod-primary-note-lum: 60; 		
+			--mod-primary-note-lum-scale: 0; 	
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;
+				}
+				/* sets background image */
+				body {
+				background-image: url("https://choptop84.github.io/abyssbox-source/website/stripesbg_light.gif") !important;
+				background-position: center;
+				background-repeat: repeat;
+	
+				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+				image-rendering: -o-crisp-edges !important;            /* Opera */
+				image-rendering: pixelated !important;                 /* Future browsers */
+				image-rendering: optimizeSpeed !important;             /* IE */
+					}		
+			#text-content {
+    				border-image-source: url("https://choptop84.github.io/abyssbox-source/website/abyssbox_border_light.png");
+    				border-image-slice: 4 fill; 
+   				border-image-width: 8px; 
+				border-image-repeat: stretch; 
+    				padding: 12px; 
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */
+				}
+			#beepboxEditorContainer {
+    				border-image-source: url("https://choptop84.github.io/abyssbox-source/website/abyssbox_border_light.png");
+    				border-image-slice: 4 fill; 
+   				border-image-width: 8px; 
+				border-image-repeat: stretch;
+    				padding: 12px;
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */ 
+				}
+				.beepboxEditor button,
+				button.playButton,
+				button.pauseButton, 
+				button.recordButton, 
+				button.stopButton,
+				button.nextBarButton, 
+				button.prevBarButton, 
+				button.copyButton, 
+				button.pasteButton, 
+				button.exportInstrumentButton, 
+				button.importInstrumentButton, 
+				.beepboxEditor select, 
+				.beepboxEditor .select2-selection__rendered {
+						border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border_light.png") !important;
+						border-image-slice: 4 fill !important; 
+					   border-image-width: 4px !important; 
+					border-image-repeat: stretch !important;
+						padding: 4px !important; 
+	
+						image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						image-rendering: -o-crisp-edges !important;            /* Opera */
+						image-rendering: pixelated !important;                 /* Future browsers */
+						image-rendering: optimizeSpeed !important;             /* IE */
+	
+						cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+					}
+	
+				div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+					--ui-widget-background: var(--editor-background) !important;
+					border-image-source:none !important;
+				}
+
+				select.trackSelectBox {
+					border-image: none !important;
+				}
+
+		/* sets cursor */ 
+		* {
+		cursor: url("abyssbox_cursor.png"), auto !important;
+		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+		--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+		--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+		--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+		--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+		--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		}
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+ 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			@font-face {
+		   font-family: "AbyssType_small";
+		   src:
+ 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			html {
+ 		   font-family: 'AbyssType';
+			}
+			div.channelBoxLabel {
+				font-family: 'AbyssType_small' !important;
+			}
+
+			.beepboxEditor input[type="range"]::-webkit-slider-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-ms-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-thumb
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="range"]:focus::-moz-range-track
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="text"],
+			.beepboxEditor input[type="number"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+			 
+			.beepboxEditor input[type="checkbox"]:checked:after
+			{
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			div.selectRow span {
+				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+			}
+
+			`,
+        "Frutiger Aero": `
+			:root {		
+			--page-margin: #fff; 		
+			--editor-background: #2e538c;		
+			--hover-preview: white; 		
+			--playhead: rgba(255, 255, 255, 0.9); 		
+			--primary-text: white; 		
+			--secondary-text: #ceddff;		
+			--inverted-text: white;	 		
+			--text-selection: rgba(119,68,255,0.99); 		
+			--box-selection-fill: #0a091e; 		
+			--loop-accent: #6fafe8; 		
+			--link-accent: #a2b0ff; 		
+			--ui-widget-background: #84aef0; 		
+			--ui-widget-focus: #2b5376; 		
+			--pitch-background: #4671b5; 		
+			--tonic: #fff; 		
+			--fifth-note: #620297; 		
+			--white-piano-key: #dbe5ec;		
+			--black-piano-key: #2f3a40;
+			--white-piano-key-text: #131200;		
+			--black-piano-key-text: #fff;					
+			--use-color-formula: true; 		
+			--track-editor-bg-pitch: linear-gradient(#2782b0,#0c2b3e); 		
+			--track-editor-bg-pitch-dim: linear-gradient(#0c2b3e70,#05151fc4); 		
+			--track-editor-bg-noise: linear-gradient(#2d4aa1,#08204f); 		
+			--track-editor-bg-noise-dim: linear-gradient(#08204f70, #031029c4); 		
+			--track-editor-bg-mod: linear-gradient(#46299e, #26145e); 		
+			--track-editor-bg-mod-dim: linear-gradient(#26145e70,#110630c4); 		
+			--multiplicative-mod-slider: #60769f; 		
+			--overwriting-mod-slider: #343b9e; 		
+			--indicator-primary: #499ab3; 		
+			--indicator-secondary: #9db9c4; 		
+			--select2-opt-group: #185f8a; 		
+			--input-box-outline: #18041a; 		
+			--mute-button-normal: #97d4f9; 		
+			--mute-button-mod: #8a5fff;		
+			--mod-label-primary: #341a7b; 		
+			--mod-label-secondary-text: rgb(86, 93, 120);
+			--mod-label-primary-text: gray; 
+		
+			--pitch-secondary-channel-hue: 110; 		
+			--pitch-secondary-channel-hue-scale 0; 		
+			--pitch-secondary-channel-sat: 63; 		
+			--pitch-secondary-channel-sat-scale: 0.1; 		
+			--pitch-secondary-channel-lum: 50; 		
+			--pitch-secondary-channel-lum-scale: 0.05; 
+		
+			--pitch-primary-channel-hue: 120; 		
+			--pitch-primary-channel-hue-scale: 6.1; 		
+			--pitch-primary-channel-sat: 75; 		
+			--pitch-primary-channel-sat-scale: 0.1; 		
+			--pitch-primary-channel-lum: 67.5; 		
+			--pitch-primary-channel-lum-scale: 0.05; 	
+	
+			--pitch-secondary-note-hue: 110; 		
+			--pitch-secondary-note-hue-scale: 6.1; 		
+			--pitch-secondary-note-sat: 63.9; 		
+			--pitch-secondary-note-sat-scale: 0.1; 		
+			--pitch-secondary-note-lum: 55; 		
+			--pitch-secondary-note-lum-scale: 0.05; 
+		
+			--pitch-primary-note-hue: 120; 		
+			--pitch-primary-note-hue-scale: 6.1; 		
+			--pitch-primary-note-sat: 100; 		
+			--pitch-primary-note-sat-scale: 0.05; 		
+			--pitch-primary-note-lum: 85.6; 		
+			--pitch-primary-note-lum-scale: 0.025; 
+		
+			--noise-secondary-channel-hue: 90; 		
+			--noise-secondary-channel-hue-scale: 2; 		
+			--noise-secondary-channel-sat: 65; 		
+			--noise-secondary-channel-sat-scale: 0; 		
+			--noise-secondary-channel-lum: 42; 		
+			--noise-secondary-channel-lum-scale: 0; 
+		
+			--noise-primary-channel-hue: 80; 		
+			--noise-primary-channel-hue-scale: 1; 		
+			--noise-primary-channel-sat: 100; 		
+			--noise-primary-channel-sat-scale: 1; 		
+			--noise-primary-channel-lum: 63.5; 		
+			--noise-primary-channel-lum-scale: 0; 
+		
+			--noise-secondary-note-hue: 90; 		
+			--noise-secondary-note-hue-scale: 2; 		
+			--noise-secondary-note-sat: 60; 		
+			--noise-secondary-note-sat-scale: 0; 		
+			--noise-secondary-note-lum: 35; 		
+			--noise-secondary-note-lum-scale: 0; 	
+	
+			--noise-primary-note-hue: 80; 		
+			--noise-primary-note-hue-scale: 2; 		
+			--noise-primary-note-sat: 100; 		
+			--noise-primary-note-sat-scale: 1; 		
+			--noise-primary-note-lum: 60; 		
+			--noise-primary-note-lum-scale: 1; 	
+	
+			--mod-secondary-channel-hue: 55; 		
+			--mod-secondary-channel-hue-scale: 1.5; 		
+			--mod-secondary-channel-sat: 100; 		
+			--mod-secondary-channel-sat-scale: 0; 		
+			--mod-secondary-channel-lum: 20; 		
+			--mod-secondary-channel-lum-scale: 0; 
+		
+			--mod-primary-channel-hue: 55; 		
+			--mod-primary-channel-hue-scale: 1.5; 		
+			--mod-primary-channel-sat: 96; 		
+			--mod-primary-channel-sat-scale: 0; 		
+			--mod-primary-channel-lum: 50; 		
+			--mod-primary-channel-lum-scale: 0; 
+		
+			--mod-secondary-note-hue: 55; 		
+			--mod-secondary-note-hue-scale: 1.5; 		
+			--mod-secondary-note-sat: 62; 		
+			--mod-secondary-note-sat-scale: 0; 		
+			--mod-secondary-note-lum: 45; 		
+			--mod-secondary-note-lum-scale: 0; 
+		
+			--mod-primary-note-hue: 55; 		
+			--mod-primary-note-hue-scale: 1.5; 		
+			--mod-primary-note-sat: 96; 		
+			--mod-primary-note-sat-scale: 0; 		
+			--mod-primary-note-lum: 85; 		
+			--mod-primary-note-lum-scale: 0; 	
+
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;
+
+		}
+
+		* {
+		/*cursor: url("abyssbox_cursor.png"), auto !important;*/
+		--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/vistaSpeakerIconMuted.png");
+		--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/vistaSpeakerIcon.png");
+		}
+	
+
+		/* Frutiger Aero Icons */
+
+		div.mute-button::before {
+			background: #fff0 !important;
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/vistaSpeakerIcon.png") !important;
+			background-size: 18px !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+			mask-size: 800px !important;
+			color: #fff0;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		div.mute-button.muted::before {
+			background: #fff0 !important;
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/vistaSpeakerIconMuted.png") !important;
+			background-size: 18px !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+			mask-size: 800px !important;
+			color: #fff0;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		#text-content > section > h1 > font {
+			display: none;
+			}
+			#text-content > section > h1 {
+			margin: auto;
+			content: url("https://choptop84.github.io/choptop84s-image-repository/AbyssBoxFrutigerAeroThemeLogo.png");
+			}
+
+		select.trackSelectBox {
+			border-image: none !important;
+		}
+
+			@font-face {
+		   font-family: "Frutiger";
+		   src:
+ 		   url("https://choptop84.github.io/choptop84s-image-repository/FrutigerLight.ttf") format("truetype") tech(color-COLRv1),
+			}
+
+			canvas#oscilascopeAll {
+				background: #2e538c !important; 
+				border: 2px solid #84aef000 !important;
+			}
+
+			.beepboxEditor .play-pause-area div:last-child {
+				position: relative;
+				width: 144px;
+				height: 32px;
+			  }
+			  .beepboxEditor .play-pause-area div:last-child::before {
+				content: "";
+				display: block;
+				width: calc(144px + 4px);
+				height: calc(32px + 4px);
+				box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.5), inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5), inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+				position: absolute;
+				z-index: 1;
+			  }
+
+			div.prompt.noSelection{
+				background: linear-gradient(#84aef080, #2a3d6a80) !important; 
+				opacity: 77;
+			}  
+
+			svg#firstImage {
+				opacity: 50%;
+				--editor-background: #84aef0;
+			}
+
+			/* sets background image */
+			body {
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/frutigerbg3.jpg") !important;
+			background-position: top;
+			background-attachment: fixed;
+			background-repeat: no-repeat;
+			background-size: cover;
+			image-rendering: optimizeQuality !important;             /* IE */ 
+				}
+
+			#beepboxEditorContainer {
+				background: linear-gradient(#eef3ff80, #395eb380) !important;
+				border-style: solid;
+  				border-color: lightblue;
+				padding-bottom: 5px;
+				--inverted-text: black;
+				backdrop-filter: blur(10px);
+			}
+			#text-content {
+				background: linear-gradient(#395eb380, #03112f80);
+				border-style: solid;
+  				border-color: lightblue;
+				  backdrop-filter: blur(10px);
+			}
+
+				.beepboxEditor select
+				{
+					box-shadow: 0px 1px 3px 0px rgb(0, 0, 0), inset 0px -12px 14px 0px rgba(0, 0, 0, 0.3), inset 0px -15px 0px 0px rgba(0, 0, 0, 0.2);
+
+					--ui-widget-background: linear-gradient(#84aef0, #4f6db3) !important;
+					border-image-source:url("https://choptop84.github.io/choptop84s-image-repository/buttonshading.png") !important;
+					border-image-slice: 40 fill !important; 
+   					border-image-width: 4px !important; 
+					border-image-repeat: stretch; 
+				
+
+				}
+
+				div.playback-bar-controls button.playButton, 
+				div.playback-bar-controls button.pauseButton, 
+				div.playback-bar-controls button.recordButton, 
+				div.playback-bar-controls button.stopButton, 
+				div.playback-bar-controls button.prevBarButton, 
+				div.playback-bar-controls button.nextBarButton, 
+				div.selectRow button.copyButton, 
+				div.selectRow button.pasteButton, 
+				div.editor-controls button.exportInstrumentButton, 
+				div.editor-controls button.importInstrumentButton,
+				div.editor-controls div button.add-envelope,
+				div.editor-controls div button.delete-envelope  { 
+					box-shadow: 0px 1px 3px 0px rgb(0, 0, 0), inset 0px -12px 14px 0px rgba(0, 0, 0, 0.3), inset 0px -15px 0px 0px rgba(0, 0, 0, 0.2);
+
+					--ui-widget-background: linear-gradient(#84aef0, #4f6db3) !important;
+					border-image-source:url("https://choptop84.github.io/choptop84s-image-repository/buttonshading.png") !important;
+					border-image-slice: 40 fill !important; 
+   					border-image-width: 4px !important; 
+					border-image-repeat: stretch; 
+				}
+
+				.beepboxEditor select:focus
+				{
+					border-image-source: none;
+					
+					--ui-widget-background: linear-gradient(#2a3d6a, #2a3d6a) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+						inset 0px 10px 20px 1px rgba(0, 0, 0, 0.4),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+
+				.beepboxEditor .select2-selection__rendered,
+				.beepboxEditor .instrument-bar button,
+				.beepboxEditor .eq-filter-type-bar button .deactivated,
+				.beepboxEditor .note-filter-type-bar button .deactivated
+				{
+					box-shadow: 0px 1px 3px 0px rgb(0, 0, 0), inset 0px -12px 14px 0px rgba(0, 0, 0, 0.3), inset 0px -15px 0px 0px rgba(0, 0, 0, 0.2);
+					--ui-widget-background: linear-gradient(#84aef0, #4f6db3) !important;
+
+					border-image-source:url("https://choptop84.github.io/choptop84s-image-repository/buttonshading.png") !important;
+					border-image-slice: 40 fill !important; 
+   					border-image-width: 4px !important; 
+					border-image-repeat: stretch; 
+				}
+				.beepboxEditor button
+				{
+					--ui-widget-background: linear-gradient(#84aef0, #2a3d6a) !important;
+					box-shadow:
+						0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				.beepboxEditor .select2-container--open .select2-selection__rendered,
+				.beepboxEditor button:focus,
+				.beepboxEditor .instrument-bar .selected-instrument,
+				.beepboxEditor .eq-filter-type-bar button:not(.deactivated),
+				.beepboxEditor .note-filter-type-bar button:not(.deactivated)
+				{
+					--ui-widget-background: linear-gradient(#333, #444) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor .filterEditor svg,
+				.beepboxEditor .fadeInOut svg,
+				.beepboxEditor .harmonics svg,
+				.beepboxEditor .spectrum svg
+				{
+					background: rgba(0, 0, 0, 0.3) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-webkit-slider-thumb
+				{
+					box-shadow:
+						0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+						inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+				{
+					background: rgba(0, 0, 0, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+					border-radius: 4px;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+				{
+					background: rgba(255, 255, 255, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-ms-thumb
+				{
+					box-shadow:
+						0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+						inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-ms-track
+				{
+					background: rgba(0, 0, 0, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+					border-radius: 4px;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-ms-track
+				{
+					background: rgba(255, 255, 255, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-moz-range-thumb
+				{
+					height: 16px !important;
+					width: 16px !important;
+					border-radius: 40px !important;
+					box-shadow:
+						0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+						inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+						inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+					;
+				}
+				 
+				.beepboxEditor input[type="range"]::-moz-range-track
+				{
+					background: rgba(0, 0, 0, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+					border-radius: 4px;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-moz-range-track
+				{
+					background: rgba(255, 255, 255, 0.2) !important;
+					box-shadow:
+						0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="text"],
+				.beepboxEditor input[type="number"]
+				{
+					border: none !important;
+					background: rgba(0, 0, 0, 0.2) !important;
+					box-shadow:
+						0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+						inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]
+				{
+					appearance: none;
+					background: rgba(0, 0, 0, 0.3);
+					color: currentColor;
+					border-radius: 1px;
+					width: 1em !important;
+					height: 1em !important;
+					box-shadow:
+						inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+						inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+					;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]:checked
+				{
+					display: flex;
+					justify-content: center;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]:checked:after
+				{
+					width: 1em;
+					height: 1em;
+					text-align: center;
+					font-size: 0.8em;
+					content: "✓";
+					color: currentColor;
+					text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.5);
+				}
+
+			html {
+ 		   	font-family: 'Frutiger';
+			}
+
+			div.channelBoxLabel {
+				font-family: 'Frutiger' !important;
+			}
+
+				/* Use this code down here when you have transparent backgrounds!!! */
+
+		   div.beepboxEditor.load {
+			background: none !important;
+		   }
+
+		   div.noSelection {
+			background: none !important;
+		   }
+
+		   .beepboxEditor .loopEditor {
+			background: none !important;
+		   }
+
+		   .beepboxEditor .muteEditor {
+			background: linear-gradient(#c4f0d1, #83c139) !important;
+			border-radius: 5px;
+			box-shadow: 0px 1px 1px 0px rgb(0, 0, 0), inset 0px 3px 14px 0px rgba(0, 0, 0, 0.1), inset 0px -4px 0px 0px rgba(0, 0, 0, 0.1);
+			opacity: 65%;
+		   }
+
+		   div.muteEditor div {
+			background: none !important;
+			--track-editor-bg-pitch: #1b4079;
+			--track-editor-bg-noise: #213779;
+			--track-editor-bg-mod: #46299e;
+	
+			--track-editor-bg-pitch-dim: #0c2b3e; 		
+			--track-editor-bg-noise-dim: #08204f; 			
+			--track-editor-bg-mod-dim: #26145e; 
+
+		   }
+
+		   div.channelBox {
+			border-radius: 5px;
+		  }
+
+			`,
+        "Glyde": `
+	  :root { 
+		--page-margin: #000000; 
+		--editor-background: #472434a8; 
+		--hover-preview: white; 
+		--playhead: rgba(255, 255, 255, 0.9); 
+		--primary-text: #ffe5c2; 
+		--secondary-text: #ffcedd; 
+		--inverted-text: black; 
+		--text-selection: rgba(119,68,255,0.99); 
+		--box-selection-fill: #1e0915; 
+		--loop-accent: #ffdeaf; 
+		--link-accent: #df88ff; 
+		--ui-widget-background: #8a516e9e; 
+		--ui-widget-focus: #4f152b; 
+		--pitch-background: #00000038; 
+		--tonic: #ff9db9; 
+		--fifth-note: #ffe1b88c; 
+		--white-piano-key: #ffb6ce; 
+		--black-piano-key: #ff7ba7; 
+		--use-color-formula: true; 
+		--track-editor-bg-pitch: #751e40; 
+		--track-editor-bg-pitch-dim: #4f152b; 
+		--track-editor-bg-noise: #751e30; 
+		--track-editor-bg-noise-dim: #4f152b; 
+		--track-editor-bg-mod: #751e29; 
+		--track-editor-bg-mod-dim: #4f152b; 
+		--multiplicative-mod-slider: #ea7d7d; 
+		--overwriting-mod-slider: #ffebd5; 
+		--indicator-primary: #ffebd5; 
+		--indicator-secondary: #4f152b; 
+		--select2-opt-group: #ffebd5; 
+		--input-box-outline: #a33e67; 
+		--mute-button-normal: #b63448; 
+		--mute-button-mod: #6d0f1d; 
+		--mod-label-primary: #2b080d; 
+		--mod-label-secondary-text: #421a20; 
+		--mod-label-primary-text: #ffc6cf; 
+		--pitch-secondary-channel-hue: 60; 
+		--pitch-secondary-channel-sat: 23; 
+		--pitch-secondary-channel-sat-scale: 0.1; 
+		--pitch-secondary-channel-lum: 50; 
+		--pitch-secondary-channel-lum-scale: 0.05; 
+		--pitch-primary-channel-hue: 60; 
+		--pitch-primary-channel-hue-scale: 6.1; 
+		--pitch-primary-channel-sat: 75; 
+		--pitch-primary-channel-sat-scale: 0.1; 
+		--pitch-primary-channel-lum: 87.5; 
+		--pitch-primary-channel-lum-scale: 0.05; 
+		--pitch-secondary-note-hue: 60; 
+		--pitch-secondary-note-hue-scale: 6.1; 
+		--pitch-secondary-note-sat: 53.9; 
+		--pitch-secondary-note-sat-scale: 0.1; 
+		--pitch-secondary-note-lum: 65; 
+		--pitch-secondary-note-lum-scale: 0.05; 
+		--pitch-primary-note-hue: 60; 
+		--pitch-primary-note-hue-scale: 6.1; 
+		--pitch-primary-note-sat: 100; 
+		--pitch-primary-note-sat-scale: 0.05; 
+		--pitch-primary-note-lum: 95.6; 
+		--pitch-primary-note-lum-scale: 0.025; 
+		--noise-secondary-channel-hue: 0; 
+		--noise-secondary-channel-hue-scale: 2; 
+		--noise-secondary-channel-sat: 65; 
+		--noise-secondary-channel-sat-scale: 0; 
+		--noise-secondary-channel-lum: 72; 
+		--noise-secondary-channel-lum-scale: 0; 
+		--noise-primary-channel-hue: 0; 
+		--noise-primary-channel-hue-scale: 1; 
+		--noise-primary-channel-sat: 100; 
+		--noise-primary-channel-sat-scale: 1; 
+		--noise-primary-channel-lum: 93.5; 
+		--noise-primary-channel-lum-scale: 0; 
+		--noise-secondary-note-hue: 24; 
+		--noise-secondary-note-hue-scale: 2; 
+		--noise-secondary-note-sat: 100; 
+		--noise-secondary-note-sat-scale: 0; 
+		--noise-secondary-note-lum: 75; 
+		--noise-secondary-note-lum-scale: 0; 
+		--noise-primary-note-hue: 24; 
+		--noise-primary-note-hue-scale: 2; 
+		--noise-primary-note-sat: 100; 
+		--noise-primary-note-sat-scale: 1; 
+		--noise-primary-note-lum: 90; 
+		--noise-primary-note-lum-scale: 1; 
+		--mod-secondary-channel-hue: 55; 
+		--mod-secondary-channel-hue-scale: 1.5; 
+		--mod-secondary-channel-sat: 100; 
+		--mod-secondary-channel-sat-scale: 0; 
+		--mod-secondary-channel-lum: 70; 
+		--mod-secondary-channel-lum-scale: 0; 
+		--mod-primary-channel-hue: 55; 
+		--mod-primary-channel-hue-scale: 1.5; 
+		--mod-primary-channel-sat: 96; 
+		--mod-primary-channel-sat-scale: 0; 
+		--mod-primary-channel-lum: 95; 
+		--mod-primary-channel-lum-scale: 0; 
+		--mod-secondary-note-hue: 55; 
+		--mod-secondary-note-hue-scale: 1.5; 
+		--mod-secondary-note-sat: 92; 
+		--mod-secondary-note-sat-scale: 0; 
+		--mod-secondary-note-lum: 75; 
+		--mod-secondary-note-lum-scale: 0; 
+		--mod-primary-note-hue: 55; 
+		--mod-primary-note-hue-scale: 1.5; 
+		--mod-primary-note-sat: 96; 
+		--mod-primary-note-sat-scale: 0; 
+		--mod-primary-note-lum: 95; 
+		--mod-primary-note-lum-scale: 0; 
+		--note-flash: #fff; 
+		--note-flash-secondary: #ffffff54; }
+		* {
+		cursor: url("abyssbox_cursor.png"), auto !important;
+		}
+		
+			@font-face {
+		   font-family: "Varela";
+		   src:
+ 		   url("https://choptop84.github.io/abyssbox-app/Varela.ttf") format("truetype") tech(color-COLRv1),
+			}
+
+			/* sets background image */
+			body {
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/glydebg.png") !important;
+			background-position: top right;
+			background-repeat: no-repeat;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+				}
+
+			div#beepboxEditorContainer {
+				border-style: solid;
+				border-width: 8px;
+				border-color: #4f152b;
+				padding-bottom: 5px;
+			}
+				
+			#text-content {
+				border-style: solid;
+				border-width: 8px;
+				border-color: #4f152b;
+			}
+
+			html {
+ 		   	font-family: 'Varela';
+			}
+
+			div.channelBoxLabel {
+				font-family: 'Varela' !important;
+			}
+
+			#firstImage {
+				background-image: url("https://choptop84.github.io/choptop84s-image-repository/slushiepfp.PNG") !important;
+				background-repeat: no-repeat !important;
+				background-size: 100% 100% !important;
+			}
+
+			#text-content > section > h1 > font {
+				display: none;
+				}
+				#text-content > section > h1 {
+				margin: auto;
+				content: url("https://choptop84.github.io/choptop84s-image-repository/AbyssBoxGlydeThemeLogo.png");
+				}
+
+				div.beepboxEditor.load {
+					background: none !important;
+				   }
+		
+				   div.noSelection {
+					background: none !important;
+				   }
+		
+				   .beepboxEditor .loopEditor {
+					background: none !important;
+				   }
+		
+				   .beepboxEditor .muteEditor {
+					background: none !important;
+				   }
+		
+				   div.muteEditor div {
+					background: none !important;
+				   }
+
+
+			`,
+        "AWeebyssBox": `
+			:root {		
+			--page-margin: #1e0915; 		
+			--editor-background: #1e0915; 		
+			--hover-preview: white; 		
+			--playhead: rgba(255, 255, 255, 0.9); 		
+			--primary-text: white; 		
+			--secondary-text: #ffcedd; 		
+			--inverted-text: black;	 		
+			--text-selection: rgba(119,68,255,0.99); 		
+			--box-selection-fill: #1e0915; 		
+			--loop-accent: #873a51; 		
+			--link-accent: #df88ff; 		
+			--ui-widget-background: #581b3e; 		
+			--ui-widget-focus: #762b4c; 		
+			--pitch-background: #381d2455; 		
 			--tonic: #873a51; 		
 			--fifth-note: #75001e; 		
 			--white-piano-key: #cca5c7; 		
@@ -2113,7 +3769,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-sat: 96; 		
 			--mod-primary-note-sat-scale: 0; 		
 			--mod-primary-note-lum: 85; 		
-			--mod-primary-note-lum-scale: 0; 	
+			--mod-primary-note-lum-scale: 0; 
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;	
 				}
 		* {
 		cursor: url("abyssbox_cursor.png"), auto !important;
@@ -2150,6 +3808,7 @@ var beepbox = (function (exports) {
     				image-rendering: -o-crisp-edges !important;            /* Opera */
     				image-rendering: pixelated !important;                 /* Future browsers */
     				image-rendering: optimizeSpeed !important;             /* IE */ 
+
 				}
 			 .beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
     				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png") !important;
@@ -2165,6 +3824,17 @@ var beepbox = (function (exports) {
     				image-rendering: optimizeSpeed !important;             /* IE */
 				}
 
+				select.trackSelectBox {
+					border-image: none !important;
+				}
+
+				#firstImage {
+					background-image: url("https://choptop84.github.io/abyssbox-source/website/viviandbelle.png") !important;
+					background-repeat: no-repeat !important;
+					background-size: 100% 100% !important;
+				}
+
+
 			@font-face {
 		   font-family: "AbyssType_small";
 		   src:
@@ -2175,299 +3845,11 @@ var beepbox = (function (exports) {
  		   	font-family: 'AbyssType';
 			}
 
-		   var(--track-font): 'AbyssType';
-
-			`,
-        "AbyssBox Competative": `
-			:root { 		
-			--page-margin: #000000; 		
-			--editor-background: #000000; 		
-			--hover-preview: white; 		
-			--playhead: rgba(255, 255, 255, 0.9); 		
-			--primary-text: white; 		
-			--secondary-text: #ffcedd; 		
-			--inverted-text: black;	 		
-			--text-selection: rgba(119,68,255,0.99); 		
-			--box-selection-fill: #bf2c5d; 		
-			--loop-accent: #873a51; 		
-			--link-accent: #df88ff; 		
-			--ui-widget-background: #581b3e; 		
-			--ui-widget-focus: #000000; 		
-			--pitch-background: #240f15; 		
-			--tonic: #a34b65; 		
-			--fifth-note: #75001e; 		
-			--white-piano-key: #cca5c7; 		
-			--black-piano-key: #402f2f; 		
-			--use-color-formula: true; 		
-			--track-editor-bg-pitch: #571c40; 		
-			--track-editor-bg-pitch-dim: #290d0d; 		
-			--track-editor-bg-noise: #571131; 		
-			--track-editor-bg-noise-dim: #330a28; 		
-			--track-editor-bg-mod: #54083c; 		
-			--track-editor-bg-mod-dim: #360426; 		
-			--multiplicative-mod-slider: #9f6082; 		
-			--overwriting-mod-slider: #9e3470; 		
-			--indicator-primary: #b3498f; 		
-			--indicator-secondary: #541d40; 		
-			--select2-opt-group: #4f191e; 		
-			--input-box-outline: #18041a; 		
-			--mute-button-normal: #dd5d94;	 		
-			--mute-button-mod: #ba364c; 		
-			--mod-label-primary: #541625; 		
-			--mod-label-secondary-text: rgb(120, 87, 86); 
-			--mod-label-primary-text: gray; 
-		
-			--pitch-secondary-channel-hue: -80; 		
-			--pitch-secondary-channel-hue-scale 0; 		
-			--pitch-secondary-channel-sat: 43; 		
-			--pitch-secondary-channel-sat-scale: 0.1; 		
-			--pitch-secondary-channel-lum: 40; 		
-			--pitch-secondary-channel-lum-scale: 0.05; 
-		
-			--pitch-primary-channel-hue: -53; 		
-			--pitch-primary-channel-hue-scale: 6.1; 		
-			--pitch-primary-channel-sat: 75; 		
-			--pitch-primary-channel-sat-scale: 0.1; 		
-			--pitch-primary-channel-lum: 67.5; 		
-			--pitch-primary-channel-lum-scale: 0.05; 	
-	
-			--pitch-secondary-note-hue: -34; 		
-			--pitch-secondary-note-hue-scale: 6.1; 		
-			--pitch-secondary-note-sat: 93.9; 		
-			--pitch-secondary-note-sat-scale: 0.1; 		
-			--pitch-secondary-note-lum: 25; 		
-			--pitch-secondary-note-lum-scale: 0.05; 
-		
-			--pitch-primary-note-hue: -53; 		
-			--pitch-primary-note-hue-scale: 6.1; 		
-			--pitch-primary-note-sat: 100; 		
-			--pitch-primary-note-sat-scale: 0.05; 		
-			--pitch-primary-note-lum: 85.6; 		
-			--pitch-primary-note-lum-scale: 0.025; 
-		
-			--noise-secondary-channel-hue: 0; 		
-			--noise-secondary-channel-hue-scale: 2; 		
-			--noise-secondary-channel-sat: 65; 		
-			--noise-secondary-channel-sat-scale: 0; 		
-			--noise-secondary-channel-lum: 42; 		
-			--noise-secondary-channel-lum-scale: 0; 
-		
-			--noise-primary-channel-hue: 0; 		
-			--noise-primary-channel-hue-scale: 1; 		
-			--noise-primary-channel-sat: 100; 		
-			--noise-primary-channel-sat-scale: 1; 		
-			--noise-primary-channel-lum: 63.5; 		
-			--noise-primary-channel-lum-scale: 0; 
-		
-			--noise-secondary-note-hue: 24; 		
-			--noise-secondary-note-hue-scale: 2; 		
-			--noise-secondary-note-sat: 100; 		
-			--noise-secondary-note-sat-scale: 0; 		
-			--noise-secondary-note-lum: 35; 		
-			--noise-secondary-note-lum-scale: 0; 	
-	
-			--noise-primary-note-hue: 24; 		
-			--noise-primary-note-hue-scale: 2; 		
-			--noise-primary-note-sat: 100; 		
-			--noise-primary-note-sat-scale: 1; 		
-			--noise-primary-note-lum: 60; 		
-			--noise-primary-note-lum-scale: 1; 	
-	
-			--mod-secondary-channel-hue: 55; 		
-			--mod-secondary-channel-hue-scale: 1.5; 		
-			--mod-secondary-channel-sat: 100; 		
-			--mod-secondary-channel-sat-scale: 0; 		
-			--mod-secondary-channel-lum: 20; 		
-			--mod-secondary-channel-lum-scale: 0; 
-		
-			--mod-primary-channel-hue: 55; 		
-			--mod-primary-channel-hue-scale: 1.5; 		
-			--mod-primary-channel-sat: 96; 		
-			--mod-primary-channel-sat-scale: 0; 		
-			--mod-primary-channel-lum: 50; 		
-			--mod-primary-channel-lum-scale: 0; 
-		
-			--mod-secondary-note-hue: 55; 		
-			--mod-secondary-note-hue-scale: 1.5; 		
-			--mod-secondary-note-sat: 92; 		
-			--mod-secondary-note-sat-scale: 0; 		
-			--mod-secondary-note-lum: 45; 		
-			--mod-secondary-note-lum-scale: 0; 
-		
-			--mod-primary-note-hue: 55; 		
-			--mod-primary-note-hue-scale: 1.5; 		
-			--mod-primary-note-sat: 96; 		
-			--mod-primary-note-sat-scale: 0; 		
-			--mod-primary-note-lum: 85; 		
-			--mod-primary-note-lum-scale: 0; 
-			--track-font: "AbyssType";	
-				}
-		/* sets cursor */ 
-		* {
-		cursor: url("abyssbox_cursor.png"), auto !important;
-		}
-			@font-face {
-		   font-family: "AbyssType";
-		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			div.channelBoxLabel {
+				font-family: 'AbyssType_small' !important;
 			}
 
-			@font-face {
-		   font-family: "AbyssType_small";
-		   src:
- 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
-			}
-
-			html {
- 		   font-family: 'AbyssType_small';
-			}
-		   var(--track-font): 'AbyssType';
-
-			`,
-        "AbyssBox Light": `
-			:root { 		
-			--page-margin: #e0adbc; 		
-			--editor-background: #e0adbc; 		
-			--hover-preview: white; 		
-			--playhead: rgba(255, 255, 255, 0.9); 		
-			--primary-text: #c763a0; 		
-			--secondary-text: #c763a0; 		
-			--inverted-text:  #e8bcc9;	 		
-			--text-selection: rgba(119,68,255,0.99); 		
-			--box-selection-fill: #bf2c5d; 		
-			--loop-accent: #8c346a; 		
-			--link-accent: #8c346a; 		
-			--ui-widget-background: #f5e9f0;		
-			--ui-widget-focus: #8c346a; 		
-			--pitch-background: #eddadf; 		
-			--tonic: #f5f0f1; 		
-			--fifth-note: #75001e; 		
-			--white-piano-key: #cca5c7; 		
-			--black-piano-key: #402f2f; 		
-			--use-color-formula: true; 		
-			--track-editor-bg-pitch: #decad8; 		
-			--track-editor-bg-pitch-dim: #bfb0bb; 		
-			--track-editor-bg-noise: #d6a3ca; 		
-			--track-editor-bg-noise-dim: #b389a9; 		
-			--track-editor-bg-mod: #b0649e; 		
-			--track-editor-bg-mod-dim: #915683; 		
-			--multiplicative-mod-slider: #9f6082; 		
-			--overwriting-mod-slider: #9e3470; 		
-			--indicator-primary: #b3498f; 		
-			--indicator-secondary: #541d40; 		
-			--select2-opt-group: #4f191e; 		
-			--input-box-outline: #18041a; 		
-			--mute-button-normal: #dd5d94;	 		
-			--mute-button-mod: #ba364c; 		
-			--mod-label-primary: #541625; 		
-			--mod-label-secondary-text: rgb(120, 87, 86); 
-			--mod-label-primary-text: gray; 
-		
-			--pitch-secondary-channel-hue: -80; 		
-			--pitch-secondary-channel-hue-scale 0; 		
-			--pitch-secondary-channel-sat: 43; 		
-			--pitch-secondary-channel-sat-scale: 0.1; 		
-			--pitch-secondary-channel-lum: 20; 		
-			--pitch-secondary-channel-lum-scale: 0.05; 
-		
-			--pitch-primary-channel-hue: -53; 		
-			--pitch-primary-channel-hue-scale: 6.1; 		
-			--pitch-primary-channel-sat: 75; 		
-			--pitch-primary-channel-sat-scale: 0.1; 		
-			--pitch-primary-channel-lum: 47.5; 		
-			--pitch-primary-channel-lum-scale: 0.05; 	
-	
-			--pitch-secondary-note-hue: -34; 		
-			--pitch-secondary-note-hue-scale: 6.1; 		
-			--pitch-secondary-note-sat: 93.9; 		
-			--pitch-secondary-note-sat-scale: 0.1; 		
-			--pitch-secondary-note-lum: 15; 		
-			--pitch-secondary-note-lum-scale: 0.05; 
-		
-			--pitch-primary-note-hue: -53; 		
-			--pitch-primary-note-hue-scale: 6.1; 		
-			--pitch-primary-note-sat: 45; 		
-			--pitch-primary-note-sat-scale: 0.05; 		
-			--pitch-primary-note-lum: 45.6; 		
-			--pitch-primary-note-lum-scale: 0.025; 
-		
-			--noise-secondary-channel-hue: 0; 		
-			--noise-secondary-channel-hue-scale: 2; 		
-			--noise-secondary-channel-sat: 65; 		
-			--noise-secondary-channel-sat-scale: 0; 		
-			--noise-secondary-channel-lum: 42; 		
-			--noise-secondary-channel-lum-scale: 0; 
-		
-			--noise-primary-channel-hue: 0; 		
-			--noise-primary-channel-hue-scale: 1; 		
-			--noise-primary-channel-sat: 100; 		
-			--noise-primary-channel-sat-scale: 1; 		
-			--noise-primary-channel-lum: 63.5; 		
-			--noise-primary-channel-lum-scale: 0; 
-		
-			--noise-secondary-note-hue: 24; 		
-			--noise-secondary-note-hue-scale: 2; 		
-			--noise-secondary-note-sat: 100; 		
-			--noise-secondary-note-sat-scale: 0; 		
-			--noise-secondary-note-lum: 35; 		
-			--noise-secondary-note-lum-scale: 0; 	
-	
-			--noise-primary-note-hue: 24; 		
-			--noise-primary-note-hue-scale: 2; 		
-			--noise-primary-note-sat: 75; 		
-			--noise-primary-note-sat-scale: 1; 		
-			--noise-primary-note-lum: 60; 		
-			--noise-primary-note-lum-scale: 1; 	
-	
-			--mod-secondary-channel-hue: 55; 		
-			--mod-secondary-channel-hue-scale: 1.5; 		
-			--mod-secondary-channel-sat: 100; 		
-			--mod-secondary-channel-sat-scale: 0; 		
-			--mod-secondary-channel-lum: 20; 		
-			--mod-secondary-channel-lum-scale: 0; 
-		
-			--mod-primary-channel-hue: 55; 		
-			--mod-primary-channel-hue-scale: 1.5; 		
-			--mod-primary-channel-sat: 96; 		
-			--mod-primary-channel-sat-scale: 0; 		
-			--mod-primary-channel-lum: 50; 		
-			--mod-primary-channel-lum-scale: 0; 
-		
-			--mod-secondary-note-hue: 55; 		
-			--mod-secondary-note-hue-scale: 1.5; 		
-			--mod-secondary-note-sat: 92; 		
-			--mod-secondary-note-sat-scale: 0; 		
-			--mod-secondary-note-lum: 45; 		
-			--mod-secondary-note-lum-scale: 0; 
-		
-			--mod-primary-note-hue: 55; 		
-			--mod-primary-note-hue-scale: 1.5; 		
-			--mod-primary-note-sat: 96; 		
-			--mod-primary-note-sat-scale: 0; 		
-			--mod-primary-note-lum: 85; 		
-			--mod-primary-note-lum-scale: 0; 	
-			--track-font: "AbyssType";
-				}
-		/* sets cursor */ 
-		* {
-		cursor: url("abyssbox_cursor.png"), auto !important;
-		}
-			@font-face {
-		   font-family: "AbyssType";
-		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
-			}
-
-			@font-face {
-		   font-family: "AbyssType_small";
-		   src:
- 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
-			}
-
-			html {
- 		   font-family: 'AbyssType_small';
-			}
-		   var(--track-font): 'AbyssType';
+		   
 
 			`,
         "Half-Life": `
@@ -2591,7 +3973,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-sat: 96; 		
 			--mod-primary-note-sat-scale: 0; 		
 			--mod-primary-note-lum: 85; 		
-			--mod-primary-note-lum-scale: 0; 	
+			--mod-primary-note-lum-scale: 0; 
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;	
 				}
 		/* replaces hotdog (in a hacky way) with an image of gordon freeman but really wide*/
 		#Hotdog {
@@ -2600,14 +3984,14 @@ var beepbox = (function (exports) {
 		.instructions-column > section:first-of-type > p:first-of-type:after {
 		display: block;
 		content: url("wide-gordon.png");
-		width: 50%;
-		height: 50%;
+		width: inherit;
+		height: contain;
 		text-align: center;
 		margin-top: 25px;
 		}
 		/* sets background image */
 		body {
-		background-image: url("lambda.png") !important;
+		background-image: url("https://choptop84.github.io/abyssbox-source/website/lambda.png") !important;
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
@@ -2625,8 +4009,805 @@ var beepbox = (function (exports) {
 			html {
  		   font-family: 'trebuc';
 			}
+			div.channelBoxLabel {
+				font-family: 'trebuc' !important;
+			}
+
+			.modTitle::before {
+				content: "λbyssBox" !important;
+			}
 
 			`,
+        "Half-Life: Source": `
+			:root { 		
+			--page-margin: #0c1012; 		
+			--editor-background: #0c1012; 		
+			--hover-preview: white; 		
+			--playhead: rgba(255, 255, 255, 0.9); 		
+			--primary-text: #ffee00; 		
+			--secondary-text: #ffee00; 		
+			--inverted-text:  #000000;	 		
+			--text-selection: rgba(119,68,255,0.99); 		
+			--box-selection-fill: #ff6f00; 		
+			--loop-accent: #ff6f00; 		
+			--link-accent: #ff6f00; 		
+			--ui-widget-background: #36454F;		
+			--ui-widget-focus: #36454F; 		
+			--pitch-background: #5e2103; 		
+			--tonic: #ff6f00; 		
+			--fifth-note: #963c00; 		
+			--white-piano-key: #ccbca5; 		
+			--black-piano-key: #40382f; 		
+			--use-color-formula: true; 		
+			--track-editor-bg-pitch: #7d5100; 		
+			--track-editor-bg-pitch-dim: #3b2c10; 		
+			--track-editor-bg-noise: #730a00; 		
+			--track-editor-bg-noise-dim: #360e0b; 		
+			--track-editor-bg-mod: #856f00; 		
+			--track-editor-bg-mod-dim: #3b3205; 		
+			--multiplicative-mod-slider: #9f8460; 		
+			--overwriting-mod-slider: #9e7534; 		
+			--indicator-primary: #b38949; 		
+			--indicator-secondary: #543d1d; 		
+			--select2-opt-group: #4f3b19; 		
+			--input-box-outline: #1a0b04; 		
+			--mute-button-normal: #ddac5d;	 		
+			--mute-button-mod: #ba3d36; 		
+			--mod-label-primary: #542f16; 		
+			--mod-label-secondary-text: rgb(120, 87, 86); 
+			--mod-label-primary-text: gray; 
+		
+			--pitch-secondary-channel-hue: 0; 		
+			--pitch-secondary-channel-hue-scale 0; 		
+			--pitch-secondary-channel-sat: 43; 		
+			--pitch-secondary-channel-sat-scale: 0.1; 		
+			--pitch-secondary-channel-lum: 60; 		
+			--pitch-secondary-channel-lum-scale: 0.05; 
+		
+			--pitch-primary-channel-hue: 154; 		
+			--pitch-primary-channel-hue-scale: 6.1; 		
+			--pitch-primary-channel-sat: 75; 		
+			--pitch-primary-channel-sat-scale: 0.1; 		
+			--pitch-primary-channel-lum: 60; 		
+			--pitch-primary-channel-lum-scale: 0.05; 	
+	
+			--pitch-secondary-note-hue: 154; 		
+			--pitch-secondary-note-hue-scale: 6.1; 		
+			--pitch-secondary-note-sat: 93.9; 		
+			--pitch-secondary-note-sat-scale: 0.1; 		
+			--pitch-secondary-note-lum: 20; 		
+			--pitch-secondary-note-lum-scale: 0.05; 
+		
+			--pitch-primary-note-hue: 154; 		
+			--pitch-primary-note-hue-scale: 6.1; 		
+			--pitch-primary-note-sat: 65; 		
+			--pitch-primary-note-sat-scale: 0.05; 		
+			--pitch-primary-note-lum: 60; 		
+			--pitch-primary-note-lum-scale: 0.05; 
+		
+			--noise-secondary-channel-hue: 0; 		
+			--noise-secondary-channel-hue-scale: 2; 		
+			--noise-secondary-channel-sat: 65; 		
+			--noise-secondary-channel-sat-scale: 0; 		
+			--noise-secondary-channel-lum: 60; 		
+			--noise-secondary-channel-lum-scale: 0; 
+		
+			--noise-primary-channel-hue: 0; 		
+			--noise-primary-channel-hue-scale: 1; 		
+			--noise-primary-channel-sat: 100; 		
+			--noise-primary-channel-sat-scale: 1; 		
+			--noise-primary-channel-lum: 63.5; 		
+			--noise-primary-channel-lum-scale: 0; 
+		
+			--noise-secondary-note-hue: 24; 		
+			--noise-secondary-note-hue-scale: 2; 		
+			--noise-secondary-note-sat: 100; 		
+			--noise-secondary-note-sat-scale: 0; 		
+			--noise-secondary-note-lum: 25; 		
+			--noise-secondary-note-lum-scale: 0; 	
+	
+			--noise-primary-note-hue: 24; 		
+			--noise-primary-note-hue-scale: 2; 		
+			--noise-primary-note-sat: 75; 		
+			--noise-primary-note-sat-scale: 1; 		
+			--noise-primary-note-lum: 60; 		
+			--noise-primary-note-lum-scale: 1; 	
+	
+			--mod-secondary-channel-hue: 55; 		
+			--mod-secondary-channel-hue-scale: 1.5; 		
+			--mod-secondary-channel-sat: 100; 		
+			--mod-secondary-channel-sat-scale: 0; 		
+			--mod-secondary-channel-lum: 20; 		
+			--mod-secondary-channel-lum-scale: 0; 
+		
+			--mod-primary-channel-hue: 55; 		
+			--mod-primary-channel-hue-scale: 1.5; 		
+			--mod-primary-channel-sat: 96; 		
+			--mod-primary-channel-sat-scale: 0; 		
+			--mod-primary-channel-lum: 50; 		
+			--mod-primary-channel-lum-scale: 0; 
+		
+			--mod-secondary-note-hue: 55; 		
+			--mod-secondary-note-hue-scale: 1.5; 		
+			--mod-secondary-note-sat: 92; 		
+			--mod-secondary-note-sat-scale: 0; 		
+			--mod-secondary-note-lum: 45; 		
+			--mod-secondary-note-lum-scale: 0; 
+		
+			--mod-primary-note-hue: 55; 		
+			--mod-primary-note-hue-scale: 1.5; 		
+			--mod-primary-note-sat: 96; 		
+			--mod-primary-note-sat-scale: 0; 		
+			--mod-primary-note-lum: 85; 		
+			--mod-primary-note-lum-scale: 0; 
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;	
+				}
+		/* replaces hotdog (in a hacky way) with an image of gordon freeman but really wide*/
+		#Hotdog {
+		display: none;
+		}
+		.instructions-column > section:first-of-type > p:first-of-type:after {
+		display: block;
+		content: url("wide-gordon.png");
+		width: inherit;
+		height: contain;
+		text-align: center;
+		margin-top: 25px;
+		}
+		/* sets background image */
+		body {
+		background-image: url("https://choptop84.github.io/abyssbox-source/website/lambda.png") !important;
+		background-position: center;
+		background-repeat: repeat;
+			}
+			/* make editor background transparent */
+		#beepboxEditorContainer, .beepboxEditor, #text-content {
+		}
+
+			@font-face {
+		   font-family: "trebuc";
+		   src:
+ 		   url("trebuc.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			div.prompt.noSelection {
+				left: 636px !important;
+			}
+
+			#beepboxEditorContainer {
+				padding-top: 20px;
+			}
+
+			div.beepboxEditor.load {
+				width: 50%;
+			}
+
+			#text-content {
+				overflow: visible;
+				width: 20% !important;
+			}
+
+			html {
+ 		   font-family: 'trebuc';
+			}
+			div.channelBoxLabel {
+				font-family: 'trebuc' !important;
+			}
+
+			.modTitle::before {
+				content: "λbyssBox: Source" !important;
+			}
+
+			`,
+        "Scratch": `
+		:root {
+			--page-margin: #4d97ff40;
+			--editor-background: #f6e5fa;
+			--hover-preview: #ff9900;
+			--playhead: #4cbf56;
+			--primary-text: #fff;
+			--secondary-text: #000;
+			--inverted-text: #fff;
+			--text-selection: rgba(255, 255, 255, 0.99);
+			--box-selection-fill: #7725ff;
+			--loop-accent: #ffab19;
+			--link-accent: #ff9900;
+			--ui-widget-background: #855cd6;
+			--ui-widget-focus: #ff661a;
+			--pitch-background: #fff;
+			--tonic: #855cd6;
+			--fifth-note: #7e7e7e;
+			--use-color-formula: false;
+			--track-editor-bg-pitch: #fff;
+			--track-editor-bg-pitch-dim: #c7c7c7;
+			--track-editor-bg-noise: #4d97ff40;
+			--track-editor-bg-noise-dim: #1c54a3b0;
+			--track-editor-bg-mod: #855cd6;
+			--track-editor-bg-mod-dim: #503389;
+			--multiplicative-mod-slider: #ff6680;
+			--overwriting-mod-slider: #ff3355;
+			--indicator-primary: #855cd6;
+			--indicator-secondary: #cecece;
+			--select2-opt-group: #5a3b98;
+			--input-box-outline: #626262;
+			--mute-button-normal: #cf63cf;
+			--mute-button-mod: #cf63cf;
+			--mod-label-primary: #ff3355;
+			--white-piano-key: #fff;
+			--black-piano-key: #000;
+			--white-piano-key-text: #000;
+			--black-piano-key-text: #fff;
+			--note-flash: #4cbf56;
+			--note-flash-secondary: #b84848;
+			--track-font: sans-serif;
+			--oscilloscope-line-L: #d587e6;
+			--oscilloscope-line-R: #b11cc7;
+			--pitch1-secondary-channel: #3373cc;
+			--pitch1-primary-channel: #4c97ff;
+			--pitch1-secondary-note: #3373cc;
+			--pitch1-primary-note: #4c97ff;
+			--pitch2-secondary-channel: #774dcb;
+			--pitch2-primary-channel: #9966ff;
+			--pitch2-secondary-note: #774dcb;
+			--pitch2-primary-note: #9966ff;
+			--pitch3-secondary-channel: #bd42bd;
+			--pitch3-primary-channel: #cf63cf;
+			--pitch3-secondary-note: #bd42bd;
+			--pitch3-primary-note: #cf63cf;
+			--pitch4-secondary-channel: #cc9900;
+			--pitch4-primary-channel: #ffbf00;
+			--pitch4-secondary-note: #cc9900;
+			--pitch4-primary-note: #ffbf00;
+			--pitch5-secondary-channel: #cf8b17;
+			--pitch5-primary-channel: #ffab19;
+			--pitch5-secondary-note: #cf8b17;
+			--pitch5-primary-note: #ffab19;
+			--pitch6-secondary-channel: #2e8eb8;
+			--pitch6-primary-channel: #5cb1d6;
+			--pitch6-secondary-note: #2e8eb8;
+			--pitch6-primary-note: #5cb1d6;
+			--pitch7-secondary-channel: #389438;
+			--pitch7-primary-channel: #59c059;
+			--pitch7-secondary-note: #389438;
+			--pitch7-primary-note: #59c059;
+			--pitch8-secondary-channel: #db6e00;
+			--pitch8-primary-channel: #ff8c1a;
+			--pitch8-secondary-note: #db6e00;
+			--pitch8-primary-note: #ff8c1a;
+			--pitch9-secondary-channel: #ff3355;
+			--pitch9-primary-channel: #ff6680;
+			--pitch9-secondary-note: #ff3355;
+			--pitch9-primary-note: #ff6680;
+			--pitch10-secondary-channel: #0b8e69;
+			--pitch10-primary-channel: #0fbd8c;
+			--pitch10-secondary-note: #0b8e69;
+			--pitch10-primary-note: #0fbd8c;
+			--noise1-secondary-channel: #ef3d23;
+			--noise1-primary-channel: #fcf9ce;
+			--noise1-secondary-note: #ef3d23;
+			--noise1-primary-note: #fcf9ce;
+			--noise2-secondary-channel: #dd002b;
+			--noise2-primary-channel: #f73d61;
+			--noise2-secondary-note: #dd002b;
+			--noise2-primary-note: #f73d61;
+			--noise3-secondary-channel: #d0e9ea;
+			--noise3-primary-channel: #f3ffff;
+			--noise3-secondary-note: #d0e9ea;
+			--noise3-primary-note: #f3ffff;
+			--noise4-secondary-channel: #ed9b24;
+			--noise4-primary-channel: #ffc941;
+			--noise4-secondary-note: #ed9b24;
+			--noise4-primary-note: #ffc941;
+			--noise5-secondary-channel: #663b00;
+			--noise5-primary-channel: #ffe9cc;
+			--noise5-secondary-note: #663b00;
+			--noise5-primary-note: #ffe9cc;
+			--mod1-secondary-channel: #001026;
+			--mod1-primary-channel: #ffab19;
+			--mod1-secondary-note: #001026;
+			--mod1-primary-note: #ffab19;
+			--mod2-secondary-channel: #603813;
+			--mod2-primary-channel: #ffc93e;
+			--mod2-secondary-note: #603813;
+			--mod2-primary-note: #ffc93e;
+			--mod3-secondary-channel: #1b75bb;
+			--mod3-primary-channel: #e6e7e8;
+			--mod3-secondary-note: #1b75bb;
+			--mod3-primary-note: #e6e7e8;
+			--mod4-secondary-channel: #404041;
+			--mod4-primary-channel: #f05a28;
+			--mod4-secondary-note: #404041;
+			--mod4-primary-note: #f05a28;
+			--disabled-note-primary: #ff6680;
+			--disabled-note-secondary: #ff3355;
+		  }
+		  * {
+		  --play-symbol:url("https://choptop84.github.io/choptop84s-image-repository/Greenflag.png");
+		  --pause-symbol:url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png");
+		  --stop-symbol:url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png");
+		  }
+
+		  button.playButton::before {
+
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/Greenflag.png") !important;
+			background-size: 18px !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+			mask-size: 800px;
+			color: #fff0;
+			/* Hold on, before you start asking: "WHAT THE? WHY IS THE ICON SO LARGE!!!" Let me tell ya that this method removes all the filtering issues on the png and it looks incredibly seemless so shush */
+
+		}
+
+		button.pauseButton::before {
+
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png") !important;
+			background-size: 18px !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+			mask-size: 800px;
+			color: #fff0;
+		}
+
+		button.stopButton::before {
+
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png") !important;
+			background-size: 18px !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+			mask-size: 800px;
+			color: #fff0;
+		}
+
+		  #text-content > section > h1 {
+			margin: auto;
+			content: url("https://file.garden/ZMQ0Om5nmTe-x2hq/AbyssBox%20Scratch%20Logo3.png");
+		  }
+		  .beepboxEditor,
+		  #beepboxEditorContainer {
+			background-color: rgb(255, 255, 255) !important;
+			border-radius: 6px;
+			box-shadow: 0px 0px 0px 4px rgba(158, 158, 158, 0.91);
+		  }
+		  .beepboxEditor .loopEditor {
+			--editor-background: #4d97ff40 !important;
+			border-radius: 3px;
+		  }
+		  .beepboxEditor .muteEditor {
+			--editor-background: #4d97ff40 !important;
+			border-radius: 0px;
+			height: 158px;
+		  }
+		  .beepboxEditor .pattern-area {
+			--editor-background: #4d97ff40 !important;
+			border-radius: 3px;
+		  }
+		  .beepboxEditor .trackContainer svg {
+			--editor-background: #3100ff !important;
+		  }
+		  .beepboxEditor .muteEditor > :last-child {
+			--editor-background: #4d97ff40 !important;
+		  }
+		  .beepboxEditor #octaveScrollBarContainer {
+			background-color: #4d97ff40;
+		  }
+		  .beepboxEditor .muteButtonText {
+			transform: translate(0px, 1px) !important;
+			color: #777 !important;
+		  }
+		  .beepboxEditor .instrument-bar {
+			--text-color-lit: #fff !important;
+			--text-color-dim: #4c4c4c !important;
+		  }
+		  .beepboxEditor .instrument-bar .selected-instrument {
+			color: rgb(0, 0, 0) !important;
+			text-shadow: 0px 0px 4px var(--text-color-lit);
+		  }
+		  .beepboxEditor .instrument-bar .deactivated {
+			color: rgba(0, 0, 0, 1) !important;
+			text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2);
+		  }
+		  .beepboxEditor .instrument-bar > :not(.last-button) {
+			border-color: var(--background-color-lit) !important;
+		  }
+		  .beepboxEditor .instrument-bar .selected-instrument {
+			border-color: rgba(255, 255, 255, 1) !important;
+		  }
+		  .beepboxEditor button {
+			color: #fff;
+			background: #3c236f;
+		  }
+		  .beepboxEditor .instrument-bar .selected-instrument,
+		  .beepboxEditor .filterEditor svg,
+		  .beepboxEditor .fadeInOut svg,
+		  .beepboxEditor .harmonics svg,
+		  .beepboxEditor .spectrum svg {
+			background: rgb(255, 255, 255) !important;
+			box-shadow:
+			  0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+			  inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+			  inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		  }
+		  .beepboxEditor input[type="range"]::-webkit-slider-thumb {
+			background: #000000 !important;
+		  }
+		  .beepboxEditor input[type="range"]::-moz-range-thumb {
+			background: #000000 !important;
+		  }
+		  .beepboxEditor input[type="range"]::-webkit-slider-runnable-track {
+			background: rgb(127, 127, 127) !important;
+		  }
+		  .beepboxEditor input[type="range"]::-moz-range-track {
+			background: rgb(127, 127, 127) !important;
+		  }
+		  .beepboxEditor input[type="range"]::-webkit-slider-runnable-track::focus {
+			background: rgba(255, 255, 255, 0.2) !important;
+			box-shadow:
+			  0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+			  inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+			  inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		  }
+		  .beepboxEditor input[type="range"]::-moz-range-track::focus {
+			background: rgba(255, 255, 255, 0.2) !important;
+			box-shadow:
+			  0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+			  inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+			  inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		  }
+		  .beepboxEditor input[type="text"],
+		  .beepboxEditor input[type="number"] {
+			font-size: inherit !important;
+			font-weight: bold !important;
+			font-family: inherit !important;
+			background: #ff8c1a !important;
+			text-align: center !important;
+			border: 1px solid var(--input-box-outline);
+			color: #fff !important;
+			box-shadow: 0px 0px 0px 1px rgb(134, 134, 134) !important;
+		  }
+		  .beepboxEditor .prompt {
+			--primary-text: #fff;
+			--secondary-text: #fff;
+			--ui-widget-background: #351f5f;
+			color: #fff !important;
+			background: #855cd6 !important;
+		  }
+		  .beepboxEditor .trackContainer {
+			--editor-background: #fff;
+		  }
+		  #text-content {
+			color: #fff;
+			background: #855cd6;
+		  }
+		  body:not(#secondImage) {
+			background-image: url("https://cdn.scratch.mit.edu/scratchr2/static/__74e70580e9dbe93ce1c3f8422dde592d__/images/scratch-bg.png");
+		  }
+		  body:not(#secondImage) input {
+			--primary-text: #000;
+		  }
+		  body:not(#secondImage) h1 {
+			color: #000;
+		  }
+		  button.copyButton,
+		  button.pasteButton,
+		  button.exportInstrumentButton,
+		  button.importInstrumentButton, 
+		  button.addEnvelope,
+		  div.editor-controls div button,
+		  div.selectRow button,
+		  div.effects-menu button,
+		  div.effects-menu::before,
+		  div.selectContainer select,
+		  div.selectContainer::after,
+		  span#select2-pitchPresetSelect-container {
+			color: white !important;
+		  }
+		  div#text-content {
+			padding-top: 15px;
+		  }
+		  div#beepboxEditorContainer{
+			padding-bottom: 15px;
+		  }
+		  div.channelBox {
+			border-radius: 5px;
+		  }
+		  div.muteEditor {
+			border-radius: 0px !important;
+			height: 158px !important;
+		  }
+		  div.loopEditor {
+			border-radius: 0px !important;
+		  }
+		`,
+        "Scratch Addons": `
+		:root {
+			--page-margin: #111111;
+			--editor-background: #f6e5fa;
+			--hover-preview: #ff9900;
+			--playhead: #4cbf56;
+			--primary-text: #fff;
+			--secondary-text: #fff;
+			--inverted-text: #fff;
+			--text-selection: rgba(255, 255, 255, .99);
+			--box-selection-fill: #7725ff;
+			--loop-accent: rgb(225, 169, 26);
+			--link-accent: #ff9900;
+			--ui-widget-background: #202020;
+			--ui-widget-focus: #0a0a0a;
+			--pitch-background: #111111;
+			--tonic: #855cd6;
+			--fifth-note: #2e4274;
+			--use-color-formula: false;
+			--track-editor-bg-pitch: #393939;
+			--track-editor-bg-pitch-dim: #21211F;
+			--track-editor-bg-noise: #393939;
+			--track-editor-bg-noise-dim: #21211FF;
+			--track-editor-bg-mod: #393939;
+			--track-editor-bg-mod-dim: #21211FF;
+			--multiplicative-mod-slider: #ff6680;
+			--overwriting-mod-slider: #ff3355;
+			--indicator-primary: #855cd6;
+			--indicator-secondary: #cecece;
+			--select2-opt-group: #333;
+			--input-box-outline: #626262;
+			--mute-button-normal: #cf63cf;
+			--mute-button-mod: #cf63cf;
+			--mod-label-primary: #ff3355;
+			--white-piano-key: #fff;
+			--black-piano-key: #000;
+			--white-piano-key-text: #000;
+			--black-piano-key-text: #fff;
+			--note-flash: #ff0;
+			--note-flash-secondary: #ff7b00;
+			--track-font: sans-serif;
+			--oscilloscope-line-L: #d587e6;
+			--oscilloscope-line-R: #b11cc7;
+		   
+			--pitch1-secondary-channel: #3b56aa;
+			--pitch1-primary-channel: #4a6cd4;
+			--pitch1-secondary-note: #3b56aa;
+			--pitch1-primary-note: #4a6cd4;
+			--pitch2-secondary-channel: rgb(110, 68, 172);
+			--pitch2-primary-channel: rgb(138, 85, 215);
+			--pitch2-secondary-note: rgb(110, 68, 172);
+			--pitch2-primary-note: rgb(138, 85, 215);
+			--pitch3-secondary-channel: rgb(150, 53, 156);
+			--pitch3-primary-channel: rgb(187, 66, 195);
+			--pitch3-secondary-note: rgb(150, 53, 156);
+			--pitch3-primary-note: rgb(187, 66, 195);
+			--pitch4-secondary-channel: rgb(160, 105, 38);
+			--pitch4-primary-channel: rgb(200, 131, 48);
+			--pitch4-secondary-note: rgb(160, 105, 38);
+			--pitch4-primary-note: rgb(200, 131, 48);
+			--pitch5-secondary-channel: rgb(180, 135, 21);
+			--pitch5-primary-channel: rgb(225, 169, 26);
+			--pitch5-secondary-note: rgb(180, 135, 21);
+			--pitch5-primary-note: rgb(225, 169, 26);
+			--pitch6-secondary-channel: rgb(35, 132, 181);
+			--pitch6-primary-channel: rgb(44, 165, 226);
+			--pitch6-secondary-note: rgb(35, 132, 181);
+			--pitch6-primary-note: rgb(44, 165, 226);
+			--pitch7-secondary-channel: rgb(74, 146, 14);
+			--pitch7-primary-channel: rgb(92, 183, 18);
+			--pitch7-secondary-note: rgb(74, 146, 14);
+			--pitch7-primary-note: rgb(92, 183, 18);
+			--pitch8-secondary-channel: rgb(190, 100, 18);
+			--pitch8-primary-channel: rgb(238, 125, 22);
+			--pitch8-secondary-note: rgb(190, 100, 18);
+			--pitch8-primary-note: rgb(238, 125, 22);
+			--pitch9-secondary-channel: rgb(79, 36, 122);
+			--pitch9-primary-channel: rgb(99, 45, 153);
+			--pitch9-secondary-note: rgb(79, 36, 122);
+			--pitch9-primary-note: rgb(99, 45, 153);
+			--pitch10-secondary-channel: rgb(11, 123, 86);
+			--pitch10-primary-channel: rgb(14, 154, 108);
+			--pitch10-secondary-note: rgb(11, 123, 86);
+			--pitch10-primary-note: rgb(14, 154, 108);
+			--noise1-secondary-channel: #ef3d23;
+			--noise1-primary-channel: #fcf9ce;
+			--noise1-secondary-note: #ef3d23;
+			--noise1-primary-note: #fcf9ce;
+			--noise2-secondary-channel: #dd002b;
+			--noise2-primary-channel: #f73d61;
+			--noise2-secondary-note: #dd002b;
+			--noise2-primary-note: #f73d61;
+			--noise3-secondary-channel: #d0e9ea;
+			--noise3-primary-channel: #f3ffff;
+			--noise3-secondary-note: #d0e9ea;
+			--noise3-primary-note: #f3ffff;
+			--noise4-secondary-channel: #ed9b24;
+			--noise4-primary-channel: #ffc941;
+			--noise4-secondary-note: #ed9b24;
+			--noise4-primary-note: #ffc941;
+			--noise5-secondary-channel: #663b00;
+			--noise5-primary-channel: #ffe9cc;
+			--noise5-secondary-note: #663b00;
+			--noise5-primary-note: #ffe9cc;
+			--mod1-secondary-channel: #001026;
+			--mod1-primary-channel: #ffab19;
+			--mod1-secondary-note: #001026;
+			--mod1-primary-note: #ffab19;
+			--mod2-secondary-channel: #603813;
+			--mod2-primary-channel: #ffc93e;
+			--mod2-secondary-note: #603813;
+			--mod2-primary-note: #ffc93e;
+			--mod3-secondary-channel: #1b75bb;
+			--mod3-primary-channel: #e6e7e8;
+			--mod3-secondary-note: #1b75bb;
+			--mod3-primary-note: #e6e7e8;
+			--mod4-secondary-channel: #404041;
+			--mod4-primary-channel: #f05a28;
+			--mod4-secondary-note: #404041;
+			--mod4-primary-note: #f05a28;
+			--disabled-note-primary: #ff6680;
+			--disabled-note-secondary: #ff3355;
+		   }
+
+		   * {
+		   --play-symbol:url("https://choptop84.github.io/choptop84s-image-repository/Greenflag.png");
+		   --pause-symbol:url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png");
+		   }
+ 
+		   button.playButton::before {
+			 background-image: url("https://choptop84.github.io/choptop84s-image-repository/Greenflag.png") !important;
+			 background-size: 18px !important;
+			 background-position: center !important;
+			 background-repeat: no-repeat !important;
+			 mask-size: 800px;
+			 color: #fff0;
+		 }
+ 
+		 button.pauseButton::before {
+			 background-image: url("https://choptop84.github.io/choptop84s-image-repository/stopsign.png") !important;
+			 background-size: 18px !important;
+			 background-position: center !important;
+			 background-repeat: no-repeat !important;
+			 mask-size: 800px;
+			   color: #fff0;
+		 }
+
+		   #text-content > section > h1 {
+			 margin: auto;
+			 content: url("https://file.garden/ZMQ0Om5nmTe-x2hq/AbyssBox%20Scratch%20Logo3.png");
+		   }
+		   .beepboxEditor,
+		   #beepboxEditorContainer {
+			 background-color: #111111 !important;
+			 border-radius: 6px;
+			 box-shadow: 0px 0px 0px 4px rgba(158, 158, 158, 0.91);
+		   }
+		   .beepboxEditor .loopEditor {
+			 --editor-background: #111111 !important;
+			 border-radius: 3px;
+		   }
+		   .beepboxEditor .muteEditor {
+			 --editor-background: #4d97ff40 !important;
+			 border-radius: 3px;
+		   }
+		   .beepboxEditor .pattern-area {
+			 --editor-background: #292929 !important;
+			 border-radius: 3px;
+		   }
+		   .beepboxEditor .trackContainer svg {
+			 --editor-background: #3100ff !important;
+		   }
+		   .beepboxEditor .muteEditor > :last-child {
+			 --editor-background: #111111 !important;
+		   }
+		   .beepboxEditor #octaveScrollBarContainer {
+			 background-color: #111111;
+		   }
+		   .beepboxEditor .muteButtonText {
+			 transform: translate(0px, 1px) !important;
+			 color: #777 !important;
+		   }
+		   .beepboxEditor .instrument-bar {
+			 --text-color-lit: #111111 !important;
+			 --text-color-dim: #4c4c4c !important;
+		   }
+		   .beepboxEditor .instrument-bar .selected-instrument {
+			 color: rgb(0, 0, 0) !important;
+			 text-shadow: 0px 0px 4px var(--text-color-lit);
+		   }
+		   .beepboxEditor .instrument-bar .deactivated {
+			 color: rgba(0, 0, 0, 1) !important;
+			 text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2);
+		   }
+		   .beepboxEditor .instrument-bar > :not(.last-button) {
+			 border-color: var(--background-color-lit) !important;
+		   }
+		   .beepboxEditor .instrument-bar .selected-instrument {
+			 border-color: #111111 !important;
+		   }
+		   .beepboxEditor button {
+			 color: #fff;
+			 background: #3c236f;
+		   }
+		   .beepboxEditor .instrument-bar .selected-instrument,
+		   .beepboxEditor .filterEditor svg,
+		   .beepboxEditor .fadeInOut svg,
+		   .beepboxEditor .harmonics svg,
+		   .beepboxEditor .spectrum svg {
+			 background: rgb(255, 255, 255) !important;
+			 box-shadow:
+			   0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+			   inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+			   inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		   }
+		   .beepboxEditor input[type="range"]::-webkit-slider-thumb {
+			 background: #fff !important;
+		   }
+		   .beepboxEditor input[type="range"]::-moz-range-thumb {
+			 background: #000000 !important;
+		   }
+		   .beepboxEditor input[type="range"]::-webkit-slider-runnable-track {
+			 background: rgb(127, 127, 127) !important;
+		   }
+		   .beepboxEditor input[type="range"]::-moz-range-track {
+			 background: rgb(127, 127, 127) !important;
+		   }
+		   .beepboxEditor input[type="range"]::-webkit-slider-runnable-track::focus {
+			 background: rgba(255, 255, 255, 0.2) !important;
+			 box-shadow:
+			   0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+			   inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+			   inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		   }
+		   .beepboxEditor input[type="range"]::-moz-range-track::focus {
+			 background: rgba(255, 255, 255, 0.2) !important;
+			 box-shadow:
+			   0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+			   inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+			   inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3);
+		   }
+		   .beepboxEditor input[type="text"],
+		   .beepboxEditor input[type="number"] {
+			 font-size: inherit !important;
+			 font-weight: bold !important;
+			 font-family: inherit !important;
+			 background: #202020 !important;
+			 text-align: center !important;
+			 border: 1px solid var(--input-box-outline);
+			 color: #fff !important;
+			 box-shadow: 0px 0px 0px 1px rgb(134, 134, 134) !important;
+		   }
+		   .beepboxEditor .prompt {
+			 --primary-text: #fff;
+			 --secondary-text: #fff;
+			 --ui-widget-background: #351f5f;
+			 color: #fff !important;
+			 background: #202020 !important;
+		   }
+		   .beepboxEditor .trackContainer {
+			 --editor-background: #000;
+		   }
+		   #text-content {
+			 color: #fff;
+			 background: #202020;
+		   }
+		   body:not(#secondImage) {
+			 background: #202020;
+		   }
+		   body:not(#secondImage) input {
+			 --primary-text: #000;
+		   }
+		   body:not(#secondImage) h1 {
+			 color: #fff;
+		   }
+		  div#text-content {
+			padding-top: 15px;
+		  }
+		  div#beepboxEditorContainer{
+			padding-bottom: 15px;
+		  }
+		  div.channelBox {
+			border-radius: 5px;
+		  }
+		  div.muteEditor {
+			border-radius: 0px !important;
+		  }
+		`,
         "Doom 1993": `
 			:root { 		
 			--page-margin: #470000; 		
@@ -2748,7 +4929,10 @@ var beepbox = (function (exports) {
 			--mod-primary-note-sat: 96; 		
 			--mod-primary-note-sat-scale: 0; 		
 			--mod-primary-note-lum: 85; 		
-			--mod-primary-note-lum-scale: 0; 	
+			--mod-primary-note-lum-scale: 0; 
+			
+			--note-flash: #ffffff;
+			--note-flash-secondary: #ffffff77;
 				}
 		
 			#text-content > section > h1 > font {
@@ -2780,7 +4964,232 @@ var beepbox = (function (exports) {
 			html {
  		   font-family: 'doomfont';
 			}
+			div.channelBoxLabel {
+				font-family: 'doomfont' !important;
+			}
 
+			`,
+        "Undertale": `
+			:root {
+				--page-margin: #000;
+				--editor-background: #000;
+				--hover-preview: #fff;
+				--playhead: rgba(255, 255, 255, 0.9);
+				--primary-text: #fff;
+				--secondary-text: #979797;
+				--inverted-text: #000;
+				--text-selection: rgba(255, 255, 255, .99);
+				--box-selection-fill: #fff;
+				--loop-accent: #f00;
+				--link-accent: #0f0;
+				--ui-widget-background: #4d4d4d;
+				--ui-widget-focus: #000;
+				--pitch-background: #2d2d2d73;
+				--tonic: #c9c9c9;
+				--fifth-note: #400000;
+				--white-piano-key: #fff;
+				--black-piano-key: #000;
+				--white-piano-key-text: #000;
+				--black-piano-key-text: #fff;
+				--use-color-formula: false;
+				--track-editor-bg-pitch: #8b8b8b;
+				--track-editor-bg-pitch-dim: #000;
+				--track-editor-bg-noise: #5c5c5c;
+				--track-editor-bg-noise-dim: #000;
+				--track-editor-bg-mod: #585858;
+				--track-editor-bg-mod-dim: #000;
+				--multiplicative-mod-slider: #f00;
+				--overwriting-mod-slider: #00f;
+				--indicator-primary: #f00;
+				--indicator-secondary: #919191;
+				--select2-opt-group: #5d576f;
+				--input-box-outline: #626262;
+				--mute-button-normal: #ffffff;
+				--mute-button-mod: #4f4f4f;
+				--mod-label-primary: #f00;
+			
+				--pitch1-secondary-channel: #590000;
+			  --pitch1-primary-channel: #f00;
+			  --pitch1-secondary-note: #590000;
+			  --pitch1-primary-note: #f00;
+			
+			  --pitch2-secondary-channel: #00678a;
+			  --pitch2-primary-channel: #00ffef;
+			  --pitch2-secondary-note: #00678a;
+			  --pitch2-primary-note: #00ffef;
+			
+			  --pitch3-secondary-channel: #b35600;
+			  --pitch3-primary-channel: #ff7a00;
+			  --pitch3-secondary-note: #b35600;
+			  --pitch3-primary-note: #ff7a00;
+			
+			  --pitch4-secondary-channel: #002866;
+			  --pitch4-primary-channel: #001aff;
+			  --pitch4-secondary-note: #002866;
+			  --pitch4-primary-note: #001aff;
+			
+			  --pitch5-secondary-channel: #005e0b;
+			  --pitch5-primary-channel: #00ff1d;
+			  --pitch5-secondary-note: #005e0b;
+			  --pitch5-primary-note: #00ff1d;
+			
+			  --pitch6-secondary-channel: #b55d00;
+			  --pitch6-primary-channel: #fe0;
+			  --pitch6-secondary-note: #b55d00;
+			  --pitch6-primary-note: #fe0;
+			
+			  --pitch7-secondary-channel: #6a00b3;
+			  --pitch7-primary-channel: #a429f7;
+			  --pitch7-secondary-note: #6a00b3;
+			  --pitch7-primary-note: #a429f7;
+			
+			  --pitch8-secondary-channel: #02009f;
+			  --pitch8-primary-channel: #0058ff;
+			  --pitch8-secondary-note: #02009f;
+			  --pitch8-primary-note: #0058ff;
+			
+			  --pitch9-secondary-channel: #5c5c5c;
+			  --pitch9-primary-channel: #fff;
+			  --pitch9-secondary-note: #5c5c5c;
+			  --pitch9-primary-note: #fff;
+			
+			  --pitch10-secondary-channel: #5e2700;
+			  --pitch10-primary-channel: #ffb300;
+			  --pitch10-secondary-note: #5e2700;
+			  --pitch10-primary-note: #ffb300;
+			
+			  --noise1-secondary-channel: #750000;
+			  --noise1-primary-channel: #f00;
+			  --noise1-secondary-note: #750000;
+			  --noise1-primary-note: #f00;
+			
+			  --noise2-secondary-channel: #8567ff;
+			  --noise2-primary-channel: #f00;
+			  --noise2-secondary-note: #8567ff;
+			  --noise2-primary-note: #f00;
+			
+			  --noise3-secondary-channel: #8567ff;
+			  --noise3-primary-channel: #cec2ff;
+			  --noise3-secondary-note: #8567ff;
+			  --noise3-primary-note: #cec2ff;
+			
+			  --noise4-secondary-channel: #00266a;
+			  --noise4-primary-channel: #ffe100;
+			  --noise4-secondary-note: #00266a;
+			  --noise4-primary-note: #ffe100;
+			
+			  --noise5-secondary-channel: #976a00;
+			  --noise5-primary-channel: #ffe100;
+			  --noise5-secondary-note: #976a00;
+			  --noise5-primary-note: #ffe100;
+			
+			  --mod1-secondary-channel: #aaa;
+			  --mod1-primary-channel: #fff;
+			  --mod1-secondary-note: #aaa;
+			  --mod1-primary-note: #fff;
+			
+			  --mod2-secondary-channel: #950000;
+			  --mod2-primary-channel: #ff6000;
+			  --mod2-secondary-note: #950000;
+			  --mod2-primary-note: #ff6000;
+			
+			  --mod3-secondary-channel: #021300;
+			  --mod3-primary-channel: #1db917;
+			  --mod3-secondary-note: #021300;
+			  --mod3-primary-note: #1db917;
+			
+			  --mod4-secondary-channel: #a00000;
+			  --mod4-primary-channel: #ff252f;
+			  --mod4-secondary-note: #a00000;
+			  --mod4-primary-note: #ff252f;
+			
+			  --disabled-note-primary: #999;
+			  --disabled-note-secondary: #696969;
+
+			  --arrow-color: #f67c33;
+			  --icon-color: #f67c33;
+				}
+				* {
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/cursor-heart.png"), auto !important;
+					--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+					--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+					--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+					--text-enabled-icon:❤️ ;
+					}
+			
+			/* sets background image */
+			body {
+			background-image: url("https://cdn.discordapp.com/attachments/804372822931668994/1165384144948305960/spr_battlebg_1.png") !important;
+			background-position: center;
+			background-size: contain;
+			background-attachment: fixed;
+			background-repeat: no-repeat;
+			}
+			#text-content > section > h1 > font {
+			display: none;
+			}
+			#text-content > section > h1 {
+			margin: auto;
+			content: url("https://choptop84.github.io/choptop84s-image-repository/UndertaleThemeLogo.png");
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/AbyssBoxUtThemeLogo.png");
+ 			background-size: contain;
+ 			background-position: center;
+  			background-repeat: no-repeat;
+			}
+
+			div.selectContainer.menu.file select,
+			div.selectContainer.menu.edit select,
+			div.selectContainer.menu.preferences select {
+				border-style: solid;
+				border-color: #f67c33;
+				border-radius: 0px;
+			}
+			div.selectContainer.menu.file,
+			div.selectContainer.menu.edit,
+			div.selectContainer.menu.preferences {
+				--ui-widget-background: black;
+				--icon-color: #f67c33;
+				--arrow-color: #f67c33;
+				color: #f67c33;
+			}
+			.beepboxEditor select:focus,
+			.beepboxEditor .selectContainer:focus-within
+			{
+				border-color: #fbff4b !important;
+				--ui-widget-background: black !important;
+				--icon-color: #f00 !important;
+				--arrow-color: #fbff4b !important;
+				color: #fbff4b !important;
+
+				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-soul.png");
+				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-soul.png");
+				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-soul.png");
+			}
+			.beepboxEditor .menu.edit::before,
+			.beepboxEditor .menu.file::before,
+			.beepboxEditor .menu.preferences::before {
+				background: var(--icon-color) !important;
+			}
+			.beepboxEditor .menu.edit::after,
+			.beepboxEditor .menu.file::after,
+			.beepboxEditor .menu.preferences::after {
+				background: var(--arrow-color) !important;
+			}
+
+			#text-content {
+				border-style: solid;
+				border-radius: 0px;
+				padding-left: 20px;
+				padding-right: 20px;
+				padding-top: 15px;
+			}
+		#beepboxEditorContainer {
+			border-style: solid;
+			border-radius: 0px;
+			padding-left: 20px;
+			padding-right: 20px;
+			padding-bottom: 15px;
+			}
 			`,
         "Windows Xp": `
 			:root {		
@@ -2795,11 +5204,11 @@ var beepbox = (function (exports) {
 			--box-selection-fill: #1e0915; 		
 			--loop-accent: #003399; 		
 			--link-accent: #003399; 		
-			--ui-widget-background: #cfcab2; 		
-			--ui-widget-focus: #cfcab2; 		
-			--pitch-background: #918d79; 		
-			--tonic: #575344; 		
-			--fifth-note: #b0ac96; 		
+			--ui-widget-background: #faf9f2; 		
+			--ui-widget-focus: #faf9f2; 		
+			--pitch-background: #ffffff; 		
+			--tonic: #d5dbf5; 		
+			--fifth-note: #e8e8e8; 		
 			--white-piano-key: #ebe2ca; 		
 			--black-piano-key: #403a2f; 		
 			--use-color-formula: true; 		
@@ -2904,10 +5313,410 @@ var beepbox = (function (exports) {
 --mod-primary-note-sat-scale: 0;		
 --mod-primary-note-lum: 65;		
 --mod-primary-note-lum-scale: 0;	
+
+			--note-flash: #ffffff77;
+			--note-flash-secondary: #ffffff66;
 				}
+				
+				@font-face {
+					font-family: "tahoma";
+					src:
+					 url("https://choptop84.github.io/abyssbox-app/tahoma.otf") format("opentype") tech(color-COLRv1),
+					 image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					 image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					 image-rendering: -o-crisp-edges !important;            /* Opera */
+					 image-rendering: pixelated !important;                 /* Future browsers */
+					 image-rendering: optimizeSpeed !important;             /* IE */
+
+				}
+
+				html {
+				font-family: 'tahoma' !important;
+			   font-size: 150% !important;
+				}
+				div.channelBoxLabel {
+					font-family: 'tahoma' !important;
+				}
+
+				.beepboxEditor .promptContainer {
+				}
+
+				div.prompt.noSelection {
+					margin: auto;
+					text-align: center;
+					background: var(--editor-background);
+					border-radius: 15px;
+					border: 0px solid var(--ui-widget-background) !important;
+					padding-left: 20px !important;
+					box-shadow: 0px 0px 0px 0px rgba(0,0,0,0) !important;
+					padding-top: 6px !important;
+					padding-right: 20px !important;
+					padding-bottom: 20px !important;
+					border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/xpborder.png") !important;
+					border-image-slice: 34 !important;
+					border-image-width: 50px !important;
+					border-width: unset !important;
+
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+				}
+
+				div.prompt.noSelection button.cancelButton {
+					opacity: 0;
+				}
+
+				div.promptTitle {
+					text-align: left !important;
+					color: white !important;
+				}
+				.set-themeExt::after {
+					content: "setTheme.exe";
+				}
+				.set-themeTitle {
+					display: none;
+				}
+				.layoutExt::before {
+					content: "layout.exe";
+				}
+				.layoutTitle {
+					display: none;
+				}
+				.channelExt::after {
+					content: "channelSettings.exe";
+				}
+				.channelTitle {
+					display: none;
+				}
+				.limiterExt::after {
+					content: "limiter.exe";
+				}
+				.limiterTitle {
+					display: none;
+				}
+
+				.bpmTitle {
+					display: none;
+				}
+				.bpmExt::after {
+					content: "bpb.exe";
+				}
+
+				.gerTitle {
+					display: none;
+				}
+				.gerExt::after {
+					content: "euclidianRhythm.exe";
+				}
+
+				.samplesTitle {
+					display: none;
+				}
+				.samplesExt::after {
+					content: "sampler.exe";
+					margin-bottom: 0.5em;
+
+				}
+				.samplesExt {
+					padding-bottom: 8px;
+				}
+
+				.importTitle {
+					display: none;
+				}
+				.importExt::after {
+					content: "import.exe";
+				}
+
+				.exportTitle {
+					display: none;
+				}
+				.exportExt::after {
+					content: "export.exe";
+				}
+
+				.import-instrumentTitle {
+					display: none;
+				}
+				.import-instrumentExt::after {
+					content: "importInstrument.exe";
+				}
+
+				.export-instrumentTitle {
+					display: none;
+				}
+				.export-instrumentExt::after {
+					content: "exportInstrument.exe";
+				}
+
+				.song-lengthTitle {
+					display: none;
+				}
+				.song-lengthExt::after {
+					content: "songExtender.exe";
+				}
+
+				.mnsTitle {
+					display: none;
+				}
+				.mnsExt::after {
+					content: "moveNotesSideways.exe";
+				}
+
+				.nrsTitle {
+					display: none;
+				}
+				.nrsExt::after {
+					content: "setupMidiKeyboard.exe";
+				}
+
+				.beepboxEditor .promptContainer::before {
+					background: #fff0;
+				}
+
 		* {
 		cursor: url("https://choptop84.github.io/abyssbox-app/xpcursor.png"), auto !important;
+		--play-symbol:url("https://choptop84.github.io/abyssbox-app/xpPlay.png");
+		--pause-symbol:url("https://choptop84.github.io/abyssbox-app/xpPause.png");
+		--record-symbol:url("https://choptop84.github.io/abyssbox-app/xpRecord.png");
+		--stop-symbol:url("https://choptop84.github.io/abyssbox-app/xpStop.png");
+		--prev-bar-symbol:url("https://choptop84.github.io/abyssbox-app/xpBackward.png");
+		--next-bar-symbol:url("https://choptop84.github.io/abyssbox-app/xpForward.png");
+		--file-page-symbol: url("https://choptop84.github.io/abyssbox-app/xpFile.png");
+		--edit-pencil-symbol: url("https://choptop84.github.io/abyssbox-app/xpEdit.png");
+		--preferences-gear-symbol: url("https://choptop84.github.io/abyssbox-app/xpPreferences.png");
+		--muted-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeakerMute.png");
+		--unmuted-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
+		--volume-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
+		--zoom-in-symbol: url("https://choptop84.github.io/abyssbox-app/xpZoomIn.png");
+		--zoom-out-symbol: url("https://choptop84.github.io/abyssbox-app/xpZoomOut.png");
 		}
+
+		.beepboxEditor button,
+		button.playButton,
+		button.pauseButton, 
+		button.recordButton, 
+		button.stopButton,
+		button.nextBarButton, 
+		button.prevBarButton, 
+		button.copyButton, 
+		button.pasteButton, 
+		button.exportInstrumentButton, 
+		button.importInstrumentButton, 
+		.beepboxEditor select, 
+		.beepboxEditor .select2-selection__rendered {
+				cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+			}
+
+		div.mute-button::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png") !important;
+			background-size: 120% !important;
+			background-position-x: center !important;
+			background-position-y: center !important;
+			background-repeat: no-repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		div.mute-button.muted::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeakerMute.png") !important;
+			background-size: 120% !important;
+			background-position-x: center !important;
+			background-position-y: center !important;
+			background-repeat: no-repeat !important;
+			
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		button.recordButton::Before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpRecord.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		button.stopButton::Before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpStop.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		button.pauseButton::Before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpPause.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		.beepboxEditor span.volume-speaker {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
+			background-position: center !important;
+			background-repeat: no-repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+			}
+
+		div.selectContainer.menu.file::before {
+
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpFile.png");
+			background-size: 64%;
+			background-position-x: center;
+			background-position-y: center;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		div.selectContainer.menu.edit::before {
+
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpEdit.png");
+			background-size: 64%;
+			background-position-x: center;
+			background-position-y: center;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+		div.selectContainer.menu.preferences::before {
+
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpPreferences.png");
+			background-size: 64%;
+			background-position-x: center;
+			background-position-y: center;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+		button.playButton::before {
+
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpPlay.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+		}
+
+		.beepboxEditor button.prevBarButton::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpBackward.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		.beepboxEditor button.nextBarButton::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpForward.png") !important;
+			background-size: 64% !important;
+			background-position: center !important;
+
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		.beepboxEditor .zoomInButton::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpZoomIn.png") !important;
+			background-position: center !important;
+
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		.beepboxEditor .zoomOutButton::before {
+			background-image: url("https://choptop84.github.io/abyssbox-app/xpZoomOut.png") !important;
+			background-position: center !important;
+
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+		.beepboxEditor input[type="range"]::-moz-range-thumb {
+			background-image: url("https://choptop84.github.io/abyssbox-app/scrollbar.png") !important;
+			background-position: center !important;
+			background-size: inherit !important;
+
+			border-radius: 0px !important;
+			width: 13px !important;
+			height: 23px !important;
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+
+		}
+
+			/* NON ICON STUFFS SO DON'T GET CONFUSED DUMMY!!! */
 
 			#text-content > section > h1 > font {
 		display: none;
@@ -2931,7 +5740,7 @@ var beepbox = (function (exports) {
    				border-image-width: 11px; 
 				border-image-repeat: stretch;
     				background-color: transparent; 
-    				padding: 11px; 
+    				padding: 14px; 
 				}
 			#beepboxEditorContainer {
     				border-image-source: url("https://choptop84.github.io/abyssbox-app/xptextbg.png");
@@ -2941,25 +5750,635 @@ var beepbox = (function (exports) {
     				background-color: transparent; 
     				padding: 13px; 
 				}
-			 .beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/xpbuttonbg.png") !important;
-    				border-image-slice: 5 fill !important; 
-   				border-image-width: 2px !important; 
-				border-image-repeat: stretch !important;
-    				background-color: transparent !important; 
-    				padding: 7px !important; 
-				}		
 
-			@font-face {
-		   font-family: "tahoma";
-		   src:
- 		   url("https://choptop84.github.io/abyssbox-app/tahoma.otf") format("opentype") tech(color-COLRv1),
+			#firstImage {
+				background-image: url("https://choptop84.github.io/abyssbox-app/xpsongeditorbg.png") !important;
+				background-repeat: no-repeat !important;
+				background-size: 100% 100% !important;
 			}
 
-			html {
- 		   font-family: 'tahoma';
-		   font-size: 125% !important;
+			div.menu-area {
+				--ui-widget-background: #edead9; 
 			}
+			select {
+				--ui-widget-background: #edead9; 
+				cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+			}
+			div.playback-bar-controls {
+				--ui-widget-background: #edead9; 
+			}
+
+			.beepboxEditor input[type="range"]::-moz-range-track
+			{
+				background: rgba(222, 217, 189, 0.2) !important;
+				box-shadow:
+					0px 0px 1px 1px rgba(0, 0, 0, 0.0), 
+					inset 0px 1px 2px 0px rgb(125, 120, 95), 
+					inset 0px -1px 0px 0px rgb(255, 255, 255)
+				;
+				border-radius: 4px;
+			} /* Thanks to LeoV's Skeumorphic theme on this one */
+			
+			.beepboxEditor input[type="range"]::-moz-range-track {
+				height: 3px !important;
+			}
+			
+			.beepboxEditor select:focus {
+					border-image-source: url("https://choptop84.github.io/abyssbox-app/xpbuttonpressedbg.png");
+					border-image-slice: 4 fill; 
+					border-image-width: 4px; 
+					border-image-repeat: repeat;
+					background-color: transparent; 
+					padding: 6px; 
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+
+				.beepboxEditor input[type="checkbox"]
+				{
+					appearance: none;
+					background: rgba(255, 255, 255, 1);
+					color: currentColor;
+					border-radius: 0px;
+					width: 13px !important;
+					height: 13px !important;
+					background-image:url("https://choptop84.github.io/abyssbox-app/xpCheckmarkBlank.png");
+					background-repeat:no-repeat;
+
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+					transform: scale(2) !important;
+					}
+
+				.beepboxEditor input[type="checkbox"]:checked
+				{
+					display: flex;
+					justify-content: center;
+					transform: scale(2) !important;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]:checked:after
+				{
+					width: 13px;
+					height: 13px;
+					text-align: center;
+					content: "";
+					background-repeat:no-repeat;
+					background-image:url("https://choptop84.github.io/abyssbox-app/xpCheckmark.png");
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+				}
+
+				.beepboxEditor input[type="range"]::-webkit-slider-thumb
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]::-ms-thumb
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]::-ms-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-ms-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]::-moz-range-thumb
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]::-moz-range-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="range"]:focus::-moz-range-track
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="text"],
+				.beepboxEditor input[type="number"]
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]:checked
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+				.beepboxEditor input[type="checkbox"]:checked:after
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+	
+				div.selectRow span 
+				{
+					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
+				}
+				 
+
+
+			`,
+        "Terminal 2.0 (AB)": `
+
+			:root { 
+			--page-margin: black; 
+			--editor-background: black; 
+			--hover-preview: white; 
+			--playhead: white; 
+			--primary-text: #26ff00; 
+			--secondary-text: #0d6d00; 
+			--inverted-text: #000000; 
+			--text-selection: rgba(119,68,255,0.99); 
+			--box-selection-fill: rgba(255,255,255,0.2); 
+			--loop-accent: #1eff00; 
+			--link-accent: #8dff7e; 
+			--ui-widget-background: #000000; 
+			--ui-widget-focus: #242424; 
+			--pitch-background: #0d0d0d50; 
+			--tonic: #06350090; 
+			--fifth-note: #20202090; 
+			--white-piano-key: #ffffff; 
+			--black-piano-key: #000000; 
+			--white-piano-key-text: #131200; 
+			--black-piano-key-text: #fff; 
+			--use-color-formula: false; 
+			--track-editor-bg-pitch: #152912; 
+			--track-editor-bg-pitch-dim: #091307; 
+			--track-editor-bg-noise: #1a1a1a; 
+			--track-editor-bg-noise-dim: #333; 
+			--track-editor-bg-mod: #000000; 
+			--track-editor-bg-mod-dim: #000000; 
+			--multiplicative-mod-slider: #073c00; 
+			--overwriting-mod-slider: #0c6700; 
+			--indicator-primary: #139f00; 
+			--indicator-secondary: #1eff00; 
+			--select2-opt-group: #171717; 
+			--input-box-outline: #00ff00; 
+			--mute-button-normal: #00ff44; 
+			--mute-button-mod: #44ff00; 
+			--pitch1-secondary-channel: #0099A1; 
+			--pitch1-primary-channel: #25F3FF; 
+			--pitch1-secondary-note: #00BDC7; 
+			--pitch1-primary-note: #92F9FF; 
+			--pitch2-secondary-channel: #A1A100; 
+			--pitch2-primary-channel: #FFFF25; 
+			--pitch2-secondary-note: #C7C700; 
+			--pitch2-primary-note: #FFFF92; 
+			--pitch3-secondary-channel: #C75000; 
+			--pitch3-primary-channel: #FF9752; 
+			--pitch3-secondary-note: #FF771C; 
+			--pitch3-primary-note: #FFCDAB; 
+			--pitch4-secondary-channel: #00A100; 
+			--pitch4-primary-channel: #50FF50; 
+			--pitch4-secondary-note: #00C700; 
+			--pitch4-primary-note: #A0FFA0; 
+			--pitch5-secondary-channel: #D020D0; 
+			--pitch5-primary-channel: #FF90FF; 
+			--pitch5-secondary-note: #E040E0; 
+			--pitch5-primary-note: #FFC0FF; 
+			--pitch6-secondary-channel: #7777B0; 
+			--pitch6-primary-channel: #A0A0FF; 
+			--pitch6-secondary-note: #8888D0; 
+			--pitch6-primary-note: #D0D0FF; 
+			--pitch7-secondary-channel: #8AA100; 
+			--pitch7-primary-channel: #DEFF25; 
+			--pitch7-secondary-note: #AAC700; 
+			--pitch7-primary-note: #E6FF92; 
+			--pitch8-secondary-channel: #DF0019; 
+			--pitch8-primary-channel: #FF98A4; 
+			--pitch8-secondary-note: #FF4E63; 
+			--pitch8-primary-note: #FFB2BB; 
+			--pitch9-secondary-channel: #00A170; 
+			--pitch9-primary-channel: #50FFC9; 
+			--pitch9-secondary-note: #00C78A; 
+			--pitch9-primary-note: #83FFD9; 
+			--pitch10-secondary-channel: #A11FFF; 
+			--pitch10-primary-channel: #CE8BFF; 
+			--pitch10-secondary-note: #B757FF; 
+			--pitch10-primary-note: #DFACFF; 
+			--noise1-secondary-channel: #6F6F6F; 
+			--noise1-primary-channel: #AAAAAA; 
+			--noise1-secondary-note: #A7A7A7; 
+			--noise1-primary-note: #E0E0E0; 
+			--noise2-secondary-channel: #996633; 
+			--noise2-primary-channel: #DDAA77; 
+			--noise2-secondary-note: #CC9966; 
+			--noise2-primary-note: #F0D0BB; 
+			--noise3-secondary-channel: #4A6D8F; 
+			--noise3-primary-channel: #77AADD; 
+			--noise3-secondary-note: #6F9FCF; 
+			--noise3-primary-note: #BBD7FF; 
+			--noise4-secondary-channel: #7A4F9A; 
+			--noise4-primary-channel: #AF82D2; 
+			--noise4-secondary-note: #9E71C1; 
+			--noise4-primary-note: #D4C1EA; 
+			--noise5-secondary-channel: #607837; 
+			--noise5-primary-channel: #A2BB77; 
+			--noise5-secondary-note: #91AA66; 
+			--noise5-primary-note: #C5E2B2; 
+			--mod1-secondary-channel: #339955; 
+			--mod1-primary-channel: #77fc55; 
+			--mod1-secondary-note: #77ff8a; 
+			--mod1-primary-note: #cdffee; 
+			--mod2-secondary-channel: #993355; 
+			--mod2-primary-channel: #f04960; 
+			--mod2-secondary-note: #f057a0; 
+			--mod2-primary-note: #ffb8de; 
+			--mod3-secondary-channel: #553399; 
+			--mod3-primary-channel: #8855fc; 
+			--mod3-secondary-note: #aa64ff; 
+			--mod3-primary-note: #f8ddff; 
+			--mod4-secondary-channel: #a86436; 
+			--mod4-primary-channel: #c8a825; 
+			--mod4-secondary-note: #e8ba46; 
+			--mod4-primary-note: #fff6d3; 
+			--mod-label-primary: #164705; 
+			--mod-label-secondary-text: #333; 
+			--mod-label-primary-text: #44ff00; 
+			--disabled-note-primary: #999; 
+			--disabled-note-secondary: #666; 
+			--note-flash: #a4ff82; 
+			--note-flash-secondary: #dffbd57a; }
+			
+						.beepboxEditor button,
+						button.playButton,
+						button.pauseButton, 
+						button.recordButton, 
+						button.stopButton,
+						button.nextBarButton, 
+						button.prevBarButton, 
+						button.copyButton, 
+						button.pasteButton, 
+						button.exportInstrumentButton, 
+						button.importInstrumentButton,
+						.beepboxEditor select, 
+						.beepboxEditor .select2-selection__rendered {
+							background-image: url("https://choptop84.github.io/choptop84s-image-repository/lines2.png") !important;
+							background-size: 75% !important;
+							}
+			
+						.beepboxEditor .playButton::before,
+						.beepboxEditor .pauseButton::before, 
+						.beepboxEditor .recordButton::before, 
+						.beepboxEditor .stopButton::before,
+						.beepboxEditor .nextBarButton::before, 
+						.beepboxEditor .prevBarButton::before, 
+						.beepboxEditor .copyButton::before, 
+						.beepboxEditor .pasteButton::before,
+						.beepboxEditor .copyPatternButton::before, 
+						.beepboxEditor .pastePatternButton::before,
+						.beepboxEditor .undoButton::before,
+						.beepboxEditor .redoButton::before,
+						.beepboxEditor .insertChannelButton::before,
+						.beepboxEditor .deleteChannelButton::before,
+						.beepboxEditor .selectAllButton::before,
+						.beepboxEditor .duplicateButton::before,
+						.beepboxEditor .notesUpButton::before,
+						.beepboxEditor .notesDownButton::before,
+						.beepboxEditor .loopBarButton::before,
+						.beepboxEditor .menu.file::before,
+						.beepboxEditor .menu.edit::before,
+						.beepboxEditor .menu.preferences::before,
+						.beepboxEditor .volume-speaker,
+						.beepboxEditor .mute-button::before,
+						.beepboxEditor .mute-button.modMute::before,
+						div.noSelection  {
+							border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/lines2.png") !important;
+							border-image-width: 46% !important;
+							}
+			
+						@font-face {
+					   font-family: "Workbench";
+					   src:
+						url("https://choptop84.github.io/abyssbox-app/Workbench.ttf") format("truetype") tech(color-COLRv1),
+						}
+			
+						html {
+							font-family: 'Workbench';
+						}
+			
+						div.channelBoxLabel {
+							font-family: 'Workbench' !important;
+						}
+			
+							#firstImage {
+								background-image: url("https://choptop84.github.io/choptop84s-image-repository/lines.png") !important;
+								background-repeat: repeat !important;
+								background-size: 40% 40% !important;
+								opacity: 70%;
+							}
+			
+						.beepboxEditor input[type="range"]::-moz-range-thumb {
+							border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/lines2.png") !important;
+							border-image-width: 46% !important;
+						}    
+			
+						.modTitle::before {
+							content: "> AbyssBox Terminal 2.0" !important;
+						}
+
+						div.channelBox {
+						background-image: url("https://choptop84.github.io/choptop84s-image-repository/lines2.png") !important;
+					  }
+			`,
+        "2012 Video Tutorial": `
+			:root {
+				--page-margin: black;
+				--editor-background: black;
+				--hover-preview: white;
+				--playhead: white;
+				--primary-text: white;
+				--secondary-text: #999;
+				--inverted-text: black;
+				--text-selection: rgba(119,68,255,0.99);
+				--box-selection-fill: rgba(255,255,255,0.2);
+				--loop-accent: #74f;
+				--link-accent: #98f;
+				--ui-widget-background: #444;
+				--ui-widget-focus: #777;
+				--pitch-background: #444;
+				--tonic: #864;
+				--fifth-note: #468;
+				--white-piano-key: #bbb;
+				--black-piano-key: #444;
+				--white-piano-key-text: #131200;
+				--black-piano-key-text: #fff;
+					--use-color-formula: false;
+					--track-editor-bg-pitch: #444;
+					--track-editor-bg-pitch-dim: #333;
+					--track-editor-bg-noise: #444;
+					--track-editor-bg-noise-dim: #333;
+					--track-editor-bg-mod: #234;
+					--track-editor-bg-mod-dim: #123;
+					--multiplicative-mod-slider: #456;
+					--overwriting-mod-slider: #654;
+					--indicator-primary: #74f;
+					--indicator-secondary: #444;
+					--select2-opt-group: #585858;
+					--input-box-outline: #333;
+					--mute-button-normal: #ffa033;
+					--mute-button-mod: #9a6bff;
+				--pitch1-secondary-channel: #0099A1;
+				--pitch1-primary-channel:   #25F3FF;
+				--pitch1-secondary-note:    #00BDC7;
+				--pitch1-primary-note:      #92F9FF;
+				--pitch2-secondary-channel: #A1A100;
+				--pitch2-primary-channel:   #FFFF25;
+				--pitch2-secondary-note:    #C7C700;
+				--pitch2-primary-note:      #FFFF92;
+				--pitch3-secondary-channel: #C75000;
+				--pitch3-primary-channel:   #FF9752;
+				--pitch3-secondary-note:    #FF771C;
+				--pitch3-primary-note:      #FFCDAB;
+				--pitch4-secondary-channel: #00A100;
+				--pitch4-primary-channel:   #50FF50;
+				--pitch4-secondary-note:    #00C700;
+				--pitch4-primary-note:      #A0FFA0;
+				--pitch5-secondary-channel: #D020D0;
+				--pitch5-primary-channel:   #FF90FF;
+				--pitch5-secondary-note:    #E040E0;
+				--pitch5-primary-note:      #FFC0FF;
+				--pitch6-secondary-channel: #7777B0;
+				--pitch6-primary-channel:   #A0A0FF;
+				--pitch6-secondary-note:    #8888D0;
+				--pitch6-primary-note:      #D0D0FF;
+				--pitch7-secondary-channel: #8AA100;
+				--pitch7-primary-channel:   #DEFF25;
+				--pitch7-secondary-note:    #AAC700;
+				--pitch7-primary-note:      #E6FF92;
+				--pitch8-secondary-channel: #DF0019;
+				--pitch8-primary-channel:   #FF98A4;
+				--pitch8-secondary-note:    #FF4E63;
+				--pitch8-primary-note:      #FFB2BB;
+				--pitch9-secondary-channel: #00A170;
+				--pitch9-primary-channel:   #50FFC9;
+				--pitch9-secondary-note:    #00C78A;
+				--pitch9-primary-note:      #83FFD9;
+				--pitch10-secondary-channel:#A11FFF;
+				--pitch10-primary-channel:  #CE8BFF;
+				--pitch10-secondary-note:   #B757FF;
+				--pitch10-primary-note:     #DFACFF;
+				--noise1-secondary-channel: #6F6F6F;
+				--noise1-primary-channel:   #AAAAAA;
+				--noise1-secondary-note:    #A7A7A7;
+				--noise1-primary-note:      #E0E0E0;
+				--noise2-secondary-channel: #996633;
+				--noise2-primary-channel:   #DDAA77;
+				--noise2-secondary-note:    #CC9966;
+				--noise2-primary-note:      #F0D0BB;
+				--noise3-secondary-channel: #4A6D8F;
+				--noise3-primary-channel:   #77AADD;
+				--noise3-secondary-note:    #6F9FCF;
+				--noise3-primary-note:      #BBD7FF;
+				--noise4-secondary-channel: #7A4F9A;
+				--noise4-primary-channel:   #AF82D2;
+				--noise4-secondary-note:    #9E71C1;
+				--noise4-primary-note:      #D4C1EA;
+				--noise5-secondary-channel: #607837;
+				--noise5-primary-channel:   #A2BB77;
+				--noise5-secondary-note:    #91AA66;
+				--noise5-primary-note:      #C5E2B2;
+          --mod1-secondary-channel:   #339955;
+					--mod1-primary-channel:     #77fc55;
+					--mod1-secondary-note:      #77ff8a;
+					--mod1-primary-note:        #cdffee;
+					--mod2-secondary-channel:   #993355;
+					--mod2-primary-channel:     #f04960;
+					--mod2-secondary-note:      #f057a0;
+					--mod2-primary-note:        #ffb8de;
+					--mod3-secondary-channel:   #553399;
+					--mod3-primary-channel:     #8855fc;
+					--mod3-secondary-note:      #aa64ff;
+					--mod3-primary-note:	    #f8ddff;
+					--mod4-secondary-channel:   #a86436;
+					--mod4-primary-channel:     #c8a825;
+					--mod4-secondary-note:      #e8ba46;
+					--mod4-primary-note:        #fff6d3;
+					--mod-label-primary:        #999;
+					--mod-label-secondary-text: #333;
+					--mod-label-primary-text:   black;
+					--disabled-note-primary:    #999;
+					--disabled-note-secondary:  #666;
+				}
+
+				.overlay {
+					background-image: url("https://choptop84.github.io/choptop84s-image-repository/bandicam_watermark.png");
+					background-repeat: no-repeat;
+  					background-size: contain;
+  					background-position-x: center;
+				  	backdrop-filter: blur(1px);
+					position: fixed !important;
+				}
+
+				 html:not(.overlay) {
+					width: 75vw;
+					padding-left: 12.5%;
+					position: relative;
+					background: black;
+				} 
+
+			`,
+        "I am on fire": `
+			:root {
+				--page-margin: black;
+				--editor-background: black;
+				--hover-preview: white;
+				--playhead: white;
+				--primary-text: white;
+				--secondary-text: #999;
+				--inverted-text: black;
+				--text-selection: rgba(119,68,255,0.99);
+				--box-selection-fill: rgba(255,255,255,0.2);
+				--loop-accent: #74f;
+				--link-accent: #98f;
+				--ui-widget-background: #444;
+				--ui-widget-focus: #777;
+				--pitch-background: #444;
+				--tonic: #864;
+				--fifth-note: #468;
+				--white-piano-key: #bbb;
+				--black-piano-key: #444;
+				--white-piano-key-text: #131200;
+				--black-piano-key-text: #fff;
+					--use-color-formula: false;
+					--track-editor-bg-pitch: #444;
+					--track-editor-bg-pitch-dim: #333;
+					--track-editor-bg-noise: #444;
+					--track-editor-bg-noise-dim: #333;
+					--track-editor-bg-mod: #234;
+					--track-editor-bg-mod-dim: #123;
+					--multiplicative-mod-slider: #456;
+					--overwriting-mod-slider: #654;
+					--indicator-primary: #74f;
+					--indicator-secondary: #444;
+					--select2-opt-group: #585858;
+					--input-box-outline: #333;
+					--mute-button-normal: #ffa033;
+					--mute-button-mod: #9a6bff;
+				--pitch1-secondary-channel: #0099A1;
+				--pitch1-primary-channel:   #25F3FF;
+				--pitch1-secondary-note:    #00BDC7;
+				--pitch1-primary-note:      #92F9FF;
+				--pitch2-secondary-channel: #A1A100;
+				--pitch2-primary-channel:   #FFFF25;
+				--pitch2-secondary-note:    #C7C700;
+				--pitch2-primary-note:      #FFFF92;
+				--pitch3-secondary-channel: #C75000;
+				--pitch3-primary-channel:   #FF9752;
+				--pitch3-secondary-note:    #FF771C;
+				--pitch3-primary-note:      #FFCDAB;
+				--pitch4-secondary-channel: #00A100;
+				--pitch4-primary-channel:   #50FF50;
+				--pitch4-secondary-note:    #00C700;
+				--pitch4-primary-note:      #A0FFA0;
+				--pitch5-secondary-channel: #D020D0;
+				--pitch5-primary-channel:   #FF90FF;
+				--pitch5-secondary-note:    #E040E0;
+				--pitch5-primary-note:      #FFC0FF;
+				--pitch6-secondary-channel: #7777B0;
+				--pitch6-primary-channel:   #A0A0FF;
+				--pitch6-secondary-note:    #8888D0;
+				--pitch6-primary-note:      #D0D0FF;
+				--pitch7-secondary-channel: #8AA100;
+				--pitch7-primary-channel:   #DEFF25;
+				--pitch7-secondary-note:    #AAC700;
+				--pitch7-primary-note:      #E6FF92;
+				--pitch8-secondary-channel: #DF0019;
+				--pitch8-primary-channel:   #FF98A4;
+				--pitch8-secondary-note:    #FF4E63;
+				--pitch8-primary-note:      #FFB2BB;
+				--pitch9-secondary-channel: #00A170;
+				--pitch9-primary-channel:   #50FFC9;
+				--pitch9-secondary-note:    #00C78A;
+				--pitch9-primary-note:      #83FFD9;
+				--pitch10-secondary-channel:#A11FFF;
+				--pitch10-primary-channel:  #CE8BFF;
+				--pitch10-secondary-note:   #B757FF;
+				--pitch10-primary-note:     #DFACFF;
+				--noise1-secondary-channel: #6F6F6F;
+				--noise1-primary-channel:   #AAAAAA;
+				--noise1-secondary-note:    #A7A7A7;
+				--noise1-primary-note:      #E0E0E0;
+				--noise2-secondary-channel: #996633;
+				--noise2-primary-channel:   #DDAA77;
+				--noise2-secondary-note:    #CC9966;
+				--noise2-primary-note:      #F0D0BB;
+				--noise3-secondary-channel: #4A6D8F;
+				--noise3-primary-channel:   #77AADD;
+				--noise3-secondary-note:    #6F9FCF;
+				--noise3-primary-note:      #BBD7FF;
+				--noise4-secondary-channel: #7A4F9A;
+				--noise4-primary-channel:   #AF82D2;
+				--noise4-secondary-note:    #9E71C1;
+				--noise4-primary-note:      #D4C1EA;
+				--noise5-secondary-channel: #607837;
+				--noise5-primary-channel:   #A2BB77;
+				--noise5-secondary-note:    #91AA66;
+				--noise5-primary-note:      #C5E2B2;
+          --mod1-secondary-channel:   #339955;
+					--mod1-primary-channel:     #77fc55;
+					--mod1-secondary-note:      #77ff8a;
+					--mod1-primary-note:        #cdffee;
+					--mod2-secondary-channel:   #993355;
+					--mod2-primary-channel:     #f04960;
+					--mod2-secondary-note:      #f057a0;
+					--mod2-primary-note:        #ffb8de;
+					--mod3-secondary-channel:   #553399;
+					--mod3-primary-channel:     #8855fc;
+					--mod3-secondary-note:      #aa64ff;
+					--mod3-primary-note:	    #f8ddff;
+					--mod4-secondary-channel:   #a86436;
+					--mod4-primary-channel:     #c8a825;
+					--mod4-secondary-note:      #e8ba46;
+					--mod4-primary-note:        #fff6d3;
+					--mod-label-primary:        #999;
+					--mod-label-secondary-text: #333;
+					--mod-label-primary-text:   black;
+					--disabled-note-primary:    #999;
+					--disabled-note-secondary:  #666;
+				}
+
+				.overlay {
+					background-image: url("https://choptop84.github.io/choptop84s-image-repository/fire.gif");
+					background-repeat: no-repeat;
+  					background-size: cover;
+  					background-position-y: bottom;
+				}
+
+				
+				.modTitle::before {
+					content: "AAAA I'M ON FIRE AAA" !important;
+				}
 
 			`,
         "dark classic": `
@@ -3321,6 +6740,10 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #666;
 					--disabled-note-secondary:  #aaa;
+
+					
+					
+
 			}
 			
 			.beepboxEditor button, .beepboxEditor select {
@@ -3445,6 +6868,10 @@ var beepbox = (function (exports) {
 					--mod-primary-note-lum-scale: 0;
 					--disabled-note-primary:    #91879f;
 					--disabled-note-secondary:  #6a677a;
+
+					
+					
+
 				}
 			`,
         "forest": `
@@ -3561,7 +6988,214 @@ var beepbox = (function (exports) {
 					--mod-primary-note-lum-scale: 0;
 					--disabled-note-primary:    #536e5c;
 					--disabled-note-secondary:  #395440;
+
+					
+					
+
 				}
+			`,
+        "forest 2": `
+					:root { --page-margin: #132f16; 
+					--editor-background: #002b03;; 
+					--hover-preview: white; 
+					--playhead: rgba(255, 255, 255, 0.9); 
+					--primary-text: #96d69f; 
+					--secondary-text: #7fdb60; 
+					--inverted-text: #2c562e; 
+					--text-selection: rgba(119,68,255,0.99); 
+					--box-selection-fill: #044b94; 
+					--loop-accent: #63e469; 
+					--link-accent: #c5facd; 
+					--ui-widget-background: #396b32; 
+					--ui-widget-focus: #002b03; 
+					--pitch-background: #30583c; 
+					--tonic: #4dac5b; 
+					--fifth-note: #458343; 
+					--white-piano-key: #bee9bf; 
+					--black-piano-key: #395e3c; 
+					--use-color-formula: true; 
+					--track-editor-bg-pitch: #43a631; 
+					--track-editor-bg-pitch-dim: #387e34; 
+					--track-editor-bg-noise: #3c8462; 
+					--track-editor-bg-noise-dim: #285821; 
+					--track-editor-bg-mod: #419296; 
+					--track-editor-bg-mod-dim: #3e7b59; 
+					--multiplicative-mod-slider: #345838; 
+					--overwriting-mod-slider: #3a8136; 
+					--indicator-primary: #75ce71; 
+					--indicator-secondary: #5fe857; 
+					--select2-opt-group: #002002; 
+					--input-box-outline: #bbe6b0; 
+					--mute-button-normal: #50aa4a; 
+					--mute-button-mod: #49ab69; 
+					--mod-label-primary: #8dd883; 
+					--mod-label-secondary-text: #7be250; 
+					--mod-label-primary-text: #bcebb4; 
+
+					--pitch-secondary-channel-hue: 120;
+					--pitch-secondary-channel-hue-scale: 8.1;
+					--pitch-secondary-channel-sat: 59;
+					--pitch-secondary-channel-sat-scale: 0.1;
+					--pitch-secondary-channel-lum: 50;
+					--pitch-secondary-channel-lum-scale: 0.04;
+					--pitch-primary-channel-hue: 120;
+					--pitch-primary-channel-hue-scale: 8.1;
+					--pitch-primary-channel-sat: 86;
+					--pitch-primary-channel-sat-scale: 0.1;
+					--pitch-primary-channel-lum: 70;
+					--pitch-primary-channel-lum-scale: 0.04;
+					--pitch-secondary-note-hue: 120;
+					--pitch-secondary-note-hue-scale: 8.1;
+					--pitch-secondary-note-sat: 85;
+					--pitch-secondary-note-sat-scale: 0.1;
+					--pitch-secondary-note-lum: 30;
+					--pitch-secondary-note-lum-scale: 0.04;
+					--pitch-primary-note-hue: 120;
+					--pitch-primary-note-hue-scale: 8.1;
+					--pitch-primary-note-sat: 90;
+					--pitch-primary-note-sat-scale: 0.05;
+					--pitch-primary-note-lum: 80;
+					--pitch-primary-note-lum-scale: 0.025;
+					--noise-secondary-channel-hue: 200;
+					--noise-secondary-channel-hue-scale: 1.1;
+					--noise-secondary-channel-sat: 25;
+					--noise-secondary-channel-sat-scale: 0;
+					--noise-secondary-channel-lum: 22;
+					--noise-secondary-channel-lum-scale: 0;
+					--noise-primary-channel-hue: 200;
+					--noise-primary-channel-hue-scale: 1.1;
+					--noise-primary-channel-sat: 48;
+					--noise-primary-channel-sat-scale: 0;
+					--noise-primary-channel-lum: 65;
+					--noise-primary-channel-lum-scale: 0;
+					--noise-secondary-note-hue: 200;
+					--noise-secondary-note-hue-scale: 1.1;
+					--noise-secondary-note-sat: 33.5;
+					--noise-secondary-note-sat-scale: 0;
+					--noise-secondary-note-lum: 33;
+					--noise-secondary-note-lum-scale: 0;
+					--noise-primary-note-hue: 200;
+					--noise-primary-note-hue-scale: 1.1;
+					--noise-primary-note-sat: 46.5;
+					--noise-primary-note-sat-scale: 0;
+					--noise-primary-note-lum: 64;
+					--noise-primary-note-lum-scale: 0;
+					--mod-secondary-channel-hue: 40;
+					--mod-secondary-channel-hue-scale: 1.8;
+					--mod-secondary-channel-sat: 44;
+					--mod-secondary-channel-sat-scale: 0;
+					--mod-secondary-channel-lum: 50;
+					--mod-secondary-channel-lum-scale: 0;
+					--mod-primary-channel-hue: 40;
+					--mod-primary-channel-hue-scale: 1.8;
+					--mod-primary-channel-sat: 60;
+					--mod-primary-channel-sat-scale: 0;
+					--mod-primary-channel-lum: 80;
+					--mod-primary-channel-lum-scale: 0;
+					--mod-secondary-note-hue: 40;
+					--mod-secondary-note-hue-scale: 1.8;
+					--mod-secondary-note-sat: 62;
+					--mod-secondary-note-sat-scale: 0;
+					--mod-secondary-note-lum: 55;
+					--mod-secondary-note-lum-scale: 0;
+					--mod-primary-note-hue: 40;
+					--mod-primary-note-hue-scale: 1.8;
+					--mod-primary-note-sat: 66;
+					--mod-primary-note-sat-scale: 0;
+					--mod-primary-note-lum: 85;
+					--mod-primary-note-lum-scale: 0;
+					--disabled-note-primary:    #536e5c;
+					--disabled-note-secondary:  #395440;
+
+
+					}
+					/* sets background image */
+					body {
+						background-image: url("https://choptop84.github.io/abyssbox-app/Forest2Trees.png") !important;
+						background-size: cover;
+						background-position: center top; /* Adjusted to align with the top */
+  						background-repeat: no-repeat;
+
+    				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+    				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+    				image-rendering: -o-crisp-edges !important;            /* Opera */
+    				image-rendering: pixelated !important;                 /* Future browsers */
+    				image-rendering: optimizeSpeed !important;             /* IE */ 
+						}
+						#text-content {
+						--editor-background: (255, 255, 255, 0);
+							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border.png");
+							border-image-slice: 16 fill; 
+						   	border-image-width: 32px; 
+							border-image-repeat: repeat; 
+							padding: 36px; 
+		
+							image-rendering: -moz-crisp-edges !important;         /* Firefox */
+							image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+							image-rendering: -o-crisp-edges !important;            /* Opera */
+							image-rendering: pixelated !important;                 /* Future browsers */
+							image-rendering: optimizeSpeed !important;             /* IE */
+						}
+					#beepboxEditorContainer {
+						--editor-background: (255, 255, 255, 0);
+							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border.png");
+							border-image-slice: 16 fill; 
+						   	border-image-width: 32px; 
+							border-image-repeat: repeat; 
+							padding-left: 36px; 
+							padding-right: 36px; 
+							padding-top: 5px; 
+							padding-bottom: 5px; 
+
+							image-rendering: -moz-crisp-edges !important;         /* Firefox */
+							image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+							image-rendering: -o-crisp-edges !important;            /* Opera */
+							image-rendering: pixelated !important;                 /* Future browsers */
+							image-rendering: optimizeSpeed !important;             /* IE */ 
+						}
+					.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
+							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border2.png") !important;
+							border-image-slice: 4 fill !important; 
+						   border-image-width: 4px !important; 
+						border-image-repeat: stretch !important;
+							padding: 4px !important; 
+		
+							image-rendering: -moz-crisp-edges !important;         /* Firefox */
+							image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+							image-rendering: -o-crisp-edges !important;            /* Opera */
+							image-rendering: pixelated !important;                 /* Future browsers */
+							image-rendering: optimizeSpeed !important;             /* IE */
+						}
+					select.trackSelectBox {
+						border-image: none !important;
+					}
+					div.prompt.noSelection {
+						--editor-background: #002b03; 
+					}
+					/* div.channelBox {
+					border-radius: 5px;
+					} */
+					* {
+						cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+						} 
+							@font-face {
+						   font-family: "AbyssType";
+						   src:
+							url("abysstype.otf") format("opentype") tech(color-COLRv1),
+							}
+				
+							@font-face {
+						   font-family: "AbyssType_small";
+						   src:
+							url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+							}
+				
+							html {
+							font-family: 'AbyssType';
+							}
+							div.channelBoxLabel {
+								font-family: 'AbyssType_small' !important;
+							}
 			`,
         "canyon": `
 				:root {
@@ -3677,6 +7311,9 @@ var beepbox = (function (exports) {
 					--mod-primary-note-lum-scale: 0;
 					--disabled-note-primary:    #515164;
 					--disabled-note-secondary:  #2a2a3a;
+
+					
+					
 				}
 			`,
         "midnight": `
@@ -3793,6 +7430,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum-scale: 0;
 			--disabled-note-primary:    #66a;
 			--disabled-note-secondary:  #447;
+
+			
+			
 		}
 	`,
         "jummbox light": `
@@ -3910,6 +7550,9 @@ var beepbox = (function (exports) {
 					--mod-primary-note-lum-scale: 0;
 					--disabled-note-primary:    #868;
 					--disabled-note-secondary:  #767;
+
+					
+					
 				}
 
 				.beepboxEditor button, .beepboxEditor select {
@@ -4038,6 +7681,9 @@ var beepbox = (function (exports) {
 					--mod-primary-note-lum-scale: 0;
 					--disabled-note-primary: #91879f;
 					--disabled-note-secondary: #6a677a;
+
+					
+					
 				}
 
 			`,
@@ -4160,6 +7806,8 @@ var beepbox = (function (exports) {
   --disabled-note-primary: #91879f;
   --disabled-note-secondary: #6a677a;
 
+  
+  
 
 			}
 		`,
@@ -4281,6 +7929,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #c9c9c9;
 			--disabled-note-secondary: #616161;
+
+			
+			
 		}`,
         "moonlight": `
 			:root {
@@ -4400,7 +8051,10 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #828282;
 			--disabled-note-secondary: #4f4f4f;
-			}`,
+			
+			
+			
+		}`,
         "autumn": `
 		:root {
 			--page-margin: #060304;
@@ -4519,6 +8173,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #5d5d5d;
 			--disabled-note-secondary: #292929;
+
+			
+			
 		}`,
         "fruit": `
 		:root {
@@ -4638,6 +8295,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #5d5d5d;
 			--disabled-note-secondary: #292929;
+
+			
+			
 		}`,
         "sunset": `
 		:root {
@@ -4757,6 +8417,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #5d5d5d;
 			--disabled-note-secondary: #292929;
+
+			
+			
 		}`,
         "toxic": `
 		:root {
@@ -4876,6 +8539,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #5d5d5d;
 			--disabled-note-secondary: #292929;
+
+			
+			
 		}`,
         "violet verdant": `
 		:root {
@@ -4991,6 +8657,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum-scale: 0;
 			--disabled-note-primary: #91879f;
 			--disabled-note-secondary: #6a677a;
+
+			
+			
 		}`,
         "portal": `
 		:root {
@@ -5110,6 +8779,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: #7bd4ff;
 			--disabled-note-primary: #072f4a;
 			--disabled-note-secondary: #6585a7;
+
+			
+			
 		}`,
         "fusion": `:root {
 			--page-margin: #0c0306;
@@ -5228,6 +8900,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: black;
 			--disabled-note-primary: #696969;
 			--disabled-note-secondary: #232323;
+
+			
+			
 		}`,
         "inverse": `:root {
 			--page-margin: #c4c8e3;
@@ -5346,10 +9021,13 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: black;
 			--disabled-note-primary: #959595;
 			--disabled-note-secondary: #6e6e6e;
+
+			
+			
 			}`,
         "nebula": `
 		:root {
-			--page-margin: #040410;
+			--page-margin: #11001c;
 			--editor-background: #150e1f;
 			--hover-preview: white;
 			--playhead: rgba(255, 255, 255, 0.9);
@@ -5461,7 +9139,215 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum-scale: 0;
 			--disabled-note-primary: #aaa;
 			--disabled-note-secondary: #666;
+
+			
+			
 		}`,
+        "Nebula 2": ` 
+			:root { 
+				--page-margin: #040410;
+				--editor-background: #11001c;
+				--hover-preview: white;
+				--playhead: rgba(255, 255, 255, 0.9);
+				--primary-text: white;
+				--secondary-text: #8C849A;
+				--inverted-text: black;
+				--text-selection: rgba(141,79,201,0.99);
+				--box-selection-fill: #311E44;
+				--loop-accent: #CC688C;
+				--link-accent: #817DC9;
+				--ui-widget-background: #3b2057;
+				--ui-widget-focus: #7A6386;
+				--pitch-background: #393e4f40;
+				--tonic: #7D5C9EC0;
+				--fifth-note: #ab77bd50;
+				--white-piano-key: #EEEEEE;
+				--black-piano-key: #5F5566;
+				--white-piano-key-text: #131200;
+				--black-piano-key-text: #fff;
+				--use-color-formula: true;
+				--track-editor-bg-pitch: #46374C;
+				--track-editor-bg-pitch-dim: #1F1C2850;
+				--track-editor-bg-noise: #3D353B;
+				--track-editor-bg-noise-dim: #16131550;
+				--track-editor-bg-mod: #623F4C;
+				--track-editor-bg-mod-dim: #361A2450;
+				--multiplicative-mod-slider: #9F6E6A;
+				--overwriting-mod-slider: #A664B5;
+				--indicator-primary: #CC6B8E;
+				--indicator-secondary: #3b2057;
+				--select2-opt-group: #6A576F;
+				--input-box-outline: #222;
+				--mute-button-normal: #BF91DC;
+				--mute-button-mod: #DC8C9A;
+				--mod-label-primary: #3A2840;
+				--mod-label-secondary-text: #62485E;
+				--mod-label-primary-text: white;
+				--pitch-secondary-channel-hue: -96;
+				--pitch-secondary-channel-hue-scale: 4.2;
+				--pitch-secondary-channel-sat: 50.3;
+				--pitch-secondary-channel-sat-scale: 0.1;
+				--pitch-secondary-channel-lum: 40;
+				--pitch-secondary-channel-lum-scale: 0.05;
+				--pitch-primary-channel-hue: -96;
+				--pitch-primary-channel-hue-scale: 4.2;
+				--pitch-primary-channel-sat: 70;
+				--pitch-primary-channel-sat-scale: 0.1;
+				--pitch-primary-channel-lum: 67.5;
+				--pitch-primary-channel-lum-scale: 0.05;
+				--pitch-secondary-note-hue: -96;
+				--pitch-secondary-note-hue-scale: 4.2;
+				--pitch-secondary-note-sat: 70.9;
+				--pitch-secondary-note-sat-scale: 0.1;
+				--pitch-secondary-note-lum: 25;
+				--pitch-secondary-note-lum-scale: 0.05;
+				--pitch-primary-note-hue: -96;
+				--pitch-primary-note-hue-scale: 4.2;
+				--pitch-primary-note-sat: 90;
+				--pitch-primary-note-sat-scale: 0.05;
+				--pitch-primary-note-lum: 85.6;
+				--pitch-primary-note-lum-scale: 0.025;
+				--noise-secondary-channel-hue: 16;
+				--noise-secondary-channel-hue-scale: -1.33;
+				--noise-secondary-channel-sat: 25;
+				--noise-secondary-channel-sat-scale: 0;
+				--noise-secondary-channel-lum: 42;
+				--noise-secondary-channel-lum-scale: 0;
+				--noise-primary-channel-hue: 16;
+				--noise-primary-channel-hue-scale: -1.33;
+				--noise-primary-channel-sat: 33;
+				--noise-primary-channel-sat-scale: 0;
+				--noise-primary-channel-lum: 63.5;
+				--noise-primary-channel-lum-scale: 0;
+				--noise-secondary-note-hue: 12;
+				--noise-secondary-note-hue-scale: -1.33;
+				--noise-secondary-note-sat: 33.5;
+				--noise-secondary-note-sat-scale: 0;
+				--noise-secondary-note-lum: 55;
+				--noise-secondary-note-lum-scale: 0;
+				--noise-primary-note-hue: 12;
+				--noise-primary-note-hue-scale: -1.33;
+				--noise-primary-note-sat: 46.5;
+				--noise-primary-note-sat-scale: 0;
+				--noise-primary-note-lum: 74;
+				--noise-primary-note-lum-scale: 0;
+				--mod-secondary-channel-hue: 12;
+				--mod-secondary-channel-hue-scale: -.75;
+				--mod-secondary-channel-sat: 50;
+				--mod-secondary-channel-sat-scale: 0;
+				--mod-secondary-channel-lum: 50;
+				--mod-secondary-channel-lum-scale: 0;
+				--mod-primary-channel-hue: 12;
+				--mod-primary-channel-hue-scale: -.75;
+				--mod-primary-channel-sat: 70;
+				--mod-primary-channel-sat-scale: 0;
+				--mod-primary-channel-lum: 80;
+				--mod-primary-channel-lum-scale: 0;
+				--mod-secondary-note-hue: 12;
+				--mod-secondary-note-hue-scale: -.75;
+				--mod-secondary-note-sat: 75;
+				--mod-secondary-note-sat-scale: 0;
+				--mod-secondary-note-lum: 45;
+				--mod-secondary-note-lum-scale: 0;
+				--mod-primary-note-hue: 12;
+				--mod-primary-note-hue-scale: -.75;
+				--mod-primary-note-sat: 85;
+				--mod-primary-note-sat-scale: 0;
+				--mod-primary-note-lum: 85;
+				--mod-primary-note-lum-scale: 0;
+				--disabled-note-primary: #aaa;
+				--disabled-note-secondary: #666;
+				
+				
+				
+			}
+			body {
+				background-image: url("https://choptop84.github.io/abyssbox-app/stars.gif") !important;
+				background-size: contain;
+				background-position: center top;
+				  background-repeat: repeat;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */ 
+				}
+			#text-content {
+				--editor-background: rgba(255, 255, 255, 0);
+					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border.png");
+					border-image-slice: 16 fill; 
+					   border-image-width: 32px; 
+					border-image-repeat: repeat; 
+					padding: 36px; 
+
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+				}
+			#beepboxEditorContainer {
+				--editor-background: rgba(255, 255, 255, 0);
+					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border.png");
+					border-image-slice: 16 fill; 
+					   border-image-width: 32px; 
+					border-image-repeat: repeat; 
+					padding-left: 36px; 
+					padding-right: 36px; 
+					padding-top: 5px; 
+					padding-bottom: 5px; 
+
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */ 
+				}
+			.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
+					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border2.png") !important;
+					border-image-slice: 4 fill !important; 
+				   border-image-width: 4px !important; 
+				border-image-repeat: stretch !important;
+					padding: 4px !important; 
+
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+				}
+				select.trackSelectBox {
+					border-image: none !important;
+				}
+			/* div.channelBox {
+			border-radius: 5px;
+			} */
+			* {
+				cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+				} 
+					@font-face {
+				   font-family: "AbyssType";
+				   src:
+					url("abysstype.otf") format("opentype") tech(color-COLRv1),
+					}
+		
+					@font-face {
+				   font-family: "AbyssType_small";
+				   src:
+					url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+					}
+		
+					html {
+					font-family: 'AbyssType';
+					}
+					div.channelBoxLabel {
+						font-family: 'AbyssType_small' !important;
+					}
+		
+
+
+		`,
         "roe light": `
 		:root {
 			--page-margin: #fff5f5;
@@ -5580,6 +9466,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: black;
 			--disabled-note-primary: #616161;
 			--disabled-note-secondary: #474747;
+
+			
+			
 		}`,
         "energized": `
 		:root {
@@ -5697,6 +9586,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: white;
 			--disabled-note-primary: #808080;
 			--disabled-note-secondary: #666666;
+
+			
+			
 		}`,
         "neapolitan": `:root {
 			--page-margin: #120807;
@@ -5815,6 +9707,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text: #decdbf;
 			--disabled-note-primary: #bababa;
 			--disabled-note-secondary: #878787;
+
+			
+			
 		}`,
         "mono": `:root {
 			--page-margin: #000;
@@ -5928,6 +9823,125 @@ var beepbox = (function (exports) {
 			--disabled-note-primary: #c6c6c6;
 			--disabled-note-secondary: #8c8c8c;
 		}`,
+        "blutonium": `:root {
+			--page-margin: #02070D;
+			--editor-background: #02070D;
+			--hover-preview: white;
+			--playhead: white;
+			--primary-text: #9bd1ee;
+			--secondary-text: #5a6da8;
+			--inverted-text: black;
+			--text-selection: rgb(68 68 255 / 99%);
+			--box-selection-fill: rgb(0 0 255 / 30%);
+			--loop-accent: #024aca;
+			--link-accent: #024aca;
+			--ui-widget-background: #161c2e;
+			--ui-widget-focus: #262c3e;
+			--pitch-background: #22272D;
+			--tonic: #1b3056;
+			--fifth-note: #344051;
+			--white-piano-key: #a6c6ed;
+			--black-piano-key: #2f4687;
+			--use-color-formula: false;
+			--track-editor-bg-pitch: #25284c;
+			--track-editor-bg-pitch-dim: #211c26;
+			--track-editor-bg-noise: #261f42;
+			--track-editor-bg-noise-dim: #1a152d;
+			--track-editor-bg-mod: #183049;
+			--track-editor-bg-mod-dim: #102132;
+			--multiplicative-mod-slider: #344a7f;
+			--overwriting-mod-slider: #344a7f;
+			--indicator-primary: #024aca;
+			--indicator-secondary: #00177d;
+			--select2-opt-group: #141e34;
+			--input-box-outline: #141e34;
+			--mute-button-normal: #273b9d;
+			--mute-button-mod: #27989d;
+			--pitch1-secondary-channel: hsl(200, 100%, 40%);
+			--pitch1-primary-channel: #99ddff;
+			--pitch1-secondary-note: hsl(200, 100%, 40%);
+			--pitch1-primary-note: #99ddff;
+			--pitch2-secondary-channel: 	hsl(212, 100%, 34%);
+			--pitch2-primary-channel: #5BA8FF;
+			--pitch2-secondary-note: hsl(212, 100%, 34%);
+			--pitch2-primary-note: #5BA8FF;
+			--pitch3-secondary-channel: #024ACA;
+			--pitch3-primary-channel: #0A89FF;
+			--pitch3-secondary-note: #024ACA;
+			--pitch3-primary-note: #0A89FF;
+			--pitch4-secondary-channel: #00177D;
+			--pitch4-primary-channel: #024ACA;
+			--pitch4-secondary-note: #00177D;
+			--pitch4-primary-note: #024ACA;
+			--pitch5-secondary-channel: #000e4e;
+			--pitch5-primary-channel: #0023bf;
+			--pitch5-secondary-note: #000e4e;
+			--pitch5-primary-note: #0023bf;
+			--pitch6-secondary-channel: #8990FE;
+			--pitch6-primary-channel: #C2C6FF;
+			--pitch6-secondary-note: #8990FE;
+			--pitch6-primary-note: #C2C6FF;
+			--pitch7-secondary-channel: #5E65D3;
+			--pitch7-primary-channel: #8990FE;
+			--pitch7-secondary-note: #5E65D3;
+			--pitch7-primary-note: #8990FE;
+			--pitch8-secondary-channel: #3138A6;
+			--pitch8-primary-channel: #5E65D3;
+			--pitch8-secondary-note: #3138A6;
+			--pitch8-primary-note: #5E65D3;
+			--pitch9-secondary-channel: #1B0B7F;
+			--pitch9-primary-channel: #3138A6;
+			--pitch9-secondary-note: #1B0B7F;
+			--pitch9-primary-note: #3138A6;
+			--pitch10-secondary-channel: #13015D;
+			--pitch10-primary-channel: #1c02bd;
+			--pitch10-secondary-note: #13015D;
+			--pitch10-primary-note: #1c02bd;
+			--noise1-secondary-channel: #A675FE;
+			--noise1-primary-channel: #E2C9FF;
+			--noise1-secondary-note: #A675FE;
+			--noise1-primary-note: #E2C9FF;
+			--noise2-secondary-channel: #6A31CA;
+			--noise2-primary-channel: #A675FE;
+			--noise2-secondary-note: #6A31CA;
+			--noise2-primary-note: #A675FE;
+			--noise3-secondary-channel: #5A1991;
+			--noise3-primary-channel: #6A31CA;
+			--noise3-secondary-note: #5A1991;
+			--noise3-primary-note: #6A31CA;
+			--noise4-secondary-channel: #2f1a68;
+			--noise4-primary-channel: #5A1991;
+			--noise4-secondary-note: #2f1a68;
+			--noise4-primary-note: #5A1991;
+			--noise5-secondary-channel: #211640;
+			--noise5-primary-channel: #391b8d;
+			--noise5-secondary-note: #211640;
+			--noise5-primary-note: #391b8d;
+			--mod1-secondary-channel: #25E2CD;
+			--mod1-primary-channel: #BDFFCA;
+			--mod1-secondary-note: #25E2CD;
+			--mod1-primary-note: #BDFFCA;
+			--mod2-secondary-channel: #0A98AC;
+			--mod2-primary-channel: #25E2CD;
+			--mod2-secondary-note: #0A98AC;
+			--mod2-primary-note: #25E2CC;
+			--mod3-secondary-channel: #005280;
+			--mod3-primary-channel: #0A98AC;
+			--mod3-secondary-note: #005280;
+			--mod3-primary-note: #0A98AC;
+			--mod4-secondary-channel: #0f3670;
+			--mod4-primary-channel: #1369c1;
+			--mod4-secondary-note: #0f3670;
+			--mod4-primary-note: #1369c1;
+			--mod-label-primary: #191d26;
+			--mod-label-secondary-text: #024aca;
+			--mod-label-primary-text: #ffffffa6;
+			--disabled-note-primary: #c9c9c9;
+			--disabled-note-secondary: #616161;
+
+			
+			
+	}`,
         "modbox classic": `
 			:root {
 				--page-margin: black;
@@ -6048,6 +10062,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "zefbox": `
@@ -6168,6 +10185,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "sandbox classic": `
@@ -6290,6 +10310,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "harrybox": `
@@ -6411,13 +10434,16 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "brucebox": `
 		:root {
 				font: 16px/2 cursive;
 				--page-margin: #4667CE;
-				--editor-background: black;
+				--editor-background: #4667CE;
 				--hover-preview: white;
 				--playhead: white;
 				--primary-text: white;
@@ -6535,6 +10561,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "shitbox 2.0": `
@@ -6657,6 +10686,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "shitbox 3.0": `
@@ -6781,6 +10813,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			
 			`,
@@ -6904,6 +10939,96 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
+				}
+			`,
+        "nepbox": `
+			:root {
+				--page-margin: #000;
+				--editor-background: #060606;
+				--hover-preview: #fff;
+				--playhead: rgb(0, 242, 255);
+				--primary-text: #00fff5;
+				--secondary-text: #a82f2f;
+				--inverted-text: #000;
+				--text-selection: rgba(98, 46, 164, .99);
+				--box-selection-fill: #b74a4a;
+				--loop-accent: #7744FF;
+				--link-accent: #ff00e1;
+				--ui-widget-background: #484848;
+				--ui-widget-focus: #3e3e3e;
+				--pitch-background: #0a2d44;
+				--tonic: #9150ff;
+				--fifth-note: #900;
+				--white-piano-key: #353535;
+				--black-piano-key: #fff;
+				--white-piano-key-text: #fff;
+				--black-piano-key-text: #000;
+				--use-color-formula: false;
+				--track-editor-bg-pitch: #424242;
+				--track-editor-bg-pitch-dim: #000;
+				--track-editor-bg-noise: #424242;
+				--track-editor-bg-noise-dim: #000;
+				--track-editor-bg-mod: #3c3c3c;
+				--track-editor-bg-mod-dim: #000;
+				--multiplicative-mod-slider: #fff;
+				--overwriting-mod-slider: #9d9d9d;
+				--indicator-primary: #f00;
+				--indicator-secondary: #919191;
+				--select2-opt-group: #5d576f;
+				--input-box-outline: #626262;
+				--mute-button-normal: #9a00ff;
+				--mute-button-mod: #00fff7;
+				--mod-label-primary: #2b2b2b;
+				--pitch-channel-limit: 4;
+				--noise-channel-limit: 2;
+				--pitch1-secondary-channel: #c13cbf;
+				--pitch1-primary-channel: #f75dff;
+				--pitch1-secondary-note: #b930a2;
+				--pitch1-primary-note: #fca5ff;
+				--pitch2-secondary-channel: #800000;
+				--pitch2-primary-channel: #f00;
+				--pitch2-secondary-note: #8c2121;
+				--pitch2-primary-note: #ff5252;
+				--pitch3-secondary-channel: #004bb3;
+				--pitch3-primary-channel: #1792ff;
+				--pitch3-secondary-note: #005cb3;
+				--pitch3-primary-note: #00ffe9;
+				--pitch4-secondary-channel: #a48800;
+				--pitch4-primary-channel: #fb0;
+				--pitch4-secondary-note: #9c4100;
+				--pitch4-primary-note: #ffd84e;
+				--noise1-secondary-channel: #868686;
+				--noise1-primary-channel: #fff;
+				--noise1-secondary-note: #868686;
+				--noise1-primary-note: #fff;
+				--noise2-secondary-channel: #805300;
+				--noise2-primary-channel: #ff8c00;
+				--noise2-secondary-note: #6a3500;
+				--noise2-primary-note: #a85400;
+				--mod1-secondary-channel: #6c0000;
+				--mod1-primary-channel: #ff3e3e;
+				--mod1-secondary-note: #6c0000;
+				--mod1-primary-note: #ff3e3e;
+				--mod2-secondary-channel: #d25a00;
+				--mod2-primary-channel: #fdff00;
+				--mod2-secondary-note: #d25a00;
+				--mod2-primary-note: #fdff00;
+				--mod3-secondary-channel: #046000;
+				--mod3-primary-channel: #23ff1b;
+				--mod3-secondary-note: #046000;
+				--mod3-primary-note: #23ff1b;
+				--mod4-secondary-channel: #3b2bae;
+				--mod4-primary-channel: #0c79ff;
+				--mod4-secondary-note: #3b2bae;
+				--mod4-primary-note: #0c79ff;
+				--disabled-note-primary: #999;
+				--disabled-note-secondary: #696969;
+
+				
+				
 				}
 			`,
         "cardboardbox classic": `
@@ -7020,6 +11145,9 @@ var beepbox = (function (exports) {
 --mod-label-primary: #999;
 --mod-label-secondary-text: #333;
 --mod-label-primary-text: black;
+
+			
+			
 				}
 			`,
         "blubox classic": `
@@ -7132,6 +11260,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary:        #282840;
 					--mod-label-secondary-text: rgb(87, 86, 120);
 					--mod-label-primary-text:   white;
+
+					
+					
 				}
 			`,
         "dogebox classic": `
@@ -7254,6 +11385,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary-text:   black;
 			--disabled-note-primary:    #999;
 			--disabled-note-secondary:  #666;
+
+			
+			
 				}
 			`,
         "dogebox dark": `
@@ -7312,6 +11446,9 @@ var beepbox = (function (exports) {
 					--noise3-primary-channel:   #77aadd;
 					--noise3-secondary-note:    #6f9fcf;
 					--noise3-primary-note:      #bbd7ff;
+
+					
+					
 				}
 			`,
         "todbox classic": `
@@ -7434,6 +11571,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "todbox dark mode": `
@@ -7557,6 +11697,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 				.beepboxEditor button, .beepboxEditor select {
 					box-shadow: inset 0 0 0 1px var(--secondary-text);
@@ -7682,6 +11825,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "fogbox": `
@@ -7802,6 +11948,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 			`,
         "foxbox": `
@@ -7922,6 +12071,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;	
+
+					
+					
 				}
 			`,
         "wackybox": `
@@ -8046,6 +12198,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 				}
 
 .beepboxEditor {
@@ -8199,6 +12354,9 @@ var beepbox = (function (exports) {
 					--mod-primary-note-sat-scale: 0;
 					--mod-primary-note-lum: 85;
 					--mod-primary-note-lum-scale: 0;
+
+					
+					
 				}
 			`,
         "paandorasbox": `
@@ -8317,125 +12475,10 @@ var beepbox = (function (exports) {
 			  --mod-label-primary-text: #331512;
 			  --disabled-note-primary: #994038;
 			  --disabled-note-secondary: #331512;
+
+			  
+			  
 			}
-			`,
-        "slushie": `
-			:root {
-				--page-margin: #040814;
-    --editor-background: #040814;
-    --hover-preview: #c6f7ff;
-    --playhead: white;
-    --primary-text: #d3f3ff;
-    --secondary-text: #6f72b5;
-    --inverted-text: black;
-    --text-selection: rgba(119,68,255,0.99);
-    --box-selection-fill: rgb(43 70 171 / 62%);
-    --loop-accent: #573ebb;
-    --link-accent: #98f;
-    --ui-widget-background: #2e2f44;
-    --ui-widget-focus: #2b2c46;
-    --pitch-background: #353654;
-    --tonic: #716fe3;
-    --fifth-note: #76469b;
-    --white-piano-key: #abbce3;
-    --black-piano-key: #2f235e;
-    --use-color-formula: false;
-    --track-editor-bg-pitch: #3a3b5c;
-    --track-editor-bg-pitch-dim: #1f2036;
-    --track-editor-bg-noise: #3c3554;
-    --track-editor-bg-noise-dim: #1e1834;
-    --track-editor-bg-mod: #30335e;
-    --track-editor-bg-mod-dim: #161938;
-    --multiplicative-mod-slider: #e29cff;
-    --overwriting-mod-slider: #495789;
-    --indicator-primary: #e1a6ff;
-    --indicator-secondary: #415187;
-    --select2-opt-group: #22223a;
-    --input-box-outline: #2d2648;
-    --mute-button-normal: #7aceff;
-    --mute-button-mod: #9d6bff;
-    --pitch1-secondary-channel: #5f3ea5;
-    --pitch1-primary-channel: #c1a4ff;
-    --pitch1-secondary-note: #794fd3;
-    --pitch1-primary-note: #d8c6ff;
-    --pitch2-secondary-channel: #4f44bf;
-    --pitch2-primary-channel: #9287ff;
-    --pitch2-secondary-note: #5e51d9;
-    --pitch2-primary-note: #b6afff;
-    --pitch3-secondary-channel: #374eb9;
-    --pitch3-primary-channel: #8097ff;
-    --pitch3-secondary-note: #445cc9;
-    --pitch3-primary-note: #a0b2ff;
-    --pitch4-secondary-channel: #2867cf;
-    --pitch4-primary-channel: #6fa5ff;
-    --pitch4-secondary-note: #2e6ed7;
-    --pitch4-primary-note: #a6c7ff;
-    --pitch5-secondary-channel: #3175a7;
-    --pitch5-primary-channel: #7ec9ff;
-    --pitch5-secondary-note: #367eb3;
-    --pitch5-primary-note: #9fd7ff;
-    --pitch6-secondary-channel: #3993a9;
-    --pitch6-primary-channel: #8ce9ff;
-    --pitch6-secondary-note: #386da3;
-    --pitch6-primary-note: #9eecff;
-    --pitch7-secondary-channel: #369d8a;
-    --pitch7-primary-channel: #8bfce7;
-    --pitch7-secondary-note: #1c93a7;
-    --pitch7-primary-note: #abffef;
-    --pitch8-secondary-channel: #00A170;
-    --pitch8-primary-channel: #50FFC9;
-    --pitch8-secondary-note: #00C78A;
-    --pitch8-primary-note: #83FFD9;
-    --pitch9-secondary-channel: #49b374;
-    --pitch9-primary-channel: #8affa9;
-    --pitch9-secondary-note: #26815f;
-    --pitch9-primary-note: #c8ffde;
-    --pitch10-secondary-channel: #58a747;
-    --pitch10-primary-channel: #bbffaa;
-    --pitch10-secondary-note: #1d7c48;
-    --pitch10-primary-note: #c7ffbc;
-    --noise1-secondary-channel: #42829b;
-    --noise1-primary-channel: #97d3fc;
-    --noise1-secondary-note: #3f53b3;
-    --noise1-primary-note: #97d3fc;
-    --noise2-secondary-channel: #6354bb;
-    --noise2-primary-channel: #9a89ff;
-    --noise2-secondary-note: #5f4dcd;
-    --noise2-primary-note: #c6bcff;
-    --noise3-secondary-channel: #704a95;
-    --noise3-primary-channel: #c285ff;
-    --noise3-secondary-note: #ad5aff;
-    --noise3-primary-note: #d3a6ff;
-    --noise4-secondary-channel: #a53c65;
-    --noise4-primary-channel: #f794bb;
-    --noise4-secondary-note: #cb5080;
-    --noise4-primary-note: #f794bb;
-    --noise5-secondary-channel: #9b2d2d;
-    --noise5-primary-channel: #ff7676;
-    --noise5-secondary-note: #cb4444;
-    --noise5-primary-note: #ff9999;
-    --mod1-secondary-channel: #b7613c;
-    --mod1-primary-channel: #ff9f76;
-    --mod1-secondary-note: #e77e52;
-    --mod1-primary-note: #ffb99b;
-    --mod2-secondary-channel: #916d34;
-    --mod2-primary-channel: #fece80;
-    --mod2-secondary-note: #c58b35;
-    --mod2-primary-note: #ffdda5;
-    --mod3-secondary-channel: #83761a;
-    --mod3-primary-channel: #fdf68c;
-    --mod3-secondary-note: #c18e00;
-    --mod3-primary-note: #fdf68c;
-    --mod4-secondary-channel: #a86436;
-    --mod4-primary-channel: #c8a825;
-    --mod4-secondary-note: #e8ba46;
-    --mod4-primary-note: #c8a825;
-    --mod-label-primary: #37325e;
-    --mod-label-secondary-text: #6e8aa7;
-    --mod-label-primary-text: #c1ffff;
-    --disabled-note-primary: #999;
-    --disabled-note-secondary: #666;
-				}
 			`,
         "midbox": `:root {
 			--page-margin: #010a1e;
@@ -8550,6 +12593,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum-scale: 0;
 			--disabled-note-primary:    #53527b;
 			--disabled-note-secondary:  #1c1b30;
+
+			
+			
 		}`,
         "dogebox2": `
 			:root {
@@ -8668,6 +12714,9 @@ var beepbox = (function (exports) {
 				--mod4-primary-note: #b2fffb;
 				--disabled-note-primary: #c6c6c6;
 				--disabled-note-secondary: #8c8c8c;
+
+				
+				
 				}`,
         "azur lane": `
 		:root {
@@ -8785,6 +12834,9 @@ var beepbox = (function (exports) {
 		  --mod4-primary-note: #fff;
 		  --disabled-note-primary: #3a3a3a;
 		  --disabled-note-secondary: #000;
+
+		  
+		  
 			}
 		/* replaces hotdog (in a hacky way) with an image of the girls using the same scratch sprites from the 404 page*/
 		#Hotdog {
@@ -8820,6 +12872,134 @@ var beepbox = (function (exports) {
 		content: url("UltraBoxALThemeLogo.png");
 		}
 	}`,
+        "WeebBox": `
+	:root {
+		--page-margin: #040410;
+		--editor-background: #040410;
+		--hover-preview: white;
+		--playhead: rgba(255, 255, 255, 0.9);
+		--primary-text: white;
+		--secondary-text: #84859a;
+		--inverted-text: black;
+		--text-selection: rgba(119,68,255,0.99);
+		--box-selection-fill: #044b94;
+		--loop-accent: #74f;
+		--link-accent: #98f;
+		--ui-widget-background: #393e4f;
+		--ui-widget-focus: #6d6886;
+		--pitch-background: #393e4f55;
+		--tonic: #725491;
+		--fifth-note: #54547a;
+		--white-piano-key: #eee;
+		--black-piano-key: #666;
+		--white-piano-key-text: #131200;
+		--black-piano-key-text: #fff;
+		--use-color-formula: true;
+		--track-editor-bg-pitch: #393e4f;
+		--track-editor-bg-pitch-dim: #1c1d28;
+		--track-editor-bg-noise: #3d3535;
+		--track-editor-bg-noise-dim: #161313;
+		--track-editor-bg-mod: #283560;
+		--track-editor-bg-mod-dim: #0a101f;
+		--multiplicative-mod-slider: #606c9f;
+		--overwriting-mod-slider: #6850b5;
+		--indicator-primary: #9c64f7;
+		--indicator-secondary: #393e4f;
+		--select2-opt-group: #5d576f;
+		--input-box-outline: #222;
+		--mute-button-normal: #dda85d;
+		--mute-button-mod: #886eae;
+		--mod-label-primary: #282840;
+		--mod-label-secondary-text: rgb(87, 86, 120);
+		--mod-label-primary-text: white;
+		--pitch-secondary-channel-hue: 0;
+		--pitch-secondary-channel-hue-scale: 6.5;
+		--pitch-secondary-channel-sat: 83.3;
+		--pitch-secondary-channel-sat-scale: 0.1;
+		--pitch-secondary-channel-lum: 40;
+		--pitch-secondary-channel-lum-scale: 0.05;
+		--pitch-primary-channel-hue: 0;
+		--pitch-primary-channel-hue-scale: 6.5;
+		--pitch-primary-channel-sat: 100;
+		--pitch-primary-channel-sat-scale: 0.1;
+		--pitch-primary-channel-lum: 67.5;
+		--pitch-primary-channel-lum-scale: 0.05;
+		--pitch-secondary-note-hue: 0;
+		--pitch-secondary-note-hue-scale: 6.5;
+		--pitch-secondary-note-sat: 93.9;
+		--pitch-secondary-note-sat-scale: 0.1;
+		--pitch-secondary-note-lum: 25;
+		--pitch-secondary-note-lum-scale: 0.05;
+		--pitch-primary-note-hue: 0;
+		--pitch-primary-note-hue-scale: 6.5;
+		--pitch-primary-note-sat: 100;
+		--pitch-primary-note-sat-scale: 0.05;
+		--pitch-primary-note-lum: 85.6;
+		--pitch-primary-note-lum-scale: 0.025;
+		--noise-secondary-channel-hue: 0;
+		--noise-secondary-channel-hue-scale: 2;
+		--noise-secondary-channel-sat: 25;
+		--noise-secondary-channel-sat-scale: 0;
+		--noise-secondary-channel-lum: 42;
+		--noise-secondary-channel-lum-scale: 0;
+		--noise-primary-channel-hue: 0;
+		--noise-primary-channel-hue-scale: 2;
+		--noise-primary-channel-sat: 33;
+		--noise-primary-channel-sat-scale: 0;
+		--noise-primary-channel-lum: 63.5;
+		--noise-primary-channel-lum-scale: 0;
+		--noise-secondary-note-hue: 0;
+		--noise-secondary-note-hue-scale: 2;
+		--noise-secondary-note-sat: 33.5;
+		--noise-secondary-note-sat-scale: 0;
+		--noise-secondary-note-lum: 55;
+		--noise-secondary-note-lum-scale: 0;
+		--noise-primary-note-hue: 0;
+		--noise-primary-note-hue-scale: 2;
+		--noise-primary-note-sat: 46.5;
+		--noise-primary-note-sat-scale: 0;
+		--noise-primary-note-lum: 74;
+		--noise-primary-note-lum-scale: 0;
+		--mod-secondary-channel-hue: 192;
+		--mod-secondary-channel-hue-scale: 1.5;
+		--mod-secondary-channel-sat: 88;
+		--mod-secondary-channel-sat-scale: 0;
+		--mod-secondary-channel-lum: 50;
+		--mod-secondary-channel-lum-scale: 0;
+		--mod-primary-channel-hue: 192;
+		--mod-primary-channel-hue-scale: 1.5;
+		--mod-primary-channel-sat: 96;
+		--mod-primary-channel-sat-scale: 0;
+		--mod-primary-channel-lum: 80;
+		--mod-primary-channel-lum-scale: 0;
+		--mod-secondary-note-hue: 192;
+		--mod-secondary-note-hue-scale: 1.5;
+		--mod-secondary-note-sat: 92;
+		--mod-secondary-note-sat-scale: 0;
+		--mod-secondary-note-lum: 45;
+		--mod-secondary-note-lum-scale: 0;
+		--mod-primary-note-hue: 192;
+		--mod-primary-note-hue-scale: 1.5;
+		--mod-primary-note-sat: 96;
+		--mod-primary-note-sat-scale: 0;
+		--mod-primary-note-lum: 85;
+		--mod-primary-note-lum-scale: 0;
+		--disabled-note-primary:    #91879f;
+		--disabled-note-secondary:  #6a677a;
+
+		
+		
+	}
+	#firstImage {
+		background-image: url("https://choptop84.github.io/choptop84s-image-repository/weebboxbackground.jpg") !important;
+		background-repeat: no-repeat !important;
+		background-size: 100% 100% !important;
+	}
+
+	#firstImage rect {
+		opacity: 0.8 !important;
+	}
+`,
         "Protanopia": `
 :root { 
 --page-margin: #000000; 
@@ -8835,9 +13015,9 @@ var beepbox = (function (exports) {
 --link-accent: #8915c8; 
 --ui-widget-background: #676767; 
 --ui-widget-focus: #696969; 
---pitch-background: #7a7887; 
---tonic: #313036; 
---fifth-note: #c3c1db; 
+--pitch-background: #302f36; 
+--tonic: #19181c; 
+--fifth-note: #1b1924; 
 --white-piano-key: #a6a6a6; 
 --black-piano-key: #484848; 
 --use-color-formula: false; 
@@ -8858,11 +13038,11 @@ var beepbox = (function (exports) {
 --mod-label-primary: #0909ff; 
 --mod-label-secondary-text: #ffffff; 
 --mod-label-primary-text: #c8ecfd; 
-				--pitch1-secondary-channel: #0e0429;
-				--pitch1-primary-channel:   #310b8f;
+				--pitch1-secondary-channel: #160740;
+				--pitch1-primary-channel:   #482d8a;
 
-				--pitch1-secondary-note:    #0e0429;
-				--pitch1-primary-note:      #310b8f;
+				--pitch1-secondary-note:    #160740;
+				--pitch1-primary-note:      #482d8a;
 
 				--pitch2-secondary-channel: #0b555e;
 				--pitch2-primary-channel:   #126e7a;
@@ -8961,6 +13141,9 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+
+					
+					
 }
 
 			`,
@@ -8979,9 +13162,9 @@ var beepbox = (function (exports) {
 --link-accent: #8915c8; 
 --ui-widget-background: #676767; 
 --ui-widget-focus: #696969; 
---pitch-background: #7a7887; 
---tonic: #313036; 
---fifth-note: #c3c1db; 
+--pitch-background: #302f36; 
+--tonic: #19181c; 
+--fifth-note: #1b1924; 
 --white-piano-key: #a6a6a6; 
 --black-piano-key: #484848; 
 --use-color-formula: false; 
@@ -9105,6 +13288,8 @@ var beepbox = (function (exports) {
 					--mod-label-primary-text:   black;
 					--disabled-note-primary:    #999;
 					--disabled-note-secondary:  #666;
+					
+					
 }
 
 			`,
@@ -9222,6 +13407,9 @@ var beepbox = (function (exports) {
   --mod4-primary-note: #0ce7ff;
   --disabled-note-primary: #8d8d8d;
   --disabled-note-secondary: #363636;
+
+  
+  
     }
 
 			`,
@@ -9334,6 +13522,9 @@ var beepbox = (function (exports) {
 				--mod-primary-note-sat-scale: 0;
 				--mod-primary-note-lum: 85;
 				--mod-primary-note-lum-scale: 0;
+
+				
+				
 			}`}`,
     };
     ColorConfig.pageMargin = "var(--page-margin)";
@@ -9356,9 +13547,6 @@ var beepbox = (function (exports) {
     ColorConfig.blackPianoKey = "var(--black-piano-key)";
     ColorConfig.whitePianoKeyText = "var(--white-piano-key-text)";
     ColorConfig.blackPianoKeyText = "var(--black-piano-key-text)";
-    ColorConfig.oscilloscopeLineL = "var(--oscilloscope-line-L)";
-    ColorConfig.oscilloscopeLineR = "var(--oscilloscope-line-R)";
-    ColorConfig.modTitle = "var(--mod-title)";
     ColorConfig.useColorFormula = "var(--use-color-formula)";
     ColorConfig.pitchSecondaryChannelHue = "var(--pitch-secondary-channel-hue)";
     ColorConfig.pitchSecondaryChannelHueScale = "var(--pitch-secondary-channel-hue-scale)";
@@ -9451,6 +13639,85 @@ var beepbox = (function (exports) {
     ColorConfig.modLabelPrimaryText = "var(--mod-label-primary-text)";
     ColorConfig.disabledNotePrimary = "var(--disabled-note-primary)";
     ColorConfig.disabledNoteSecondary = "var(--disabled-note-secondary)";
+    ColorConfig.c_pitchSecondaryChannelHue = 0;
+    ColorConfig.c_pitchSecondaryChannelHueScale = 0;
+    ColorConfig.c_pitchSecondaryChannelSat = 0;
+    ColorConfig.c_pitchSecondaryChannelSatScale = 0;
+    ColorConfig.c_pitchSecondaryChannelLum = 0;
+    ColorConfig.c_pitchSecondaryChannelLumScale = 0;
+    ColorConfig.c_pitchPrimaryChannelHue = 0;
+    ColorConfig.c_pitchPrimaryChannelHueScale = 0;
+    ColorConfig.c_pitchPrimaryChannelSat = 0;
+    ColorConfig.c_pitchPrimaryChannelSatScale = 0;
+    ColorConfig.c_pitchPrimaryChannelLum = 0;
+    ColorConfig.c_pitchPrimaryChannelLumScale = 0;
+    ColorConfig.c_pitchSecondaryNoteHue = 0;
+    ColorConfig.c_pitchSecondaryNoteHueScale = 0;
+    ColorConfig.c_pitchSecondaryNoteSat = 0;
+    ColorConfig.c_pitchSecondaryNoteSatScale = 0;
+    ColorConfig.c_pitchSecondaryNoteLum = 0;
+    ColorConfig.c_pitchSecondaryNoteLumScale = 0;
+    ColorConfig.c_pitchPrimaryNoteHue = 0;
+    ColorConfig.c_pitchPrimaryNoteHueScale = 0;
+    ColorConfig.c_pitchPrimaryNoteSat = 0;
+    ColorConfig.c_pitchPrimaryNoteSatScale = 0;
+    ColorConfig.c_pitchPrimaryNoteLum = 0;
+    ColorConfig.c_pitchPrimaryNoteLumScale = 0;
+    ColorConfig.c_modSecondaryChannelHue = 0;
+    ColorConfig.c_modSecondaryChannelHueScale = 0;
+    ColorConfig.c_modSecondaryChannelSat = 0;
+    ColorConfig.c_modSecondaryChannelSatScale = 0;
+    ColorConfig.c_modSecondaryChannelLum = 0;
+    ColorConfig.c_modSecondaryChannelLumScale = 0;
+    ColorConfig.c_modPrimaryChannelHue = 0;
+    ColorConfig.c_modPrimaryChannelHueScale = 0;
+    ColorConfig.c_modPrimaryChannelSat = 0;
+    ColorConfig.c_modPrimaryChannelSatScale = 0;
+    ColorConfig.c_modPrimaryChannelLum = 0;
+    ColorConfig.c_modPrimaryChannelLumScale = 0;
+    ColorConfig.c_modSecondaryNoteHue = 0;
+    ColorConfig.c_modSecondaryNoteHueScale = 0;
+    ColorConfig.c_modSecondaryNoteSat = 0;
+    ColorConfig.c_modSecondaryNoteSatScale = 0;
+    ColorConfig.c_modSecondaryNoteLum = 0;
+    ColorConfig.c_modSecondaryNoteLumScale = 0;
+    ColorConfig.c_modPrimaryNoteHue = 0;
+    ColorConfig.c_modPrimaryNoteHueScale = 0;
+    ColorConfig.c_modPrimaryNoteSat = 0;
+    ColorConfig.c_modPrimaryNoteSatScale = 0;
+    ColorConfig.c_modPrimaryNoteLum = 0;
+    ColorConfig.c_modPrimaryNoteLumScale = 0;
+    ColorConfig.c_noiseSecondaryChannelHue = 0;
+    ColorConfig.c_noiseSecondaryChannelHueScale = 0;
+    ColorConfig.c_noiseSecondaryChannelSat = 0;
+    ColorConfig.c_noiseSecondaryChannelSatScale = 0;
+    ColorConfig.c_noiseSecondaryChannelLum = 0;
+    ColorConfig.c_noiseSecondaryChannelLumScale = 0;
+    ColorConfig.c_noisePrimaryChannelHue = 0;
+    ColorConfig.c_noisePrimaryChannelHueScale = 0;
+    ColorConfig.c_noisePrimaryChannelSat = 0;
+    ColorConfig.c_noisePrimaryChannelSatScale = 0;
+    ColorConfig.c_noisePrimaryChannelLum = 0;
+    ColorConfig.c_noisePrimaryChannelLumScale = 0;
+    ColorConfig.c_noiseSecondaryNoteHue = 0;
+    ColorConfig.c_noiseSecondaryNoteHueScale = 0;
+    ColorConfig.c_noiseSecondaryNoteSat = 0;
+    ColorConfig.c_noiseSecondaryNoteSatScale = 0;
+    ColorConfig.c_noiseSecondaryNoteLum = 0;
+    ColorConfig.c_noiseSecondaryNoteLumScale = 0;
+    ColorConfig.c_noisePrimaryNoteHue = 0;
+    ColorConfig.c_noisePrimaryNoteHueScale = 0;
+    ColorConfig.c_noisePrimaryNoteSat = 0;
+    ColorConfig.c_noisePrimaryNoteSatScale = 0;
+    ColorConfig.c_noisePrimaryNoteLum = 0;
+    ColorConfig.c_noisePrimaryNoteLumScale = 0;
+    ColorConfig.c_invertedText = "";
+    ColorConfig.c_trackEditorBgNoiseDim = "";
+    ColorConfig.c_trackEditorBgNoise = "";
+    ColorConfig.c_trackEditorBgModDim = "";
+    ColorConfig.c_trackEditorBgMod = "";
+    ColorConfig.c_trackEditorBgPitchDim = "";
+    ColorConfig.c_trackEditorBgPitch = "";
     ColorConfig.pitchChannels = toNameMap([
         {
             name: "pitch1",
@@ -9610,7 +13877,7 @@ var beepbox = (function (exports) {
             return (_a = EditorConfig.presetCategories[0].presets.dictionary) === null || _a === void 0 ? void 0 : _a[TypePresets === null || TypePresets === void 0 ? void 0 : TypePresets[instrument]];
         }
     }
-    EditorConfig.version = "1.0";
+    EditorConfig.version = "1.1";
     EditorConfig.versionDisplayName = "AbyssBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
@@ -9628,7 +13895,7 @@ var beepbox = (function (exports) {
                 { name: TypePresets[6], customType: 6 },
                 { name: TypePresets[7], customType: 7 },
                 { name: TypePresets[8], customType: 8 },
-                { name: TypePresets[10], customType: 10 },
+                { name: TypePresets[9], customType: 9 },
                 { name: TypePresets[11], customType: 11 },
             ])
         },
@@ -9760,6 +14027,8 @@ var beepbox = (function (exports) {
                 { name: "orchestra hit 1", midiProgram: 55, generalMidi: true, midiSubharmonicOctaves: 1, settings: { "type": "FM", "effects": "chorus & reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 14, "filterEnvelope": "custom", "vibrato": "none", "algorithm": "1 2 3 4", "feedbackType": "1⟲ 2⟲ 3⟲ 4⟲", "feedbackAmplitude": 14, "feedbackEnvelope": "twang 3", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "twang 3" }, { "frequency": "2×", "amplitude": 15, "envelope": "flare 3" }, { "frequency": "4×", "amplitude": 15, "envelope": "flare 2" }, { "frequency": "8×", "amplitude": 15, "envelope": "flare 1" }] } },
                 { name: "violin 2", midiProgram: 40, generalMidi: true, settings: { "type": "FM", "eqFilter": [{ "type": "low-pass", "cutoffHz": 2828, "linearGain": 1.4142 }, { "type": "high-pass", "cutoffHz": 105.11, "linearGain": 0.3536 }], "effects": ["vibrato", "reverb"], "vibrato": "light", "reverb": 67, "transition": "normal", "fadeInSeconds": 0.0413, "fadeOutTicks": 6, "chord": "simultaneous", "algorithm": "(1 2)←(3 4)", "feedbackType": "4⟲", "feedbackAmplitude": 5, "feedbackEnvelope": "twang 3", "operators": [{ "frequency": "4×", "amplitude": 15, "envelope": "custom" }, { "frequency": "3×", "amplitude": 13, "envelope": "custom" }, { "frequency": "2×", "amplitude": 7, "envelope": "steady" }, { "frequency": "7×", "amplitude": 8, "envelope": "swell 1" }] } },
                 { name: "orchestra hit 2", midiProgram: 55, midiSubharmonicOctaves: 1, settings: { "type": "FM", "effects": "chorus & reverb", "transition": "medium fade", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "decay 1", "vibrato": "delayed", "algorithm": "1 2 3 4", "feedbackType": "1⟲ 2⟲ 3⟲ 4⟲", "feedbackAmplitude": 14, "feedbackEnvelope": "steady", "operators": [{ "frequency": "1×", "amplitude": 12, "envelope": "custom" }, { "frequency": "2×", "amplitude": 14, "envelope": "custom" }, { "frequency": "3×", "amplitude": 12, "envelope": "custom" }, { "frequency": "4×", "amplitude": 14, "envelope": "custom" }] } },
+                { name: "supersaw string", midiProgram: 41, settings: { "type": "supersaw", "eqFilter": [{ "type": "low-pass", "cutoffHz": 2828.43, "linearGain": 1.4142 }, { "type": "low-pass", "cutoffHz": 3363.59, "linearGain": 0.1768 }], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "high-pass", "cutoffHz": 500, "linearGain": 0.1768 }], "reverb": 33, "fadeInSeconds": 0.0263, "fadeOutTicks": 6, "pulseWidth": 35.35534, "dynamism": 83, "spread": 8, "shape": 50, "envelopes": [{ "target": "noteFilterFreq", "envelope": "twang 1", "index": 0 }] } },
+                { name: "supersaw string 2", midiProgram: 41, settings: { "type": "supersaw", "eqFilter": [{ "type": "low-pass", "cutoffHz": 2378.41, "linearGain": 0.5 }, { "type": "high-pass", "cutoffHz": 594.6, "linearGain": 0.25 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }, { "type": "peak", "cutoffHz": 4756.83, "linearGain": 2 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "envelopeSpeed": 12, "discreteEnvelope": false, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 2378.41, "linearGain": 0.5 }, { "type": "high-pass", "cutoffHz": 594.6, "linearGain": 0.25 }, { "type": "peak", "cutoffHz": 2000, "linearGain": 2.8284 }, { "type": "peak", "cutoffHz": 4756.83, "linearGain": 2 }], "effects": ["note filter", "chorus", "reverb"], "noteFilterType": false, "noteSimpleCut": 10, "noteSimplePeak": 0, "noteFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 1 }], "noteSubFilters0": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 1 }], "chorus": 57, "reverb": 42, "fadeInSeconds": 0.0575, "fadeOutTicks": -6, "pulseWidth": 50, "dynamism": 67, "spread": 58, "shape": 0, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "punch" }, { "target": "pulseWidth", "envelope": "flare 2" }] } },
             ])
         },
         {
@@ -9840,6 +14109,7 @@ var beepbox = (function (exports) {
                 { name: "sci-fi", midiProgram: 103, generalMidi: true, settings: { "type": "FM", "eqFilter": [{ "type": "peak", "cutoffHz": 9513.66, "linearGain": 2.8284 }], "effects": ["note filter", "chorus"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.5 }], "chorus": 100, "transition": "normal", "fadeInSeconds": 0.0125, "fadeOutTicks": 48, "chord": "simultaneous", "algorithm": "(1 2)←3←4", "feedbackType": "1⟲ 2⟲ 3⟲ 4⟲", "feedbackAmplitude": 8, "operators": [{ "frequency": "~1×", "amplitude": 13 }, { "frequency": "2×", "amplitude": 10 }, { "frequency": "5×", "amplitude": 5 }, { "frequency": "11×", "amplitude": 8 }], "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 3" }, { "target": "operatorAmplitude", "envelope": "twang 3", "index": 2 }, { "target": "operatorAmplitude", "envelope": "tremolo5", "index": 3 }, { "target": "feedbackAmplitude", "envelope": "twang 3" }] } },
                 { name: "flutter pad", midiProgram: 90, settings: { "type": "FM", "eqFilter": [], "effects": ["vibrato", "note filter", "chorus"], "vibrato": "delayed", "noteFilter": [{ "type": "low-pass", "cutoffHz": 4000, "linearGain": 4 }], "chorus": 100, "transition": "normal", "fadeInSeconds": 0, "fadeOutTicks": 48, "chord": "simultaneous", "algorithm": "(1 2)←(3 4)", "feedbackType": "1⟲ 2⟲ 3⟲", "feedbackAmplitude": 9, "operators": [{ "frequency": "1×", "amplitude": 13 }, { "frequency": "5×", "amplitude": 7 }, { "frequency": "7×", "amplitude": 5 }, { "frequency": "~1×", "amplitude": 6 }], "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 3" }, { "target": "operatorAmplitude", "envelope": "tremolo1", "index": 2 }, { "target": "operatorAmplitude", "envelope": "punch", "index": 3 }] } },
                 { name: "feedback pad", midiProgram: 89, settings: { "type": "FM", "eqFilter": [{ "type": "peak", "cutoffHz": 2378.41, "linearGain": 8 }], "effects": [], "transition": "normal", "fadeInSeconds": 0.0575, "fadeOutTicks": 96, "chord": "custom interval", "algorithm": "1 2 3 4", "feedbackType": "1⟲ 2⟲ 3⟲ 4⟲", "feedbackAmplitude": 8, "operators": [{ "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "~1×", "amplitude": 15 }], "envelopes": [{ "target": "feedbackAmplitude", "envelope": "swell 2" }] } },
+                { name: "supersaw pad", midiProgram: 93, settings: { "type": "supersaw", "eqFilter": [{ "type": "low-pass", "cutoffHz": 8000, "linearGain": 0.1768 }], "effects": ["reverb"], "reverb": 100, "fadeInSeconds": 0.0263, "fadeOutTicks": 24, "pulseWidth": 50, "dynamism": 100, "spread": 58, "shape": 0, "envelopes": [] } },
             ])
         },
         {
@@ -9880,56 +14150,7 @@ var beepbox = (function (exports) {
                 { name: "sonar ping", midiProgram: 121, settings: { "type": "spectrum", "eqFilter": [], "effects": ["note filter", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 1681.79, "linearGain": 0.5 }], "reverb": 33, "transition": "normal", "fadeInSeconds": 0.0125, "fadeOutTicks": 72, "chord": "simultaneous", "spectrum": [100, 43, 29, 29, 14, 14, 14, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 2" }] } },
             ])
         },
-        { name: "Modbox Presets", presets: toNameMap([
-                { name: "modbox theepsynth", settings: { "type": "FM", "effects": "none", "transition": "hard", "chord": "arpeggio", "filterCutoffHz": 4000, "filterResonance": 14, "filterEnvelope": "custom", "vibrato": "none", "algorithm": "1←3 2←4", "feedbackType": "1⟲ 2⟲", "feedbackAmplitude": 11, "feedbackEnvelope": "steady", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "custom" }, { "frequency": "1×", "amplitude": 15, "envelope": "custom" }, { "frequency": "2×", "amplitude": 7, "envelope": "steady" }, { "frequency": "1×", "amplitude": 11, "envelope": "steady" }] } },
-            ]) },
-        { name: "Sandbox Presets", presets: toNameMap([
-                { name: "sandbox netsky hollow", generalMidi: false, isNoise: true, midiSubharmonicOctaves: -1, settings: { "type": "spectrum", "effects": "reverb", "transition": "hard", "chord": "arpeggio", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "steady", "spectrum": [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45] } },
-                { name: "sandbox abnormality", generalMidi: false, midiSubharmonicOctaves: 1, settings: { "type": "chip", "effects": "none", "transition": "seamless", "chord": "arpeggio", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "steady", "wave": "spiky", "interval": "fifth", "vibrato": "none" } },
-                { name: "sandbox playstation", generalMidi: false, midiSubharmonicOctaves: 1, settings: { "type": "chip", "effects": "chorus", "transition": "seamless", "chord": "harmony", "filterCutoffHz": 1414, "filterResonance": 29, "filterEnvelope": "steady", "wave": "glitch", "interval": "shimmer", "vibrato": "none" } },
-                { name: "sandbox harmony pulse", generalMidi: false, midiSubharmonicOctaves: 1, settings: { "type": "chip", "effects": "chorus", "transition": "soft", "chord": "harmony", "filterCutoffHz": 4000, "filterResonance": 29, "filterEnvelope": "punch", "wave": "double pulse", "interval": "union", "vibrato": "none" } },
-                { name: "sandbox pink ping", generalMidi: false, midiSubharmonicOctaves: -1, settings: { "type": "spectrum", "effects": "reverb", "transition": "soft", "chord": "harmony", "filterCutoffHz": 3000, "filterResonance": 0, "filterEnvelope": "tripolo6", "spectrum": [0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } },
-                { name: "sandbox tv static", generalMidi: false, isNoise: true, midiSubharmonicOctaves: 1, settings: { "type": "noise", "effects": "reverb", "transition": "medium fade", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 40, "filterEnvelope": "steady", "wave": "static" } },
-                { name: "sandbox clean pulse", generalMidi: false, settings: { "type": "custom chip", "transition": "hard", "effects": "none", "chord": "arpeggio", "filterCutoffHz": 4000, "filterResonance": 0, "filterEnvelope": "steady", "interval": "union", "vibrato": "none", "customChipWave": [-24, -24, -24, -24, -24, -24, -24, -24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -24, -24, -24, -24, -24, -24, -24, -24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] } },
-                { name: "sandbox snp chorus", generalMidi: false, settings: { "type": "FM", "transition": "hard", "effects": "chorus & reverb", "chord": "strum", "filterCutoffHz": 2000, "filterResonance": 0, "filterEnvelope": "twang 2", "vibrato": "none", "algorithm": "1←(2 3 4)", "feedbackType": "1→2→3→4", "feedbackAmplitude": 1, "feedbackEnvelope": "flare 1", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "custom" }, { "frequency": "2×", "amplitude": 15, "envelope": "custom" }, { "frequency": "4×", "amplitude": 10, "envelope": "custom" }, { "frequency": "3×", "amplitude": 6, "envelope": "custom" }] } },
-                { name: "sandbox snp echo", generalMidi: false, settings: { "type": "FM", "transition": "hard fade", "effects": "chorus", "chord": "strum", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "steady", "vibrato": "none", "algorithm": "1←(2 3←4)", "feedbackType": "3⟲ 4⟲", "feedbackAmplitude": 5, "feedbackEnvelope": "decay 2", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "custom" }, { "frequency": "2×", "amplitude": 15, "envelope": "custom" }, { "frequency": "20×", "amplitude": 9, "envelope": "twang 1" }, { "frequency": "20×", "amplitude": 5, "envelope": "twang 2" }] } },
-                { name: "sandbox tori synth lead", generalMidi: false, settings: { "type": "harmonics", "effects": "chorus", "transition": "seamless", "chord": "harmony", "filterCutoffHz": 2000, "filterResonance": 0, "filterEnvelope": "steady", "interval": "union", "vibrato": "none", "harmonics": [100, 100, 100, 100, 71, 71, 43, 43, 43, 29, 29, 43, 43, 43, 43, 43, 43, 43, 43, 43, 43, 43, 29, 14, 0, 0, 0, 86] } },
-                { name: "sandbox glorious piano 1", generalMidi: false, settings: { "type": "custom chip", "transition": "hard fade", "effects": "chorus & reverb", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 14, "filterEnvelope": "steady", "interval": "union", "vibrato": "none", "customChipWave": [24, 24, -16, -15, -15, -14, -13, -13, -12, -11, -11, -10, -9, -8, -8, -7, -6, -5, -5, -4, -3, -2, -2, 23, 22, 22, 21, 20, 20, 19, 19, 18, 18, 17, 16, 15, 15, 14, 13, 12, 12, 11, 0, -1, -1, -2, -3, -3, -4, -5, -5, -6, -20, -19, -17, -17, -14, -11, -8, -5, -2, -23, -24, -24] } },
-                { name: "sandbox glorious piano 2", generalMidi: false, settings: { "type": "custom chip", "transition": "hard fade", "effects": "chorus & reverb", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 14, "filterEnvelope": "punch", "interval": "shimmer", "vibrato": "light", "customChipWave": [24, 24, -16, -15, -15, -14, -13, -13, -12, 12, 9, 5, 2, -3, -7, -10, -6, -5, -5, -4, -3, -2, -2, 23, 22, 22, 21, 20, 20, 19, 19, 18, 18, 17, 16, 15, 15, 0, 4, 8, 15, 21, 0, -1, -1, -2, -3, -3, -4, -5, -5, -6, -20, -19, -17, -17, -2, -2, -8, 2, -2, -5, -24, -24] } },
-                { name: "sandbox muffled katrumpet", generalMidi: false, settings: { "type": "custom chip", "transition": "cross fade", "effects": "reverb", "chord": "strum", "filterCutoffHz": 5657, "filterResonance": 29, "filterEnvelope": "steady", "interval": "union", "vibrato": "light", "customChipWave": [24, 23, 22, 22, 22, 22, 22, 21, 21, 19, 19, 15, 11, 7, 5, -2, -5, -11, -13, -14, -16, -17, -17, -17, -17, -17, -17, -17, -17, -13, -10, -1, 4, 6, 8, 10, 11, 14, 15, 15, 16, 16, 16, 16, 16, 16, 16, 16, 15, 15, 14, 11, 8, 4, 2, -4, -7, -11, -12, -13, -14, -15, -15, -15] } },
-                { name: "sandbox ehruthing", generalMidi: false, settings: { "type": "custom chip", "hard fade": "seamless", "effects": "reverb", "chord": "strum", "filterCutoffHz": 5657, "filterResonance": 14, "filterEnvelope": "twang 2", "interval": "union", "vibrato": "none", "customChipWave": [24, 24, 23, 22, 21, 21, 20, 19, 18, 18, 17, 16, 15, -22, -20, -18, -16, -14, -13, -11, -10, -7, -6, -4, -3, -2, 0, 2, 4, 17, 16, 15, 13, 12, 11, 9, 8, 6, 5, 4, 3, 2, 1, -1, -1, -2, -3, -4, -6, -6, -7, -8, -8, -9, -10, -10, -11, -13, -15, -16, -17, -3, -4, -5] } },
-                { name: "sandbox wurtz organ", generalMidi: false, settings: { "type": "FM", "transition": "seamless", "effects": "chorus", "chord": "harmony", "filterCutoffHz": 1414, "filterResonance": 0, "filterEnvelope": "punch", "vibrato": "none", "algorithm": "1 2 3 4", "feedbackType": "1⟲ 2⟲ 3⟲ 4⟲", "feedbackAmplitude": 3, "feedbackEnvelope": "decay 2", "operators": [{ "frequency": "1×", "amplitude": 14, "envelope": "tremolo6" }, { "frequency": "2×", "amplitude": 9, "envelope": "tripolo3" }, { "frequency": "4×", "amplitude": 5, "envelope": "pentolo3" }, { "frequency": "8×", "amplitude": 2, "envelope": "pentolo6" }] } },
-            ]) },
-        { name: "Blackbox Presets", presets: toNameMap([
-                { name: "blackbox deep key", midiProgram: 9, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 32, "filterEnvelope": "twang 1", "interval": "shimmer", "vibrato": "light", "harmonics": [100, 86, 86, 86, 86, 71, 71, 57, 0, 57, 29, 43, 57, 57, 57, 43, 43, 0, 29, 43, 43, 43, 43, 43, 43, 29, 0, 30] } },
-                { name: "blackbox ring ding", midiProgram: 78, generalMidi: true, settings: { "type": "FM", "effects": "reverb", "transition": "hard", "chord": "strum", "filterCutoffHz": 1500, "filterResonance": 16, "filterEnvelope": "twang 2", "vibrato": "none", "algorithm": "1 2 3 4", "feedbackType": "1⟲ 2⟲", "feedbackAmplitude": 0, "feedbackEnvelope": "steady", "operators": [{ "frequency": "1×", "amplitude": 9, "envelope": "custom" }, { "frequency": "4×", "amplitude": 8, "envelope": "custom" }, { "frequency": "12×", "amplitude": 9, "envelope": "custom" }, { "frequency": "22×", "amplitude": 4, "envelope": "twang 2" }] } },
-            ]) },
-        { name: "Todbox Presets", presets: toNameMap([
-                { name: "todbox accordion", midiProgram: 21, generalMidi: true, settings: { "type": "chip", "effects": "reverb", "transition": "cross fade", "chord": "harmony", "filterCutoffHz": 5657, "filterResonance": 0, "filterEnvelope": "swell 1", "wave": "todbox accordian", "interval": "honky tonk", "vibrato": "none" } },
-                { name: "todbox wind", generalMidi: false, settings: { "type": "FM", "effects": "reverb", "transition": "seamless", "chord": "harmony", "filterCutoffHz": 200, "filterResonance": 2950, "filterEnvelope": "steady", "vibrato": "none", "algorithm": "1→3 2→4", "feedbackType": "1→3 2→4", "feedbackAmplitude": 15, "feedbackEnvelope": "steady", "operators": [{ "frequency": "16×", "amplitude": 15, "envelope": "steady" }, { "frequency": "16×", "amplitude": 0, "envelope": "custom" }, { "frequency": "16×", "amplitude": 15, "envelope": "steady" }, { "frequency": "16×", "amplitude": 0, "envelope": "flare 2" }] } },
-            ]) },
-        { name: "Old Beepbox Presets", presets: toNameMap([
-                { name: "old grand piano", midiProgram: 0, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 1414, "filterResonance": 14, "filterEnvelope": "twang 3", "interval": "piano", "vibrato": "none", "harmonics": [100, 100, 86, 86, 86, 71, 71, 71, 0, 86, 71, 71, 71, 57, 57, 71, 57, 14, 57, 57, 57, 57, 57, 57, 57, 57, 29, 57] } },
-                { name: "old bright piano", midiProgram: 1, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 2000, "filterResonance": 14, "filterEnvelope": "twang 3", "interval": "piano", "vibrato": "none", "harmonics": [100, 100, 86, 86, 71, 71, 0, 71, 86, 86, 71, 71, 71, 14, 57, 57, 57, 57, 57, 57, 29, 57, 57, 57, 57, 57, 57, 57] } },
-                { name: "old honky-tonk piano", midiProgram: 3, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 5657, "filterResonance": 29, "filterEnvelope": "twang 2", "interval": "honky tonk", "vibrato": "none", "harmonics": [100, 100, 86, 71, 86, 71, 43, 71, 43, 43, 57, 57, 57, 29, 57, 43, 43, 43, 43, 43, 29, 43, 43, 43, 29, 29, 29, 29] } },
-                { name: "old harpsichord", midiProgram: 6, generalMidi: true, settings: { "type": "FM", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 0, "filterEnvelope": "twang 2", "vibrato": "none", "algorithm": "1←(2 3←4)", "feedbackType": "4⟲", "feedbackAmplitude": 9, "feedbackEnvelope": "twang 2", "operators": [{ "frequency": "1×", "amplitude": 15, "envelope": "custom" }, { "frequency": "4×", "amplitude": 8, "envelope": "steady" }, { "frequency": "3×", "amplitude": 6, "envelope": "steady" }, { "frequency": "5×", "amplitude": 7, "envelope": "steady" }] } },
-                { name: "old dulcimer", midiProgram: 15, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "strum", "filterCutoffHz": 5657, "filterResonance": 14, "filterEnvelope": "twang 2", "interval": "piano", "vibrato": "none", "harmonics": [100, 100, 100, 86, 100, 86, 57, 100, 100, 86, 100, 86, 100, 86, 100, 71, 57, 71, 71, 100, 86, 71, 86, 86, 100, 86, 86, 86] } },
-                { name: "old music box 1", midiProgram: 10, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "strum", "filterCutoffHz": 4000, "filterResonance": 14, "filterEnvelope": "twang 2", "interval": "union", "vibrato": "none", "harmonics": [100, 0, 0, 100, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 86, 0, 0, 0, 0, 0, 0, 71, 0] } },
-                { name: "old music box 2", midiProgram: 10, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "strum", "filterCutoffHz": 2828, "filterResonance": 14, "filterEnvelope": "twang 1", "interval": "union", "vibrato": "none", "harmonics": [100, 57, 57, 0, 0, 0, 0, 0, 0, 57, 0, 0, 0, 14, 14, 14, 14, 14, 14, 43, 14, 14, 14, 14, 14, 14, 14, 14] } },
-                { name: "old tubular bell", midiProgram: 14, generalMidi: true, midiSubharmonicOctaves: 1, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "strum", "filterCutoffHz": 4000, "filterResonance": 14, "filterEnvelope": "twang 3", "interval": "hum", "vibrato": "none", "harmonics": [43, 71, 0, 100, 0, 100, 0, 86, 0, 0, 86, 0, 14, 71, 14, 14, 57, 14, 14, 43, 14, 14, 43, 14, 14, 43, 14, 14] } },
-                { name: "old steel guitar", midiProgram: 25, generalMidi: true, settings: { "type": "harmonics", "effects": "reverb", "transition": "hard fade", "chord": "strum", "filterCutoffHz": 5657, "filterResonance": 14, "filterEnvelope": "twang 2", "interval": "union", "vibrato": "none", "harmonics": [100, 100, 86, 71, 71, 71, 86, 86, 71, 57, 43, 43, 43, 57, 57, 57, 57, 57, 43, 43, 43, 43, 43, 43, 43, 43, 43, 43] } },
-                { name: "old cello", midiProgram: 42, generalMidi: true, settings: { "type": "FM", "effects": "reverb", "transition": "cross fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 29, "filterEnvelope": "steady", "vibrato": "delayed", "algorithm": "(1 2 3)←4", "feedbackType": "1⟲ 2⟲ 3⟲", "feedbackAmplitude": 6, "feedbackEnvelope": "swell 1", "operators": [{ "frequency": "1×", "amplitude": 11, "envelope": "custom" }, { "frequency": "3×", "amplitude": 9, "envelope": "custom" }, { "frequency": "8×", "amplitude": 7, "envelope": "custom" }, { "frequency": "1×", "amplitude": 6, "envelope": "steady" }] } },
-                { name: "old choir soprano", midiProgram: 94, generalMidi: true, settings: { "type": "harmonics", "effects": "chorus & reverb", "transition": "soft fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 57, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [86, 100, 86, 43, 14, 14, 57, 71, 57, 14, 14, 14, 14, 14, 43, 57, 43, 14, 14, 14, 14, 14, 14, 14, 0, 0, 0, 0] } },
-                { name: "old choir tenor", midiProgram: 52, generalMidi: true, settings: { "type": "harmonics", "effects": "chorus & reverb", "transition": "soft fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 86, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [86, 100, 100, 86, 71, 57, 29, 14, 14, 14, 29, 43, 43, 43, 29, 14, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } },
-                { name: "old choir bass", midiProgram: 52, settings: { "type": "harmonics", "effects": "chorus & reverb", "transition": "soft fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 86, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [71, 86, 86, 100, 86, 100, 57, 43, 14, 14, 14, 14, 29, 29, 43, 43, 43, 43, 43, 29, 29, 29, 29, 14, 14, 14, 0, 0] } },
-                { name: "old solo soprano", midiProgram: 85, settings: { "type": "harmonics", "effects": "reverb", "transition": "cross fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 71, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [86, 100, 86, 43, 14, 14, 57, 71, 57, 14, 14, 14, 14, 14, 43, 57, 43, 14, 14, 14, 14, 14, 14, 14, 0, 0, 0, 0] } },
-                { name: "old solo tenor", midiProgram: 85, settings: { "type": "harmonics", "effects": "reverb", "transition": "cross fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 86, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [86, 100, 100, 86, 71, 57, 29, 14, 14, 14, 29, 43, 43, 43, 29, 14, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } },
-                { name: "old solo bass", midiProgram: 85, settings: { "type": "harmonics", "effects": "reverb", "transition": "cross fade", "chord": "harmony", "filterCutoffHz": 2828, "filterResonance": 86, "filterEnvelope": "steady", "interval": "union", "vibrato": "shaky", "harmonics": [71, 86, 86, 100, 86, 100, 57, 43, 14, 14, 14, 14, 29, 29, 43, 43, 43, 43, 43, 29, 29, 29, 29, 14, 14, 14, 0, 0] } },
-                { name: "old pan flute", midiProgram: 75, generalMidi: true, settings: { "type": "spectrum", "effects": "reverb", "transition": "soft", "chord": "harmony", "filterCutoffHz": 8000, "filterResonance": 43, "filterEnvelope": "steady", "spectrum": [100, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 71, 0, 0, 14, 0, 57, 0, 29, 14, 29, 14, 14, 29, 14, 29, 14, 14, 29, 14] } },
-                { name: "old timpani", midiProgram: 47, generalMidi: true, settings: { "type": "spectrum", "effects": "reverb", "transition": "hard fade", "chord": "harmony", "filterCutoffHz": 4000, "filterResonance": 29, "filterEnvelope": "twang 2", "spectrum": [100, 0, 0, 0, 86, 0, 0, 71, 0, 14, 43, 14, 43, 43, 0, 29, 43, 29, 29, 29, 43, 29, 43, 29, 43, 43, 43, 43, 43, 43] } },
-            ]) },
         { name: "UltraBox Presets", presets: toNameMap([
-                { name: "vrc6 sawtooth", generalMidi: false, settings: { "type": "custom chip", "volume": 0, "eqFilter": [{ "type": "high-pass", "cutoffHz": 62.5, "linearGain": 0.5 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "high-pass", "cutoffHz": 62.5, "linearGain": 0.5 }], "effects": ["panning", "transition type", "chord type", "detune", "vibrato"], "transition": "normal", "clicklessTransition": true, "chord": "arpeggio", "fastTwoNoteArp": true, "arpeggioSpeed": 12, "detuneCents": 0, "vibrato": "none", "vibratoDepth": 0, "vibratoDelay": 0, "vibratoSpeed": 10, "vibratoType": 0, "pan": 0, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -1, "wave": "square", "unison": "none", "customChipWave": { "0": -1, "1": -1, "2": -1, "3": -1, "4": -1, "5": -1, "6": -1, "7": -1, "8": -1, "9": -5, "10": -5, "11": -5, "12": -4, "13": -4, "14": -4, "15": -3, "16": -3, "17": -3, "18": -7, "19": -7, "20": -6, "21": -6, "22": -5, "23": -5, "24": -4, "25": -4, "26": -4, "27": -7, "28": -7, "29": -6, "30": -6, "31": -5, "32": -5, "33": -4, "34": -4, "35": -4, "36": -8, "37": -8, "38": -7, "39": -7, "40": -6, "41": -6, "42": -5, "43": -5, "44": -4, "45": -4, "46": 21, "47": 20, "48": 18, "49": 17, "50": 16, "51": 14, "52": 13, "53": 12, "54": 11, "55": 7, "56": 6, "57": 6, "58": 5, "59": 5, "60": 5, "61": 4, "62": 4, "63": 4 }, "customChipWaveIntegral": { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0, "24": 0, "25": 0, "26": 0, "27": 0, "28": 0, "29": 0, "30": 0, "31": 0, "32": 0, "33": 0, "34": 0, "35": 0, "36": 0, "37": 0, "38": 0, "39": 0, "40": 0, "41": 0, "42": 0, "43": 0, "44": 0, "45": 0, "46": 0, "47": 0, "48": 0, "49": 0, "50": 0, "51": 0, "52": 0, "53": 0, "54": 0, "55": 0, "56": 0, "57": 0, "58": 0, "59": 0, "60": 0, "61": 0, "62": 0, "63": 0, "64": 0 }, "envelopes": [] } },
                 { name: "nes white", midiProgram: 116, generalMidi: true, isNoise: true, settings: { "type": "noise", "volume": 0, "eqFilter": [], "eqFilterType": false, "eqSimpleCut": 8, "eqSimplePeak": 0, "eqSubFilters1": [], "effects": ["panning"], "pan": 0, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": 0, "wave": "1-bit white", "envelopes": [] } },
                 { name: "nes ping", midiProgram: 116, generalMidi: true, isNoise: true, settings: { "type": "noise", "volume": 0, "eqFilter": [], "eqFilterType": false, "eqSimpleCut": 8, "eqSimplePeak": 0, "eqSubFilters1": [], "effects": ["panning"], "pan": 0, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": 0, "wave": "1-bit metallic", "envelopes": [] } },
                 { name: "distorted pulse vocal", generalMidi: false, settings: { "type": "chip", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 0.0884 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 0.0884 }], "effects": ["panning", "transition type", "pitch shift", "vibrato", "note filter", "bitcrusher", "echo", "reverb"], "transition": "normal", "clicklessTransition": false, "pitchShiftSemitones": 0, "vibrato": "delayed", "vibratoDepth": 0.3, "vibratoDelay": 18.5, "vibratoSpeed": 10, "vibratoType": 0, "noteFilterType": false, "noteSimpleCut": 10, "noteSimplePeak": 0, "noteFilter": [{ "type": "high-pass", "cutoffHz": 840.9, "linearGain": 11.3137 }, { "type": "low-pass", "cutoffHz": 297.3, "linearGain": 8 }, { "type": "peak", "cutoffHz": 500, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 62.5, "linearGain": 1.4142 }, { "type": "peak", "cutoffHz": 176.78, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 250, "linearGain": 11.3137 }], "noteSubFilters0": [{ "type": "high-pass", "cutoffHz": 840.9, "linearGain": 11.3137 }, { "type": "low-pass", "cutoffHz": 297.3, "linearGain": 8 }, { "type": "peak", "cutoffHz": 500, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 62.5, "linearGain": 1.4142 }, { "type": "peak", "cutoffHz": 176.78, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 250, "linearGain": 11.3137 }], "bitcrusherOctave": 6.5, "bitcrusherQuantization": 71, "pan": 0, "panDelay": 10, "echoSustain": 14, "echoDelayBeats": 0.167, "reverb": 0, "fadeInSeconds": 0, "fadeOutTicks": -3, "wave": "1/8 pulse", "unison": "none", "envelopes": [] } },
@@ -9940,15 +14161,16 @@ var beepbox = (function (exports) {
                 { name: "talking bass", generalMidi: false, settings: { "type": "FM", "volume": 0, "eqFilter": [], "effects": ["chord type"], "chord": "custom interval", "fadeInSeconds": 0, "fadeOutTicks": -3, "algorithm": "1←(2 3)←4", "feedbackType": "1⟲", "feedbackAmplitude": 15, "operators": [{ "frequency": "1×", "amplitude": 15 }, { "frequency": "2×", "amplitude": 8 }, { "frequency": "2×", "amplitude": 5 }, { "frequency": "1×", "amplitude": 12 }], "envelopes": [{ "target": "operatorAmplitude", "envelope": "note size", "index": 2 }, { "target": "operatorAmplitude", "envelope": "note size", "index": 3 }, { "target": "feedbackAmplitude", "envelope": "note size" }] } },
                 { name: "synth marimba", generalMidi: false, settings: { "type": "Picked String", "volume": 0, "eqFilter": [{ "type": "high-pass", "cutoffHz": 176.78, "linearGain": 1 }, { "type": "peak", "cutoffHz": 4000, "linearGain": 0.5 }], "effects": ["note filter", "echo"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 1.4142 }], "echoSustain": 71, "echoDelayBeats": 0.5, "fadeInSeconds": 0, "fadeOutTicks": -1, "harmonics": [86, 100, 29, 29, 0, 0, 0, 100, 0, 0, 0, 86, 29, 0, 14, 100, 0, 0, 0, 0, 0, 14, 0, 0, 14, 0, 0, 86], "unison": "fifth", "stringSustain": 7, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "punch" }] } },
                 { name: "italian accordian", generalMidi: false, settings: { "type": "custom chip", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 6000, "linearGain": 0.5 }], "eqFilterType": true, "eqSimpleCut": 8, "eqSimplePeak": 1, "eqSubFilters1": [], "effects": ["panning", "chorus", "reverb"], "pan": 0, "panDelay": 10, "chorus": 71, "reverb": 45, "fadeInSeconds": 0.0263, "fadeOutTicks": -3, "wave": "square", "unison": "honky tonk", "customChipWave": { "0": -24, "1": -24, "2": -24, "3": -24, "4": -24, "5": -24, "6": -24, "7": -24, "8": -24, "9": -24, "10": -24, "11": -24, "12": -24, "13": -24, "14": -24, "15": -24, "16": 24, "17": 24, "18": 24, "19": 24, "20": 24, "21": 24, "22": 24, "23": 24, "24": -24, "25": -24, "26": -24, "27": -24, "28": -24, "29": -24, "30": -24, "31": -24, "32": -24, "33": -24, "34": -24, "35": -24, "36": -24, "37": -24, "38": -24, "39": -24, "40": 24, "41": 24, "42": 24, "43": 24, "44": 24, "45": 24, "46": 24, "47": 24, "48": -24, "49": -24, "50": -24, "51": -24, "52": -24, "53": -24, "54": -24, "55": -24, "56": -24, "57": -24, "58": -24, "59": -24, "60": -24, "61": -24, "62": -24, "63": -24 }, "customChipWaveIntegral": { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0, "24": 0, "25": 0, "26": 0, "27": 0, "28": 0, "29": 0, "30": 0, "31": 0, "32": 0, "33": 0, "34": 0, "35": 0, "36": 0, "37": 0, "38": 0, "39": 0, "40": 0, "41": 0, "42": 0, "43": 0, "44": 0, "45": 0, "46": 0, "47": 0, "48": 0, "49": 0, "50": 0, "51": 0, "52": 0, "53": 0, "54": 0, "55": 0, "56": 0, "57": 0, "58": 0, "59": 0, "60": 0, "61": 0, "62": 0, "63": 0, "64": 0 }, "envelopes": [] } },
-                { name: "custom chip supersaw", generalMidi: false, settings: { "type": "custom chip", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 0.7071 }], "eqFilterType": true, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters1": [], "effects": ["panning", "transition type", "vibrato", "chorus", "reverb"], "transition": "interrupt", "clicklessTransition": false, "vibrato": "delayed", "vibratoDepth": 0.3, "vibratoDelay": 18.5, "vibratoSpeed": 10, "vibratoType": 0, "pan": 0, "panDelay": 10, "chorus": 29, "reverb": 29, "fadeInSeconds": 0, "fadeOutTicks": -1, "wave": "square", "unison": "dissonant", "customChipWave": { "0": 22, "1": 22, "2": 16, "3": 6, "4": 0, "5": -3, "6": -8, "7": -10, "8": -13, "9": -16, "10": -19, "11": -19, "12": -20, "13": -22, "14": -22, "15": -24, "16": -24, "17": -24, "18": -24, "19": -24, "20": -24, "21": -24, "22": -24, "23": -24, "24": -24, "25": -24, "26": -24, "27": -24, "28": -24, "29": -24, "30": -24, "31": 24, "32": 24, "33": 16, "34": 9, "35": 6, "36": 4, "37": 2, "38": 0, "39": -1, "40": -3, "41": -4, "42": -4, "43": -6, "44": -6, "45": -6, "46": -6, "47": -5, "48": -5, "49": -4, "50": -2, "51": -2, "52": 1, "53": 4, "54": 6, "55": 8, "56": 10, "57": 12, "58": 14, "59": 16, "60": 18, "61": 19, "62": 22, "63": 24 }, "customChipWaveIntegral": { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0, "24": 0, "25": 0, "26": 0, "27": 0, "28": 0, "29": 0, "30": 0, "31": 0, "32": 0, "33": 0, "34": 0, "35": 0, "36": 0, "37": 0, "38": 0, "39": 0, "40": 0, "41": 0, "42": 0, "43": 0, "44": 0, "45": 0, "46": 0, "47": 0, "48": 0, "49": 0, "50": 0, "51": 0, "52": 0, "53": 0, "54": 0, "55": 0, "56": 0, "57": 0, "58": 0, "59": 0, "60": 0, "61": 0, "62": 0, "63": 0, "64": 0 }, "envelopes": [] } },
+                { name: "chip supersaw", generalMidi: false, settings: { "type": "custom chip", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 0.7071 }], "eqFilterType": true, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters1": [], "effects": ["panning", "transition type", "vibrato", "chorus", "reverb"], "transition": "interrupt", "clicklessTransition": false, "vibrato": "delayed", "vibratoDepth": 0.3, "vibratoDelay": 18.5, "vibratoSpeed": 10, "vibratoType": 0, "pan": 0, "panDelay": 10, "chorus": 29, "reverb": 29, "fadeInSeconds": 0, "fadeOutTicks": -1, "wave": "square", "unison": "dissonant", "customChipWave": { "0": 22, "1": 22, "2": 16, "3": 6, "4": 0, "5": -3, "6": -8, "7": -10, "8": -13, "9": -16, "10": -19, "11": -19, "12": -20, "13": -22, "14": -22, "15": -24, "16": -24, "17": -24, "18": -24, "19": -24, "20": -24, "21": -24, "22": -24, "23": -24, "24": -24, "25": -24, "26": -24, "27": -24, "28": -24, "29": -24, "30": -24, "31": 24, "32": 24, "33": 16, "34": 9, "35": 6, "36": 4, "37": 2, "38": 0, "39": -1, "40": -3, "41": -4, "42": -4, "43": -6, "44": -6, "45": -6, "46": -6, "47": -5, "48": -5, "49": -4, "50": -2, "51": -2, "52": 1, "53": 4, "54": 6, "55": 8, "56": 10, "57": 12, "58": 14, "59": 16, "60": 18, "61": 19, "62": 22, "63": 24 }, "customChipWaveIntegral": { "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0, "13": 0, "14": 0, "15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 0, "21": 0, "22": 0, "23": 0, "24": 0, "25": 0, "26": 0, "27": 0, "28": 0, "29": 0, "30": 0, "31": 0, "32": 0, "33": 0, "34": 0, "35": 0, "36": 0, "37": 0, "38": 0, "39": 0, "40": 0, "41": 0, "42": 0, "43": 0, "44": 0, "45": 0, "46": 0, "47": 0, "48": 0, "49": 0, "50": 0, "51": 0, "52": 0, "53": 0, "54": 0, "55": 0, "56": 0, "57": 0, "58": 0, "59": 0, "60": 0, "61": 0, "62": 0, "63": 0, "64": 0 }, "envelopes": [] } },
                 { name: "fm supersaw", generalMidi: false, settings: { "type": "FM6op", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 1.4142 }, { "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 1.4142 }, { "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }], "effects": ["panning", "transition type", "pitch shift", "note filter", "chorus", "reverb"], "transition": "continue", "clicklessTransition": false, "pitchShiftSemitones": 0, "noteFilterType": false, "noteSimpleCut": 10, "noteSimplePeak": 0, "noteFilter": [], "noteSubFilters0": [], "noteSubFilters1": [{ "type": "low-pass", "cutoffHz": 4756.83, "linearGain": 1 }], "pan": 0, "panDelay": 10, "chorus": 71, "reverb": 0, "fadeInSeconds": 0, "fadeOutTicks": -1, "algorithm": "1 2 3 4 5 6", "feedbackType": "1⟲", "feedbackAmplitude": 0, "operators": [{ "frequency": "1×", "amplitude": 13, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "~1×", "amplitude": 15, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "2×", "amplitude": 10, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "3×", "amplitude": 7, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "4×", "amplitude": 9, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "8×", "amplitude": 6, "waveform": "sawtooth", "pulseWidth": 5 }], "envelopes": [] } },
                 { name: "obama why", generalMidi: false, settings: { "type": "harmonics", "volume": 0, "eqFilter": [], "effects": ["note filter", "panning", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 840.9, "linearGain": 11.3137 }], "pan": 0, "reverb": 0, "fadeInSeconds": 0.0263, "fadeOutTicks": -3, "harmonics": [100, 86, 29, 29, 14, 14, 0, 14, 14, 43, 71, 100, 100, 86, 71, 71, 57, 57, 43, 43, 43, 43, 43, 0, 0, 0, 0, 0], "unison": "octave", "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
             ]) },
-        { name: "Le choptop84's presets", presets: toNameMap([
+        { name: "AbyssBox presets", presets: toNameMap([
                 { name: "Demonic Bell", generalMidi: false, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "effects": ["detune", "distortion", "bitcrusher", "echo", "reverb"], "detuneCents": -52, "distortion": 29, "aliases": false, "bitcrusherOctave": 4.5, "bitcrusherQuantization": 29, "panDelay": 10, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 68, "fadeInSeconds": 0, "fadeOutTicks": 96, "harmonics": [43, 71, 71, 100, 86, 100, 43, 86, 71, 57, 86, 29, 14, 71, 14, 14, 57, 14, 14, 43, 14, 14, 43, 14, 14, 43, 14, 14], "unison": "shimmer", "stringSustain": 64, "envelopes": [] } },
                 { name: "Spacey Triangle", generalMidi: false, settings: { "type": "chip", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "effects": ["transition type", "vibrato", "distortion", "bitcrusher", "chorus", "echo", "reverb"], "transition": "normal", "clicklessTransition": false, "vibrato": "shaky", "vibratoDepth": 0.1, "vibratoDelay": 0, "vibratoSpeed": 10, "vibratoType": 1, "distortion": 29, "aliases": false, "bitcrusherOctave": 5.5, "bitcrusherQuantization": 14, "panDelay": 10, "chorus": 86, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 26, "fadeInSeconds": 0, "fadeOutTicks": 96, "wave": "triangle", "unison": "dirty", "isUsingAdvancedLoopControls": false, "chipWaveLoopStart": 0, "chipWaveLoopEnd": 32, "chipWaveLoopMode": 0, "chipWavePlayBackwards": false, "chipWaveStartOffset": 0, "envelopes": [] } },
                 { name: "Harmonic Piano", generalMidi: false, settings: { "type": "harmonics", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "effects": ["transition type"], "transition": "interrupt", "clicklessTransition": false, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -1, "harmonics": [100, 57, 57, 57, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "unison": "none", "envelopes": [] } },
                 { name: "Organic Synth", generalMidi: false, settings: { "type": "FM", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "effects": ["chord type", "reverb"], "chord": "simultaneous", "fastTwoNoteArp": false, "arpeggioSpeed": 12, "panDelay": 10, "reverb": 71, "fadeInSeconds": 0.0263, "fadeOutTicks": 96, "algorithm": "(1 2 3)←4", "feedbackType": "1⟲ 2⟲ 3⟲", "feedbackAmplitude": 2, "operators": [{ "frequency": "1×", "amplitude": 15, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "5×", "amplitude": 3, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "8×", "amplitude": 7, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }], "envelopes": [{ "target": "operatorAmplitude", "envelope": "twang 1", "index": 3 }, { "target": "noteVolume", "envelope": "twang 2" }] } },
+                { name: "Nokia Ringtone", generalMidi: false, settings: { "type": "FM", "eqFilter": [], "effects": ["transition type", "chord type"], "transition": "interrupt", "chord": "custom interval", "fadeInSeconds": 0, "fadeOutTicks": -1, "algorithm": "(1 2)←(3 4)", "feedbackType": "1→2", "feedbackAmplitude": 0, "operators": [{ "frequency": "1×", "amplitude": 2 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }], "envelopes": [] } },
             ]) },
     ]);
 
@@ -10282,6 +14504,21 @@ var beepbox = (function (exports) {
             this.b[1] = -(1.0 + cos) / a0;
             this.order = 2;
         }
+        highShelf2ndOrder(cornerRadiansPerSample, shelfLinearGain, slope) {
+            const A = Math.sqrt(shelfLinearGain);
+            const c = Math.cos(cornerRadiansPerSample);
+            const Aplus = A + 1.0;
+            const Aminus = A - 1.0;
+            const alpha = Math.sin(cornerRadiansPerSample) * 0.5 * Math.sqrt((Aplus / A) * (1.0 / slope - 1.0) + 2.0);
+            const sqrtA2Alpha = 2.0 * Math.sqrt(A) * alpha;
+            const a0 = (Aplus - Aminus * c + sqrtA2Alpha);
+            this.a[1] = 2 * (Aminus - Aplus * c) / a0;
+            this.a[2] = (Aplus - Aminus * c - sqrtA2Alpha) / a0;
+            this.b[0] = A * (Aplus + Aminus * c + sqrtA2Alpha) / a0;
+            this.b[1] = -2 * A * (Aminus + Aplus * c) / a0;
+            this.b[2] = A * (Aplus + Aminus * c - sqrtA2Alpha) / a0;
+            this.order = 2;
+        }
         peak2ndOrder(cornerRadiansPerSample, peakLinearGain, bandWidthScale) {
             const sqrtGain = Math.sqrt(peakLinearGain);
             const bandWidth = bandWidthScale * cornerRadiansPerSample / (sqrtGain >= 1 ? sqrtGain : 1 / sqrtGain);
@@ -10377,6 +14614,9 @@ var beepbox = (function (exports) {
             }
             this.useMultiplicativeInputCoefficients = useMultiplicativeInputCoefficients;
         }
+    }
+    function warpInfinityToNyquist(radians) {
+        return 2.0 * Math.atan(radians * 0.5);
     }
 
     const epsilon = (1.0e-24);
@@ -11411,6 +15651,8 @@ var beepbox = (function (exports) {
             this.vibratoSpeed = 10;
             this.vibratoDelay = 0;
             this.vibratoType = 0;
+            this.envelopeSpeed = 12;
+            this.discreteEnvelope = false;
             this.unison = 0;
             this.unisonVoices = 1;
             this.unisonSpread = 0.0;
@@ -11428,11 +15670,12 @@ var beepbox = (function (exports) {
             this.clicklessTransition = false;
             this.aliases = false;
             this.pulseWidth = Config.pulseWidthRange;
+            this.decimalOffset = 0;
             this.supersawDynamism = Config.supersawDynamismMax;
             this.supersawSpread = Math.ceil(Config.supersawSpreadMax / 2.0);
             this.supersawShape = 0;
-            this.decimalOffset = 0;
             this.stringSustain = 10;
+            this.stringSustainType = 1;
             this.distortion = 0;
             this.bitcrusherFreq = 0;
             this.bitcrusherQuantization = 0;
@@ -11447,9 +15690,6 @@ var beepbox = (function (exports) {
             this.customAlgorithm = new CustomAlgorithm();
             this.customFeedbackType = new CustomFeedBack();
             this.feedbackAmplitude = 0;
-            this.LFOtime = 0;
-            this.nextLFOtime = 0;
-            this.arpTime = 0;
             this.customChipWave = new Float32Array(64);
             this.customChipWaveIntegral = new Float32Array(65);
             this.operators = [];
@@ -11463,7 +15703,7 @@ var beepbox = (function (exports) {
             this.invalidModulators = [];
             if (isModChannel) {
                 for (let mod = 0; mod < Config.modCount; mod++) {
-                    this.modChannels.push(0);
+                    this.modChannels.push(-2);
                     this.modInstruments.push(0);
                     this.modulators.push(Config.modulators.dictionary["none"].index);
                 }
@@ -11495,7 +15735,7 @@ var beepbox = (function (exports) {
         }
         setTypeAndReset(type, isNoiseChannel, isModChannel) {
             if (isModChannel)
-                type = 9;
+                type = 10;
             this.type = type;
             this.preset = type;
             this.volume = 0;
@@ -11526,8 +15766,11 @@ var beepbox = (function (exports) {
             this.vibrato = 0;
             this.unison = 0;
             this.stringSustain = 10;
+            this.stringSustainType = Config.enableAcousticSustain ? 1 : 0;
             this.clicklessTransition = false;
             this.arpeggioSpeed = 12;
+            this.envelopeSpeed = 12;
+            this.discreteEnvelope = false;
             this.legacyTieOver = false;
             this.aliases = false;
             this.fadeIn = 0;
@@ -11545,7 +15788,7 @@ var beepbox = (function (exports) {
                     this.chipWavePlayBackwards = false;
                     this.chipWaveStartOffset = 0;
                     break;
-                case 8:
+                case 9:
                     this.chipWave = 2;
                     this.chord = Config.chords.dictionary["arpeggio"].index;
                     for (let i = 0; i < 64; i++) {
@@ -11574,7 +15817,7 @@ var beepbox = (function (exports) {
                         this.operators[i].reset(i);
                     }
                     break;
-                case 10:
+                case 11:
                     this.transition = 1;
                     this.vibrato = 0;
                     this.effects = 1;
@@ -11614,12 +15857,13 @@ var beepbox = (function (exports) {
                 case 6:
                     this.chord = Config.chords.dictionary["arpeggio"].index;
                     this.pulseWidth = Config.pulseWidthRange;
+                    this.decimalOffset = 0;
                     break;
                 case 7:
                     this.chord = Config.chords.dictionary["strum"].index;
                     this.harmonicsWave.reset();
                     break;
-                case 9:
+                case 10:
                     this.transition = 0;
                     this.vibrato = 0;
                     this.interval = 0;
@@ -11636,12 +15880,13 @@ var beepbox = (function (exports) {
                         this.modFilterTypes[mod] = 0;
                     }
                     break;
-                case 11:
+                case 8:
                     this.chord = Config.chords.dictionary["arpeggio"].index;
                     this.supersawDynamism = Config.supersawDynamismMax;
                     this.supersawSpread = Math.ceil(Config.supersawSpreadMax / 2.0);
                     this.supersawShape = 0;
                     this.pulseWidth = Config.pulseWidthRange - 1;
+                    this.decimalOffset = 0;
                     break;
                 default:
                     throw new Error("Unrecognized instrument type: " + type);
@@ -11747,7 +15992,9 @@ var beepbox = (function (exports) {
                 "eqFilter": this.eqFilter.toJsonObject(),
                 "eqFilterType": this.eqFilterType,
                 "eqSimpleCut": this.eqFilterSimpleCut,
-                "eqSimplePeak": this.eqFilterSimplePeak
+                "eqSimplePeak": this.eqFilterSimplePeak,
+                "envelopeSpeed": this.envelopeSpeed,
+                "discreteEnvelope": this.discreteEnvelope
             };
             if (this.preset != this.type) {
                 instrumentObject["preset"] = this.preset;
@@ -11878,8 +16125,9 @@ var beepbox = (function (exports) {
                 instrumentObject["pulseWidth"] = this.pulseWidth;
                 instrumentObject["decimalOffset"] = this.decimalOffset;
             }
-            else if (this.type == 11) {
-                instrumentObject["pulseWidth"] = Math.round(getPulseWidthRatio(this.pulseWidth) * 100 * 100000) / 100000;
+            else if (this.type == 8) {
+                instrumentObject["pulseWidth"] = this.pulseWidth;
+                instrumentObject["decimalOffset"] = this.decimalOffset;
                 instrumentObject["dynamism"] = Math.round(100 * this.supersawDynamism / Config.supersawDynamismMax);
                 instrumentObject["spread"] = Math.round(100 * this.supersawSpread / Config.supersawSpreadMax);
                 instrumentObject["shape"] = Math.round(100 * this.supersawShape / Config.supersawShapeMax);
@@ -11894,6 +16142,9 @@ var beepbox = (function (exports) {
                     instrumentObject["unisonSign"] = this.unisonSign;
                 }
                 instrumentObject["stringSustain"] = Math.round(100 * this.stringSustain / (Config.stringSustainRange - 1));
+                if (Config.enableAcousticSustain) {
+                    instrumentObject["stringSustainType"] = Config.sustainTypeNames[this.stringSustainType];
+                }
             }
             else if (this.type == 5) {
                 instrumentObject["unison"] = this.unison == Config.unisons.length ? "custom" : Config.unisons[this.unison].name;
@@ -11905,7 +16156,7 @@ var beepbox = (function (exports) {
                     instrumentObject["unisonSign"] = this.unisonSign;
                 }
             }
-            else if (this.type == 1 || this.type == 10) {
+            else if (this.type == 1 || this.type == 11) {
                 const operatorArray = [];
                 for (const operator of this.operators) {
                     operatorArray.push({
@@ -11939,7 +16190,7 @@ var beepbox = (function (exports) {
                     instrumentObject["operators"] = operatorArray;
                 }
             }
-            else if (this.type == 8) {
+            else if (this.type == 9) {
                 instrumentObject["wave"] = Config.chipWaves[this.chipWave].name;
                 instrumentObject["unison"] = this.unison == Config.unisons.length ? "custom" : Config.unisons[this.unison].name;
                 if (this.unison == Config.unisons.length) {
@@ -11955,15 +16206,16 @@ var beepbox = (function (exports) {
                     instrumentObject["customChipWave"][i] = this.customChipWave[i];
                 }
             }
-            else if (this.type == 9) {
+            else if (this.type == 10) {
                 instrumentObject["modChannels"] = [];
                 instrumentObject["modInstruments"] = [];
                 instrumentObject["modSettings"] = [];
-                instrumentObject["modStatuses"] = [];
+                instrumentObject["modFilterTypes"] = [];
                 for (let mod = 0; mod < Config.modCount; mod++) {
                     instrumentObject["modChannels"][mod] = this.modChannels[mod];
                     instrumentObject["modInstruments"][mod] = this.modInstruments[mod];
                     instrumentObject["modSettings"][mod] = this.modulators[mod];
+                    instrumentObject["modFilterTypes"][mod] = this.modFilterTypes[mod];
                 }
             }
             else {
@@ -11981,8 +16233,9 @@ var beepbox = (function (exports) {
                 instrumentObject = {};
             let type = Config.instrumentTypeNames.indexOf(instrumentObject["type"]);
             if (type == -1)
-                type = isModChannel ? 9 : (isNoiseChannel ? 2 : 0);
+                type = isModChannel ? 10 : (isNoiseChannel ? 2 : 0);
             this.setTypeAndReset(type, isNoiseChannel, isModChannel);
+            this.effects &= ~(1 << 2);
             if (instrumentObject["preset"] != undefined) {
                 this.preset = instrumentObject["preset"] >>> 0;
             }
@@ -11991,6 +16244,18 @@ var beepbox = (function (exports) {
             }
             else {
                 this.volume = 0;
+            }
+            if (instrumentObject["envelopeSpeed"] != undefined) {
+                this.envelopeSpeed = clamp(0, Config.modulators.dictionary["envelope speed"].maxRawVol + 1, instrumentObject["envelopeSpeed"] | 0);
+            }
+            else {
+                this.envelopeSpeed = 12;
+            }
+            if (instrumentObject["discreteEnvelope"] != undefined) {
+                this.discreteEnvelope = instrumentObject["discreteEnvelope"];
+            }
+            else {
+                this.discreteEnvelope = false;
             }
             if (Array.isArray(instrumentObject["effects"])) {
                 let effects = 0;
@@ -12058,7 +16323,7 @@ var beepbox = (function (exports) {
                     else if (this.type == 0) {
                         this.chord = Config.chords.dictionary["arpeggio"].index;
                     }
-                    else if (this.type == 1 || this.type == 10) {
+                    else if (this.type == 1 || this.type == 11) {
                         this.chord = Config.chords.dictionary["custom interval"].index;
                     }
                     else {
@@ -12127,7 +16392,6 @@ var beepbox = (function (exports) {
             }
             else {
                 this.pan = Config.panCenter;
-                this.effects = (this.effects | (1 << 2));
             }
             if (instrumentObject["panDelay"] != undefined) {
                 this.panDelay = (instrumentObject["panDelay"] | 0);
@@ -12171,6 +16435,12 @@ var beepbox = (function (exports) {
             else {
                 this.pulseWidth = Config.pulseWidthRange;
             }
+            if (instrumentObject["decimalOffset"] != undefined) {
+                this.decimalOffset = clamp(0, 99 + 1, Math.round(instrumentObject["decimalOffset"]));
+            }
+            else {
+                this.decimalOffset = 0;
+            }
             if (instrumentObject["dynamism"] != undefined) {
                 this.supersawDynamism = clamp(0, Config.supersawDynamismMax + 1, Math.round(Config.supersawDynamismMax * (instrumentObject["dynamism"] | 0) / 100));
             }
@@ -12188,12 +16458,6 @@ var beepbox = (function (exports) {
             }
             else {
                 this.supersawShape = 0;
-            }
-            if (instrumentObject["decimalOffset"] != undefined) {
-                this.decimalOffset = clamp(0, 99 + 1, Math.round(instrumentObject["decimalOffset"]));
-            }
-            else {
-                this.decimalOffset = 0;
             }
             if (instrumentObject["harmonics"] != undefined) {
                 for (let i = 0; i < Config.harmonicsControlPoints; i++) {
@@ -12218,6 +16482,9 @@ var beepbox = (function (exports) {
             else {
                 this.stringSustain = 10;
             }
+            this.stringSustainType = Config.enableAcousticSustain ? Config.sustainTypeNames.indexOf(instrumentObject["stringSustainType"]) : 0;
+            if (this.stringSustainType == -1)
+                this.stringSustainType = 0;
             if (this.type == 2) {
                 this.chipNoise = Config.chipNoises.findIndex(wave => wave.name == instrumentObject["wave"]);
                 if (instrumentObject["wave"] == "pink noise")
@@ -12279,7 +16546,7 @@ var beepbox = (function (exports) {
                 if (this.chipWave == -1)
                     this.chipWave = 1;
             }
-            if (this.type == 1 || this.type == 10) {
+            if (this.type == 1 || this.type == 11) {
                 if (this.type == 1) {
                     this.algorithm = Config.algorithms.findIndex(algorithm => algorithm.name == instrumentObject["algorithm"]);
                     if (this.algorithm == -1)
@@ -12314,7 +16581,7 @@ var beepbox = (function (exports) {
                 else {
                     this.feedbackAmplitude = 0;
                 }
-                for (let j = 0; j < Config.operatorCount + (this.type == 10 ? 2 : 0); j++) {
+                for (let j = 0; j < Config.operatorCount + (this.type == 11 ? 2 : 0); j++) {
                     const operator = this.operators[j];
                     let operatorObject = undefined;
                     if (instrumentObject["operators"] != undefined)
@@ -12353,7 +16620,7 @@ var beepbox = (function (exports) {
                     }
                 }
             }
-            else if (this.type == 8) {
+            else if (this.type == 9) {
                 if (instrumentObject["customChipWave"]) {
                     for (let i = 0; i < 64; i++) {
                         this.customChipWave[i] = instrumentObject["customChipWave"][i];
@@ -12373,16 +16640,18 @@ var beepbox = (function (exports) {
                     this.customChipWaveIntegral[64] = 0.0;
                 }
             }
-            else if (this.type == 9) {
+            else if (this.type == 10) {
                 if (instrumentObject["modChannels"] != undefined) {
                     for (let mod = 0; mod < Config.modCount; mod++) {
                         this.modChannels[mod] = instrumentObject["modChannels"][mod];
                         this.modInstruments[mod] = instrumentObject["modInstruments"][mod];
                         this.modulators[mod] = instrumentObject["modSettings"][mod];
+                        if (instrumentObject["modFilterTypes"] != undefined)
+                            this.modFilterTypes[mod] = instrumentObject["modFilterTypes"][mod];
                     }
                 }
             }
-            if (this.type != 9) {
+            if (this.type != 10) {
                 if (this.chord == Config.chords.dictionary["arpeggio"].index && instrumentObject["arpeggioSpeed"] != undefined) {
                     this.arpeggioSpeed = instrumentObject["arpeggioSpeed"];
                 }
@@ -12521,6 +16790,24 @@ var beepbox = (function (exports) {
                 }
             }
         }
+        getLargestControlPointCount(forNoteFilter) {
+            let largest;
+            if (forNoteFilter) {
+                largest = this.noteFilter.controlPointCount;
+                for (let i = 0; i < Config.filterMorphCount; i++) {
+                    if (this.noteSubFilters[i] != null && this.noteSubFilters[i].controlPointCount > largest)
+                        largest = this.noteSubFilters[i].controlPointCount;
+                }
+            }
+            else {
+                largest = this.eqFilter.controlPointCount;
+                for (let i = 0; i < Config.filterMorphCount; i++) {
+                    if (this.eqSubFilters[i] != null && this.eqSubFilters[i].controlPointCount > largest)
+                        largest = this.eqSubFilters[i].controlPointCount;
+                }
+            }
+            return largest;
+        }
         static frequencyFromPitch(pitch) {
             return 440.0 * Math.pow(2.0, (pitch - 69.0) / 12.0);
         }
@@ -12540,6 +16827,9 @@ var beepbox = (function (exports) {
         }
         supportsEnvelopeTarget(target, index) {
             const automationTarget = Config.instrumentAutomationTargets[target];
+            if (automationTarget.computeIndex == null && automationTarget.name != "none") {
+                return false;
+            }
             if (index >= automationTarget.maxCount) {
                 return false;
             }
@@ -12570,7 +16860,7 @@ var beepbox = (function (exports) {
         }
         getTransition() {
             return effectsIncludeTransition(this.effects) ? Config.transitions[this.transition] :
-                (this.type == 9 ? Config.transitions.dictionary["interrupt"] : Config.transitions.dictionary["normal"]);
+                (this.type == 10 ? Config.transitions.dictionary["interrupt"] : Config.transitions.dictionary["normal"]);
         }
         getFadeInSeconds() {
             return (this.type == 4) ? 0.0 : Synth.fadeInSettingToSeconds(this.fadeIn);
@@ -12740,7 +17030,7 @@ var beepbox = (function (exports) {
                         if (channel.instruments.length <= instrument) {
                             channel.instruments[instrument] = new Instrument(isNoiseChannel, isModChannel);
                         }
-                        channel.instruments[instrument].setTypeAndReset(isModChannel ? 9 : (isNoiseChannel ? 2 : 0), isNoiseChannel, isModChannel);
+                        channel.instruments[instrument].setTypeAndReset(isModChannel ? 10 : (isNoiseChannel ? 2 : 0), isNoiseChannel, isModChannel);
                     }
                     channel.instruments.length = Config.instrumentCountMin;
                     for (let bar = 0; bar < this.barCount; bar++) {
@@ -12970,7 +17260,7 @@ var beepbox = (function (exports) {
                         encode32BitNumber(buffer, instrument.chipWaveLoopEnd);
                         encode32BitNumber(buffer, instrument.chipWaveStartOffset);
                     }
-                    else if (instrument.type == 1 || instrument.type == 10) {
+                    else if (instrument.type == 1 || instrument.type == 11) {
                         if (instrument.type == 1) {
                             buffer.push(65, base64IntToCharCode[instrument.algorithm]);
                             buffer.push(70, base64IntToCharCode[instrument.feedbackType]);
@@ -13002,22 +17292,22 @@ var beepbox = (function (exports) {
                         }
                         buffer.push(66, base64IntToCharCode[instrument.feedbackAmplitude]);
                         buffer.push(81);
-                        for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                        for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                             buffer.push(base64IntToCharCode[instrument.operators[o].frequency]);
                         }
                         buffer.push(80);
-                        for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                        for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                             buffer.push(base64IntToCharCode[instrument.operators[o].amplitude]);
                         }
                         buffer.push(82);
-                        for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                        for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                             buffer.push(base64IntToCharCode[instrument.operators[o].waveform]);
                             if (instrument.operators[o].waveform == 2) {
                                 buffer.push(base64IntToCharCode[instrument.operators[o].pulseWidth]);
                             }
                         }
                     }
-                    else if (instrument.type == 8) {
+                    else if (instrument.type == 9) {
                         if (instrument.chipWave > 186) {
                             buffer.push(119, base64IntToCharCode[instrument.chipWave - 186]);
                             buffer.push(base64IntToCharCode[3]);
@@ -13076,22 +17366,27 @@ var beepbox = (function (exports) {
                         buffer.push(87, base64IntToCharCode[instrument.pulseWidth]);
                         buffer.push(base64IntToCharCode[instrument.decimalOffset >> 6], base64IntToCharCode[instrument.decimalOffset & 0x3f]);
                     }
-                    else if (instrument.type == 11) {
+                    else if (instrument.type == 8) {
                         buffer.push(120, base64IntToCharCode[instrument.supersawDynamism], base64IntToCharCode[instrument.supersawSpread], base64IntToCharCode[instrument.supersawShape]);
                         buffer.push(87, base64IntToCharCode[instrument.pulseWidth]);
                         buffer.push(base64IntToCharCode[instrument.decimalOffset >> 6], base64IntToCharCode[instrument.decimalOffset & 0x3f]);
                     }
                     else if (instrument.type == 7) {
+                        if (Config.stringSustainRange > 0x20 || 2 > 2) {
+                            throw new Error("Not enough bits to represent sustain value and type in same base64 character.");
+                        }
                         buffer.push(104, base64IntToCharCode[instrument.unison]);
                         if (instrument.unison == Config.unisons.length)
                             encodeUnisonSettings(buffer, instrument.unisonVoices, instrument.unisonSpread, instrument.unisonOffset, instrument.unisonExpression, instrument.unisonSign);
-                        buffer.push(73, base64IntToCharCode[instrument.stringSustain]);
+                        buffer.push(73, base64IntToCharCode[instrument.stringSustain | (instrument.stringSustainType << 5)]);
                     }
-                    else if (instrument.type == 9) ;
+                    else if (instrument.type == 10) ;
                     else {
                         throw new Error("Unknown instrument type.");
                     }
                     buffer.push(69, base64IntToCharCode[instrument.envelopeCount]);
+                    buffer.push(base64IntToCharCode[instrument.envelopeSpeed]);
+                    buffer.push(base64IntToCharCode[+instrument.discreteEnvelope]);
                     for (let envelopeIndex = 0; envelopeIndex < instrument.envelopeCount; envelopeIndex++) {
                         buffer.push(base64IntToCharCode[instrument.envelopes[envelopeIndex].target]);
                         if (Config.instrumentAutomationTargets[instrument.envelopes[envelopeIndex].target].maxCount > 1) {
@@ -13725,15 +18020,17 @@ var beepbox = (function (exports) {
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
                             let instrumentType = validateRange(0, 12 - 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                             if ((fromJummBox && beforeFive) || (beforeFour && fromGoldBox)) {
-                                if (instrumentType == 7) {
-                                    instrumentType = 8;
+                                if (instrumentType == 7 || instrumentType == 8) {
+                                    instrumentType += 2;
                                 }
-                                else if (instrumentType == 8) {
-                                    instrumentType = 9;
+                            }
+                            else if ((fromJummBox && beforeSix) || (fromGoldBox && !beforeFour) || (fromUltraBox && beforeFive)) {
+                                if (instrumentType == 8 || instrumentType == 9 || instrumentType == 10) {
+                                    instrumentType += 1;
                                 }
                             }
                             instrument.setTypeAndReset(instrumentType, instrumentChannelIterator >= this.pitchChannelCount && instrumentChannelIterator < this.pitchChannelCount + this.noiseChannelCount, instrumentChannelIterator >= this.pitchChannelCount + this.noiseChannelCount);
-                            if (((beforeSeven && fromBeepBox) || (beforeTwo && fromJummBox)) && (instrumentType == 0 || instrumentType == 8 || instrumentType == 6)) {
+                            if (((beforeSeven && fromBeepBox) || (beforeTwo && fromJummBox)) && (instrumentType == 0 || instrumentType == 9 || instrumentType == 6)) {
                                 instrument.aliases = true;
                                 instrument.distortion = 0;
                                 instrument.effects |= 1 << 3;
@@ -13758,8 +18055,22 @@ var beepbox = (function (exports) {
                             this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = presetValue;
                             if ((fromJummBox && beforeFive) || (beforeFour && fromGoldBox)) {
                                 if (this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset == 7) {
-                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = 8;
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = 9;
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].type = 9;
                                 }
+                            }
+                            else if ((fromJummBox && beforeSix) || (fromUltraBox && beforeFive)) {
+                                if (this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset == 8) {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = 9;
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].type = 9;
+                                }
+                                if (this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset == 10) {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = 11;
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].type = 11;
+                                }
+                            }
+                            if (fromBeepBox && presetValue == EditorConfig.nameToPresetValue("grand piano 1")) {
+                                this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].preset = EditorConfig.nameToPresetValue("grand piano 3");
                             }
                         }
                         break;
@@ -14043,23 +18354,16 @@ var beepbox = (function (exports) {
                                 instrument.convertLegacySettings(legacySettings, forceSimpleFilter);
                             }
                             if (fromUltraBox && !beforeFour) {
-                                const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
                                 instrument.decimalOffset = clamp(0, 99 + 1, (base64CharCodeToInt[compressed.charCodeAt(charIndex++)] << 6) + base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                             }
-                        }
-                        break;
-                    case 120:
-                        {
-                            const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
-                            instrument.supersawDynamism = clamp(0, Config.supersawDynamismMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
-                            instrument.supersawSpread = clamp(0, Config.supersawSpreadMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
-                            instrument.supersawShape = clamp(0, Config.supersawShapeMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                         }
                         break;
                     case 73:
                         {
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
-                            instrument.stringSustain = clamp(0, Config.stringSustainRange, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                            const sustainValue = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
+                            instrument.stringSustain = clamp(0, Config.stringSustainRange, sustainValue & 0x1F);
+                            instrument.stringSustainType = Config.enableAcousticSustain ? clamp(0, 2, sustainValue >> 5) : 0;
                         }
                         break;
                     case 100:
@@ -14262,7 +18566,7 @@ var beepbox = (function (exports) {
                                 this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].unison = clamp(0, Config.unisons.length + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                             }
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
-                            if (instrument.unison == Config.unisons.length) {
+                            if ((fromUltraBox && !beforeFive) && (instrument.unison == Config.unisons.length)) {
                                 instrument.unisonVoices = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
                                 const unisonSpreadNegative = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
                                 const unisonSpread = base64CharCodeToInt[compressed.charCodeAt(charIndex++)] + ((base64CharCodeToInt[compressed.charCodeAt(charIndex++)] + (base64CharCodeToInt[compressed.charCodeAt(charIndex++)] * 63)) * 63);
@@ -14608,6 +18912,39 @@ var beepbox = (function (exports) {
                             }
                         }
                         break;
+                    case 120:
+                        {
+                            if (fromGoldBox && !beforeFour && beforeSix) {
+                                const chipWaveForCompat = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
+                                if ((chipWaveForCompat + 62) > 85) {
+                                    if (document.URL.substring(document.URL.length - 13).toLowerCase() != "legacysamples") {
+                                        if (!willLoadLegacySamplesForOldSongs) {
+                                            willLoadLegacySamplesForOldSongs = true;
+                                            Config.willReloadForCustomSamples = true;
+                                            EditorConfig.customSamples = ["legacySamples"];
+                                            loadBuiltInSamples(0);
+                                        }
+                                    }
+                                }
+                                if ((chipWaveForCompat + 62) > 78) {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = clamp(0, Config.chipWaves.length, chipWaveForCompat + 63);
+                                }
+                                else if ((chipWaveForCompat + 62) > 67) {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = clamp(0, Config.chipWaves.length, chipWaveForCompat + 61);
+                                }
+                                else if ((chipWaveForCompat + 62) == 67) {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = 40;
+                                }
+                                else {
+                                    this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator].chipWave = clamp(0, Config.chipWaves.length, chipWaveForCompat + 62);
+                                }
+                            }
+                            const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
+                            instrument.supersawDynamism = clamp(0, Config.supersawDynamismMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                            instrument.supersawSpread = clamp(0, Config.supersawSpreadMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                            instrument.supersawShape = clamp(0, Config.supersawShapeMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                        }
+                        break;
                     case 70:
                         {
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
@@ -14662,18 +18999,18 @@ var beepbox = (function (exports) {
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
                             if (beforeThree && fromGoldBox) {
                                 const freqToGold3 = [4, 5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 18, 20, 22, 24, 2, 1, 9, 17, 19, 21, 23, 0, 3];
-                                for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                                for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                     instrument.operators[o].frequency = freqToGold3[clamp(0, freqToGold3.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)])];
                                 }
                             }
                             else if (!fromGoldBox && !fromUltraBox) {
                                 const freqToUltraBox = [4, 5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 18, 20, 23, 27, 2, 1, 9, 17, 19, 21, 23, 0, 3];
-                                for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                                for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                     instrument.operators[o].frequency = freqToUltraBox[clamp(0, freqToUltraBox.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)])];
                                 }
                             }
                             else {
-                                for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                                for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                     instrument.operators[o].frequency = clamp(0, Config.operatorFrequencies.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                                 }
                             }
@@ -14682,7 +19019,7 @@ var beepbox = (function (exports) {
                     case 80:
                         {
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
-                            for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                            for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                 instrument.operators[o].amplitude = clamp(0, Config.operatorAmplitudeMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                             }
                         }
@@ -14690,20 +19027,27 @@ var beepbox = (function (exports) {
                     case 69:
                         {
                             const pregoldToEnvelope = [0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14, 16, 17, 18, 19, 20, 21, 23, 24, 25, 27, 28, 29, 32, 33, 34, 31, 11];
+                            const jummToUltraEnvelope = [0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14, 16, 17, 18, 19, 20, 21, 23, 24, 25, 58, 59, 60];
                             const instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
                             if ((beforeNine && fromBeepBox) || (beforeFive && fromJummBox) || (beforeFour && fromGoldBox)) {
                                 const legacySettings = legacySettingsCache[instrumentChannelIterator][instrumentIndexIterator];
                                 legacySettings.operatorEnvelopes = [];
-                                for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                                for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                     let aa = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
-                                    if ((beforeTwo && fromGoldBox) || (!fromGoldBox && !fromUltraBox))
+                                    if ((beforeTwo && fromGoldBox) || (fromBeepBox))
                                         aa = pregoldToEnvelope[aa];
+                                    if (fromJummBox)
+                                        aa = jummToUltraEnvelope[aa];
                                     legacySettings.operatorEnvelopes[o] = Song._envelopeFromLegacyIndex(aa);
                                 }
                                 instrument.convertLegacySettings(legacySettings, forceSimpleFilter);
                             }
                             else {
                                 const envelopeCount = clamp(0, Config.maxEnvelopeCount + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                                if ((fromJummBox && !beforeSix) || (fromUltraBox && !beforeFive)) {
+                                    instrument.envelopeSpeed = clamp(0, Config.modulators.dictionary["envelope speed"].maxRawVol + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                                    instrument.discreteEnvelope = (base64CharCodeToInt[compressed.charCodeAt(charIndex++)]) ? true : false;
+                                }
                                 for (let i = 0; i < envelopeCount; i++) {
                                     const target = clamp(0, Config.instrumentAutomationTargets.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                                     let index = 0;
@@ -14712,8 +19056,10 @@ var beepbox = (function (exports) {
                                         index = clamp(0, maxCount, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                                     }
                                     let aa = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
-                                    if ((beforeTwo && fromGoldBox) || (!fromGoldBox && !fromUltraBox))
+                                    if ((beforeTwo && fromGoldBox) || (fromBeepBox))
                                         aa = pregoldToEnvelope[aa];
+                                    if (fromJummBox)
+                                        aa = jummToUltraEnvelope[aa];
                                     const envelope = clamp(0, Config.envelopes.length, aa);
                                     instrument.addEnvelope(target, index, envelope);
                                 }
@@ -14740,7 +19086,7 @@ var beepbox = (function (exports) {
                                 }
                             }
                             else {
-                                for (let o = 0; o < (instrument.type == 10 ? 6 : Config.operatorCount); o++) {
+                                for (let o = 0; o < (instrument.type == 11 ? 6 : Config.operatorCount); o++) {
                                     if (fromJummBox) {
                                         const jummToG = [0, 1, 3, 2, 4, 5];
                                         instrument.operators[o].waveform = jummToG[clamp(0, Config.operatorWaves.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)])];
@@ -15841,8 +20187,10 @@ var beepbox = (function (exports) {
             this.scale = 0;
             if (jsonObject["scale"] != undefined) {
                 const oldScaleNames = {
-                    "romani :)": "dbl harmonic :)",
-                    "romani :(": "dbl harmonic :(",
+                    "romani :)": "double harmonic :)",
+                    "romani :(": "double harmonic :(",
+                    "dbl harmonic :)": "double harmonic :)",
+                    "dbl harmonic :(": "double harmonic :(",
                     "enigma": "strange",
                 };
                 const scaleName = (oldScaleNames[jsonObject["scale"]] != undefined) ? oldScaleNames[jsonObject["scale"]] : jsonObject["scale"];
@@ -16102,40 +20450,43 @@ var beepbox = (function (exports) {
     Song._oldestBeepboxVersion = 2;
     Song._latestBeepboxVersion = 9;
     Song._oldestJummBoxVersion = 1;
-    Song._latestJummBoxVersion = 5;
+    Song._latestJummBoxVersion = 6;
     Song._oldestGoldBoxVersion = 1;
     Song._latestGoldBoxVersion = 4;
     Song._oldestUltraBoxVersion = 1;
-    Song._latestUltraBoxVersion = 4;
+    Song._latestUltraBoxVersion = 5;
     Song._variant = 0x75;
     class PickedString {
         constructor() {
             this.delayLine = null;
             this.allPassG = 0.0;
             this.allPassGDelta = 0.0;
-            this.shelfA1 = 0.0;
-            this.shelfA1Delta = 0.0;
-            this.shelfB0 = 0.0;
-            this.shelfB0Delta = 0.0;
-            this.shelfB1 = 0.0;
-            this.shelfB1Delta = 0.0;
+            this.sustainFilterA1 = 0.0;
+            this.sustainFilterA1Delta = 0.0;
+            this.sustainFilterA2 = 0.0;
+            this.sustainFilterA2Delta = 0.0;
+            this.sustainFilterB0 = 0.0;
+            this.sustainFilterB0Delta = 0.0;
+            this.sustainFilterB1 = 0.0;
+            this.sustainFilterB1Delta = 0.0;
+            this.sustainFilterB2 = 0.0;
+            this.sustainFilterB2Delta = 0.0;
             this.reset();
         }
         reset() {
             this.delayIndex = -1;
             this.allPassSample = 0.0;
             this.allPassPrevInput = 0.0;
-            this.shelfSample = 0.0;
-            this.shelfPrevInput = 0.0;
+            this.sustainFilterSample = 0.0;
+            this.sustainFilterPrevOutput2 = 0.0;
+            this.sustainFilterPrevInput1 = 0.0;
+            this.sustainFilterPrevInput2 = 0.0;
             this.fractionalDelaySample = 0.0;
             this.prevDelayLength = -1.0;
             this.delayResetOffset = 0;
         }
-        update(synth, instrumentState, tone, stringIndex, roundedSamplesPerTick, stringDecayStart, stringDecayEnd) {
+        update(synth, instrumentState, tone, stringIndex, roundedSamplesPerTick, stringDecayStart, stringDecayEnd, sustainType) {
             const allPassCenter = 2.0 * Math.PI * Config.pickedStringDispersionCenterFreq / synth.samplesPerSecond;
-            const shelfRadians = 2.0 * Math.PI * Config.pickedStringShelfHz / synth.samplesPerSecond;
-            const decayCurveStart = (Math.pow(100.0, stringDecayStart) - 1.0) / 99.0;
-            const decayCurveEnd = (Math.pow(100.0, stringDecayEnd) - 1.0) / 99.0;
             const prevDelayLength = this.prevDelayLength;
             const phaseDeltaStart = tone.phaseDeltas[stringIndex];
             const phaseDeltaScale = tone.phaseDeltaScales[stringIndex];
@@ -16146,10 +20497,14 @@ var beepbox = (function (exports) {
             const centerHarmonicEnd = radiansPerSampleEnd * 2.0;
             const allPassRadiansStart = Math.min(Math.PI, radiansPerSampleStart * Config.pickedStringDispersionFreqMult * Math.pow(allPassCenter / radiansPerSampleStart, Config.pickedStringDispersionFreqScale));
             const allPassRadiansEnd = Math.min(Math.PI, radiansPerSampleEnd * Config.pickedStringDispersionFreqMult * Math.pow(allPassCenter / radiansPerSampleEnd, Config.pickedStringDispersionFreqScale));
-            const decayRateStart = Math.pow(0.5, decayCurveStart * shelfRadians / radiansPerSampleStart);
-            const decayRateEnd = Math.pow(0.5, decayCurveEnd * shelfRadians / radiansPerSampleEnd);
-            const shelfGainStart = Math.pow(decayRateStart, Config.stringDecayRate);
-            const shelfGainEnd = Math.pow(decayRateEnd, Config.stringDecayRate);
+            const shelfRadians = 2.0 * Math.PI * Config.pickedStringShelfHz / synth.samplesPerSecond;
+            const decayCurveStart = (Math.pow(100.0, stringDecayStart) - 1.0) / 99.0;
+            const decayCurveEnd = (Math.pow(100.0, stringDecayEnd) - 1.0) / 99.0;
+            const register = sustainType == 1 ? 0.25 : 0.0;
+            const registerShelfCenter = 15.6;
+            const registerLowpassCenter = 3.0 * synth.samplesPerSecond / 48000;
+            const decayRateStart = Math.pow(0.5, decayCurveStart * Math.pow(shelfRadians / (radiansPerSampleStart * registerShelfCenter), (1.0 + 2.0 * register)) * registerShelfCenter);
+            const decayRateEnd = Math.pow(0.5, decayCurveEnd * Math.pow(shelfRadians / (radiansPerSampleEnd * registerShelfCenter), (1.0 + 2.0 * register)) * registerShelfCenter);
             const expressionDecayStart = Math.pow(decayRateStart, 0.002);
             const expressionDecayEnd = Math.pow(decayRateEnd, 0.002);
             Synth.tempFilterStartCoefficients.allPass1stOrderInvertPhaseAbove(allPassRadiansStart);
@@ -16160,33 +20515,57 @@ var beepbox = (function (exports) {
             synth.tempFrequencyResponse.analyze(Synth.tempFilterEndCoefficients, centerHarmonicEnd);
             const allPassGEnd = Synth.tempFilterEndCoefficients.b[0];
             const allPassPhaseDelayEnd = -synth.tempFrequencyResponse.angle() / centerHarmonicEnd;
-            Synth.tempFilterStartCoefficients.highShelf1stOrder(shelfRadians, shelfGainStart);
+            const brightnessType = sustainType == 0 ? 0 : 1;
+            if (brightnessType == 0) {
+                const shelfGainStart = Math.pow(decayRateStart, Config.stringDecayRate);
+                const shelfGainEnd = Math.pow(decayRateEnd, Config.stringDecayRate);
+                Synth.tempFilterStartCoefficients.highShelf2ndOrder(shelfRadians, shelfGainStart, 0.5);
+                Synth.tempFilterEndCoefficients.highShelf2ndOrder(shelfRadians, shelfGainEnd, 0.5);
+            }
+            else {
+                const cornerHardness = Math.pow(brightnessType == 1 ? 0.0 : 1.0, 0.25);
+                const lowpass1stOrderCutoffRadiansStart = Math.pow(registerLowpassCenter * registerLowpassCenter * radiansPerSampleStart * 3.3 * 48000 / synth.samplesPerSecond, 0.5 + register) / registerLowpassCenter / Math.pow(decayCurveStart, .5);
+                const lowpass1stOrderCutoffRadiansEnd = Math.pow(registerLowpassCenter * registerLowpassCenter * radiansPerSampleEnd * 3.3 * 48000 / synth.samplesPerSecond, 0.5 + register) / registerLowpassCenter / Math.pow(decayCurveEnd, .5);
+                const lowpass2ndOrderCutoffRadiansStart = lowpass1stOrderCutoffRadiansStart * Math.pow(2.0, 0.5 - 1.75 * (1.0 - Math.pow(1.0 - cornerHardness, 0.85)));
+                const lowpass2ndOrderCutoffRadiansEnd = lowpass1stOrderCutoffRadiansEnd * Math.pow(2.0, 0.5 - 1.75 * (1.0 - Math.pow(1.0 - cornerHardness, 0.85)));
+                const lowpass2ndOrderGainStart = Math.pow(2.0, -Math.pow(2.0, -Math.pow(cornerHardness, 0.9)));
+                const lowpass2ndOrderGainEnd = Math.pow(2.0, -Math.pow(2.0, -Math.pow(cornerHardness, 0.9)));
+                Synth.tempFilterStartCoefficients.lowPass2ndOrderButterworth(warpInfinityToNyquist(lowpass2ndOrderCutoffRadiansStart), lowpass2ndOrderGainStart);
+                Synth.tempFilterEndCoefficients.lowPass2ndOrderButterworth(warpInfinityToNyquist(lowpass2ndOrderCutoffRadiansEnd), lowpass2ndOrderGainEnd);
+            }
             synth.tempFrequencyResponse.analyze(Synth.tempFilterStartCoefficients, centerHarmonicStart);
-            const shelfA1Start = Synth.tempFilterStartCoefficients.a[1];
-            const shelfB0Start = Synth.tempFilterStartCoefficients.b[0] * expressionDecayStart;
-            const shelfB1Start = Synth.tempFilterStartCoefficients.b[1] * expressionDecayStart;
-            const shelfPhaseDelayStart = -synth.tempFrequencyResponse.angle() / centerHarmonicStart;
-            Synth.tempFilterEndCoefficients.highShelf1stOrder(shelfRadians, shelfGainEnd);
+            const sustainFilterA1Start = Synth.tempFilterStartCoefficients.a[1];
+            const sustainFilterA2Start = Synth.tempFilterStartCoefficients.a[2];
+            const sustainFilterB0Start = Synth.tempFilterStartCoefficients.b[0] * expressionDecayStart;
+            const sustainFilterB1Start = Synth.tempFilterStartCoefficients.b[1] * expressionDecayStart;
+            const sustainFilterB2Start = Synth.tempFilterStartCoefficients.b[2] * expressionDecayStart;
+            const sustainFilterPhaseDelayStart = -synth.tempFrequencyResponse.angle() / centerHarmonicStart;
             synth.tempFrequencyResponse.analyze(Synth.tempFilterEndCoefficients, centerHarmonicEnd);
-            const shelfA1End = Synth.tempFilterEndCoefficients.a[1];
-            const shelfB0End = Synth.tempFilterEndCoefficients.b[0] * expressionDecayEnd;
-            const shelfB1End = Synth.tempFilterEndCoefficients.b[1] * expressionDecayEnd;
-            const shelfPhaseDelayEnd = -synth.tempFrequencyResponse.angle() / centerHarmonicEnd;
+            const sustainFilterA1End = Synth.tempFilterEndCoefficients.a[1];
+            const sustainFilterA2End = Synth.tempFilterEndCoefficients.a[2];
+            const sustainFilterB0End = Synth.tempFilterEndCoefficients.b[0] * expressionDecayEnd;
+            const sustainFilterB1End = Synth.tempFilterEndCoefficients.b[1] * expressionDecayEnd;
+            const sustainFilterB2End = Synth.tempFilterEndCoefficients.b[2] * expressionDecayEnd;
+            const sustainFilterPhaseDelayEnd = -synth.tempFrequencyResponse.angle() / centerHarmonicEnd;
             const periodLengthStart = 1.0 / phaseDeltaStart;
             const periodLengthEnd = 1.0 / phaseDeltaEnd;
             const minBufferLength = Math.ceil(Math.max(periodLengthStart, periodLengthEnd) * 2);
-            const delayLength = periodLengthStart - allPassPhaseDelayStart - shelfPhaseDelayStart;
-            const delayLengthEnd = periodLengthEnd - allPassPhaseDelayEnd - shelfPhaseDelayEnd;
+            const delayLength = periodLengthStart - allPassPhaseDelayStart - sustainFilterPhaseDelayStart;
+            const delayLengthEnd = periodLengthEnd - allPassPhaseDelayEnd - sustainFilterPhaseDelayEnd;
             this.prevDelayLength = delayLength;
             this.delayLengthDelta = (delayLengthEnd - delayLength) / roundedSamplesPerTick;
             this.allPassG = allPassGStart;
-            this.shelfA1 = shelfA1Start;
-            this.shelfB0 = shelfB0Start;
-            this.shelfB1 = shelfB1Start;
+            this.sustainFilterA1 = sustainFilterA1Start;
+            this.sustainFilterA2 = sustainFilterA2Start;
+            this.sustainFilterB0 = sustainFilterB0Start;
+            this.sustainFilterB1 = sustainFilterB1Start;
+            this.sustainFilterB2 = sustainFilterB2Start;
             this.allPassGDelta = (allPassGEnd - allPassGStart) / roundedSamplesPerTick;
-            this.shelfA1Delta = (shelfA1End - shelfA1Start) / roundedSamplesPerTick;
-            this.shelfB0Delta = (shelfB0End - shelfB0Start) / roundedSamplesPerTick;
-            this.shelfB1Delta = (shelfB1End - shelfB1Start) / roundedSamplesPerTick;
+            this.sustainFilterA1Delta = (sustainFilterA1End - sustainFilterA1Start) / roundedSamplesPerTick;
+            this.sustainFilterA2Delta = (sustainFilterA2End - sustainFilterA2Start) / roundedSamplesPerTick;
+            this.sustainFilterB0Delta = (sustainFilterB0End - sustainFilterB0Start) / roundedSamplesPerTick;
+            this.sustainFilterB1Delta = (sustainFilterB1End - sustainFilterB1Start) / roundedSamplesPerTick;
+            this.sustainFilterB2Delta = (sustainFilterB2End - sustainFilterB2Start) / roundedSamplesPerTick;
             const pitchChanged = Math.abs(Math.log2(delayLength / prevDelayLength)) > 0.01;
             const reinitializeImpulse = (this.delayIndex == -1 || pitchChanged);
             if (this.delayLine == null || this.delayLine.length <= minBufferLength) {
@@ -16208,8 +20587,10 @@ var beepbox = (function (exports) {
                 this.delayIndex = 0;
                 this.allPassSample = 0.0;
                 this.allPassPrevInput = 0.0;
-                this.shelfSample = 0.0;
-                this.shelfPrevInput = 0.0;
+                this.sustainFilterSample = 0.0;
+                this.sustainFilterPrevOutput2 = 0.0;
+                this.sustainFilterPrevInput1 = 0.0;
+                this.sustainFilterPrevInput2 = 0.0;
                 this.fractionalDelaySample = 0.0;
                 const startImpulseFrom = -delayLength;
                 const startZerosFrom = Math.floor(startImpulseFrom - periodLengthStart / 2);
@@ -16290,7 +20671,8 @@ var beepbox = (function (exports) {
             this._prevNoteSizeFinal = Config.noteSizeMax;
             this._modifiedEnvelopeCount = 0;
         }
-        computeEnvelopes(instrument, currentPart, tickTimeStart, secondsPerTick, tone) {
+        computeEnvelopes(instrument, currentPart, tickTimeStart, tickTimeStartReal, secondsPerTick, tone, timeScale) {
+            secondsPerTick *= timeScale;
             const transition = instrument.getTransition();
             if (tone != null && tone.atNoteStart && !transition.continues && !tone.forceContinueAtStart) {
                 this.prevNoteSecondsEnd = this.noteSecondsEnd;
@@ -16307,7 +20689,8 @@ var beepbox = (function (exports) {
                     this._noteSizeFinal = Config.noteSizeMax;
                 }
             }
-            const tickTimeEnd = tickTimeStart + 1.0;
+            const tickTimeEnd = tickTimeStart + timeScale;
+            const tickTimeEndReal = tickTimeStartReal + 1.0;
             const noteSecondsStart = this.noteSecondsEnd;
             const noteSecondsEnd = noteSecondsStart + secondsPerTick;
             const noteTicksStart = this.noteTicksEnd;
@@ -16337,8 +20720,8 @@ var beepbox = (function (exports) {
                 const endPin = tone.note.pins[endPinIndex];
                 const startPinTick = (tone.note.start + startPin.time) * Config.ticksPerPart;
                 const endPinTick = (tone.note.start + endPin.time) * Config.ticksPerPart;
-                const ratioStart = (tickTimeStart - startPinTick) / (endPinTick - startPinTick);
-                const ratioEnd = (tickTimeEnd - startPinTick) / (endPinTick - startPinTick);
+                const ratioStart = (tickTimeStartReal - startPinTick) / (endPinTick - startPinTick);
+                const ratioEnd = (tickTimeEndReal - startPinTick) / (endPinTick - startPinTick);
                 noteSizeStart = startPin.size + (endPin.size - startPin.size) * ratioStart;
                 noteSizeEnd = startPin.size + (endPin.size - startPin.size) * ratioEnd;
                 if (transition.slides) {
@@ -16348,24 +20731,24 @@ var beepbox = (function (exports) {
                     const maximumSlideTicks = noteLengthTicks * 0.5;
                     const slideTicks = Math.min(maximumSlideTicks, transition.slideTicks);
                     if (tone.prevNote != null && !tone.forceContinueAtStart) {
-                        if (tickTimeStart - noteStartTick < slideTicks) {
+                        if (tickTimeStartReal - noteStartTick < slideTicks) {
                             prevSlideStart = true;
-                            prevSlideRatioStart = 0.5 * (1.0 - (tickTimeStart - noteStartTick) / slideTicks);
+                            prevSlideRatioStart = 0.5 * (1.0 - (tickTimeStartReal - noteStartTick) / slideTicks);
                         }
-                        if (tickTimeEnd - noteStartTick < slideTicks) {
+                        if (tickTimeEndReal - noteStartTick < slideTicks) {
                             prevSlideEnd = true;
-                            prevSlideRatioEnd = 0.5 * (1.0 - (tickTimeEnd - noteStartTick) / slideTicks);
+                            prevSlideRatioEnd = 0.5 * (1.0 - (tickTimeEndReal - noteStartTick) / slideTicks);
                         }
                     }
                     if (tone.nextNote != null && !tone.forceContinueAtEnd) {
                         nextNoteSize = tone.nextNote.pins[0].size;
-                        if (noteEndTick - tickTimeStart < slideTicks) {
+                        if (noteEndTick - tickTimeStartReal < slideTicks) {
                             nextSlideStart = true;
-                            nextSlideRatioStart = 0.5 * (1.0 - (noteEndTick - tickTimeStart) / slideTicks);
+                            nextSlideRatioStart = 0.5 * (1.0 - (noteEndTick - tickTimeStartReal) / slideTicks);
                         }
-                        if (noteEndTick - tickTimeEnd < slideTicks) {
+                        if (noteEndTick - tickTimeEndReal < slideTicks) {
                             nextSlideEnd = true;
-                            nextSlideRatioEnd = 0.5 * (1.0 - (noteEndTick - tickTimeEnd) / slideTicks);
+                            nextSlideRatioEnd = 0.5 * (1.0 - (noteEndTick - tickTimeEndReal) / slideTicks);
                         }
                     }
                 }
@@ -16394,22 +20777,25 @@ var beepbox = (function (exports) {
                 if (automationTarget.computeIndex != null) {
                     const computeIndex = automationTarget.computeIndex + targetIndex;
                     let envelopeStart = EnvelopeComputer.computeEnvelope(envelope, noteSecondsStart, beatTimeStart, noteSizeStart);
-                    let envelopeEnd = EnvelopeComputer.computeEnvelope(envelope, noteSecondsEnd, beatTimeEnd, noteSizeEnd);
                     if (prevSlideStart) {
                         const other = EnvelopeComputer.computeEnvelope(envelope, prevNoteSecondsStart, beatTimeStart, prevNoteSize);
                         envelopeStart += (other - envelopeStart) * prevSlideRatioStart;
-                    }
-                    if (prevSlideEnd) {
-                        const other = EnvelopeComputer.computeEnvelope(envelope, prevNoteSecondsEnd, beatTimeEnd, prevNoteSize);
-                        envelopeEnd += (other - envelopeEnd) * prevSlideRatioEnd;
                     }
                     if (nextSlideStart) {
                         const other = EnvelopeComputer.computeEnvelope(envelope, 0.0, beatTimeStart, nextNoteSize);
                         envelopeStart += (other - envelopeStart) * nextSlideRatioStart;
                     }
-                    if (nextSlideEnd) {
-                        const other = EnvelopeComputer.computeEnvelope(envelope, 0.0, beatTimeEnd, nextNoteSize);
-                        envelopeEnd += (other - envelopeEnd) * nextSlideRatioEnd;
+                    let envelopeEnd = envelopeStart;
+                    if (instrument.discreteEnvelope == false) {
+                        envelopeEnd = EnvelopeComputer.computeEnvelope(envelope, noteSecondsEnd, beatTimeEnd, noteSizeEnd);
+                        if (prevSlideEnd) {
+                            const other = EnvelopeComputer.computeEnvelope(envelope, prevNoteSecondsEnd, beatTimeEnd, prevNoteSize);
+                            envelopeEnd += (other - envelopeEnd) * prevSlideRatioEnd;
+                        }
+                        if (nextSlideEnd) {
+                            const other = EnvelopeComputer.computeEnvelope(envelope, 0.0, beatTimeEnd, nextNoteSize);
+                            envelopeEnd += (other - envelopeEnd) * nextSlideRatioEnd;
+                        }
                     }
                     this.envelopeStarts[computeIndex] *= envelopeStart;
                     this.envelopeEnds[computeIndex] *= envelopeEnd;
@@ -16465,6 +20851,7 @@ var beepbox = (function (exports) {
                     const attack = 0.25 / Math.sqrt(envelope.speed);
                     return time < attack ? time / attack : 1.0 / (1.0 + (time - attack) * envelope.speed);
                 case 8: return Math.pow(2, -envelope.speed * time);
+                case 13: return 1.0 * +(time < (0.25 / Math.sqrt(envelope.speed)));
                 case 9:
                     let temp = 0.5 - Math.cos(beats * envelope.speed) * 0.5;
                     temp = 1.0 / (1.0 + time * (envelope.speed - (temp / (1.5 / envelope.speed))));
@@ -16631,6 +21018,10 @@ var beepbox = (function (exports) {
             this.effects = 0;
             this.volumeScale = 0;
             this.aliases = false;
+            this.arpTime = 0;
+            this.vibratoTime = 0;
+            this.nextVibratoTime = 0;
+            this.envelopeTime = 0;
             this.eqFilterVolume = 1.0;
             this.eqFilterVolumeDelta = 0.0;
             this.mixVolume = 1.0;
@@ -16801,6 +21192,10 @@ var beepbox = (function (exports) {
         }
         resetAllEffects() {
             this.deactivate();
+            this.vibratoTime = 0;
+            this.nextVibratoTime = 0;
+            this.arpTime = 0;
+            this.envelopeTime = 0;
             if (this.chorusDelayLineDirty) {
                 for (let i = 0; i < this.chorusDelayLineL.length; i++)
                     this.chorusDelayLineL[i] = 0.0;
@@ -17164,7 +21559,7 @@ var beepbox = (function (exports) {
                 this.unisonExpression = instrument.unisonExpression;
                 this.unisonSign = instrument.unisonSign;
             }
-            else if (instrument.type == 8) {
+            else if (instrument.type == 9) {
                 this.wave = (this.aliases) ? instrument.customChipWave : instrument.customChipWaveIntegral;
                 this.volumeScale = 0.05;
                 this.unisonVoices = instrument.unisonVoices;
@@ -17251,6 +21646,19 @@ var beepbox = (function (exports) {
                 }
             }
         }
+        initModFilters(song) {
+            if (song != null) {
+                for (let channelIndex = 0; channelIndex < song.getChannelCount(); channelIndex++) {
+                    for (let instrumentIndex = 0; instrumentIndex < song.channels[channelIndex].instruments.length; instrumentIndex++) {
+                        const instrument = song.channels[channelIndex].instruments[instrumentIndex];
+                        instrument.tmpEqFilterStart = instrument.eqFilter;
+                        instrument.tmpEqFilterEnd = null;
+                        instrument.tmpNoteFilterStart = instrument.noteFilter;
+                        instrument.tmpNoteFilterEnd = null;
+                    }
+                }
+            }
+        }
         warmUpSynthesizer(song) {
             if (song != null) {
                 this.syncSongState();
@@ -17260,13 +21668,10 @@ var beepbox = (function (exports) {
                         const instrument = song.channels[channelIndex].instruments[instrumentIndex];
                         const instrumentState = this.channels[channelIndex].instruments[instrumentIndex];
                         Synth.getInstrumentSynthFunction(instrument);
-                        instrument.LFOtime = 0;
-                        instrument.nextLFOtime = 0;
-                        instrument.arpTime = 0;
-                        instrument.tmpEqFilterStart = instrument.eqFilter;
-                        instrument.tmpEqFilterEnd = null;
-                        instrument.tmpNoteFilterStart = instrument.noteFilter;
-                        instrument.tmpNoteFilterEnd = null;
+                        instrumentState.vibratoTime = 0;
+                        instrumentState.nextVibratoTime = 0;
+                        instrumentState.envelopeTime = 0;
+                        instrumentState.arpTime = 0;
                         instrumentState.updateWaves(instrument, this.samplesPerSecond);
                         instrumentState.allocateNecessaryBuffers(this, instrument, samplesPerTick);
                     }
@@ -17285,6 +21690,7 @@ var beepbox = (function (exports) {
                 this.nextModValues = [];
                 this.modInsValues = [];
                 this.nextModInsValues = [];
+                this.heldMods = [];
                 for (let channel = 0; channel < this.song.pitchChannelCount + this.song.noiseChannelCount; channel++) {
                     latestModInsTimes[channel] = [];
                     this.modInsValues[channel] = [];
@@ -17310,7 +21716,11 @@ var beepbox = (function (exports) {
                                     ? currentPart
                                     : this.findPartsInBar(currentBar);
                                 for (const note of pattern.notes) {
-                                    if (note.start < partsInBar && (latestPinParts[Config.modCount - 1 - note.pitches[0]] == null || note.end > latestPinParts[Config.modCount - 1 - note.pitches[0]])) {
+                                    if (note.start <= partsInBar && (latestPinParts[Config.modCount - 1 - note.pitches[0]] == null || note.end > latestPinParts[Config.modCount - 1 - note.pitches[0]])) {
+                                        if (note.start == partsInBar) {
+                                            latestPinParts[Config.modCount - 1 - note.pitches[0]] = note.start;
+                                            latestPinValues[Config.modCount - 1 - note.pitches[0]] = note.pins[0].size;
+                                        }
                                         if (note.end <= partsInBar) {
                                             latestPinParts[Config.modCount - 1 - note.pitches[0]] = note.end;
                                             latestPinValues[Config.modCount - 1 - note.pitches[0]] = note.pins[note.pins.length - 1].size;
@@ -17333,7 +21743,7 @@ var beepbox = (function (exports) {
                                     if (latestPinParts[mod] != null) {
                                         if (Config.modulators[instrument.modulators[mod]].forSong) {
                                             if (latestModTimes[instrument.modulators[mod]] == null || currentBar * Config.partsPerBeat * this.song.beatsPerBar + latestPinParts[mod] > latestModTimes[instrument.modulators[mod]]) {
-                                                this.setModValue(latestPinValues[mod], latestPinValues[mod], mod, instrument.modChannels[mod], instrument.modInstruments[mod], instrument.modulators[mod]);
+                                                this.setModValue(latestPinValues[mod], latestPinValues[mod], instrument.modChannels[mod], instrument.modInstruments[mod], instrument.modulators[mod]);
                                                 latestModTimes[instrument.modulators[mod]] = currentBar * Config.partsPerBeat * this.song.beatsPerBar + latestPinParts[mod];
                                             }
                                         }
@@ -17357,10 +21767,10 @@ var beepbox = (function (exports) {
                                                 const noteFilterParam = instrument.modulators[mod] == Config.modulators.dictionary["note filter"].index;
                                                 let modulatorAdjust = instrument.modulators[mod];
                                                 if (eqFilterParam) {
-                                                    modulatorAdjust = Config.modulators.length + instrument.modFilterTypes[mod];
+                                                    modulatorAdjust = Config.modulators.length + (instrument.modFilterTypes[mod] | 0);
                                                 }
                                                 else if (noteFilterParam) {
-                                                    modulatorAdjust = Config.modulators.length + 1 + (2 * Config.filterMaxPoints) + instrument.modFilterTypes[mod];
+                                                    modulatorAdjust = Config.modulators.length + 1 + (2 * Config.filterMaxPoints) + (instrument.modFilterTypes[mod] | 0);
                                                 }
                                                 if (latestModInsTimes[instrument.modChannels[mod]][usedInstruments[instrumentIndex]][modulatorAdjust] == null
                                                     || currentBar * Config.partsPerBeat * this.song.beatsPerBar + latestPinParts[mod] > latestModInsTimes[instrument.modChannels[mod]][usedInstruments[instrumentIndex]][modulatorAdjust]) {
@@ -17371,13 +21781,13 @@ var beepbox = (function (exports) {
                                                         }
                                                         else {
                                                             for (let i = 0; i < Config.filterMorphCount; i++) {
-                                                                if (tgtInstrument.tmpEqFilterStart == tgtInstrument.eqSubFilters[i]) {
+                                                                if (tgtInstrument.tmpEqFilterStart != null && tgtInstrument.tmpEqFilterStart == tgtInstrument.eqSubFilters[i]) {
                                                                     tgtInstrument.tmpEqFilterStart = new FilterSettings();
                                                                     tgtInstrument.tmpEqFilterStart.fromJsonObject(tgtInstrument.eqSubFilters[i].toJsonObject());
                                                                     i = Config.filterMorphCount;
                                                                 }
                                                             }
-                                                            if (Math.floor((instrument.modFilterTypes[mod] - 1) / 2) < tgtInstrument.tmpEqFilterStart.controlPointCount) {
+                                                            if (tgtInstrument.tmpEqFilterStart != null && Math.floor((instrument.modFilterTypes[mod] - 1) / 2) < tgtInstrument.tmpEqFilterStart.controlPointCount) {
                                                                 if (instrument.modFilterTypes[mod] % 2)
                                                                     tgtInstrument.tmpEqFilterStart.controlPoints[Math.floor((instrument.modFilterTypes[mod] - 1) / 2)].freq = latestPinValues[mod];
                                                                 else
@@ -17393,13 +21803,13 @@ var beepbox = (function (exports) {
                                                         }
                                                         else {
                                                             for (let i = 0; i < Config.filterMorphCount; i++) {
-                                                                if (tgtInstrument.tmpNoteFilterStart == tgtInstrument.noteSubFilters[i]) {
+                                                                if (tgtInstrument.tmpNoteFilterStart != null && tgtInstrument.tmpNoteFilterStart == tgtInstrument.noteSubFilters[i]) {
                                                                     tgtInstrument.tmpNoteFilterStart = new FilterSettings();
                                                                     tgtInstrument.tmpNoteFilterStart.fromJsonObject(tgtInstrument.noteSubFilters[i].toJsonObject());
                                                                     i = Config.filterMorphCount;
                                                                 }
                                                             }
-                                                            if (Math.floor((instrument.modFilterTypes[mod] - 1) / 2) < tgtInstrument.tmpNoteFilterStart.controlPointCount) {
+                                                            if (tgtInstrument.tmpNoteFilterStart != null && Math.floor((instrument.modFilterTypes[mod] - 1) / 2) < tgtInstrument.tmpNoteFilterStart.controlPointCount) {
                                                                 if (instrument.modFilterTypes[mod] % 2)
                                                                     tgtInstrument.tmpNoteFilterStart.controlPoints[Math.floor((instrument.modFilterTypes[mod] - 1) / 2)].freq = latestPinValues[mod];
                                                                 else
@@ -17409,7 +21819,7 @@ var beepbox = (function (exports) {
                                                         tgtInstrument.tmpNoteFilterEnd = tgtInstrument.tmpNoteFilterStart;
                                                     }
                                                     else
-                                                        this.setModValue(latestPinValues[mod], latestPinValues[mod], mod, instrument.modChannels[mod], usedInstruments[instrumentIndex], modulatorAdjust);
+                                                        this.setModValue(latestPinValues[mod], latestPinValues[mod], instrument.modChannels[mod], usedInstruments[instrumentIndex], modulatorAdjust);
                                                     latestModInsTimes[instrument.modChannels[mod]][usedInstruments[instrumentIndex]][modulatorAdjust] = currentBar * Config.partsPerBeat * this.song.beatsPerBar + latestPinParts[mod];
                                                 }
                                             }
@@ -17448,16 +21858,17 @@ var beepbox = (function (exports) {
                         continue;
                     const str = Config.modulators[instrument.modulators[mod]].name;
                     if (!((Config.modulators[instrument.modulators[mod]].associatedEffect != 12 && !(tgtInstrument.effects & (1 << Config.modulators[instrument.modulators[mod]].associatedEffect)))
-                        || ((tgtInstrument.type != 1 && tgtInstrument.type != 10) && (str == "fm slider 1" || str == "fm slider 2" || str == "fm slider 3" || str == "fm slider 4" || str == "fm feedback"))
-                        || ((tgtInstrument.type != 6 && tgtInstrument.type != 11) && (str == "pulse width"))
-                        || tgtInstrument.type != 10 && (str == "fm slider 5" || str == "fm slider 6")
+                        || ((tgtInstrument.type != 1 && tgtInstrument.type != 11) && (str == "fm slider 1" || str == "fm slider 2" || str == "fm slider 3" || str == "fm slider 4" || str == "fm feedback"))
+                        || tgtInstrument.type != 11 && (str == "fm slider 5" || str == "fm slider 6")
+                        || ((tgtInstrument.type != 6 && tgtInstrument.type != 8) && (str == "pulse width" || str == "decimal offset"))
+                        || ((tgtInstrument.type != 8) && (str == "dynamism" || str == "spread" || str == "saw shape"))
                         || (!tgtInstrument.getChord().arpeggiates && (str == "arp speed" || str == "reset arp"))
                         || (tgtInstrument.eqFilterType && str == "eq filter")
                         || (!tgtInstrument.eqFilterType && (str == "eq filt cut" || str == "eq filt peak"))
-                        || (str == "eq filter" && Math.floor((instrument.modFilterTypes[mod] + 1) / 2) > tgtInstrument.eqFilter.controlPointCount)
+                        || (str == "eq filter" && Math.floor((instrument.modFilterTypes[mod] + 1) / 2) > tgtInstrument.getLargestControlPointCount(false))
                         || (tgtInstrument.noteFilterType && str == "note filter")
                         || (!tgtInstrument.noteFilterType && (str == "note filt cut" || str == "note filt peak"))
-                        || (str == "note filter" && Math.floor((instrument.modFilterTypes[mod] + 1) / 2) > tgtInstrument.noteFilter.controlPointCount))) {
+                        || (str == "note filter" && Math.floor((instrument.modFilterTypes[mod] + 1) / 2) > tgtInstrument.getLargestControlPointCount(true)))) {
                         instrument.invalidModulators[mod] = false;
                         i = tgtInstrumentList.length;
                     }
@@ -17533,7 +21944,7 @@ var beepbox = (function (exports) {
             let hasTempoMods = false;
             let hasNextBarMods = false;
             let prevTempo = this.song.tempo;
-            for (let channel = this.song.pitchChannelCount + this.song.noiseChannelCount; channel < this.song.getChannelCount(); channel++) {
+            for (let channel = this.song.getChannelCount() - 1; channel >= this.song.pitchChannelCount + this.song.noiseChannelCount; channel--) {
                 for (let bar = startBar; bar < endBar; bar++) {
                     let pattern = this.song.getPattern(channel, bar);
                     if (pattern != null) {
@@ -17553,7 +21964,7 @@ var beepbox = (function (exports) {
                 let latestTempoPin = null;
                 let latestTempoValue = 0;
                 for (let bar = startBar - 1; bar >= 0; bar--) {
-                    for (let channel = this.song.pitchChannelCount + this.song.noiseChannelCount; channel < this.song.getChannelCount(); channel++) {
+                    for (let channel = this.song.getChannelCount() - 1; channel >= this.song.pitchChannelCount + this.song.noiseChannelCount; channel--) {
                         let pattern = this.song.getPattern(channel, bar);
                         if (pattern != null) {
                             let instrumentIdx = pattern.instruments[0];
@@ -17601,7 +22012,7 @@ var beepbox = (function (exports) {
                     }
                     if (hasTempoMods) {
                         let foundMod = false;
-                        for (let channel = this.song.pitchChannelCount + this.song.noiseChannelCount; channel < this.song.getChannelCount(); channel++) {
+                        for (let channel = this.song.getChannelCount() - 1; channel >= this.song.pitchChannelCount + this.song.noiseChannelCount; channel--) {
                             if (foundMod == false) {
                                 let pattern = this.song.getPattern(channel, bar);
                                 if (pattern != null) {
@@ -17676,10 +22087,15 @@ var beepbox = (function (exports) {
             this.preferLowerLatency = false;
             this.anticipatePoorPerformance = false;
             this.liveInputDuration = 0;
+            this.liveBassInputDuration = 0;
             this.liveInputStarted = false;
+            this.liveBassInputStarted = false;
             this.liveInputPitches = [];
+            this.liveBassInputPitches = [];
             this.liveInputChannel = 0;
+            this.liveBassInputChannel = 0;
             this.liveInputInstruments = [];
+            this.liveBassInputInstruments = [];
             this.loopRepeatCount = -1;
             this.volume = 1.0;
             this.oscRefreshEventTimer = 0;
@@ -17687,6 +22103,7 @@ var beepbox = (function (exports) {
             this.enableMetronome = false;
             this.countInMetronome = false;
             this.renderingSong = false;
+            this.heldMods = [];
             this.wantToSkip = false;
             this.playheadInternal = 0.0;
             this.bar = 0;
@@ -17708,6 +22125,7 @@ var beepbox = (function (exports) {
             this.browserAutomaticallyClearsAudioBuffer = true;
             this.tempDrumSetControlPoint = new FilterControlPoint();
             this.tempFrequencyResponse = new FrequencyResponse();
+            this.loopBar = -1;
             this.channels = [];
             this.tonePool = new Deque();
             this.tempMatchedPitchTones = Array(Config.maxChordSize).fill(null);
@@ -17802,10 +22220,11 @@ var beepbox = (function (exports) {
         play() {
             if (this.isPlayingSong)
                 return;
+            this.initModFilters(this.song);
             this.computeLatestModValues();
+            this.activateAudio();
             this.warmUpSynthesizer(this.song);
             this.isPlayingSong = true;
-            this.activateAudio();
         }
         pause() {
             if (!this.isPlayingSong)
@@ -17814,6 +22233,7 @@ var beepbox = (function (exports) {
             this.isRecording = false;
             this.modValues = [];
             this.nextModValues = [];
+            this.heldMods = [];
             if (this.song != null) {
                 this.song.inVolumeCap = 0.0;
                 this.song.outVolumeCap = 0.0;
@@ -17839,7 +22259,7 @@ var beepbox = (function (exports) {
                 }
             }
         }
-        setModValue(volumeStart, volumeEnd, mod, channelIndex, instrumentIndex, setting) {
+        setModValue(volumeStart, volumeEnd, channelIndex, instrumentIndex, setting) {
             let val = volumeStart + Config.modulators[setting].convertRealFactor;
             let nextVal = volumeEnd + Config.modulators[setting].convertRealFactor;
             if (Config.modulators[setting].optionalModify == "invert-0to50") {
@@ -17893,6 +22313,16 @@ var beepbox = (function (exports) {
             if (this.isModActive(setting) || (channel != undefined && instrument != undefined && this.isModActive(setting, channel, instrument))) {
                 this.modValues[setting] = null;
                 this.nextModValues[setting] = null;
+                for (let i = 0; i < this.heldMods.length; i++) {
+                    if (channel != undefined && instrument != undefined) {
+                        if (this.heldMods[i].channelIndex == channel && this.heldMods[i].instrumentIndex == instrument && this.heldMods[i].setting == setting)
+                            this.heldMods.splice(i, 1);
+                    }
+                    else {
+                        if (this.heldMods[i].setting == setting)
+                            this.heldMods.splice(i, 1);
+                    }
+                }
                 if (channel != undefined && instrument != undefined) {
                     this.modInsValues[channel][instrument][setting] = null;
                     this.nextModInsValues[channel][instrument][setting] = null;
@@ -17924,6 +22354,18 @@ var beepbox = (function (exports) {
                 return (this.modInsValues[channel][instrument][setting] != null);
             }
             return false;
+        }
+        forceHoldMods(volumeStart, channelIndex, instrumentIndex, setting) {
+            let found = false;
+            for (let i = 0; i < this.heldMods.length; i++) {
+                if (this.heldMods[i].channelIndex == channelIndex && this.heldMods[i].instrumentIndex == instrumentIndex && this.heldMods[i].setting == setting) {
+                    this.heldMods[i].volume = volumeStart;
+                    this.heldMods[i].holdFor = 24;
+                    found = true;
+                }
+            }
+            if (!found)
+                this.heldMods.push({ volume: volumeStart, channelIndex: channelIndex, instrumentIndex: instrumentIndex, setting: setting, holdFor: 24 });
         }
         snapToStart() {
             this.bar = 0;
@@ -17985,6 +22427,9 @@ var beepbox = (function (exports) {
                 if (nextBar >= this.song.barCount) {
                     nextBar = this.song.barCount - 1;
                 }
+            }
+            else if (this.bar == this.loopBar && !this.renderingSong) {
+                nextBar = this.bar;
             }
             else if (this.loopRepeatCount != 0 && nextBar == this.song.loopStart + this.song.loopLength) {
                 nextBar = this.song.loopStart;
@@ -18050,8 +22495,8 @@ var beepbox = (function (exports) {
                 this.tempMonoInstrumentSampleBuffer = new Float32Array(outputBufferLength);
             }
             const volume = +this.volume;
-            const limitDecay = 1.0 - Math.pow(0.5, 4.0 / this.samplesPerSecond);
-            const limitRise = 1.0 - Math.pow(0.5, 4000.0 / this.samplesPerSecond);
+            const limitDecay = 1.0 - Math.pow(0.5, this.song.limitDecay / this.samplesPerSecond);
+            const limitRise = 1.0 - Math.pow(0.5, this.song.limitRise / this.samplesPerSecond);
             let limit = +this.limit;
             let skippedBars = [];
             let firstSkippedBufferIndex = -1;
@@ -18073,7 +22518,33 @@ var beepbox = (function (exports) {
                             const instrumentState = channelState.instruments[instrumentIndex];
                             for (let i = 0; i < instrumentState.activeModTones.count(); i++) {
                                 const tone = instrumentState.activeModTones.get(i);
+                                const channel = song.channels[channelIndex];
+                                const instrument = channel.instruments[tone.instrumentIndex];
+                                let mod = Config.modCount - 1 - tone.pitches[0];
+                                if ((instrument.modulators[mod] == Config.modulators.dictionary["note filter"].index
+                                    || instrument.modulators[mod] == Config.modulators.dictionary["eq filter"].index)
+                                    && instrument.modFilterTypes[mod] != null && instrument.modFilterTypes[mod] > 0) {
+                                    continue;
+                                }
                                 this.playModTone(song, channelIndex, samplesPerTick, bufferIndex, runLength, tone, false, false);
+                            }
+                        }
+                    }
+                    for (let channelIndex = song.pitchChannelCount + song.noiseChannelCount; channelIndex < song.getChannelCount(); channelIndex++) {
+                        const channel = song.channels[channelIndex];
+                        const channelState = this.channels[channelIndex];
+                        for (let instrumentIndex = 0; instrumentIndex < channel.instruments.length; instrumentIndex++) {
+                            const instrumentState = channelState.instruments[instrumentIndex];
+                            for (let i = 0; i < instrumentState.activeModTones.count(); i++) {
+                                const tone = instrumentState.activeModTones.get(i);
+                                const channel = song.channels[channelIndex];
+                                const instrument = channel.instruments[tone.instrumentIndex];
+                                let mod = Config.modCount - 1 - tone.pitches[0];
+                                if ((instrument.modulators[mod] == Config.modulators.dictionary["note filter"].index
+                                    || instrument.modulators[mod] == Config.modulators.dictionary["eq filter"].index)
+                                    && instrument.modFilterTypes[mod] != null && instrument.modFilterTypes[mod] > 0) {
+                                    this.playModTone(song, channelIndex, samplesPerTick, bufferIndex, runLength, tone, false, false);
+                                }
                             }
                         }
                     }
@@ -18145,16 +22616,16 @@ var beepbox = (function (exports) {
                         const partTimeStart = partTimeTickStart + (partTimeTickEnd - partTimeTickStart) * startRatio;
                         const partTimeEnd = partTimeTickStart + (partTimeTickEnd - partTimeTickStart) * endRatio;
                         let useVibratoSpeed = instrument.vibratoSpeed;
-                        instrument.LFOtime = instrument.nextLFOtime;
+                        instrumentState.vibratoTime = instrumentState.nextVibratoTime;
                         if (this.isModActive(Config.modulators.dictionary["vibrato speed"].index, channelIndex, instrumentIndex)) {
                             useVibratoSpeed = this.getModValue(Config.modulators.dictionary["vibrato speed"].index, channelIndex, instrumentIndex);
                         }
                         if (useVibratoSpeed == 0) {
-                            instrument.LFOtime = 0;
-                            instrument.nextLFOtime = 0;
+                            instrumentState.vibratoTime = 0;
+                            instrumentState.nextVibratoTime = 0;
                         }
                         else {
-                            instrument.nextLFOtime += useVibratoSpeed * 0.1 * (partTimeEnd - partTimeStart);
+                            instrumentState.nextVibratoTime += useVibratoSpeed * 0.1 * (partTimeEnd - partTimeStart);
                         }
                     }
                 }
@@ -18232,18 +22703,32 @@ var beepbox = (function (exports) {
                     for (let channel = 0; channel < this.song.pitchChannelCount + this.song.noiseChannelCount; channel++) {
                         for (let instrumentIdx = 0; instrumentIdx < this.song.channels[channel].instruments.length; instrumentIdx++) {
                             let instrument = this.song.channels[channel].instruments[instrumentIdx];
+                            let instrumentState = this.channels[channel].instruments[instrumentIdx];
                             let useArpeggioSpeed = instrument.arpeggioSpeed;
                             if (this.isModActive(Config.modulators.dictionary["arp speed"].index, channel, instrumentIdx)) {
-                                useArpeggioSpeed = this.getModValue(Config.modulators.dictionary["arp speed"].index, channel, instrumentIdx, false);
+                                useArpeggioSpeed = Math.max(0, Math.min(Config.arpSpeedScale.length - 1, this.getModValue(Config.modulators.dictionary["arp speed"].index, channel, instrumentIdx, false)));
                                 if (Number.isInteger(useArpeggioSpeed)) {
-                                    instrument.arpTime += Config.arpSpeedScale[useArpeggioSpeed];
+                                    instrumentState.arpTime += Config.arpSpeedScale[useArpeggioSpeed];
                                 }
                                 else {
-                                    instrument.arpTime += (1 - (useArpeggioSpeed % 1)) * Config.arpSpeedScale[Math.floor(useArpeggioSpeed)] + (useArpeggioSpeed % 1) * Config.arpSpeedScale[Math.ceil(useArpeggioSpeed)];
+                                    instrumentState.arpTime += (1 - (useArpeggioSpeed % 1)) * Config.arpSpeedScale[Math.floor(useArpeggioSpeed)] + (useArpeggioSpeed % 1) * Config.arpSpeedScale[Math.ceil(useArpeggioSpeed)];
                                 }
                             }
                             else {
-                                instrument.arpTime += Config.arpSpeedScale[useArpeggioSpeed];
+                                instrumentState.arpTime += Config.arpSpeedScale[useArpeggioSpeed];
+                            }
+                            let useEnvelopeSpeed = instrument.envelopeSpeed;
+                            if (this.isModActive(Config.modulators.dictionary["envelope speed"].index, channel, instrumentIdx)) {
+                                useEnvelopeSpeed = Math.max(0, Math.min(Config.arpSpeedScale.length - 1, this.getModValue(Config.modulators.dictionary["envelope speed"].index, channel, instrumentIdx, false)));
+                                if (Number.isInteger(useEnvelopeSpeed)) {
+                                    instrumentState.envelopeTime += Config.arpSpeedScale[useEnvelopeSpeed];
+                                }
+                                else {
+                                    instrumentState.envelopeTime += (1 - (useEnvelopeSpeed % 1)) * Config.arpSpeedScale[Math.floor(useEnvelopeSpeed)] + (useEnvelopeSpeed % 1) * Config.arpSpeedScale[Math.ceil(useEnvelopeSpeed)];
+                                }
+                            }
+                            else {
+                                instrumentState.envelopeTime += Config.arpSpeedScale[useEnvelopeSpeed];
                             }
                         }
                     }
@@ -18270,6 +22755,13 @@ var beepbox = (function (exports) {
                         this.tick = 0;
                         this.part++;
                         this.liveInputDuration--;
+                        this.liveBassInputDuration--;
+                        for (let i = 0; i < this.heldMods.length; i++) {
+                            this.heldMods[i].holdFor--;
+                            if (this.heldMods[i].holdFor <= 0) {
+                                this.heldMods.splice(i, 1);
+                            }
+                        }
                         if (this.part == Config.partsPerBeat) {
                             this.part = 0;
                             if (playSong) {
@@ -18306,10 +22798,13 @@ var beepbox = (function (exports) {
                     samplesPerTick = this.getSamplesPerTick();
                     this.tickSampleCountdown = Math.min(this.tickSampleCountdown, samplesPerTick);
                 }
-                for (let channel = 0; channel < this.song.pitchChannelCount; channel++) {
-                    for (let instrument of this.song.channels[channel].instruments) {
-                        instrument.nextLFOtime = (instrument.nextLFOtime % (Config.vibratoTypes[instrument.vibratoType].period / (Config.ticksPerPart * samplesPerTick / this.samplesPerSecond)));
-                        instrument.arpTime = (instrument.arpTime % (2520 * Config.ticksPerArpeggio));
+                for (let channelIndex = 0; channelIndex < this.song.pitchChannelCount + this.song.noiseChannelCount; channelIndex++) {
+                    for (let instrumentIndex = 0; instrumentIndex < this.channels[channelIndex].instruments.length; instrumentIndex++) {
+                        const instrumentState = this.channels[channelIndex].instruments[instrumentIndex];
+                        const instrument = this.song.channels[channelIndex].instruments[instrumentIndex];
+                        instrumentState.nextVibratoTime = (instrumentState.nextVibratoTime % (Config.vibratoTypes[instrument.vibratoType].period / (Config.ticksPerPart * samplesPerTick / this.samplesPerSecond)));
+                        instrumentState.arpTime = (instrumentState.arpTime % (2520 * Config.ticksPerArpeggio));
+                        instrumentState.envelopeTime = (instrumentState.envelopeTime % (Config.partsPerBeat * Config.ticksPerPart * this.song.beatsPerBar));
                     }
                 }
                 for (let setting = 0; setting < Config.modulators.length; setting++) {
@@ -18367,11 +22862,12 @@ var beepbox = (function (exports) {
             const channel = song.channels[channelIndex];
             const channelState = this.channels[channelIndex];
             const pitches = this.liveInputPitches;
+            const bassPitches = this.liveBassInputPitches;
             for (let instrumentIndex = 0; instrumentIndex < channel.instruments.length; instrumentIndex++) {
                 const instrumentState = channelState.instruments[instrumentIndex];
                 const toneList = instrumentState.liveInputTones;
                 let toneCount = 0;
-                if (this.liveInputDuration > 0 && channelIndex == this.liveInputChannel && pitches.length > 0 && this.liveInputInstruments.indexOf(instrumentIndex) != -1) {
+                if (this.liveInputDuration > 0 && (channelIndex == this.liveInputChannel) && pitches.length > 0 && this.liveInputInstruments.indexOf(instrumentIndex) != -1) {
                     const instrument = channel.instruments[instrumentIndex];
                     if (instrument.getChord().singleTone) {
                         let tone;
@@ -18430,12 +22926,72 @@ var beepbox = (function (exports) {
                         }
                     }
                 }
+                if (this.liveBassInputDuration > 0 && (channelIndex == this.liveBassInputChannel) && bassPitches.length > 0 && this.liveBassInputInstruments.indexOf(instrumentIndex) != -1) {
+                    const instrument = channel.instruments[instrumentIndex];
+                    if (instrument.getChord().singleTone) {
+                        let tone;
+                        if (toneList.count() <= toneCount) {
+                            tone = this.newTone();
+                            toneList.pushBack(tone);
+                        }
+                        else if (!instrument.getTransition().isSeamless && this.liveInputStarted) {
+                            this.releaseTone(instrumentState, toneList.get(toneCount));
+                            tone = this.newTone();
+                            toneList.set(toneCount, tone);
+                        }
+                        else {
+                            tone = toneList.get(toneCount);
+                        }
+                        toneCount++;
+                        for (let i = 0; i < bassPitches.length; i++) {
+                            tone.pitches[i] = bassPitches[i];
+                        }
+                        tone.pitchCount = bassPitches.length;
+                        tone.chordSize = 1;
+                        tone.instrumentIndex = instrumentIndex;
+                        tone.note = tone.prevNote = tone.nextNote = null;
+                        tone.atNoteStart = this.liveBassInputStarted;
+                        tone.forceContinueAtStart = false;
+                        tone.forceContinueAtEnd = false;
+                        this.computeTone(song, channelIndex, samplesPerTick, tone, false, false);
+                    }
+                    else {
+                        this.moveTonesIntoOrderedTempMatchedList(toneList, bassPitches);
+                        for (let i = 0; i < bassPitches.length; i++) {
+                            let tone;
+                            if (this.tempMatchedPitchTones[toneCount] != null) {
+                                tone = this.tempMatchedPitchTones[toneCount];
+                                this.tempMatchedPitchTones[toneCount] = null;
+                                if (tone.pitchCount != 1 || tone.pitches[0] != bassPitches[i]) {
+                                    this.releaseTone(instrumentState, tone);
+                                    tone = this.newTone();
+                                }
+                                toneList.pushBack(tone);
+                            }
+                            else {
+                                tone = this.newTone();
+                                toneList.pushBack(tone);
+                            }
+                            toneCount++;
+                            tone.pitches[0] = bassPitches[i];
+                            tone.pitchCount = 1;
+                            tone.chordSize = bassPitches.length;
+                            tone.instrumentIndex = instrumentIndex;
+                            tone.note = tone.prevNote = tone.nextNote = null;
+                            tone.atNoteStart = this.liveBassInputStarted;
+                            tone.forceContinueAtStart = false;
+                            tone.forceContinueAtEnd = false;
+                            this.computeTone(song, channelIndex, samplesPerTick, tone, false, false);
+                        }
+                    }
+                }
                 while (toneList.count() > toneCount) {
                     this.releaseTone(instrumentState, toneList.popBack());
                 }
                 this.clearTempMatchedPitchTones(toneCount, instrumentState);
             }
             this.liveInputStarted = false;
+            this.liveBassInputStarted = false;
         }
         adjacentPatternHasCompatibleInstrumentTransition(song, channel, pattern, otherPattern, instrumentIndex, transition, chord, note, otherNote, forceContinue) {
             if (song.patternInstruments && otherPattern.instruments.indexOf(instrumentIndex) == -1) {
@@ -18927,7 +23483,7 @@ var beepbox = (function (exports) {
                 expressionReferencePitch = basePitch;
                 pitchDamping = Config.chipNoises[instrument.chipNoise].isSoft ? 24.0 : 60.0;
             }
-            else if (instrument.type == 1 || instrument.type == 10) {
+            else if (instrument.type == 1 || instrument.type == 11) {
                 baseExpression = Config.fmBaseExpression;
             }
             else if (instrument.type == 0) {
@@ -18949,7 +23505,7 @@ var beepbox = (function (exports) {
                     }
                 }
             }
-            else if (instrument.type == 8) {
+            else if (instrument.type == 9) {
                 baseExpression = Config.chipBaseExpression;
             }
             else if (instrument.type == 5) {
@@ -18958,13 +23514,13 @@ var beepbox = (function (exports) {
             else if (instrument.type == 6) {
                 baseExpression = Config.pwmBaseExpression;
             }
-            else if (instrument.type == 11) {
+            else if (instrument.type == 8) {
                 baseExpression = Config.supersawBaseExpression;
             }
             else if (instrument.type == 7) {
                 baseExpression = Config.pickedStringBaseExpression;
             }
-            else if (instrument.type == 9) {
+            else if (instrument.type == 10) {
                 baseExpression = 1.0;
                 expressionReferencePitch = 0;
                 pitchDamping = 1.0;
@@ -18975,15 +23531,17 @@ var beepbox = (function (exports) {
             }
             if ((tone.atNoteStart && !transition.isSeamless && !tone.forceContinueAtStart) || tone.freshlyAllocated) {
                 tone.reset();
-                const chipWaveLength = Config.rawRawChipWaves[instrument.chipWave].samples.length - 1;
-                const firstOffset = instrument.chipWaveStartOffset / chipWaveLength;
-                const lastOffset = 0.999999999999999;
-                for (let i = 0; i < Config.maxPitchOrOperatorCount; i++) {
-                    tone.phases[i] = instrument.chipWavePlayBackwards ? Math.max(0, Math.min(lastOffset, firstOffset)) : Math.max(0, firstOffset);
-                    tone.directions[i] = instrument.chipWavePlayBackwards ? -1 : 1;
-                    tone.chipWaveCompletions[i] = 0;
-                    tone.chipWavePrevWaves[i] = 0;
-                    tone.chipWaveCompletionsLastWave[i] = 0;
+                if (instrument.type == 0 && instrument.isUsingAdvancedLoopControls) {
+                    const chipWaveLength = Config.rawRawChipWaves[instrument.chipWave].samples.length - 1;
+                    const firstOffset = instrument.chipWaveStartOffset / chipWaveLength;
+                    const lastOffset = 0.999999999999999;
+                    for (let i = 0; i < Config.maxPitchOrOperatorCount; i++) {
+                        tone.phases[i] = instrument.chipWavePlayBackwards ? Math.max(0, Math.min(lastOffset, firstOffset)) : Math.max(0, firstOffset);
+                        tone.directions[i] = instrument.chipWavePlayBackwards ? -1 : 1;
+                        tone.chipWaveCompletions[i] = 0;
+                        tone.chipWavePrevWaves[i] = 0;
+                        tone.chipWaveCompletionsLastWave[i] = 0;
+                    }
                 }
             }
             tone.freshlyAllocated = false;
@@ -18995,7 +23553,7 @@ var beepbox = (function (exports) {
             }
             tone.expression = 0.0;
             tone.expressionDelta = 0.0;
-            for (let i = 0; i < Config.operatorCount; i++) {
+            for (let i = 0; i < (instrument.type == 11 ? 6 : Config.operatorCount); i++) {
                 tone.operatorWaves[i] = Synth.getOperatorWave(instrument.operators[i].waveform, instrument.operators[i].pulseWidth);
             }
             if (released) {
@@ -19084,7 +23642,17 @@ var beepbox = (function (exports) {
                 instrument.tmpNoteFilterStart = noteFilterSettingsStart;
             }
             const envelopeComputer = tone.envelopeComputer;
-            envelopeComputer.computeEnvelopes(instrument, currentPart, Config.ticksPerPart * partTimeStart, samplesPerTick / this.samplesPerSecond, tone);
+            let useEnvelopeSpeed = Config.arpSpeedScale[instrument.envelopeSpeed];
+            if (this.isModActive(Config.modulators.dictionary["envelope speed"].index, channelIndex, tone.instrumentIndex)) {
+                useEnvelopeSpeed = Math.max(0, Math.min(Config.arpSpeedScale.length - 1, this.getModValue(Config.modulators.dictionary["envelope speed"].index, channelIndex, tone.instrumentIndex, false)));
+                if (Number.isInteger(useEnvelopeSpeed)) {
+                    useEnvelopeSpeed = Config.arpSpeedScale[useEnvelopeSpeed];
+                }
+                else {
+                    useEnvelopeSpeed = (1 - (useEnvelopeSpeed % 1)) * Config.arpSpeedScale[Math.floor(useEnvelopeSpeed)] + (useEnvelopeSpeed % 1) * Config.arpSpeedScale[Math.ceil(useEnvelopeSpeed)];
+                }
+            }
+            envelopeComputer.computeEnvelopes(instrument, currentPart, instrumentState.envelopeTime, Config.ticksPerPart * partTimeStart, samplesPerTick / this.samplesPerSecond, tone, useEnvelopeSpeed);
             const envelopeStarts = tone.envelopeComputer.envelopeStarts;
             const envelopeEnds = tone.envelopeComputer.envelopeEnds;
             instrument.noteFilter = tmpNoteFilter;
@@ -19147,8 +23715,8 @@ var beepbox = (function (exports) {
                     modDetuneStart += 4 * this.getModValue(Config.modulators.dictionary["song detune"].index, channelIndex, tone.instrumentIndex, false);
                     modDetuneEnd += 4 * this.getModValue(Config.modulators.dictionary["song detune"].index, channelIndex, tone.instrumentIndex, true);
                 }
-                intervalStart += Synth.detuneToCents((modDetuneStart) * envelopeStart) * Config.pitchesPerOctave / (12.0 * 100.0);
-                intervalEnd += Synth.detuneToCents((modDetuneEnd) * envelopeEnd) * Config.pitchesPerOctave / (12.0 * 100.0);
+                intervalStart += Synth.detuneToCents(modDetuneStart) * envelopeStart * Config.pitchesPerOctave / (12.0 * 100.0);
+                intervalEnd += Synth.detuneToCents(modDetuneEnd) * envelopeEnd * Config.pitchesPerOctave / (12.0 * 100.0);
             }
             if (effectsIncludeVibrato(instrument.effects)) {
                 let delayTicks;
@@ -19180,18 +23748,18 @@ var beepbox = (function (exports) {
                     vibratoStart = tone.prevVibrato;
                 }
                 else {
-                    let lfoStart = Synth.getLFOAmplitude(instrument, secondsPerPart * instrument.LFOtime);
+                    let vibratoLfoStart = Synth.getLFOAmplitude(instrument, secondsPerPart * instrumentState.vibratoTime);
                     const vibratoDepthEnvelopeStart = envelopeStarts[20];
-                    vibratoStart = vibratoAmplitudeStart * lfoStart * vibratoDepthEnvelopeStart;
+                    vibratoStart = vibratoAmplitudeStart * vibratoLfoStart * vibratoDepthEnvelopeStart;
                     if (delayTicks > 0.0) {
                         const ticksUntilVibratoStart = delayTicks - envelopeComputer.noteTicksStart;
                         vibratoStart *= Math.max(0.0, Math.min(1.0, 1.0 - ticksUntilVibratoStart / 2.0));
                     }
                 }
-                let lfoEnd = Synth.getLFOAmplitude(instrument, secondsPerPart * instrument.nextLFOtime);
+                let vibratoLfoEnd = Synth.getLFOAmplitude(instrument, secondsPerPart * instrumentState.nextVibratoTime);
                 const vibratoDepthEnvelopeEnd = envelopeEnds[20];
-                if (instrument.type != 9) {
-                    let vibratoEnd = vibratoAmplitudeEnd * lfoEnd * vibratoDepthEnvelopeEnd;
+                if (instrument.type != 10) {
+                    let vibratoEnd = vibratoAmplitudeEnd * vibratoLfoEnd * vibratoDepthEnvelopeEnd;
                     if (delayTicks > 0.0) {
                         const ticksUntilVibratoEnd = delayTicks - envelopeComputer.noteTicksEnd;
                         vibratoEnd *= Math.max(0.0, Math.min(1.0, 1.0 - ticksUntilVibratoEnd / 2.0));
@@ -19260,22 +23828,25 @@ var beepbox = (function (exports) {
                 const drumsetFilterEnvelope = instrument.getDrumsetEnvelope(tone.drumsetPitch);
                 noteFilterExpression *= EnvelopeComputer.getLowpassCutoffDecayVolumeCompensation(drumsetFilterEnvelope);
                 let drumsetFilterEnvelopeStart = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.noteSecondsStart, beatsPerPart * partTimeStart, envelopeComputer.noteSizeStart);
-                let drumsetFilterEnvelopeEnd = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.noteSecondsEnd, beatsPerPart * partTimeEnd, envelopeComputer.noteSizeEnd);
                 if (envelopeComputer.prevSlideStart) {
                     const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.prevNoteSecondsStart, beatsPerPart * partTimeStart, envelopeComputer.prevNoteSize);
                     drumsetFilterEnvelopeStart += (other - drumsetFilterEnvelopeStart) * envelopeComputer.prevSlideRatioStart;
-                }
-                if (envelopeComputer.prevSlideEnd) {
-                    const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.prevNoteSecondsEnd, beatsPerPart * partTimeEnd, envelopeComputer.prevNoteSize);
-                    drumsetFilterEnvelopeEnd += (other - drumsetFilterEnvelopeEnd) * envelopeComputer.prevSlideRatioEnd;
                 }
                 if (envelopeComputer.nextSlideStart) {
                     const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, 0.0, beatsPerPart * partTimeStart, envelopeComputer.nextNoteSize);
                     drumsetFilterEnvelopeStart += (other - drumsetFilterEnvelopeStart) * envelopeComputer.nextSlideRatioStart;
                 }
-                if (envelopeComputer.nextSlideEnd) {
-                    const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, 0.0, beatsPerPart * partTimeEnd, envelopeComputer.nextNoteSize);
-                    drumsetFilterEnvelopeEnd += (other - drumsetFilterEnvelopeEnd) * envelopeComputer.nextSlideRatioEnd;
+                let drumsetFilterEnvelopeEnd = drumsetFilterEnvelopeStart;
+                if (instrument.discreteEnvelope == false) {
+                    drumsetFilterEnvelopeEnd = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.noteSecondsEnd, beatsPerPart * partTimeEnd, envelopeComputer.noteSizeEnd);
+                    if (envelopeComputer.prevSlideEnd) {
+                        const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, envelopeComputer.prevNoteSecondsEnd, beatsPerPart * partTimeEnd, envelopeComputer.prevNoteSize);
+                        drumsetFilterEnvelopeEnd += (other - drumsetFilterEnvelopeEnd) * envelopeComputer.prevSlideRatioEnd;
+                    }
+                    if (envelopeComputer.nextSlideEnd) {
+                        const other = EnvelopeComputer.computeEnvelope(drumsetFilterEnvelope, 0.0, beatsPerPart * partTimeEnd, envelopeComputer.nextNoteSize);
+                        drumsetFilterEnvelopeEnd += (other - drumsetFilterEnvelopeEnd) * envelopeComputer.nextSlideRatioEnd;
+                    }
                 }
                 const point = this.tempDrumSetControlPoint;
                 point.type = 0;
@@ -19289,18 +23860,18 @@ var beepbox = (function (exports) {
                 tone.noteFilterCount++;
             }
             noteFilterExpression = Math.min(3.0, noteFilterExpression);
-            if (instrument.type == 1 || instrument.type == 10) {
+            if (instrument.type == 1 || instrument.type == 11) {
                 let sineExpressionBoost = 1.0;
                 let totalCarrierExpression = 0.0;
                 let arpeggioInterval = 0;
                 const arpeggiates = chord.arpeggiates;
                 if (tone.pitchCount > 1 && arpeggiates) {
-                    const arpeggio = Math.floor(instrument.arpTime / Config.ticksPerArpeggio);
+                    const arpeggio = Math.floor(instrumentState.arpTime / Config.ticksPerArpeggio);
                     arpeggioInterval = tone.pitches[getArpeggioPitchIndex(tone.pitchCount, instrument.fastTwoNoteArp, arpeggio)] - tone.pitches[0];
                 }
-                const carrierCount = (instrument.type == 10 ? instrument.customAlgorithm.carrierCount : Config.algorithms[instrument.algorithm].carrierCount);
-                for (let i = 0; i < (instrument.type == 10 ? 6 : Config.operatorCount); i++) {
-                    const associatedCarrierIndex = (instrument.type == 10 ? instrument.customAlgorithm.associatedCarrier[i] - 1 : Config.algorithms[instrument.algorithm].associatedCarrier[i] - 1);
+                const carrierCount = (instrument.type == 11 ? instrument.customAlgorithm.carrierCount : Config.algorithms[instrument.algorithm].carrierCount);
+                for (let i = 0; i < (instrument.type == 11 ? 6 : Config.operatorCount); i++) {
+                    const associatedCarrierIndex = (instrument.type == 11 ? instrument.customAlgorithm.associatedCarrier[i] - 1 : Config.algorithms[instrument.algorithm].associatedCarrier[i] - 1);
                     const pitch = tone.pitches[arpeggiates ? 0 : ((i < tone.pitchCount) ? i : ((associatedCarrierIndex < tone.pitchCount) ? associatedCarrierIndex : 0))];
                     const freqMult = Config.operatorFrequencies[instrument.operators[i].frequency].mult;
                     const interval = Config.operatorCarrierInterval[associatedCarrierIndex] + arpeggioInterval;
@@ -19400,7 +23971,7 @@ var beepbox = (function (exports) {
                 const basePhaseDeltaScale = Math.pow(freqEndRatio, 1.0 / roundedSamplesPerTick);
                 let pitch = tone.pitches[0];
                 if (tone.pitchCount > 1 && (chord.arpeggiates || chord.customInterval)) {
-                    const arpeggio = Math.floor(instrument.arpTime / Config.ticksPerArpeggio);
+                    const arpeggio = Math.floor(instrumentState.arpTime / Config.ticksPerArpeggio);
                     if (chord.customInterval) {
                         const intervalOffset = tone.pitches[1 + getArpeggioPitchIndex(tone.pitchCount - 1, instrument.fastTwoNoteArp, arpeggio)] - tone.pitches[0];
                         specialIntervalMult = Math.pow(2.0, intervalOffset / 12.0);
@@ -19460,7 +24031,7 @@ var beepbox = (function (exports) {
                     settingsExpressionMult *= Math.pow(2.0, 0.7 * (1.0 - useSustainStart / (Config.stringSustainRange - 1)));
                 }
                 const startFreq = Instrument.frequencyFromPitch(startPitch);
-                if (instrument.type == 0 || instrument.type == 8 || instrument.type == 5 || instrument.type == 7) {
+                if (instrument.type == 0 || instrument.type == 9 || instrument.type == 5 || instrument.type == 7) {
                     const unisonVoices = instrument.unisonVoices;
                     const unisonSpread = instrument.unisonSpread;
                     const unisonOffset = instrument.unisonOffset;
@@ -19484,20 +24055,20 @@ var beepbox = (function (exports) {
                 }
                 let supersawExpressionStart = 1.0;
                 let supersawExpressionEnd = 1.0;
-                if (instrument.type == 11) {
+                if (instrument.type == 8) {
                     const minFirstVoiceAmplitude = 1.0 / Math.sqrt(Config.supersawVoiceCount);
-                    let baseDynamismSliderStart = instrument.supersawDynamism / Config.supersawDynamismMax;
-                    let baseDynamismSliderEnd = instrument.supersawDynamism / Config.supersawDynamismMax;
+                    let useDynamismStart = instrument.supersawDynamism / Config.supersawDynamismMax;
+                    let useDynamismEnd = instrument.supersawDynamism / Config.supersawDynamismMax;
                     if (this.isModActive(Config.modulators.dictionary["dynamism"].index, channelIndex, tone.instrumentIndex)) {
-                        baseDynamismSliderStart = Math.max(0.0, this.getModValue(Config.modulators.dictionary["dynamism"].index, channelIndex, tone.instrumentIndex, false) / Config.supersawDynamismMax);
-                        baseDynamismSliderEnd = Math.max(0.0, this.getModValue(Config.modulators.dictionary["dynamism"].index, channelIndex, tone.instrumentIndex, true) / Config.supersawDynamismMax);
+                        useDynamismStart = (this.getModValue(Config.modulators.dictionary["dynamism"].index, channelIndex, tone.instrumentIndex, false)) / Config.supersawDynamismMax;
+                        useDynamismEnd = (this.getModValue(Config.modulators.dictionary["dynamism"].index, channelIndex, tone.instrumentIndex, true)) / Config.supersawDynamismMax;
                     }
-                    const curvedDynamismStart = 1.0 - Math.pow(Math.max(0.0, 1.0 - baseDynamismSliderStart * envelopeStarts[38]), 0.2);
-                    const curvedDynamismEnd = 1.0 - Math.pow(Math.max(0.0, 1.0 - baseDynamismSliderEnd * envelopeEnds[38]), 0.2);
+                    const curvedDynamismStart = 1.0 - Math.pow(Math.max(0.0, 1.0 - useDynamismStart * envelopeStarts[38]), 0.2);
+                    const curvedDynamismEnd = 1.0 - Math.pow(Math.max(0.0, 1.0 - useDynamismEnd * envelopeEnds[38]), 0.2);
                     const firstVoiceAmplitudeStart = Math.pow(2.0, Math.log2(minFirstVoiceAmplitude) * curvedDynamismStart);
                     const firstVoiceAmplitudeEnd = Math.pow(2.0, Math.log2(minFirstVoiceAmplitude) * curvedDynamismEnd);
-                    let dynamismStart = Math.sqrt((1.0 / Math.pow(firstVoiceAmplitudeStart, 2.0) - 1.0) / (Config.supersawVoiceCount - 1.0));
-                    let dynamismEnd = Math.sqrt((1.0 / Math.pow(firstVoiceAmplitudeEnd, 2.0) - 1.0) / (Config.supersawVoiceCount - 1.0));
+                    const dynamismStart = Math.sqrt((1.0 / Math.pow(firstVoiceAmplitudeStart, 2.0) - 1.0) / (Config.supersawVoiceCount - 1.0));
+                    const dynamismEnd = Math.sqrt((1.0 / Math.pow(firstVoiceAmplitudeEnd, 2.0) - 1.0) / (Config.supersawVoiceCount - 1.0));
                     tone.supersawDynamism = dynamismStart;
                     tone.supersawDynamismDelta = (dynamismEnd - dynamismStart) / roundedSamplesPerTick;
                     const initializeSupersaw = (tone.supersawDelayIndex == -1);
@@ -19543,12 +24114,14 @@ var beepbox = (function (exports) {
                         }
                     }
                     const baseSpreadSlider = instrument.supersawSpread / Config.supersawSpreadMax;
-                    let spreadSliderStart = Math.max(0.0, baseSpreadSlider * envelopeStarts[39]);
-                    let spreadSliderEnd = Math.max(0.0, baseSpreadSlider * envelopeEnds[39]);
+                    let useSpreadStart = baseSpreadSlider;
+                    let useSpreadEnd = baseSpreadSlider;
                     if (this.isModActive(Config.modulators.dictionary["spread"].index, channelIndex, tone.instrumentIndex)) {
-                        spreadSliderStart = Math.max(0.0, this.getModValue(Config.modulators.dictionary["spread"].index, channelIndex, tone.instrumentIndex, false) / Config.supersawSpreadMax);
-                        spreadSliderEnd = Math.max(0.0, this.getModValue(Config.modulators.dictionary["spread"].index, channelIndex, tone.instrumentIndex, true) / Config.supersawSpreadMax);
+                        useSpreadStart = (this.getModValue(Config.modulators.dictionary["spread"].index, channelIndex, tone.instrumentIndex, false)) / Config.supersawSpreadMax;
+                        useSpreadEnd = (this.getModValue(Config.modulators.dictionary["spread"].index, channelIndex, tone.instrumentIndex, true)) / Config.supersawSpreadMax;
                     }
+                    const spreadSliderStart = useSpreadStart * envelopeStarts[39];
+                    const spreadSliderEnd = useSpreadEnd * envelopeEnds[39];
                     const averageSpreadSlider = (spreadSliderStart + spreadSliderEnd) * 0.5;
                     const curvedSpread = Math.pow(1.0 - Math.sqrt(Math.max(0.0, 1.0 - averageSpreadSlider)), 1.75);
                     for (let i = 0; i < Config.supersawVoiceCount; i++) {
@@ -19556,32 +24129,33 @@ var beepbox = (function (exports) {
                         tone.supersawUnisonDetunes[i] = Math.pow(2.0, curvedSpread * offset / 12.0);
                     }
                     const baseShape = instrument.supersawShape / Config.supersawShapeMax;
-                    let shapeStart = baseShape * envelopeStarts[40];
-                    let shapeEnd = baseShape * envelopeEnds[40];
-                    if (this.isModActive(Config.modulators.dictionary["shape"].index, channelIndex, tone.instrumentIndex)) {
-                        shapeStart = Math.max(0.0, this.getModValue(Config.modulators.dictionary["shape"].index, channelIndex, tone.instrumentIndex, false) / Config.supersawShapeMax);
-                        shapeEnd = Math.max(0.0, this.getModValue(Config.modulators.dictionary["shape"].index, channelIndex, tone.instrumentIndex, true) / Config.supersawShapeMax);
+                    let useShapeStart = baseShape * envelopeStarts[40];
+                    let useShapeEnd = baseShape * envelopeEnds[40];
+                    if (this.isModActive(Config.modulators.dictionary["saw shape"].index, channelIndex, tone.instrumentIndex)) {
+                        useShapeStart = (this.getModValue(Config.modulators.dictionary["saw shape"].index, channelIndex, tone.instrumentIndex, false)) / Config.supersawShapeMax;
+                        useShapeEnd = (this.getModValue(Config.modulators.dictionary["saw shape"].index, channelIndex, tone.instrumentIndex, true)) / Config.supersawShapeMax;
                     }
+                    const shapeStart = useShapeStart * envelopeStarts[40];
+                    const shapeEnd = useShapeEnd * envelopeEnds[40];
                     tone.supersawShape = shapeStart;
                     tone.supersawShapeDelta = (shapeEnd - shapeStart) / roundedSamplesPerTick;
-                    const basePulseWidth = getPulseWidthRatio(instrument.pulseWidth);
-                    let pulseWidthModStart = basePulseWidth;
-                    let pulseWidthModEnd = basePulseWidth;
-                    if (this.isModActive(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex)) {
-                        pulseWidthModStart = Math.max(0.0, this.getModValue(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex, false) / (Config.pulseWidthRange * 2));
-                        pulseWidthModEnd = Math.max(0.0, this.getModValue(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex, true) / (Config.pulseWidthRange * 2));
-                    }
-                    const pulseWidthStart = pulseWidthModStart * envelopeStarts[2];
-                    const pulseWidthEnd = pulseWidthModEnd * envelopeEnds[2];
-                    tone.pulseWidth = pulseWidthStart;
-                    tone.pulseWidthDelta = (pulseWidthEnd - pulseWidthStart) / roundedSamplesPerTick;
                     let decimalOffsetModStart = instrument.decimalOffset;
                     if (this.isModActive(Config.modulators.dictionary["decimal offset"].index, channelIndex, tone.instrumentIndex)) {
                         decimalOffsetModStart = this.getModValue(Config.modulators.dictionary["decimal offset"].index, channelIndex, tone.instrumentIndex, false);
                     }
                     const decimalOffsetStart = decimalOffsetModStart * envelopeStarts[37];
                     tone.decimalOffset = decimalOffsetStart;
-                    tone.pulseWidth -= (tone.decimalOffset) / 10000;
+                    const basePulseWidth = getPulseWidthRatio(instrument.pulseWidth);
+                    let pulseWidthModStart = basePulseWidth;
+                    let pulseWidthModEnd = basePulseWidth;
+                    if (this.isModActive(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex)) {
+                        pulseWidthModStart = (this.getModValue(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex, false)) / (Config.pulseWidthRange * 2);
+                        pulseWidthModEnd = (this.getModValue(Config.modulators.dictionary["pulse width"].index, channelIndex, tone.instrumentIndex, true)) / (Config.pulseWidthRange * 2);
+                    }
+                    let pulseWidthStart = pulseWidthModStart * envelopeStarts[2];
+                    let pulseWidthEnd = pulseWidthModEnd * envelopeEnds[2];
+                    pulseWidthStart -= decimalOffsetStart / 10000;
+                    pulseWidthEnd -= decimalOffsetStart / 10000;
                     const phaseDeltaStart = (tone.supersawPrevPhaseDelta != null) ? tone.supersawPrevPhaseDelta : startFreq * sampleTime;
                     const phaseDeltaEnd = startFreq * sampleTime * freqEndRatio;
                     tone.supersawPrevPhaseDelta = phaseDeltaEnd;
@@ -19643,7 +24217,7 @@ var beepbox = (function (exports) {
                         }
                     }
                     for (let i = 0; i < unisonVoices; i++) {
-                        tone.pickedStrings[i].update(this, instrumentState, tone, i, roundedSamplesPerTick, stringDecayStart, stringDecayEnd);
+                        tone.pickedStrings[i].update(this, instrumentState, tone, i, roundedSamplesPerTick, stringDecayStart, stringDecayEnd, instrument.stringSustainType);
                     }
                 }
             }
@@ -19702,7 +24276,8 @@ var beepbox = (function (exports) {
                             synthSource.push(line);
                         }
                     }
-                    Synth.fmSynthFunctionCache[fingerprint] = new Function("synth", "bufferIndex", "roundedSamplesPerTick", "tone", "instrumentState", synthSource.join("\n"));
+                    const wrappedFmSynth = "return (synth, bufferIndex, roundedSamplesPerTick, tone, instrument) => {" + synthSource.join("\n") + "}";
+                    Synth.fmSynthFunctionCache[fingerprint] = new Function("Config", "Synth", wrappedFmSynth)(Config, Synth);
                 }
                 return Synth.fmSynthFunctionCache[fingerprint];
             }
@@ -19712,7 +24287,7 @@ var beepbox = (function (exports) {
                 }
                 return Synth.chipSynth;
             }
-            else if (instrument.type == 8) {
+            else if (instrument.type == 9) {
                 return Synth.chipSynth;
             }
             else if (instrument.type == 5) {
@@ -19721,7 +24296,7 @@ var beepbox = (function (exports) {
             else if (instrument.type == 6) {
                 return Synth.pulseWidthSynth;
             }
-            else if (instrument.type == 11) {
+            else if (instrument.type == 8) {
                 return Synth.supersawSynth;
             }
             else if (instrument.type == 7) {
@@ -19736,10 +24311,10 @@ var beepbox = (function (exports) {
             else if (instrument.type == 4) {
                 return Synth.drumsetSynth;
             }
-            else if (instrument.type == 9) {
+            else if (instrument.type == 10) {
                 return Synth.modSynth;
             }
-            else if (instrument.type == 10) {
+            else if (instrument.type == 11) {
                 const fingerprint = instrument.customAlgorithm.name + "_" + instrument.customFeedbackType.name;
                 if (Synth.fm6SynthFunctionCache[fingerprint] == undefined) {
                     const synthSource = [];
@@ -19785,7 +24360,8 @@ var beepbox = (function (exports) {
                             synthSource.push(line);
                         }
                     }
-                    Synth.fm6SynthFunctionCache[fingerprint] = new Function("synth", "bufferIndex", "roundedSamplesPerTick", "tone", "instrumentState", synthSource.join("\n"));
+                    const wrappedFm6Synth = "return (synth, bufferIndex, roundedSamplesPerTick, tone, instrument) => {" + synthSource.join("\n") + "}";
+                    Synth.fm6SynthFunctionCache[fingerprint] = new Function("Config", "Synth", wrappedFm6Synth)(Config, Synth);
                 }
                 return Synth.fm6SynthFunctionCache[fingerprint];
             }
@@ -20266,7 +24842,7 @@ var beepbox = (function (exports) {
             const voiceCount = instrumentState.unisonVoices;
             let pickedStringFunction = Synth.pickedStringFunctionCache[voiceCount];
             if (pickedStringFunction == undefined) {
-                let pickedStringSource = "";
+                let pickedStringSource = "return (synth, bufferIndex, runLength, tone, instrumentState) => {";
                 pickedStringSource += `
 				const Config = beepbox.Config;
 				const Synth = beepbox.Synth;
@@ -20275,8 +24851,10 @@ var beepbox = (function (exports) {
 				let pickedString# = tone.pickedStrings[#];
 				let allPassSample# = +pickedString#.allPassSample;
 				let allPassPrevInput# = +pickedString#.allPassPrevInput;
-				let shelfSample# = +pickedString#.shelfSample;
-				let shelfPrevInput# = +pickedString#.shelfPrevInput;
+				let sustainFilterSample# = +pickedString#.sustainFilterSample;
+				let sustainFilterPrevOutput2# = +pickedString#.sustainFilterPrevOutput2;
+				let sustainFilterPrevInput1# = +pickedString#.sustainFilterPrevInput1;
+				let sustainFilterPrevInput2# = +pickedString#.sustainFilterPrevInput2;
 				let fractionalDelaySample# = +pickedString#.fractionalDelaySample;
 				const delayLine# = pickedString#.delayLine;
 				const delayBufferMask# = (delayLine#.length - 1) >> 0;
@@ -20285,13 +24863,17 @@ var beepbox = (function (exports) {
 				let delayLength# = +pickedString#.prevDelayLength;
 				const delayLengthDelta# = +pickedString#.delayLengthDelta;
 				let allPassG# = +pickedString#.allPassG;
-				let shelfA1# = +pickedString#.shelfA1;
-				let shelfB0# = +pickedString#.shelfB0;
-				let shelfB1# = +pickedString#.shelfB1;
+				let sustainFilterA1# = +pickedString#.sustainFilterA1;
+				let sustainFilterA2# = +pickedString#.sustainFilterA2;
+				let sustainFilterB0# = +pickedString#.sustainFilterB0;
+				let sustainFilterB1# = +pickedString#.sustainFilterB1;
+				let sustainFilterB2# = +pickedString#.sustainFilterB2;
 				const allPassGDelta# = +pickedString#.allPassGDelta;
-				const shelfA1Delta# = +pickedString#.shelfA1Delta;
-				const shelfB0Delta# = +pickedString#.shelfB0Delta;
-				const shelfB1Delta# = +pickedString#.shelfB1Delta;
+				const sustainFilterA1Delta# = +pickedString#.sustainFilterA1Delta;
+				const sustainFilterA2Delta# = +pickedString#.sustainFilterA2Delta;
+				const sustainFilterB0Delta# = +pickedString#.sustainFilterB0Delta;
+				const sustainFilterB1Delta# = +pickedString#.sustainFilterB1Delta;
+				const sustainFilterB2Delta# = +pickedString#.sustainFilterB2Delta;
 				
 				let expression = +tone.expression;
 				const expressionDelta = +tone.expressionDelta;
@@ -20319,10 +24901,13 @@ var beepbox = (function (exports) {
 					allPassSample# = fractionalDelaySample# * allPassG# + allPassPrevInput# - allPassG# * allPassSample#;
 					allPassPrevInput# = fractionalDelaySample#;
 					
-					shelfSample# = shelfB0# * allPassSample# + shelfB1# * shelfPrevInput# - shelfA1# * shelfSample#;
-					shelfPrevInput# = allPassSample#;
+					const sustainFilterPrevOutput1# = sustainFilterSample#;
+					sustainFilterSample# = sustainFilterB0# * allPassSample# + sustainFilterB1# * sustainFilterPrevInput1# + sustainFilterB2# * sustainFilterPrevInput2# - sustainFilterA1# * sustainFilterSample# - sustainFilterA2# * sustainFilterPrevOutput2#;
+					sustainFilterPrevOutput2# = sustainFilterPrevOutput1#;
+					sustainFilterPrevInput2# = sustainFilterPrevInput1#;
+					sustainFilterPrevInput1# = allPassSample#;
 					
-					delayLine#[delayIndex# & delayBufferMask#] += shelfSample#;
+					delayLine#[delayIndex# & delayBufferMask#] += sustainFilterSample#;
 					delayLine#[(delayIndex# + delayResetOffset#) & delayBufferMask#] = 0.0;
 					delayIndex#++;
 					
@@ -20341,35 +24926,44 @@ var beepbox = (function (exports) {
 					expression += expressionDelta;
 					delayLength# += delayLengthDelta#;
 					allPassG# += allPassGDelta#;
-					shelfA1# += shelfA1Delta#;
-					shelfB0# += shelfB0Delta#;
-					shelfB1# += shelfB1Delta#;
+					sustainFilterA1# += sustainFilterA1Delta#;
+					sustainFilterA2# += sustainFilterA2Delta#;
+					sustainFilterB0# += sustainFilterB0Delta#;
+					sustainFilterB1# += sustainFilterB1Delta#;
+					sustainFilterB2# += sustainFilterB2Delta#;
 				}
 				
 				// Avoid persistent denormal or NaN values in the delay buffers and filter history.
 				const epsilon = (1.0e-24);
 				if (!Number.isFinite(allPassSample#) || Math.abs(allPassSample#) < epsilon) allPassSample# = 0.0;
 				if (!Number.isFinite(allPassPrevInput#) || Math.abs(allPassPrevInput#) < epsilon) allPassPrevInput# = 0.0;
-				if (!Number.isFinite(shelfSample#) || Math.abs(shelfSample#) < epsilon) shelfSample# = 0.0;
-				if (!Number.isFinite(shelfPrevInput#) || Math.abs(shelfPrevInput#) < epsilon) shelfPrevInput# = 0.0;
+				if (!Number.isFinite(sustainFilterSample#) || Math.abs(sustainFilterSample#) < epsilon) sustainFilterSample# = 0.0;
+				if (!Number.isFinite(sustainFilterPrevOutput2#) || Math.abs(sustainFilterPrevOutput2#) < epsilon) sustainFilterPrevOutput2# = 0.0;
+				if (!Number.isFinite(sustainFilterPrevInput1#) || Math.abs(sustainFilterPrevInput1#) < epsilon) sustainFilterPrevInput1# = 0.0;
+				if (!Number.isFinite(sustainFilterPrevInput2#) || Math.abs(sustainFilterPrevInput2#) < epsilon) sustainFilterPrevInput2# = 0.0;
 				if (!Number.isFinite(fractionalDelaySample#) || Math.abs(fractionalDelaySample#) < epsilon) fractionalDelaySample# = 0.0;
 				pickedString#.allPassSample = allPassSample#;
 				pickedString#.allPassPrevInput = allPassPrevInput#;
-				pickedString#.shelfSample = shelfSample#;
-				pickedString#.shelfPrevInput = shelfPrevInput#;
+				pickedString#.sustainFilterSample = sustainFilterSample#;
+				pickedString#.sustainFilterPrevOutput2 = sustainFilterPrevOutput2#;
+				pickedString#.sustainFilterPrevInput1 = sustainFilterPrevInput1#;
+				pickedString#.sustainFilterPrevInput2 = sustainFilterPrevInput2#;
 				pickedString#.fractionalDelaySample = fractionalDelaySample#;
 				pickedString#.delayIndex = delayIndex#;
 				pickedString#.prevDelayLength = delayLength#;
 				pickedString#.allPassG = allPassG#;
-				pickedString#.shelfA1 = shelfA1#;
-				pickedString#.shelfB0 = shelfB0#;
-				pickedString#.shelfB1 = shelfB1#;
+				pickedString#.sustainFilterA1 = sustainFilterA1#;
+				pickedString#.sustainFilterA2 = sustainFilterA2#;
+				pickedString#.sustainFilterB0 = sustainFilterB0#;
+				pickedString#.sustainFilterB1 = sustainFilterB1#;
+				pickedString#.sustainFilterB2 = sustainFilterB2#;
 				
 				tone.expression = expression;
 				
 				synth.sanitizeFilters(filters);
 				tone.initialNoteFilterInput1 = initialFilterInput1;
-				tone.initialNoteFilterInput2 = initialFilterInput2;`;
+				tone.initialNoteFilterInput2 = initialFilterInput2;
+			}`;
                 pickedStringSource = pickedStringSource.replace(/^.*\#.*$/mg, line => {
                     const lines = [];
                     for (let voice = 0; voice < voiceCount; voice++) {
@@ -20377,7 +24971,7 @@ var beepbox = (function (exports) {
                     }
                     return lines.join("\n");
                 });
-                pickedStringFunction = new Function("synth", "bufferIndex", "runLength", "tone", "instrumentState", pickedStringSource);
+                pickedStringFunction = new Function("Config", "Synth", pickedStringSource)(Config, Synth);
                 Synth.pickedStringFunctionCache[voiceCount] = pickedStringFunction;
             }
             pickedStringFunction(synth, bufferIndex, roundedSamplesPerTick, tone, instrumentState);
@@ -20413,10 +25007,9 @@ var beepbox = (function (exports) {
                 signature = signature | 1;
             let effectsFunction = Synth.effectsFunctionCache[signature];
             if (effectsFunction == undefined) {
-                let effectsSource = "";
+                let effectsSource = "return (synth, outputDataL, outputDataR, bufferIndex, runLength, instrumentState) => {";
                 const usesDelays = usesChorus || usesReverb || usesEcho;
                 effectsSource += `
-				const Config = beepbox.Config;
 				const tempMonoInstrumentSampleBuffer = synth.tempMonoInstrumentSampleBuffer;
 				
 				let mixVolume = +instrumentState.mixVolume;
@@ -20476,7 +25069,7 @@ var beepbox = (function (exports) {
 				const filterCount = instrumentState.eqFilterCount|0;
 				let initialFilterInput1 = +instrumentState.initialEqFilterInput1;
 				let initialFilterInput2 = +instrumentState.initialEqFilterInput2;
-				const applyFilters = beepbox.Synth.applyFilters;`;
+				const applyFilters = Synth.applyFilters;`;
                 }
                 effectsSource += `
 				
@@ -20858,7 +25451,7 @@ var beepbox = (function (exports) {
                 if (usesPanning) {
                     effectsSource += `
 				
-				beepbox.Synth.sanitizeDelayLine(panningDelayLine, panningDelayPos, panningMask);
+				Synth.sanitizeDelayLine(panningDelayLine, panningDelayPos, panningMask);
 				instrumentState.panningDelayPos = panningDelayPos;
 				instrumentState.panningVolumeL = panningVolumeL;
 				instrumentState.panningVolumeR = panningVolumeR;
@@ -20868,8 +25461,8 @@ var beepbox = (function (exports) {
                 if (usesChorus) {
                     effectsSource += `
 				
-				beepbox.Synth.sanitizeDelayLine(chorusDelayLineL, chorusDelayPos, chorusMask);
-				beepbox.Synth.sanitizeDelayLine(chorusDelayLineR, chorusDelayPos, chorusMask);
+				Synth.sanitizeDelayLine(chorusDelayLineL, chorusDelayPos, chorusMask);
+				Synth.sanitizeDelayLine(chorusDelayLineR, chorusDelayPos, chorusMask);
 				instrumentState.chorusPhase = chorusPhase;
 				instrumentState.chorusDelayPos = chorusDelayPos;
 				instrumentState.chorusVoiceMult = chorusVoiceMult;
@@ -20878,8 +25471,8 @@ var beepbox = (function (exports) {
                 if (usesEcho) {
                     effectsSource += `
 				
-				beepbox.Synth.sanitizeDelayLine(echoDelayLineL, echoDelayPos, echoMask);
-				beepbox.Synth.sanitizeDelayLine(echoDelayLineR, echoDelayPos, echoMask);
+				Synth.sanitizeDelayLine(echoDelayLineL, echoDelayPos, echoMask);
+				Synth.sanitizeDelayLine(echoDelayLineR, echoDelayPos, echoMask);
 				instrumentState.echoDelayPos = echoDelayPos;
 				instrumentState.echoMult = echoMult;
 				instrumentState.echoDelayOffsetRatio = echoDelayOffsetRatio;
@@ -20896,10 +25489,10 @@ var beepbox = (function (exports) {
                 if (usesReverb) {
                     effectsSource += `
 				
-				beepbox.Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos        , reverbMask);
-				beepbox.Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos +  3041, reverbMask);
-				beepbox.Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos +  6426, reverbMask);
-				beepbox.Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos + 10907, reverbMask);
+				Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos        , reverbMask);
+				Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos +  3041, reverbMask);
+				Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos +  6426, reverbMask);
+				Synth.sanitizeDelayLine(reverbDelayLine, reverbDelayPos + 10907, reverbMask);
 				instrumentState.reverbDelayPos = reverbDelayPos;
 				instrumentState.reverbMult = reverb;
 				
@@ -20920,7 +25513,8 @@ var beepbox = (function (exports) {
 				instrumentState.reverbShelfPrevInput2 = reverbShelfPrevInput2;
 				instrumentState.reverbShelfPrevInput3 = reverbShelfPrevInput3;`;
                 }
-                effectsFunction = new Function("synth", "outputDataL", "outputDataR", "bufferIndex", "runLength", "instrumentState", effectsSource);
+                effectsSource += "}";
+                effectsFunction = new Function("Config", "Synth", effectsSource)(Config, Synth);
                 Synth.effectsFunctionCache[signature] = effectsFunction;
             }
             effectsFunction(synth, outputDataL, outputDataR, bufferIndex, runLength, instrumentState);
@@ -21009,26 +25603,30 @@ var beepbox = (function (exports) {
             for (let sampleIndex = bufferIndex; sampleIndex < stopIndex; sampleIndex++) {
                 let phase = (phases[0] + phaseDelta) % 1.0;
                 let supersawSample = phase - 0.5 * (1.0 + (voiceCount - 1.0) * dynamism);
-                if (phase < phaseDelta) {
-                    var t = phase / phaseDelta;
-                    supersawSample -= (t + t - t * t - 1) * 0.5;
-                }
-                else if (phase > 1.0 - phaseDelta) {
-                    var t = (phase - 1.0) / phaseDelta;
-                    supersawSample -= (t + t + t * t + 1) * 0.5;
+                if (!instrumentState.aliases) {
+                    if (phase < phaseDelta) {
+                        var t = phase / phaseDelta;
+                        supersawSample -= (t + t - t * t - 1) * 0.5;
+                    }
+                    else if (phase > 1.0 - phaseDelta) {
+                        var t = (phase - 1.0) / phaseDelta;
+                        supersawSample -= (t + t + t * t + 1) * 0.5;
+                    }
                 }
                 phases[0] = phase;
                 for (let i = 1; i < voiceCount; i++) {
                     const detunedPhaseDelta = phaseDelta * unisonDetunes[i];
                     let phase = (phases[i] + detunedPhaseDelta) % 1.0;
                     supersawSample += phase * dynamism;
-                    if (phase < detunedPhaseDelta) {
-                        const t = phase / detunedPhaseDelta;
-                        supersawSample -= (t + t - t * t - 1) * 0.5 * dynamism;
-                    }
-                    else if (phase > 1.0 - detunedPhaseDelta) {
-                        const t = (phase - 1.0) / detunedPhaseDelta;
-                        supersawSample -= (t + t + t * t + 1) * 0.5 * dynamism;
+                    if (!instrumentState.aliases) {
+                        if (phase < detunedPhaseDelta) {
+                            const t = phase / detunedPhaseDelta;
+                            supersawSample -= (t + t - t * t - 1) * 0.5 * dynamism;
+                        }
+                        else if (phase > 1.0 - detunedPhaseDelta) {
+                            const t = (phase - 1.0) / detunedPhaseDelta;
+                            supersawSample -= (t + t + t * t + 1) * 0.5 * dynamism;
+                        }
                     }
                     phases[i] = phase;
                 }
@@ -21071,7 +25669,7 @@ var beepbox = (function (exports) {
             let expression = +tone.expression;
             const expressionDelta = +tone.expressionDelta;
             let phase = (tone.phases[0] % 1) * Config.chipNoiseLength;
-            if (tone.phases[0] == 0) {
+            if (tone.phases[0] == 0.0) {
                 phase = Math.random() * Config.chipNoiseLength;
             }
             const phaseMask = Config.chipNoiseLength - 1;
@@ -21119,7 +25717,7 @@ var beepbox = (function (exports) {
             let initialFilterInput2 = +tone.initialNoteFilterInput2;
             const applyFilters = Synth.applyFilters;
             let phase = (tone.phases[0] % 1) * Config.spectrumNoiseLength;
-            if (tone.phases[0] == 0)
+            if (tone.phases[0] == 0.0)
                 phase = Synth.findRandomZeroCrossing(wave, Config.spectrumNoiseLength) + phaseDelta;
             const phaseMask = Config.spectrumNoiseLength - 1;
             const pitchRelativefilter = Math.min(1.0, phaseDelta);
@@ -21163,7 +25761,7 @@ var beepbox = (function (exports) {
             let initialFilterInput2 = +tone.initialNoteFilterInput2;
             const applyFilters = Synth.applyFilters;
             let phase = (tone.phases[0] % 1) * Config.spectrumNoiseLength;
-            if (tone.phases[0] == 0)
+            if (tone.phases[0] == 0.0)
                 phase = Synth.findRandomZeroCrossing(wave, Config.spectrumNoiseLength) + phaseDelta;
             const phaseMask = Config.spectrumNoiseLength - 1;
             const stopIndex = bufferIndex + runLength;
@@ -21216,9 +25814,18 @@ var beepbox = (function (exports) {
                 }
             }
             for (let instrumentIndex = 0; instrumentIndex < usedInstruments.length; instrumentIndex++) {
-                synth.setModValue(tone.expression, tone.expression + tone.expressionDelta, mod, instrument.modChannels[mod], usedInstruments[instrumentIndex], setting);
+                synth.setModValue(tone.expression, tone.expression + tone.expressionDelta, instrument.modChannels[mod], usedInstruments[instrumentIndex], setting);
+                for (let i = 0; i < synth.heldMods.length; i++) {
+                    if (Config.modulators[instrument.modulators[mod]].forSong) {
+                        if (synth.heldMods[i].setting == setting)
+                            synth.setModValue(synth.heldMods[i].volume, synth.heldMods[i].volume, instrument.modChannels[mod], usedInstruments[instrumentIndex], setting);
+                    }
+                    else if (synth.heldMods[i].channelIndex == instrument.modChannels[mod] && synth.heldMods[i].instrumentIndex == usedInstruments[instrumentIndex] && synth.heldMods[i].setting == setting) {
+                        synth.setModValue(synth.heldMods[i].volume, synth.heldMods[i].volume, instrument.modChannels[mod], usedInstruments[instrumentIndex], setting);
+                    }
+                }
                 if (setting == Config.modulators.dictionary["reset arp"].index && synth.tick == 0 && tone.noteStartPart == synth.beat * Config.partsPerBeat + synth.part) {
-                    synth.song.channels[instrument.modChannels[mod]].instruments[usedInstruments[instrumentIndex]].arpTime = 0;
+                    synth.channels[instrument.modChannels[mod]].instruments[usedInstruments[instrumentIndex]].arpTime = 0;
                 }
                 else if (setting == Config.modulators.dictionary["next bar"].index) {
                     synth.wantToSkip = true;
@@ -21474,7 +26081,7 @@ var beepbox = (function (exports) {
     Synth.pickedStringFunctionCache = Array(3).fill(undefined);
     Synth.fmSourceTemplate = (`
 		const data = synth.tempMonoInstrumentSampleBuffer;
-		const sineWave = beepbox.Config.sineWave;
+		const sineWave = Config.sineWave;
 			
 		// I'm adding 1000 to the phase to ensure that it's never negative even when modulated by other waves because negative numbers don't work with the modulus operator very well.
 		let operator#Phase       = +((tone.phases[#] % 1) + 1000) * ` + Config.sineWaveLength + `;
@@ -21493,7 +26100,7 @@ var beepbox = (function (exports) {
 		const filterCount = tone.noteFilterCount|0;
 		let initialFilterInput1 = +tone.initialNoteFilterInput1;
 		let initialFilterInput2 = +tone.initialNoteFilterInput2;
-		const applyFilters = beepbox.Synth.applyFilters;
+		const applyFilters = Synth.applyFilters;
 		
 		const stopIndex = bufferIndex + roundedSamplesPerTick;
 		for (let sampleIndex = bufferIndex; sampleIndex < stopIndex; sampleIndex++) {
@@ -21567,9 +26174,6 @@ var beepbox = (function (exports) {
         }
     }
 
-    const { a, button, div, h1, input, canvas } = HTML;
-    const { svg, circle, rect, path } = SVG;
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|android|ipad|playbook|silk/i.test(navigator.userAgent);
     document.head.appendChild(HTML.style({ type: "text/css" }, `
 	body {
 		color: ${ColorConfig.primaryText};
@@ -21708,8 +26312,12 @@ var beepbox = (function (exports) {
 		cursor: pointer;
 	}
 `));
+
+    const { a, button, div, h1, input, canvas } = HTML;
+    const { svg, circle, rect, path } = SVG;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|android|ipad|playbook|silk/i.test(navigator.userAgent);
     const colorTheme = getLocalStorage("colorTheme");
-    ColorConfig.setTheme(colorTheme === null ? "dark classic" : colorTheme);
+    ColorConfig.setTheme(colorTheme === null ? "AbyssBox Classic" : colorTheme);
     let prevHash = null;
     let id = ((Math.random() * 0xffffffff) >>> 0).toString(16);
     let pauseButtonDisplayed = false;
@@ -21732,7 +26340,7 @@ var beepbox = (function (exports) {
     let fullscreenLink = a({ target: "_top", style: "margin: 0 4px;" }, "⇱ Fullscreen");
     let draggingPlayhead = false;
     const playButton = button({ style: "width: 100%; height: 100%; max-height: 50px;" });
-    const playButtonContainer = div({ style: "flex-shrink: 0; display: flex; padding: 2px; width: 80px; height: 100%; box-sizing: border-box; align-items: center;" }, playButton);
+    const playButtonContainer = div({ class: "playButtonContainer", style: "flex-shrink: 0; display: flex; padding: 2px; width: 80px; height: 100%; box-sizing: border-box; align-items: center;" }, playButton);
     const loopIcon = path({ d: "M 4 2 L 4 0 L 7 3 L 4 6 L 4 4 Q 2 4 2 6 Q 2 8 4 8 L 4 10 Q 0 10 0 6 Q 0 2 4 2 M 8 10 L 8 12 L 5 9 L 8 6 L 8 8 Q 10 8 10 6 Q 10 4 8 4 L 8 2 Q 12 2 12 6 Q 12 10 8 10 z" });
     const loopButton = button({ title: "loop", style: "background: none; flex: 0 0 12px; margin: 0 3px; width: 12px; height: 12px; display: flex;" }, svg({ width: 12, height: 12, viewBox: "0 0 12 12" }, loopIcon));
     const volumeIcon = svg({ style: "flex: 0 0 12px; margin: 0 1px; width: 12px; height: 12px;", viewBox: "0 0 12 12" }, path({ fill: ColorConfig.uiWidgetBackground, d: "M 1 9 L 1 3 L 4 3 L 7 0 L 7 12 L 4 9 L 1 9 M 9 3 Q 12 6 9 9 L 8 8 Q 10.5 6 8 4 L 9 3 z" }));
@@ -21740,9 +26348,13 @@ var beepbox = (function (exports) {
     const zoomIcon = svg({ width: 12, height: 12, viewBox: "0 0 12 12" }, circle({ cx: "5", cy: "5", r: "4.5", "stroke-width": "1", stroke: "currentColor", fill: "none" }), path({ stroke: "currentColor", "stroke-width": "2", d: "M 8 8 L 11 11 M 5 2 L 5 8 M 2 5 L 8 5", fill: "none" }));
     const zoomButton = button({ title: "zoom", style: "background: none; flex: 0 0 12px; margin: 0 3px; width: 12px; height: 12px; display: flex;" }, zoomIcon);
     const timeline = svg({ style: "min-width: 0; min-height: 0; touch-action: pan-y pinch-zoom;" });
-    const playhead = div({ style: `position: absolute; left: 0; top: 0; width: 2px; height: 100%; background: ${ColorConfig.playhead}; pointer-events: none;` });
-    const timelineContainer = div({ style: "display: flex; flex-grow: 1; flex-shrink: 1; position: relative;" }, timeline, playhead);
-    const visualizationContainer = div({ style: "display: flex; flex-grow: 1; flex-shrink: 1; height: 0; position: relative; align-items: center; overflow: hidden;" }, timelineContainer);
+    const playhead = div({ class: "playhead", style: `position: absolute; left: 0; top: 0; width: 2px; height: 100%; background: ${ColorConfig.playhead}; pointer-events: none;` });
+    const timelineContainer = div({ class: "timeline", style: "display: flex; flex-grow: 1; flex-shrink: 1; position: relative;" }, timeline, playhead);
+    const visualizationContainer = div({ class: "visualizer", style: "display: flex; flex-grow: 1; flex-shrink: 1; height: 0; position: relative; align-items: center; overflow: hidden;" }, timelineContainer);
+    let noteFlashElementsPerBar;
+    let currentNoteFlashElements = [];
+    let currentNoteFlashBar = -1;
+    const notesFlashWhenPlayed = getLocalStorage("notesFlashWhenPlayed") == "true";
     const outVolumeBarBg = SVG.rect({ "pointer-events": "none", width: "90%", height: "50%", x: "5%", y: "25%", fill: ColorConfig.uiWidgetBackground });
     const outVolumeBar = SVG.rect({ "pointer-events": "none", height: "50%", width: "0%", x: "5%", y: "25%", fill: "url('#volumeGrad2')" });
     const outVolumeCap = SVG.rect({ "pointer-events": "none", width: "2px", height: "50%", x: "5%", y: "25%", fill: ColorConfig.uiWidgetFocus });
@@ -21753,7 +26365,7 @@ var beepbox = (function (exports) {
     const defs = SVG.defs({}, gradient);
     const volumeBarContainer = SVG.svg({ style: `touch-action: none; overflow: hidden; margin: auto;`, width: "160px", height: "10px", preserveAspectRatio: "none" }, defs, outVolumeBarBg, outVolumeBar, outVolumeCap);
     document.body.appendChild(visualizationContainer);
-    document.body.appendChild(div({ style: `flex-shrink: 0; height: 20vh; min-height: 22px; max-height: 70px; display: flex; align-items: center;` }, playButtonContainer, loopButton, volumeIcon, volumeSlider, zoomButton, volumeBarContainer, oscilascope.canvas, titleText, editLink, copyLink, shareLink, fullscreenLink));
+    document.body.appendChild(div({ class: "control-center", style: `flex-shrink: 0; height: 20vh; min-height: 22px; max-height: 70px; display: flex; align-items: center;` }, playButtonContainer, loopButton, volumeIcon, volumeSlider, zoomButton, volumeBarContainer, oscilascope.canvas, titleText, editLink, copyLink, shareLink, fullscreenLink));
     function setLocalStorage(key, value) {
         try {
             localStorage.setItem(key, value);
@@ -21767,6 +26379,18 @@ var beepbox = (function (exports) {
         }
         catch (error) {
             return null;
+        }
+    }
+    function removeFromUnorderedArray(array, index) {
+        if (array.length < 1) {
+            return;
+        }
+        if (index === array.length - 1) {
+            array.pop();
+        }
+        else if (index >= 0 && index < array.length - 1) {
+            const lastElement = array.pop();
+            array[index] = lastElement;
         }
     }
     function loadSong(songString, reuseParams) {
@@ -21784,7 +26408,7 @@ var beepbox = (function (exports) {
             myHash = myHash.substring(1);
         }
         fullscreenLink.href = location.href;
-        for (const parameter of myHash.split("&")) {
+        for (const parameter of myHash.split(/&(?=[a-z]+=)/g)) {
             let equalsIndex = parameter.indexOf("=");
             if (equalsIndex != -1) {
                 let paramName = parameter.substring(0, equalsIndex);
@@ -21933,6 +26557,42 @@ var beepbox = (function (exports) {
             playhead.style.left = (timelineWidth * pos) + "px";
             const boundingRect = visualizationContainer.getBoundingClientRect();
             visualizationContainer.scrollLeft = pos * (timelineWidth - boundingRect.width);
+            if (notesFlashWhenPlayed) {
+                const playheadBar = Math.floor(synth.playhead);
+                const modPlayhead = synth.playhead - playheadBar;
+                const partsPerBar = synth.song.beatsPerBar * Config.partsPerBeat;
+                const noteFlashElementsForThisBar = noteFlashElementsPerBar[playheadBar];
+                if (noteFlashElementsForThisBar != null && playheadBar !== currentNoteFlashBar) {
+                    for (var i = currentNoteFlashElements.length - 1; i >= 0; i--) {
+                        var element = currentNoteFlashElements[i];
+                        const outsideOfCurrentBar = Number(element.getAttribute("note-bar")) !== playheadBar;
+                        const isInvisible = element.style.opacity === "0";
+                        if (outsideOfCurrentBar && isInvisible) {
+                            removeFromUnorderedArray(currentNoteFlashElements, i);
+                        }
+                    }
+                    for (var i = 0; i < noteFlashElementsForThisBar.length; i++) {
+                        var element = noteFlashElementsForThisBar[i];
+                        currentNoteFlashElements.push(element);
+                    }
+                }
+                if (currentNoteFlashElements != null) {
+                    for (var i = 0; i < currentNoteFlashElements.length; i++) {
+                        var element = currentNoteFlashElements[i];
+                        const noteStart = Number(element.getAttribute("note-start")) / partsPerBar;
+                        const noteEnd = Number(element.getAttribute("note-end")) / partsPerBar;
+                        const noteBar = Number(element.getAttribute("note-bar"));
+                        if ((modPlayhead >= noteStart) && (noteBar == playheadBar)) {
+                            const dist = noteEnd - noteStart;
+                            element.style.opacity = String((1 - (((modPlayhead - noteStart) - (dist / 2)) / (dist / 2))));
+                        }
+                        else {
+                            element.style.opacity = "0";
+                        }
+                    }
+                }
+                currentNoteFlashBar = playheadBar;
+            }
         }
     }
     function renderTimeline() {
@@ -21973,6 +26633,19 @@ var beepbox = (function (exports) {
         for (let octave = 0; octave <= windowOctaves; octave++) {
             timeline.appendChild(rect({ x: 0, y: octave * 12 * wavePitchHeight, width: timelineWidth, height: wavePitchHeight + 1, fill: ColorConfig.tonic, opacity: 0.75 }));
         }
+        let noteFlashColor = "#ffffff";
+        let noteFlashColorSecondary = "#ffffff77";
+        if (notesFlashWhenPlayed) {
+            noteFlashColor = ColorConfig.getComputed("--note-flash") !== "" ? "var(--note-flash)" : "#ffffff";
+            noteFlashColorSecondary = ColorConfig.getComputed("--note-flash-secondary") !== "" ? "var(--note-flash-secondary)" : "#ffffff77";
+        }
+        if (notesFlashWhenPlayed) {
+            noteFlashElementsPerBar = [];
+            for (let bar = 0; bar < synth.song.barCount; bar++) {
+                noteFlashElementsPerBar.push([]);
+            }
+            currentNoteFlashBar = -1;
+        }
         for (let channel = synth.song.channels.length - 1 - synth.song.modChannelCount; channel >= 0; channel--) {
             const isNoise = synth.song.getChannelIsNoise(channel);
             const pitchHeight = isNoise ? drumPitchHeight : wavePitchHeight;
@@ -21992,6 +26665,17 @@ var beepbox = (function (exports) {
                         if (isNoise)
                             noteElement.style.opacity = String(0.6);
                         timeline.appendChild(noteElement);
+                        if (notesFlashWhenPlayed) {
+                            const dflash = drawNote(pitch, note.start, note.pins, (pitchHeight + 1) / 2, offsetX, offsetY, partWidth, pitchHeight);
+                            const noteFlashElement = path({ d: dflash, fill: (isNoise ? noteFlashColorSecondary : noteFlashColor) });
+                            noteFlashElement.style.opacity = "0";
+                            noteFlashElement.setAttribute('note-start', String(note.start));
+                            noteFlashElement.setAttribute('note-end', String(note.end));
+                            noteFlashElement.setAttribute('note-bar', String(bar));
+                            timeline.appendChild(noteFlashElement);
+                            const noteFlashElementsForThisBar = noteFlashElementsPerBar[bar];
+                            noteFlashElementsForThisBar.push(noteFlashElement);
+                        }
                     }
                 }
             }

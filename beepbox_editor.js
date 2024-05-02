@@ -956,6 +956,16 @@ var beepbox = (function (exports) {
     Config.detuneMin = 0;
     Config.songDetuneMin = 0;
     Config.songDetuneMax = 500;
+    Config.unisonVoicesMin = 1;
+    Config.unisonVoicesMax = 2;
+    Config.unisonSpreadMin = -96;
+    Config.unisonSpreadMax = 96;
+    Config.unisonOffsetMin = -96;
+    Config.unisonOffsetMax = 96;
+    Config.unisonExpressionMin = -2;
+    Config.unisonExpressionMax = 2;
+    Config.unisonSignMin = -2;
+    Config.unisonSignMax = 2;
     Config.sineWaveLength = 1 << 8;
     Config.sineWaveMask = Config.sineWaveLength - 1;
     Config.sineWave = generateSineWave();
@@ -978,7 +988,7 @@ var beepbox = (function (exports) {
         { name: "noteVolume", computeIndex: 0, displayName: "note volume", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: null },
         { name: "pulseWidth", computeIndex: 2, displayName: "pulse width", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 8] },
         { name: "stringSustain", computeIndex: 3, displayName: "sustain", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [7] },
-        { name: "unison", computeIndex: 4, displayName: "unison", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [0, 5, 7, 9] },
+        { name: "unison", computeIndex: 4, displayName: "unison", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [0, 5, 7, 9, 6, 2, 3] },
         { name: "operatorFrequency", computeIndex: 5, displayName: "fm# freq", interleave: true, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 11] },
         { name: "operatorAmplitude", computeIndex: 11, displayName: "fm# volume", interleave: false, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 11] },
         { name: "feedbackAmplitude", computeIndex: 17, displayName: "fm feedback", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [1, 11] },
@@ -1452,7 +1462,7 @@ var beepbox = (function (exports) {
         static valueToPreset(presetValue) {
             const categoryIndex = presetValue >> 6;
             const presetIndex = presetValue & 0x3F;
-            return EditorConfig.presetCategories[categoryIndex].presets[presetIndex];
+            return EditorConfig === null || EditorConfig === void 0 ? void 0 : EditorConfig.presetCategories[categoryIndex].presets[presetIndex];
         }
         static midiProgramToPresetValue(program) {
             for (let categoryIndex = 0; categoryIndex < EditorConfig.presetCategories.length; categoryIndex++) {
@@ -1481,7 +1491,7 @@ var beepbox = (function (exports) {
             return (_a = EditorConfig.presetCategories[0].presets.dictionary) === null || _a === void 0 ? void 0 : _a[TypePresets === null || TypePresets === void 0 ? void 0 : TypePresets[instrument]];
         }
     }
-    EditorConfig.version = "1.2";
+    EditorConfig.version = "1.3";
     EditorConfig.versionDisplayName = "AbyssBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
@@ -1769,12 +1779,17 @@ var beepbox = (function (exports) {
                 { name: "fm supersaw", generalMidi: false, settings: { "type": "FM6op", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 1.4142 }, { "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 1.4142 }, { "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }], "effects": ["panning", "transition type", "pitch shift", "note filter", "chorus", "reverb"], "transition": "continue", "clicklessTransition": false, "pitchShiftSemitones": 0, "noteFilterType": false, "noteSimpleCut": 10, "noteSimplePeak": 0, "noteFilter": [], "noteSubFilters0": [], "noteSubFilters1": [{ "type": "low-pass", "cutoffHz": 4756.83, "linearGain": 1 }], "pan": 0, "panDelay": 10, "chorus": 71, "reverb": 0, "fadeInSeconds": 0, "fadeOutTicks": -1, "algorithm": "1 2 3 4 5 6", "feedbackType": "1⟲", "feedbackAmplitude": 0, "operators": [{ "frequency": "1×", "amplitude": 13, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "~1×", "amplitude": 15, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "2×", "amplitude": 10, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "3×", "amplitude": 7, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "4×", "amplitude": 9, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "8×", "amplitude": 6, "waveform": "sawtooth", "pulseWidth": 5 }], "envelopes": [] } },
                 { name: "obama why", generalMidi: false, settings: { "type": "harmonics", "volume": 0, "eqFilter": [], "effects": ["note filter", "panning", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 840.9, "linearGain": 11.3137 }], "pan": 0, "reverb": 0, "fadeInSeconds": 0.0263, "fadeOutTicks": -3, "harmonics": [100, 86, 29, 29, 14, 14, 0, 14, 14, 43, 71, 100, 100, 86, 71, 71, 57, 57, 43, 43, 43, 43, 43, 0, 0, 0, 0, 0], "unison": "octave", "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
             ]) },
-        { name: "AbyssBox presets", presets: toNameMap([
+        { name: "AbyssBox 1.2> Presets", presets: toNameMap([
                 { name: "Demonic Bell", generalMidi: false, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "effects": ["detune", "distortion", "bitcrusher", "echo", "reverb"], "detuneCents": -52, "distortion": 29, "aliases": false, "bitcrusherOctave": 4.5, "bitcrusherQuantization": 29, "panDelay": 10, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 68, "fadeInSeconds": 0, "fadeOutTicks": 96, "harmonics": [43, 71, 71, 100, 86, 100, 43, 86, 71, 57, 86, 29, 14, 71, 14, 14, 57, 14, 14, 43, 14, 14, 43, 14, 14, 43, 14, 14], "unison": "shimmer", "stringSustain": 64, "envelopes": [] } },
                 { name: "Spacey Triangle", generalMidi: false, settings: { "type": "chip", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "effects": ["transition type", "vibrato", "distortion", "bitcrusher", "chorus", "echo", "reverb"], "transition": "normal", "clicklessTransition": false, "vibrato": "shaky", "vibratoDepth": 0.1, "vibratoDelay": 0, "vibratoSpeed": 10, "vibratoType": 1, "distortion": 29, "aliases": false, "bitcrusherOctave": 5.5, "bitcrusherQuantization": 14, "panDelay": 10, "chorus": 86, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 26, "fadeInSeconds": 0, "fadeOutTicks": 96, "wave": "triangle", "unison": "dirty", "isUsingAdvancedLoopControls": false, "chipWaveLoopStart": 0, "chipWaveLoopEnd": 32, "chipWaveLoopMode": 0, "chipWavePlayBackwards": false, "chipWaveStartOffset": 0, "envelopes": [] } },
                 { name: "Harmonic Piano", generalMidi: false, settings: { "type": "harmonics", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "effects": ["transition type"], "transition": "interrupt", "clicklessTransition": false, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -1, "harmonics": [100, 57, 57, 57, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "unison": "none", "envelopes": [] } },
                 { name: "Organic Synth", generalMidi: false, settings: { "type": "FM", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "effects": ["chord type", "reverb"], "chord": "simultaneous", "fastTwoNoteArp": false, "arpeggioSpeed": 12, "panDelay": 10, "reverb": 71, "fadeInSeconds": 0.0263, "fadeOutTicks": 96, "algorithm": "(1 2 3)←4", "feedbackType": "1⟲ 2⟲ 3⟲", "feedbackAmplitude": 2, "operators": [{ "frequency": "1×", "amplitude": 15, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "5×", "amplitude": 3, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "8×", "amplitude": 7, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }], "envelopes": [{ "target": "operatorAmplitude", "envelope": "twang 1", "index": 3 }, { "target": "noteVolume", "envelope": "twang 2" }] } },
                 { name: "Nokia Ringtone", generalMidi: false, settings: { "type": "FM", "eqFilter": [], "effects": ["transition type", "chord type"], "transition": "interrupt", "chord": "custom interval", "fadeInSeconds": 0, "fadeOutTicks": -1, "algorithm": "(1 2)←(3 4)", "feedbackType": "1→2", "feedbackAmplitude": 0, "operators": [{ "frequency": "1×", "amplitude": 2 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }], "envelopes": [] } },
+            ]) },
+        { name: "AbyssBox 1.3 Presets", presets: toNameMap([
+                { name: "Ghost House", generalMidi: false, settings: { "type": "FM", "eqFilter": [], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "envelopeSpeed": 12, "discreteEnvelope": false, "eqSubFilters0": [], "effects": ["transition type", "vibrato", "bitcrusher"], "transition": "normal", "clicklessTransition": false, "vibrato": "heavy", "vibratoDepth": 0.45, "vibratoDelay": 0, "vibratoSpeed": 10, "vibratoType": 0, "bitcrusherOctave": 3.5, "bitcrusherQuantization": 43, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -3, "algorithm": "1←(2 3←4)", "feedbackType": "1⟲", "feedbackAmplitude": 0, "operators": [{ "frequency": "1×", "amplitude": 15, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 4, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 6, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 7, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }], "envelopes": [{ "target": "noteVolume", "envelope": "punch" }] } },
+                { name: "Supersaw Pluck", generalMidi: false, settings: { "type": "supersaw", "eqFilter": [], "eqFilterType": false, "eqSimpleCut": 9, "eqSimplePeak": 0, "envelopeSpeed": 12, "discreteEnvelope": false, "eqSubFilters0": [], "eqSubFilters1": [], "effects": ["chord type", "note filter", "chorus", "echo", "reverb"], "chord": "simultaneous", "fastTwoNoteArp": true, "arpeggioSpeed": 12, "noteFilterType": true, "noteSimpleCut": 7, "noteSimplePeak": 1, "noteFilter": [{ "type": "low-pass", "cutoffHz": 3828.43, "linearGain": 0.5 }], "noteSubFilters1": [{ "type": "low-pass", "cutoffHz": 3828.43, "linearGain": 0.5 }], "panDelay": 10, "chorus": 14, "echoSustain": 29, "echoDelayBeats": 1, "reverb": 0, "fadeInSeconds": 0, "fadeOutTicks": 48, "pulseWidth": 40, "decimalOffset": 0, "dynamism": 67, "spread": 50, "shape": 0, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 1" }] } },
+                { name: "Credits Bass", generalMidi: false, settings: { "type": "chip", "eqFilter": [], "eqFilterType": false, "eqSimpleCut": 8, "eqSimplePeak": 0, "envelopeSpeed": 12, "discreteEnvelope": false, "effects": ["transition type", "chord type", "note filter"], "transition": "interrupt", "clicklessTransition": false, "chord": "arpeggio", "fastTwoNoteArp": true, "arpeggioSpeed": 9, "noteFilterType": true, "noteSimpleCut": 8, "noteSimplePeak": 0, "noteFilter": [{ "type": "low-pass", "cutoffHz": 16000, "linearGain": 0.3536 }], "noteSubFilters1": [{ "type": "low-pass", "cutoffHz": 16000, "linearGain": 0.3536 }], "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -1, "wave": "alto sax", "unison": "none", "isUsingAdvancedLoopControls": false, "chipWaveLoopStart": 0, "chipWaveLoopEnd": 2, "chipWaveLoopMode": 0, "chipWavePlayBackwards": false, "chipWaveStartOffset": 0, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "decay 1" }] } },
             ]) },
     ]);
 
@@ -2399,7 +2414,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #541625; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--mod-title: #bf2c5d;
+			--progress-bar: #bf2c5d;
+			
 			--pitch-secondary-channel-hue: -80; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -2486,6 +2503,9 @@ var beepbox = (function (exports) {
 
 			--note-flash: #ffffff;
 			--note-flash-secondary: #ffffff77;
+
+			--oscilloscope-line-R: var(--ui-widget-background);
+			--oscilloscope-line-L: var(--secondary-text);
 				}
 		* {
 		cursor: url("abyssbox_cursor.png"), auto;
@@ -2506,6 +2526,8 @@ var beepbox = (function (exports) {
 		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
 		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		--export-instrument-symbol: var(--export-symbol);
+		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
 		}
 		
 			@font-face {
@@ -2558,6 +2580,13 @@ var beepbox = (function (exports) {
     				image-rendering: optimizeSpeed !important;             /* IE */ 
 				}
 			.beepboxEditor button,
+			button.mobilePatternButton,
+			button.mobileTrackButton,
+			button.mobileSettingsButton,
+			button.mobilePlayButton,
+			button.mobilePauseButton,
+			button.mobileNextBarButton,
+			button.mobilePrevBarButton,
 			button.playButton,
 			button.pauseButton, 
 			button.recordButton, 
@@ -2594,6 +2623,11 @@ var beepbox = (function (exports) {
 					border-image: none !important;
 				}
 				
+				button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+					--ui-widget-background: var(--editor-background) !important;
+					border-image-source: none !important;
+				}
+
 			@font-face {
 		   font-family: "AbyssType_small";
 		   src:
@@ -2719,7 +2753,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #541625; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--mod-title: #bf2c5d;
+			--progress-bar: #bf2c5d;
+
 			--pitch-secondary-channel-hue: -80; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -2806,6 +2842,9 @@ var beepbox = (function (exports) {
 
 			--note-flash: #ffffff;
 			--note-flash-secondary: #ffffff77;
+
+			--oscilloscope-line-R: var(--ui-widget-background);
+			--oscilloscope-line-L: var(--secondary-text);
 				}		
 		/* sets cursor */ 
 		* {
@@ -2827,7 +2866,16 @@ var beepbox = (function (exports) {
 		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
 		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		--export-instrument-symbol: var(--export-symbol);
+		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
 		}
+		
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+ 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
@@ -2841,6 +2889,15 @@ var beepbox = (function (exports) {
 			}
 
 			.beepboxEditor button,
+			button.mobilePatternButton,
+			button.mobileTrackButton,
+			button.mobileSettingsButton,
+			button.mobilePlayButton,
+			button.mobilePauseButton,
+			button.cancelButton,
+			button.mobileNextBarButton,
+			button.mobilePrevBarButton,
+			button.insertChannelButton,
 			button.playButton,
 			button.pauseButton, 
 			button.recordButton, 
@@ -2850,7 +2907,9 @@ var beepbox = (function (exports) {
 			button.copyButton, 
 			button.pasteButton, 
 			button.exportInstrumentButton, 
-			button.importInstrumentButton, 
+			button.importInstrumentButton,
+			button.okayButton, 
+			button.songLoopButton,
 			.beepboxEditor select, 
 			.beepboxEditor .select2-selection__rendered {
 					border-style: double !important;
@@ -2863,6 +2922,7 @@ var beepbox = (function (exports) {
 			button.notesUpButton::before,
 			button.copyPatternButton::before,
 			button.pastePatternButton::before,
+			button.insertChannelButton::before,
 			button.undoButton::before,
 			button.redoButton::before,
 			button.loopBarButton::before,
@@ -2870,9 +2930,16 @@ var beepbox = (function (exports) {
 			button.selectAllButton::before,
 			button.deleteChannelButton::before, 
 			button.insertRowButton::before,
+			button.okayButton::before, 
+			button.songLoopButton::before,
 			.delete-envelope::before {
 				left: -3px !important;
 				top: -3px !important;
+			}
+
+			button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+				--ui-widget-background: var(--editor-background) !important;
+				border-image-source: none !important;
 			}
 
 			div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
@@ -3005,7 +3072,8 @@ var beepbox = (function (exports) {
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
 			--mod-title: #cc1338;
-		
+			--progress-bar: #cc1338;
+
 			--pitch-secondary-channel-hue: -80; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 255; 		
@@ -3091,6 +3159,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum-scale: 0; 	
 			--note-flash: #ffffff;
 			--note-flash-secondary: #ffffff77;
+
+			--oscilloscope-line-R: var(--ui-widget-background);
+			--oscilloscope-line-L: var(--secondary-text);
 				}
 
 				.promptContainerBG::before {
@@ -3136,6 +3207,13 @@ var beepbox = (function (exports) {
     				image-rendering: optimizeSpeed !important;             /* IE */ 
 				}
 				.beepboxEditor button,
+				button.mobilePatternButton,
+				button.mobileTrackButton,
+				button.mobileSettingsButton,
+				button.mobilePlayButton,
+				button.mobilePauseButton,
+				button.mobileNextBarButton,
+				button.mobilePrevBarButton,
 				button.playButton,
 				button.pauseButton, 
 				button.recordButton, 
@@ -3192,7 +3270,16 @@ var beepbox = (function (exports) {
 		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
 		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		--export-instrument-symbol: var(--export-symbol);
+		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
 		}
+		
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+ 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
@@ -3203,6 +3290,11 @@ var beepbox = (function (exports) {
 		   font-family: "AbyssType_small";
 		   src:
  		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+				--ui-widget-background: var(--editor-background) !important;
+				border-image-source: none !important;
 			}
 
 			html {
@@ -3452,7 +3544,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #341a7b; 		
 			--mod-label-secondary-text: rgb(86, 93, 120);
 			--mod-label-primary-text: gray; 
-		
+			--progress-bar: #84aef0;
+
 			--pitch-secondary-channel-hue: 110; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 63; 		
@@ -3725,7 +3818,7 @@ var beepbox = (function (exports) {
    					border-image-width: 4px !important; 
 					border-image-repeat: stretch; 
 				}
-				.beepboxEditor button
+				.beepboxEditor button, button
 				{
 					--ui-widget-background: linear-gradient(#84aef0, #2a3d6a) !important;
 					box-shadow:
@@ -3736,6 +3829,7 @@ var beepbox = (function (exports) {
 				}
 				.beepboxEditor .select2-container--open .select2-selection__rendered,
 				.beepboxEditor button:focus,
+				button:focus,
 				.beepboxEditor .instrument-bar .selected-instrument,
 				.beepboxEditor .eq-filter-type-bar button:not(.deactivated),
 				.beepboxEditor .note-filter-type-bar button:not(.deactivated)
@@ -3949,9 +4043,509 @@ var beepbox = (function (exports) {
 		  }
 
 			`,
+        "Skeuomorphic": `
+		:root {
+			--page-margin: #020202;
+			--editor-background: #1e1e1e;
+			--hover-preview: white;
+			--playhead: rgba(255, 255, 255, 0.9);
+			--primary-text: white;
+			--secondary-text: #848484;
+			--inverted-text: black;
+			--text-selection: rgba(119,68,255,0.99);
+			--box-selection-fill: #044b94;
+			--loop-accent: #74f;
+			--link-accent: #98f;
+			--ui-widget-background: #444;
+			--ui-widget-focus: #555;
+			--pitch-background: #393e4f;
+			--tonic: #725491;
+			--fifth-note: #54547a;
+			--white-piano-key: #eee;
+			--black-piano-key: #666;
+			--white-piano-key-text: #131200;
+			--black-piano-key-text: #fff;
+			--use-color-formula: false;
+			--track-editor-bg-pitch: linear-gradient(#4b5164, #3e3f48);
+			--track-editor-bg-pitch-dim: linear-gradient(#3e3f48, #212530);
+			--track-editor-bg-noise: linear-gradient(#3d3535,#161313);
+			--track-editor-bg-noise-dim: linear-gradient(#161313,#0e0c0c);
+			--track-editor-bg-mod: linear-gradient(#283560,#0a101f);
+			--track-editor-bg-mod-dim: linear-gradient(#05080f,#0a101f);
+			--multiplicative-mod-slider: #606c9f;
+			--overwriting-mod-slider: #6850b5;
+			--indicator-primary: #9c64f7;
+			--indicator-secondary: #393e4f;
+			--select2-opt-group: #333;
+			--input-box-outline: #222;
+			--mute-button-normal: #dda85d;
+			--mute-button-mod: #886eae;
+			--mod-label-primary: #282840;
+			--mod-label-secondary-text: rgb(87, 86, 120);
+			--mod-label-primary-text: white;
+
+			--pitch1-secondary-channel: #bb1111;
+			--pitch1-primary-channel:   #ff5959;
+			--pitch1-secondary-note:    #7c0404;
+			--pitch1-primary-note:      #ffb6b6;
+		
+			--pitch2-secondary-channel: #bb5b11;
+			--pitch2-primary-channel:   #ffa159;
+			--pitch2-secondary-note:    #7c3804;
+			--pitch2-primary-note:      #ffd5b6;
+		
+			--pitch3-secondary-channel: #bba411;
+			--pitch3-primary-channel:   #ffe959;
+			--pitch3-secondary-note:    #7c6c04;
+			--pitch3-primary-note:      #fff5b6;
+		
+			--pitch4-secondary-channel: #88bb11;
+			--pitch4-primary-channel:   #cdff59;
+			--pitch4-secondary-note:    #587c04;
+			--pitch4-primary-note:      #e9ffb6;
+		
+			--pitch5-secondary-channel: #3ebb11;
+			--pitch5-primary-channel:   #85ff59;
+			--pitch5-secondary-note:    #247c04;
+			--pitch5-primary-note:      #c9ffb6;
+		
+			--pitch6-secondary-channel: #11bb2e;
+			--pitch6-primary-channel:   #59ff75;
+			--pitch6-secondary-note:    #047c18;
+			--pitch6-primary-note:      #b6ffc2;
+		
+			--pitch7-secondary-channel: #11bb77;
+			--pitch7-primary-channel:   #59ffbd;
+			--pitch7-secondary-note:    #047c4c;
+			--pitch7-primary-note:      #b6ffe2;
+		
+			--pitch8-secondary-channel: #11b5bb;
+			--pitch8-primary-channel:   #59f9ff;
+			--pitch8-secondary-note:    #04777c;
+			--pitch8-primary-note:      #b6fcff;
+		
+			--pitch9-secondary-channel: #116bbb;
+			--pitch9-primary-channel:   #59b1ff;
+			--pitch9-secondary-note:    #04437c;
+			--pitch9-primary-note:      #b6dcff;
+		
+			--pitch10-secondary-channel:#1826aa;
+			--pitch10-primary-channel:  #5161f6;
+			--pitch10-secondary-note:   #091370;
+			--pitch10-primary-note:     #adb4fd;
+		
+			--pitch11-secondary-channel:#4918aa;
+			--pitch11-primary-channel:  #8951f6;
+			--pitch11-secondary-note:   #2c0970;
+			--pitch11-primary-note:     #c8adfd;
+		
+			--pitch12-secondary-channel:#8818aa;
+			--pitch12-primary-channel:  #d051f6;
+			--pitch12-secondary-note:   #580970;
+			--pitch12-primary-note:     #ebadfd;
+		
+			--pitch13-secondary-channel:#aa188c;
+			--pitch13-primary-channel:  #f651d4;
+			--pitch13-secondary-note:   #70095b;
+			--pitch13-primary-note:     #fdadec;
+		
+			--pitch14-secondary-channel:#aa184d;
+			--pitch14-primary-channel:  #f6518d;
+			--pitch14-secondary-note:   #70092e;
+			--pitch14-primary-note:     #fdadca; 
+		
+			--noise1-secondary-channel: #6F6F6F;
+			--noise1-primary-channel:   #AAAAAA;
+			--noise1-secondary-note:    #A7A7A7;
+			--noise1-primary-note:      #E0E0E0;
+			--noise2-secondary-channel: #996633;
+			--noise2-primary-channel:   #DDAA77;
+			--noise2-secondary-note:    #CC9966;
+			--noise2-primary-note:      #F0D0BB;
+			--noise3-secondary-channel: #4A6D8F;
+			--noise3-primary-channel:   #77AADD;
+			--noise3-secondary-note:    #6F9FCF;
+			--noise3-primary-note:      #BBD7FF;
+			--noise4-secondary-channel: #7A4F9A;
+			--noise4-primary-channel:   #AF82D2;
+			--noise4-secondary-note:    #9E71C1;
+			--noise4-primary-note:      #D4C1EA;
+			--noise5-secondary-channel: #607837;
+			--noise5-primary-channel:   #A2BB77;
+			--noise5-secondary-note:    #91AA66;
+			--noise5-primary-note:      #C5E2B2;
+		--mod1-secondary-channel:   #339955;
+				--mod1-primary-channel:     #77fc55;
+				--mod1-secondary-note:      #77ff8a;
+				--mod1-primary-note:        #cdffee;
+				--mod2-secondary-channel:   #993355;
+				--mod2-primary-channel:     #f04960;
+				--mod2-secondary-note:      #f057a0;
+				--mod2-primary-note:        #ffb8de;
+				--mod3-secondary-channel:   #553399;
+				--mod3-primary-channel:     #8855fc;
+				--mod3-secondary-note:      #aa64ff;
+				--mod3-primary-note:	    #f8ddff;
+				--mod4-secondary-channel:   #a86436;
+				--mod4-primary-channel:     #c8a825;
+				--mod4-secondary-note:      #e8ba46;
+				--mod4-primary-note:        #fff6d3;
+			--disabled-note-primary:    #91879f;
+			--disabled-note-secondary:  #6a677a;
+		}
+		 
+		.channelBox {
+			--pitch1-primary-channel:  linear-gradient(#ff7777, #ff5959);
+			--pitch2-primary-channel:  linear-gradient(#ffaf71, #ffa159);
+			--pitch3-primary-channel:  linear-gradient(#ffee7c, #ffe959);
+			--pitch4-primary-channel:  linear-gradient(#d3fa7a, #cdff59);
+			--pitch5-primary-channel:  linear-gradient(#a4ff83, #85ff59);
+			--pitch6-primary-channel:  linear-gradient(#8aff9e, #59ff75);
+			--pitch7-primary-channel:  linear-gradient(#81ffcc, #59ffbd);
+			--pitch8-primary-channel:  linear-gradient(#59f9ff, #59f9ff);
+			--pitch9-primary-channel:  linear-gradient(#87c7ff, #59b1ff);
+			--pitch10-primary-channel: linear-gradient(#7a87ff, #5161f6);
+			--pitch11-primary-channel: linear-gradient(#a476ff, #8951f6);
+			--pitch12-primary-channel: linear-gradient(#df75ff, #d051f6);
+			--pitch13-primary-channel: linear-gradient(#ff75e3, #f651d4);
+			--pitch14-primary-channel: linear-gradient(#ff71a5, #f6518d);
+		
+			border-radius: 5px;
+			box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2), 0px 0px 1px 1px rgba(0, 0, 0, 0.7), inset 0px -10px 20px 1px rgba(0, 0, 0, 0.1), inset 0px 1px 0px 0px rgba(255, 255, 255, 0.1);
+		}
+		
+		.channelBoxLabel {
+			--pitch1-primary-channel:   #ff5959;
+			--pitch2-primary-channel:   #ffa159;
+			--pitch3-primary-channel:   #ffe959;
+			--pitch4-primary-channel:   #cdff59;
+			--pitch5-primary-channel:   #85ff59;
+			--pitch6-primary-channel:   #59ff75;
+			--pitch7-primary-channel:   #59ffbd;
+			--pitch8-primary-channel:   #59f9ff;
+			--pitch9-primary-channel:   #59b1ff;
+			--pitch10-primary-channel:  #5161f6;
+			--pitch11-primary-channel:  #8951f6;
+			--pitch12-primary-channel:  #d051f6;
+			--pitch13-primary-channel:  #f651d4;
+			--pitch14-primary-channel:  #f6518d;
+		}
+		
+		body {
+			background-image: url('https://github.com/choptop84/choptop84s-image-repository/blob/main/skeuobg.png?raw=true') !important;
+			background-repeat: no-repeat !important;
+			background-size: contain;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		
+		#beepboxEditorContainer, .track-area, .beepboxEditor, #text-content, div.noSelection {
+			background-color: #fff0 !important;
+		} 
+		
+		#pitchEditorBackground {
+			opacity: 0.5 !important;
+			filter: brightness(150%);
+		}
+		
+		svg#firstImage {
+			background-image: url('https://github.com/choptop84/choptop84s-image-repository/blob/main/skeuobg2.png?raw=true') !important;
+		}
+		
+		#oscilascopeAll {
+			margin-left: auto;
+			margin-right: auto;
+			position: static;
+		}
+		 
+		.beepboxEditor,
+		.beepboxEditor select
+		{
+			text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
+		}
+		 
+		.beepboxEditor .piano-button {
+			text-shadow: none;
+		}
+		 
+		.beepboxEditor .prompt
+		{
+			background: radial-gradient(farthest-corner at 50% 0px, #2a2a2a, #1a1a1a) !important;
+		}
+		 
+		#beepboxEditorContainer {
+			background-color: rgba(0, 0, 0, 0) !important;
+		}
+		 
+		.beepboxEditor .trackAndMuteContainer {
+			text-shadow: none;
+		}
+		 
+		.beepboxEditor .loopEditor
+		{
+			--editor-background: rgba(0, 0, 0, 0.0) !important;
+		}
+		 
+		.beepboxEditor .muteEditor
+		{
+			--editor-background: #1e1e1e !important;
+		}
+		 
+		.beepboxEditor .pattern-area
+		{
+			--editor-background: rgba(0, 0, 0, 1) !important;
+		}
+		 
+		.beepboxEditor .trackContainer svg
+		{
+			--editor-background: #111 !important;
+		}
+		 
+		.beepboxEditor .muteEditor > :last-child {
+			--editor-background: rgba(0, 0, 0, 0) !important;
+		}
+		 
+		.beepboxEditor #octaveScrollBarContainer {
+			background-color: rgba(0, 0, 0, 0.3);
+		}
+		 
+		.beepboxEditor {
+			--track-editor-bg-pitch-dim: #1e1f28;
+		}
+		 
+		.beepboxEditor .muteButtonText {
+			transform: translate(0px, 1px) !important;
+			color: #777 !important;
+		}
+		 
+		.beepboxEditor .instrument-bar {
+			--text-color-lit: #eee;
+			--text-color-dim: #777;
+		}
+		 
+		.beepboxEditor .instrument-bar .selected-instrument {
+			color: rgba(255, 255, 255, 1) !important;
+			text-shadow: 0px 0px 4px var(--text-color-lit);
+		}
+		 
+		.beepboxEditor .instrument-bar .deactivated {
+			color: rgba(0, 0, 0, 1) !important;
+			text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2);
+		}
+		 
+		.beepboxEditor .instrument-bar > :not(.last-button) {
+			border-color: var(--background-color-lit) !important;
+		}
+		 
+		.beepboxEditor .instrument-bar .selected-instrument {
+			border-color: rgba(255, 255, 255, 1) !important;
+		}
+		 
+		.beepboxEditor select
+		{
+			background: #444 !important;
+			box-shadow:
+				0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px -10px 20px 1px rgba(0, 0, 0, 0.4),
+				inset 0px 1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor select:focus
+		{
+			background: #333 !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+				inset 0px 10px 20px 1px rgba(0, 0, 0, 0.4),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor .select2-selection__rendered,
+		.beepboxEditor button,
+		.beepboxEditor .instrument-bar button,
+		.beepboxEditor .eq-filter-type-bar button .deactivated,
+		.beepboxEditor .note-filter-type-bar button .deactivated
+		{
+			background: linear-gradient(#444, #333) !important;
+			box-shadow:
+				0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor .select2-container--open .select2-selection__rendered,
+		.beepboxEditor button:focus,
+		.beepboxEditor .instrument-bar .selected-instrument,
+		.beepboxEditor .eq-filter-type-bar button:not(.deactivated),
+		.beepboxEditor .note-filter-type-bar button:not(.deactivated)
+		{
+			background: linear-gradient(#333, #444) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor .filterEditor svg,
+		.beepboxEditor .fadeInOut svg,
+		.beepboxEditor .harmonics svg,
+		.beepboxEditor .spectrum svg
+		{
+			background: rgba(0, 0, 0, 0.3) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-webkit-slider-thumb
+		{
+			box-shadow:
+				0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+				inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+		{
+			background: rgba(0, 0, 0, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+			border-radius: 4px;
+		}
+		 
+		.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+		{
+			background: rgba(255, 255, 255, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-ms-thumb
+		{
+			box-shadow:
+				0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+				inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-ms-track
+		{
+			background: rgba(0, 0, 0, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+			border-radius: 4px;
+		}
+		 
+		.beepboxEditor input[type="range"]:focus::-ms-track
+		{
+			background: rgba(255, 255, 255, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-moz-range-thumb
+		{
+			box-shadow:
+				0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+				inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-moz-range-track
+		{
+			background: rgba(0, 0, 0, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+			border-radius: 4px;
+		}
+		 
+		.beepboxEditor input[type="range"]:focus::-moz-range-track
+		{
+			background: rgba(255, 255, 255, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="text"],
+		.beepboxEditor input[type="number"]
+		{
+			border: none !important;
+			background: rgba(0, 0, 0, 0.2) !important;
+			box-shadow:
+				0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="checkbox"]
+		{
+			appearance: none;
+			background: rgba(0, 0, 0, 0.3);
+			color: currentColor;
+			border-radius: 1px;
+			width: 1em !important;
+			height: 1em !important;
+			box-shadow:
+				inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="checkbox"]:checked
+		{
+			display: flex;
+			justify-content: center;
+		}
+		 
+		.beepboxEditor input[type="checkbox"]:checked:after
+		{
+			width: 1em;
+			height: 1em;
+			text-align: center;
+			font-size: 0.8em;
+			content: "✓";
+			color: currentColor;
+			text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.5);
+		}
+		`,
         "Glyde": `
 	  :root { 
 		--page-margin: #000000; 
+		--song-player-margin: #000;
 		--editor-background: #472434a8; 
 		--hover-preview: white; 
 		--playhead: rgba(255, 255, 255, 0.9); 
@@ -3987,6 +4581,7 @@ var beepbox = (function (exports) {
 		--mod-label-primary: #2b080d; 
 		--mod-label-secondary-text: #421a20; 
 		--mod-label-primary-text: #ffc6cf; 
+		--progress-bar: #ffc9ff;
 		--pitch-secondary-channel-hue: 60; 
 		--pitch-secondary-channel-sat: 23; 
 		--pitch-secondary-channel-sat-scale: 0.1; 
@@ -4074,7 +4669,7 @@ var beepbox = (function (exports) {
 			body {
 			background-image: url("https://choptop84.github.io/choptop84s-image-repository/glydebg.png") !important;
 			background-position: top right;
-			background-repeat: no-repeat;
+			background-repeat: no-repeat !important;
 
 			image-rendering: -moz-crisp-edges !important;         /* Firefox */
 			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
@@ -4140,6 +4735,137 @@ var beepbox = (function (exports) {
 
 
 			`,
+        "starry studio": `
+			:root {     
+				--page-margin: black;     
+				--editor-background: rgba(0, 0, 0, 0.65);     
+				--hover-preview: #f8f8f8;     
+				--playhead: rgba(255, 255, 255, 0.8);     
+				--primary-text: #f8f8f8;     
+				--secondary-text: #b8b4e8;     
+				--inverted-text: #3b2655;     
+				--text-selection: rgba(124, 91, 173, 0.9);     
+				--box-selection-fill: #b8b4e8;     
+				--loop-accent: #a80a61;     
+				--link-accent: #a286d7;     
+				--ui-widget-background: #31253f;     
+				--ui-widget-focus: #7c5bad;     
+				--pitch-background: rgba(40, 40, 44, 0.5);     
+				--tonic: rgba(83, 81, 95, 0.5);     
+				--fifth-note: rgba(59, 38, 85, 0.5);     
+				--white-piano-key: rgb(155, 151, 166);     
+				--black-piano-key: #39363e;     
+				--white-piano-key-text: #39363e;     
+				--black-piano-key-text: #9b97a6;     
+				--use-color-formula: true;     
+				--track-editor-bg-pitch: #423174;     
+				--track-editor-bg-pitch-dim: #252335;     
+				--track-editor-bg-noise: #39363e;     
+				--track-editor-bg-noise-dim: #28282c;     
+				--track-editor-bg-mod: #3b2655;     
+				--track-editor-bg-mod-dim: #252335;     
+				--multiplicative-mod-slider: #168ee4;     
+				--overwriting-mod-slider: #2457c6;     
+				--indicator-primary: #f8f8f8;     
+				--indicator-secondary: #423174;     
+				--select2-opt-group: #423174;     
+				--input-box-outline: #3b2655;     
+				--mute-button-normal: #00b176;     
+				--mute-button-mod: #e6a418;     
+				--mod-label-primary: #3b2655;     
+				--mod-label-secondary-text: rgb(124 91 173);     
+				--mod-label-primary-text: #b8b4e8;     
+				--pitch-secondary-channel-hue: 0;     
+				--pitch-secondary-channel-hue-scale: 6.5;     
+				--pitch-secondary-channel-sat: 83.3;     
+				--pitch-secondary-channel-sat-scale: 0.1;     
+				--pitch-secondary-channel-lum: 40;     
+				--pitch-secondary-channel-lum-scale: 0.05;     
+				--pitch-primary-channel-hue: 0;     
+				--pitch-primary-channel-hue-scale: 6.5;     
+				--pitch-primary-channel-sat: 100;     
+				--pitch-primary-channel-sat-scale: 0.1;     
+				--pitch-primary-channel-lum: 67.5;     
+				--pitch-primary-channel-lum-scale: 0.05;     
+				--pitch-secondary-note-hue: 0;     
+				--pitch-secondary-note-hue-scale: 6.5;     
+				--pitch-secondary-note-sat: 93.9;     
+				--pitch-secondary-note-sat-scale: 0.1;     
+				--pitch-secondary-note-lum: 25;     
+				--pitch-secondary-note-lum-scale: 0.05;     
+				--pitch-primary-note-hue: 0;     
+				--pitch-primary-note-hue-scale: 6.5;     
+				--pitch-primary-note-sat: 100;     
+				--pitch-primary-note-sat-scale: 0.05;     
+				--pitch-primary-note-lum: 85.6;     
+				--pitch-primary-note-lum-scale: 0.025;     
+				--noise-secondary-channel-hue: 0;     
+				--noise-secondary-channel-hue-scale: 2;     
+				--noise-secondary-channel-sat: 25;     
+				--noise-secondary-channel-sat-scale: 0;     
+				--noise-secondary-channel-lum: 42;     
+				--noise-secondary-channel-lum-scale: 0;     
+				--noise-primary-channel-hue: 0;     
+				--noise-primary-channel-hue-scale: 2;     
+				--noise-primary-channel-sat: 33;     
+				--noise-primary-channel-sat-scale: 0;     
+				--noise-primary-channel-lum: 63.5;     
+				--noise-primary-channel-lum-scale: 0;     
+				--noise-secondary-note-hue: 0;     
+				--noise-secondary-note-hue-scale: 2;     
+				--noise-secondary-note-sat: 33.5;     
+				--noise-secondary-note-sat-scale: 0;     
+				--noise-secondary-note-lum: 55;     
+				--noise-secondary-note-lum-scale: 0;     
+				--noise-primary-note-hue: 0;     
+				--noise-primary-note-hue-scale: 2;     
+				--noise-primary-note-sat: 46.5;     
+				--noise-primary-note-sat-scale: 0;     
+				--noise-primary-note-lum: 74;     
+				--noise-primary-note-lum-scale: 0;     
+				--mod-secondary-channel-hue: 192;     
+				--mod-secondary-channel-hue-scale: 1.5;     
+				--mod-secondary-channel-sat: 88;     
+				--mod-secondary-channel-sat-scale: 0;     
+				--mod-secondary-channel-lum: 50;     
+				--mod-secondary-channel-lum-scale: 0;     
+				--mod-primary-channel-hue: 192;     
+				--mod-primary-channel-hue-scale: 1.5;     
+				--mod-primary-channel-sat: 96;     
+				--mod-primary-channel-sat-scale: 0;     
+				--mod-primary-channel-lum: 80;     
+				--mod-primary-channel-lum-scale: 0;     
+				--mod-secondary-note-hue: 192;     
+				--mod-secondary-note-hue-scale: 1.5;     
+				--mod-secondary-note-sat: 92;     
+				--mod-secondary-note-sat-scale: 0;     
+				--mod-secondary-note-lum: 45;     
+				--mod-secondary-note-lum-scale: 0;     
+				--mod-primary-note-hue: 192;     
+				--mod-primary-note-hue-scale: 1.5;     
+				--mod-primary-note-sat: 96;     
+				--mod-primary-note-sat-scale: 0;     
+				--mod-primary-note-lum: 85;     
+				--mod-primary-note-lum-scale: 0;     
+				--disabled-note-primary: #252a46;     
+				--disabled-note-secondary: #181c34; }
+
+				/* sets background image */
+			.beepboxEditor load {
+				background: #fff0;
+				}
+
+			body {
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/stars.gif") !important;
+			background-repeat: repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+				}
+			`,
         "AWeebyssBox": `
 			:root {		
 			--page-margin: #1e0915; 		
@@ -4178,7 +4904,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #541625; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--progress-bar: #bf2c5d;
+
 			--pitch-secondary-channel-hue: -80; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -4273,6 +5000,11 @@ var beepbox = (function (exports) {
 		   font-family: "AbyssType";
 		   src:
  		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+				--ui-widget-background: var(--editor-background) !important;
+				border-image-source: none !important;
 			}
 
 			#text-content {
@@ -4382,7 +5114,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #542f16; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--progress-bar: #ff6f00;
+
 			--pitch-secondary-channel-hue: 0; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -4484,9 +5217,9 @@ var beepbox = (function (exports) {
 		/* sets background image */
 		body {
 		background-image: url("https://choptop84.github.io/abyssbox-source/website/lambda.png") !important;
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
+		background-size: cover !important;
+		background-position: center !important;
+		background-repeat: no-repeat !important;
 			}
 			/* make editor background transparent */
 		#beepboxEditorContainer, .beepboxEditor, #text-content {
@@ -4548,7 +5281,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #542f16; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--progress-bar: #ff6f00;
+
 			--pitch-secondary-channel-hue: 0; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -4911,7 +5645,7 @@ var beepbox = (function (exports) {
 		  .beepboxEditor .instrument-bar .selected-instrument {
 			border-color: rgba(255, 255, 255, 1) !important;
 		  }
-		  .beepboxEditor button {
+		  .beepboxEditor button, button {
 			color: #fff;
 			background: #3c236f;
 		  }
@@ -5222,7 +5956,7 @@ var beepbox = (function (exports) {
 		   .beepboxEditor .instrument-bar .selected-instrument {
 			 border-color: #111111 !important;
 		   }
-		   .beepboxEditor button {
+		   .beepboxEditor button, button {
 			 color: #fff;
 			 background: #3c236f;
 		   }
@@ -5348,7 +6082,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #541616; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--progress-bar: #ff0000;
+
 			--pitch-secondary-channel-hue: 0; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -5509,7 +6244,8 @@ var beepbox = (function (exports) {
 				--mute-button-normal: #ffffff;
 				--mute-button-mod: #4f4f4f;
 				--mod-label-primary: #f00;
-			
+				--progress-bar: #00ff00;
+
 				--pitch1-secondary-channel: #590000;
 			  --pitch1-primary-channel: #f00;
 			  --pitch1-secondary-note: #590000;
@@ -5628,7 +6364,7 @@ var beepbox = (function (exports) {
 
 			/* sets background image */
 			body {
-			background-image: url("https://cdn.discordapp.com/attachments/804372822931668994/1165384144948305960/spr_battlebg_1.png") !important;
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/battlebg.png") !important;
 			background-position: center;
 			background-size: contain;
 			background-attachment: fixed;
@@ -5738,7 +6474,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #541625; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray;
-		
+			--progress-bar: #00ff00;
+
 --pitch-secondary-channel-hue: 0;		
 --pitch-secondary-channel-hue-scale: 6.1;		
 --pitch-secondary-channel-sat: 43.3;		
@@ -5861,7 +6598,7 @@ var beepbox = (function (exports) {
 					border-radius: 15px;
 					border: 0px solid var(--ui-widget-background) !important;
 					padding-left: 20px !important;
-					box-shadow: 6px 6px 27px 4px rgba(0, 0, 0, 0.5) !important
+					box-shadow: 6px 6px 27px 4px rgba(0, 0, 0, 0.5) !important;
 					padding-top: 6px !important;
 					padding-right: 20px !important;
 					padding-bottom: 20px !important;
@@ -5884,12 +6621,6 @@ var beepbox = (function (exports) {
 				div.promptTitle {
 					text-align: left !important;
 					color: white !important;
-				}
-				.set-themeExt::after {
-					content: "setTheme.exe";
-				}
-				.set-themeTitle {
-					display: none;
 				}
 				.layoutExt::before {
 					content: "layout.exe";
@@ -5978,6 +6709,20 @@ var beepbox = (function (exports) {
 					content: "moveNotesSideways.exe";
 				}
 
+				.themeExt::after {
+					content: "setTheme.exe";
+				}
+				.themeTitle {
+					display: none;
+				}
+
+				.customThemeExt::after {
+					content: "customThemeEditor.exe";
+				}
+				.customThemeTitle {
+					display: none;
+				}
+
 				.nrsTitle {
 					display: none;
 				}
@@ -6008,6 +6753,13 @@ var beepbox = (function (exports) {
 		}
 
 		.beepboxEditor button,
+		button.mobilePatternButton,
+		button.mobileTrackButton,
+		button.mobileSettingsButton,
+		button.mobilePlayButton,
+		button.mobilePauseButton,
+		button.mobileNextBarButton,
+		button.mobilePrevBarButton,
 		button.playButton,
 		button.pauseButton, 
 		button.recordButton, 
@@ -6347,6 +7099,11 @@ var beepbox = (function (exports) {
 					image-rendering: optimizeSpeed !important;             /* IE */
 				}
 
+				button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+					--ui-widget-background: var(--editor-background) !important;
+					border-image-source: none !important;
+				}
+
 				.beepboxEditor input[type="range"]::-webkit-slider-thumb
 				{
 					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
@@ -6458,6 +7215,7 @@ var beepbox = (function (exports) {
 			--input-box-outline: #00ff00; 
 			--mute-button-normal: #00ff44; 
 			--mute-button-mod: #44ff00; 
+			--progress-bar: #00ff00;
 			--pitch1-secondary-channel: #0099A1; 
 			--pitch1-primary-channel: #25F3FF; 
 			--pitch1-secondary-note: #00BDC7; 
@@ -6571,6 +7329,439 @@ var beepbox = (function (exports) {
 						.modTitle::before {
 							content: "> AbyssBox Terminal 2.0" !important;
 						}
+			`,
+        "Slushie": `
+			:root { 
+				--page-margin: #040814; 
+				--editor-background: #040814; 
+				--hover-preview: #c6f7ff; 
+				--playhead: white; 
+				--primary-text: #d3f3ff; 
+				--secondary-text: #6f72b5; 
+				--inverted-text: black; 
+				--text-selection: rgba(119,68,255,0.99); 
+				--box-selection-fill: rgb(43 70 171 / 62%); 
+				--loop-accent: #573ebb; 
+				--link-accent: #98f; 
+				--ui-widget-background: #2e2f44; 
+				--ui-widget-focus: #2b2c46; 
+				--pitch-background: #353654; 
+				--tonic: #716fe3; 
+				--fifth-note: #76469b; 
+				--white-piano-key: #abbce3; 
+				--black-piano-key: #2f235e; 
+				--use-color-formula: false; 
+				--track-editor-bg-pitch: #3a3b5c; 
+				--track-editor-bg-pitch-dim: #1f2036; 
+				--track-editor-bg-noise: #3c3554; 
+				--track-editor-bg-noise-dim: #1e1834; 
+				--track-editor-bg-mod: #30335e; 
+				--track-editor-bg-mod-dim: #161938; 
+				--multiplicative-mod-slider: #e29cff; 
+				--overwriting-mod-slider: #495789; 
+				--indicator-primary: #e1a6ff; 
+				--indicator-secondary: #415187; 
+				--select2-opt-group: #22223a; 
+				--input-box-outline: #2d2648; 
+				--mute-button-normal: #7aceff; 
+				--mute-button-mod: #9d6bff; 
+				--pitch1-secondary-channel: #5f3ea5; 
+				--pitch1-primary-channel: #c1a4ff; 
+				--pitch1-secondary-note: #794fd3; 
+				--pitch1-primary-note: #d8c6ff; 
+				--pitch2-secondary-channel: #4f44bf; 
+				--pitch2-primary-channel: #9287ff; 
+				--pitch2-secondary-note: #5e51d9; 
+				--pitch2-primary-note: #b6afff; 
+				--pitch3-secondary-channel: #374eb9; 
+				--pitch3-primary-channel: #8097ff; 
+				--pitch3-secondary-note: #445cc9; 
+				--pitch3-primary-note: #a0b2ff; 
+				--pitch4-secondary-channel: #2867cf; 
+				--pitch4-primary-channel: #6fa5ff; 
+				--pitch4-secondary-note: #2e6ed7; 
+				--pitch4-primary-note: #a6c7ff; 
+				--pitch5-secondary-channel: #3175a7; 
+				--pitch5-primary-channel: #7ec9ff; 
+				--pitch5-secondary-note: #367eb3; 
+				--pitch5-primary-note: #9fd7ff; 
+				--pitch6-secondary-channel: #3993a9; 
+				--pitch6-primary-channel: #8ce9ff; 
+				--pitch6-secondary-note: #386da3; 
+				--pitch6-primary-note: #9eecff; 
+				--pitch7-secondary-channel: #369d8a; 
+				--pitch7-primary-channel: #8bfce7; 
+				--pitch7-secondary-note: #1c93a7; 
+				--pitch7-primary-note: #abffef; 
+				--pitch8-secondary-channel: #00A170; 
+				--pitch8-primary-channel: #50FFC9; 
+				--pitch8-secondary-note: #00C78A; 
+				--pitch8-primary-note: #83FFD9; 
+				--pitch9-secondary-channel: #49b374; 
+				--pitch9-primary-channel: #8affa9; 
+				--pitch9-secondary-note: #26815f; 
+				--pitch9-primary-note: #c8ffde; 
+				--pitch10-secondary-channel: #58a747; 
+				--pitch10-primary-channel: #bbffaa; 
+				--pitch10-secondary-note: #1d7c48; 
+				--pitch10-primary-note: #c7ffbc; 
+				--noise1-secondary-channel: #42829b; 
+				--noise1-primary-channel: #97d3fc; 
+				--noise1-secondary-note: #3f53b3; 
+				--noise1-primary-note: #97d3fc; 
+				--noise2-secondary-channel: #6354bb; 
+				--noise2-primary-channel: #9a89ff; 
+				--noise2-secondary-note: #5f4dcd; 
+				--noise2-primary-note: #c6bcff; 
+				--noise3-secondary-channel: #704a95; 
+				--noise3-primary-channel: #c285ff; 
+				--noise3-secondary-note: #ad5aff; 
+				--noise3-primary-note: #d3a6ff; 
+				--noise4-secondary-channel: #a53c65; 
+				--noise4-primary-channel: #f794bb; 
+				--noise4-secondary-note: #cb5080; 
+				--noise4-primary-note: #f794bb; 
+				--noise5-secondary-channel: #9b2d2d; 
+				--noise5-primary-channel: #ff7676; 
+				--noise5-secondary-note: #cb4444; 
+				--noise5-primary-note: #ff9999; 
+				--mod1-secondary-channel: #b7613c; 
+				--mod1-primary-channel: #ff9f76; 
+				--mod1-secondary-note: #e77e52; 
+				--mod1-primary-note: #ffb99b; 
+				--mod2-secondary-channel: #916d34; 
+				--mod2-primary-channel: #fece80; 
+				--mod2-secondary-note: #c58b35; 
+				--mod2-primary-note: #ffdda5; 
+				--mod3-secondary-channel: #83761a; 
+				--mod3-primary-channel: #fdf68c; 
+				--mod3-secondary-note: #c18e00; 
+				--mod3-primary-note: #fdf68c; 
+				--mod4-secondary-channel: #a86436; 
+				--mod4-primary-channel: #c8a825; 
+				--mod4-secondary-note: #e8ba46; 
+				--mod4-primary-note: #c8a825; 
+				--mod-label-primary: #37325e; 
+				--mod-label-secondary-text: #6e8aa7; 
+				--mod-label-primary-text: #c1ffff; 
+				--disabled-note-primary: #999; 
+				--disabled-note-secondary: #666; 
+				--note-flash: #ffffff; 
+				--note-flash-secondary: #ffffff77; }
+			`,
+        "Slushie Pixel": `
+			:root { 
+				--page-margin: #040814; 
+				--editor-background: #040814; 
+				--hover-preview: #c6f7ff; 
+				--playhead: white; 
+				--primary-text: #d3f3ff; 
+				--secondary-text: #6f72b5; 
+				--inverted-text: black; 
+				--text-selection: rgba(119,68,255,0.99); 
+				--box-selection-fill: rgb(43 70 171 / 62%); 
+				--loop-accent: #573ebb; 
+				--link-accent: #98f; 
+				--ui-widget-background: #2e2f44; 
+				--ui-widget-focus: #2b2c46; 
+				--pitch-background: #353654; 
+				--tonic: #716fe3; 
+				--fifth-note: #76469b; 
+				--white-piano-key: #abbce3; 
+				--black-piano-key: #2f235e; 
+				--progress-bar: #716fe3;
+				--use-color-formula: false; 
+				--track-editor-bg-pitch: #3a3b5c; 
+				--track-editor-bg-pitch-dim: #1f2036; 
+				--track-editor-bg-noise: #3c3554; 
+				--track-editor-bg-noise-dim: #1e1834; 
+				--track-editor-bg-mod: #30335e; 
+				--track-editor-bg-mod-dim: #161938; 
+				--multiplicative-mod-slider: #e29cff; 
+				--overwriting-mod-slider: #495789; 
+				--indicator-primary: #e1a6ff; 
+				--indicator-secondary: #415187; 
+				--select2-opt-group: #22223a; 
+				--input-box-outline: #2d2648; 
+				--mute-button-normal: #7aceff; 
+				--mute-button-mod: #9d6bff; 
+				--pitch1-secondary-channel: #5f3ea5; 
+				--pitch1-primary-channel: #c1a4ff; 
+				--pitch1-secondary-note: #794fd3; 
+				--pitch1-primary-note: #d8c6ff; 
+				--pitch2-secondary-channel: #4f44bf; 
+				--pitch2-primary-channel: #9287ff; 
+				--pitch2-secondary-note: #5e51d9; 
+				--pitch2-primary-note: #b6afff; 
+				--pitch3-secondary-channel: #374eb9; 
+				--pitch3-primary-channel: #8097ff; 
+				--pitch3-secondary-note: #445cc9; 
+				--pitch3-primary-note: #a0b2ff; 
+				--pitch4-secondary-channel: #2867cf; 
+				--pitch4-primary-channel: #6fa5ff; 
+				--pitch4-secondary-note: #2e6ed7; 
+				--pitch4-primary-note: #a6c7ff; 
+				--pitch5-secondary-channel: #3175a7; 
+				--pitch5-primary-channel: #7ec9ff; 
+				--pitch5-secondary-note: #367eb3; 
+				--pitch5-primary-note: #9fd7ff; 
+				--pitch6-secondary-channel: #3993a9; 
+				--pitch6-primary-channel: #8ce9ff; 
+				--pitch6-secondary-note: #386da3; 
+				--pitch6-primary-note: #9eecff; 
+				--pitch7-secondary-channel: #369d8a; 
+				--pitch7-primary-channel: #8bfce7; 
+				--pitch7-secondary-note: #1c93a7; 
+				--pitch7-primary-note: #abffef; 
+				--pitch8-secondary-channel: #00A170; 
+				--pitch8-primary-channel: #50FFC9; 
+				--pitch8-secondary-note: #00C78A; 
+				--pitch8-primary-note: #83FFD9; 
+				--pitch9-secondary-channel: #49b374; 
+				--pitch9-primary-channel: #8affa9; 
+				--pitch9-secondary-note: #26815f; 
+				--pitch9-primary-note: #c8ffde; 
+				--pitch10-secondary-channel: #58a747; 
+				--pitch10-primary-channel: #bbffaa; 
+				--pitch10-secondary-note: #1d7c48; 
+				--pitch10-primary-note: #c7ffbc; 
+				--noise1-secondary-channel: #42829b; 
+				--noise1-primary-channel: #97d3fc; 
+				--noise1-secondary-note: #3f53b3; 
+				--noise1-primary-note: #97d3fc; 
+				--noise2-secondary-channel: #6354bb; 
+				--noise2-primary-channel: #9a89ff; 
+				--noise2-secondary-note: #5f4dcd; 
+				--noise2-primary-note: #c6bcff; 
+				--noise3-secondary-channel: #704a95; 
+				--noise3-primary-channel: #c285ff; 
+				--noise3-secondary-note: #ad5aff; 
+				--noise3-primary-note: #d3a6ff; 
+				--noise4-secondary-channel: #a53c65; 
+				--noise4-primary-channel: #f794bb; 
+				--noise4-secondary-note: #cb5080; 
+				--noise4-primary-note: #f794bb; 
+				--noise5-secondary-channel: #9b2d2d; 
+				--noise5-primary-channel: #ff7676; 
+				--noise5-secondary-note: #cb4444; 
+				--noise5-primary-note: #ff9999; 
+				--mod1-secondary-channel: #b7613c; 
+				--mod1-primary-channel: #ff9f76; 
+				--mod1-secondary-note: #e77e52; 
+				--mod1-primary-note: #ffb99b; 
+				--mod2-secondary-channel: #916d34; 
+				--mod2-primary-channel: #fece80; 
+				--mod2-secondary-note: #c58b35; 
+				--mod2-primary-note: #ffdda5; 
+				--mod3-secondary-channel: #83761a; 
+				--mod3-primary-channel: #fdf68c; 
+				--mod3-secondary-note: #c18e00; 
+				--mod3-primary-note: #fdf68c; 
+				--mod4-secondary-channel: #a86436; 
+				--mod4-primary-channel: #c8a825; 
+				--mod4-secondary-note: #e8ba46; 
+				--mod4-primary-note: #c8a825; 
+				--mod-label-primary: #37325e; 
+				--mod-label-secondary-text: #6e8aa7; 
+				--mod-label-primary-text: #c1ffff; 
+				--disabled-note-primary: #999; 
+				--disabled-note-secondary: #666; 
+				--note-flash: #ffffff; 
+				--note-flash-secondary: #ffffff77; }
+			
+				* {
+				cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_cursor.png"), auto !important;
+				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+				--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+				--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+				--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+				--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+				--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+				--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+				--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+				--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+				--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+				--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+				--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+				--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+				--export-instrument-symbol: var(--export-symbol);
+				--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
+				} 
+					@font-face {
+				   font-family: "AbyssType";
+				   src:
+					url("abysstype.otf") format("opentype") tech(color-COLRv1),
+					}
+			
+					@font-face {
+				   font-family: "AbyssType_small";
+				   src:
+					url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+					}
+			
+					body {
+						background-image: url("https://choptop84.github.io/choptop84s-image-repository/slushbg.gif") !important;
+						background-size: 32px;
+						background-position: center;
+						background-repeat: repeat;
+			
+						image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						image-rendering: -o-crisp-edges !important;            /* Opera */
+						image-rendering: pixelated !important;                 /* Future browsers */
+						image-rendering: optimizeSpeed !important;             /* IE */
+						}
+			
+					#text-content {
+						border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/slushiepixel_border.png");
+						border-image-slice: 4 fill; 
+					   border-image-width: 8px; 
+					border-image-repeat: repeat; 
+						padding-left: 12px; 
+						padding-right: 12px; 
+						padding-bottom: 12px; 
+						image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						image-rendering: -o-crisp-edges !important;            /* Opera */
+						image-rendering: pixelated !important;                 /* Future browsers */
+						image-rendering: optimizeSpeed !important;             /* IE */
+					}
+				#beepboxEditorContainer {
+						border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/slushiepixel_border.png");
+						border-image-slice: 4 fill; 
+					   border-image-width: 8px; 
+					border-image-repeat: repeat;
+						padding-left: 12px; 
+						padding-right: 12px; 
+						padding-bottom: 12px; 
+			
+						image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						image-rendering: -o-crisp-edges !important;            /* Opera */
+						image-rendering: pixelated !important;                 /* Future browsers */
+						image-rendering: optimizeSpeed !important;             /* IE */ 
+					}
+			
+					.beepboxEditor button,
+					button.mobilePatternButton,
+					button.mobileTrackButton,
+					button.mobileSettingsButton,
+					button.mobilePlayButton,
+					button.mobilePauseButton,
+					button.mobileNextBarButton,
+					button.mobilePrevBarButton,
+					button.playButton,
+					button.pauseButton, 
+					button.recordButton, 
+					button.stopButton,
+					button.nextBarButton, 
+					button.prevBarButton, 
+					button.copyButton, 
+					button.pasteButton, 
+					button.exportInstrumentButton, 
+					button.importInstrumentButton, 
+					.beepboxEditor select, 
+					.beepboxEditor .select2-selection__rendered {
+							border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/slushie buttonbg.png") !important;
+							border-image-slice: 4 fill !important; 
+						   border-image-width: 4px !important; 
+						border-image-repeat: stretch !important;
+							padding: 4px !important; 
+			
+							image-rendering: -moz-crisp-edges !important;         /* Firefox */
+							image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+							image-rendering: -o-crisp-edges !important;            /* Opera */
+							image-rendering: pixelated !important;                 /* Future browsers */
+							image-rendering: optimizeSpeed !important;             /* IE */
+			
+							cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+						}
+			
+						button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+							--ui-widget-background: var(--editor-background) !important;
+							border-image-source: none !important;
+						}
+
+					html {
+					font-family: 'AbyssType';
+					}
+					div.channelBoxLabel {
+						font-family: 'AbyssType_small' !important;
+					}
+			
+					.beepboxEditor input[type="range"]::-webkit-slider-thumb
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]::-ms-thumb
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]::-ms-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]:focus::-ms-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]::-moz-range-thumb
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]::-moz-range-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]:focus::-moz-range-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="text"],
+					.beepboxEditor input[type="number"]
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="checkbox"]
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="checkbox"]:checked
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="checkbox"]:checked:after
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+			
+					div.selectRow span {
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
 			`,
         "2012 Video Tutorial": `
 			:root {
@@ -6841,6 +8032,340 @@ var beepbox = (function (exports) {
 					content: "AAAA I'M ON FIRE AAA" !important;
 				}
 
+			`,
+        "BeepBox Pixel": `
+			:root {
+				--page-margin: black;
+				--editor-background: black;
+				--hover-preview: white;
+				--playhead: white;
+				--primary-text: white;
+				--secondary-text: #999;
+				--inverted-text: black;
+				--text-selection: rgba(119,68,255,0.99);
+				--box-selection-fill: rgba(255,255,255,0.2);
+				--loop-accent: #74f;
+				--link-accent: #98f;
+				--ui-widget-background: #444;
+				--ui-widget-focus: #777;
+				--pitch-background: #444;
+				--tonic: #864;
+				--fifth-note: #468;
+				--white-piano-key: #bbb;
+				--black-piano-key: #444;
+				--white-piano-key-text: #131200;
+				--black-piano-key-text: #fff;
+					--use-color-formula: false;
+					--track-editor-bg-pitch: #444;
+					--track-editor-bg-pitch-dim: #333;
+					--track-editor-bg-noise: #444;
+					--track-editor-bg-noise-dim: #333;
+					--track-editor-bg-mod: #234;
+					--track-editor-bg-mod-dim: #123;
+					--multiplicative-mod-slider: #456;
+					--overwriting-mod-slider: #654;
+					--indicator-primary: #74f;
+					--indicator-secondary: #444;
+					--select2-opt-group: #585858;
+					--input-box-outline: #333;
+					--mute-button-normal: #ffa033;
+					--mute-button-mod: #9a6bff;
+				--pitch1-secondary-channel: #0099A1;
+				--pitch1-primary-channel:   #25F3FF;
+				--pitch1-secondary-note:    #00BDC7;
+				--pitch1-primary-note:      #92F9FF;
+				--pitch2-secondary-channel: #A1A100;
+				--pitch2-primary-channel:   #FFFF25;
+				--pitch2-secondary-note:    #C7C700;
+				--pitch2-primary-note:      #FFFF92;
+				--pitch3-secondary-channel: #C75000;
+				--pitch3-primary-channel:   #FF9752;
+				--pitch3-secondary-note:    #FF771C;
+				--pitch3-primary-note:      #FFCDAB;
+				--pitch4-secondary-channel: #00A100;
+				--pitch4-primary-channel:   #50FF50;
+				--pitch4-secondary-note:    #00C700;
+				--pitch4-primary-note:      #A0FFA0;
+				--pitch5-secondary-channel: #D020D0;
+				--pitch5-primary-channel:   #FF90FF;
+				--pitch5-secondary-note:    #E040E0;
+				--pitch5-primary-note:      #FFC0FF;
+				--pitch6-secondary-channel: #7777B0;
+				--pitch6-primary-channel:   #A0A0FF;
+				--pitch6-secondary-note:    #8888D0;
+				--pitch6-primary-note:      #D0D0FF;
+				--pitch7-secondary-channel: #8AA100;
+				--pitch7-primary-channel:   #DEFF25;
+				--pitch7-secondary-note:    #AAC700;
+				--pitch7-primary-note:      #E6FF92;
+				--pitch8-secondary-channel: #DF0019;
+				--pitch8-primary-channel:   #FF98A4;
+				--pitch8-secondary-note:    #FF4E63;
+				--pitch8-primary-note:      #FFB2BB;
+				--pitch9-secondary-channel: #00A170;
+				--pitch9-primary-channel:   #50FFC9;
+				--pitch9-secondary-note:    #00C78A;
+				--pitch9-primary-note:      #83FFD9;
+				--pitch10-secondary-channel:#A11FFF;
+				--pitch10-primary-channel:  #CE8BFF;
+				--pitch10-secondary-note:   #B757FF;
+				--pitch10-primary-note:     #DFACFF;
+				--noise1-secondary-channel: #6F6F6F;
+				--noise1-primary-channel:   #AAAAAA;
+				--noise1-secondary-note:    #A7A7A7;
+				--noise1-primary-note:      #E0E0E0;
+				--noise2-secondary-channel: #996633;
+				--noise2-primary-channel:   #DDAA77;
+				--noise2-secondary-note:    #CC9966;
+				--noise2-primary-note:      #F0D0BB;
+				--noise3-secondary-channel: #4A6D8F;
+				--noise3-primary-channel:   #77AADD;
+				--noise3-secondary-note:    #6F9FCF;
+				--noise3-primary-note:      #BBD7FF;
+				--noise4-secondary-channel: #7A4F9A;
+				--noise4-primary-channel:   #AF82D2;
+				--noise4-secondary-note:    #9E71C1;
+				--noise4-primary-note:      #D4C1EA;
+				--noise5-secondary-channel: #607837;
+				--noise5-primary-channel:   #A2BB77;
+				--noise5-secondary-note:    #91AA66;
+				--noise5-primary-note:      #C5E2B2;
+          --mod1-secondary-channel:   #339955;
+					--mod1-primary-channel:     #77fc55;
+					--mod1-secondary-note:      #77ff8a;
+					--mod1-primary-note:        #cdffee;
+					--mod2-secondary-channel:   #993355;
+					--mod2-primary-channel:     #f04960;
+					--mod2-secondary-note:      #f057a0;
+					--mod2-primary-note:        #ffb8de;
+					--mod3-secondary-channel:   #553399;
+					--mod3-primary-channel:     #8855fc;
+					--mod3-secondary-note:      #aa64ff;
+					--mod3-primary-note:	    #f8ddff;
+					--mod4-secondary-channel:   #a86436;
+					--mod4-primary-channel:     #c8a825;
+					--mod4-secondary-note:      #e8ba46;
+					--mod4-primary-note:        #fff6d3;
+					--mod-label-primary:        #999;
+					--mod-label-secondary-text: #333;
+					--mod-label-primary-text:   black;
+					--disabled-note-primary:    #999;
+					--disabled-note-secondary:  #666;
+				}		
+				
+				* {
+					cursor: url("abyssbox_cursor.png"), auto;
+					--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+					--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+					--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+					--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+					--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+					--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+					--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+					--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+					--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+					--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+					--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+					--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+					--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+					--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+					--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+					--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+					--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+					--export-instrument-symbol: var(--export-symbol);
+					--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
+					}
+					
+						@font-face {
+					   font-family: "AbyssType";
+					   src:
+						url("abysstype.otf") format("opentype") tech(color-COLRv1),
+						}
+
+						/* sets background image */
+						body {
+						background-image: url("https://choptop84.github.io/abyssbox-source/website/diamondsbg.gif") !important;
+						background-position: center;
+						background-repeat: repeat;
+			
+						image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						image-rendering: -o-crisp-edges !important;            /* Opera */
+						image-rendering: pixelated !important;                 /* Future browsers */
+						image-rendering: optimizeSpeed !important;             /* IE */
+							}
+			
+						#text-content {
+								border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png");
+								border-image-slice: 4 fill; 
+							   border-image-width: 8px; 
+							border-image-repeat: stretch; 
+								padding: 12px; 
+			
+								image-rendering: -moz-crisp-edges !important;         /* Firefox */
+								image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+								image-rendering: -o-crisp-edges !important;            /* Opera */
+								image-rendering: pixelated !important;                 /* Future browsers */
+								image-rendering: optimizeSpeed !important;             /* IE */
+							}
+						#beepboxEditorContainer {
+								border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png");
+								border-image-slice: 4 fill; 
+							   border-image-width: 8px; 
+							border-image-repeat: stretch;
+								padding: 12px;
+			
+								image-rendering: -moz-crisp-edges !important;         /* Firefox */
+								image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+								image-rendering: -o-crisp-edges !important;            /* Opera */
+								image-rendering: pixelated !important;                 /* Future browsers */
+								image-rendering: optimizeSpeed !important;             /* IE */ 
+							}
+						.beepboxEditor button,
+						button.mobilePatternButton,
+						button.mobileTrackButton,
+						button.mobileSettingsButton,
+						button.mobilePlayButton,
+						button.mobilePauseButton,
+						button.mobileNextBarButton,
+						button.mobilePrevBarButton,
+						button.playButton,
+						button.pauseButton, 
+						button.recordButton, 
+						button.stopButton,
+						button.nextBarButton, 
+						button.prevBarButton, 
+						button.copyButton, 
+						button.pasteButton, 
+						button.exportInstrumentButton, 
+						button.importInstrumentButton, 
+						.beepboxEditor select, 
+						.beepboxEditor .select2-selection__rendered {
+								border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png") !important;
+								border-image-slice: 4 fill !important; 
+							   border-image-width: 4px !important; 
+							border-image-repeat: stretch !important;
+								padding: 4px !important; 
+			
+								image-rendering: -moz-crisp-edges !important;         /* Firefox */
+								image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+								image-rendering: -o-crisp-edges !important;            /* Opera */
+								image-rendering: pixelated !important;                 /* Future browsers */
+								image-rendering: optimizeSpeed !important;             /* IE */
+			
+								cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							}
+			
+						.beepboxEditor .channelBox {
+							clip-path: polygon(
+								0px calc(100% - 2px),
+								2px calc(100% - 2px),
+								2px 100%,
+								calc(100% - 2px) 100%,
+								calc(100% - 2px) calc(100% - 2px),
+								100% calc(100% - 2px),
+								100% 2px,
+								calc(100% - 2px) 2px,
+								calc(100% - 2px) 0px,
+								2px 0px,
+								2px 2px,
+								0px 2px
+							  );
+							}
+							
+							button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+								--ui-widget-background: var(--editor-background) !important;
+								border-image-source: none !important;
+							}
+			
+							select.trackSelectBox {
+								border-image: none !important;
+							}
+							
+						@font-face {
+					   font-family: "AbyssType_small";
+					   src:
+						url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+						}
+			
+						html {
+							font-family: 'AbyssType';
+						}
+			
+						div.channelBoxLabel {
+							font-family: 'AbyssType_small' !important;
+						}
+			
+						.beepboxEditor input[type="range"]::-webkit-slider-thumb
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]::-ms-thumb
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]::-ms-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]:focus::-ms-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]::-moz-range-thumb
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]::-moz-range-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]:focus::-moz-range-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="text"],
+						.beepboxEditor input[type="number"]
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="checkbox"]
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="checkbox"]:checked
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="checkbox"]:checked:after
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+			
+						div.selectRow span {
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+			
 			`,
         "dark classic": `
 			:root {
@@ -7211,7 +8736,7 @@ var beepbox = (function (exports) {
 				box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
 			}
 
-			.beepboxEditor button, .beepboxEditor select {
+			.beepboxEditor button, .beepboxEditor select, button {
 				box-shadow: inset 0 0 0 1px var(--secondary-text);
 			}
 
@@ -7477,7 +9002,9 @@ var beepbox = (function (exports) {
 					--tonic: #4dac5b; 
 					--fifth-note: #458343; 
 					--white-piano-key: #bee9bf; 
-					--black-piano-key: #395e3c; 
+					--black-piano-key: #395e3c;
+					--white-piano-key-text: #024a0c;		
+					--black-piano-key-text: #96d69f; 
 					--use-color-formula: true; 
 					--track-editor-bg-pitch: #43a631; 
 					--track-editor-bg-pitch-dim: #387e34; 
@@ -7574,6 +9101,56 @@ var beepbox = (function (exports) {
 
 
 					}
+
+					.note-primary {
+						clip-path: polygon(
+							0px calc(100% - 4px),
+							4px calc(100% - 4px),
+							4px 100%,
+							calc(100% - 4px) 100%,
+							calc(100% - 4px) calc(100% - 4px),
+							100% calc(100% - 4px),
+							100% 4px,
+							calc(100% - 4px) 4px,
+							calc(100% - 4px) 0px,
+							4px 0px,
+							4px 4px,
+							0px 4px
+						  );
+					}
+					.note-secondary {
+						clip-path: polygon(
+							0px calc(100% - 4px),
+							4px calc(100% - 4px),
+							4px 100%,
+							calc(100% - 4px) 100%,
+							calc(100% - 4px) calc(100% - 4px),
+							100% calc(100% - 4px),
+							100% 4px,
+							calc(100% - 4px) 4px,
+							calc(100% - 4px) 0px,
+							4px 0px,
+							4px 4px,
+							0px 4px
+						  );
+					}
+					.note-flash {
+						clip-path: polygon(
+							0px calc(100% - 4px),
+							4px calc(100% - 4px),
+							4px 100%,
+							calc(100% - 4px) 100%,
+							calc(100% - 4px) calc(100% - 4px),
+							100% calc(100% - 4px),
+							100% 4px,
+							calc(100% - 4px) 4px,
+							calc(100% - 4px) 0px,
+							4px 0px,
+							4px 4px,
+							0px 4px
+						  );
+					}
+
 					/* sets background image */
 					body {
 						background-image: url("https://choptop84.github.io/abyssbox-app/Forest2Trees.png") !important;
@@ -7618,7 +9195,7 @@ var beepbox = (function (exports) {
 							image-rendering: pixelated !important;                 /* Future browsers */
 							image-rendering: optimizeSpeed !important;             /* IE */ 
 						}
-					.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
+					.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered, button {
 							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border2.png") !important;
 							border-image-slice: 4 fill !important; 
 						   border-image-width: 4px !important; 
@@ -7642,6 +9219,25 @@ var beepbox = (function (exports) {
 					} */
 					* {
 						cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+						--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+						--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+						--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+						--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+						--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+						--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+						--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+						--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+						--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+						--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+						--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+						--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+						--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+						--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+						--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+						--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+						--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+						--export-instrument-symbol: var(--export-symbol);
+						--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
 						} 
 							@font-face {
 						   font-family: "AbyssType";
@@ -7649,6 +9245,11 @@ var beepbox = (function (exports) {
 							url("abysstype.otf") format("opentype") tech(color-COLRv1),
 							}
 				
+							button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+								--ui-widget-background: var(--editor-background) !important;
+								border-image-source: none !important;
+							}
+
 							@font-face {
 						   font-family: "AbyssType_small";
 						   src:
@@ -7781,6 +9382,257 @@ var beepbox = (function (exports) {
 					
 				}
 			`,
+        "canyon 2": `
+			:root {
+				--page-margin: #0a0000;
+				--song-player-margin: var(--page-margin);
+				--editor-background: #5a1616;
+				--hover-preview: white;
+				--playhead: rgba(247, 172, 196, 0.9);
+				--primary-text: #f5d6bf;
+				--secondary-text: #ff234d;
+				--inverted-text: #290505;
+				--text-selection: rgba(255, 208, 68, 0.99);
+				--box-selection-fill: #94044870;
+				--loop-accent: #ff1e1e;
+				--link-accent: #da7b76;
+				--ui-widget-background: #832d2d;
+				--ui-widget-focus: #832d2d;
+				--pitch-background: #832d2d;
+				--tonic: #bb5a5e;
+				--fifth-note: #5b3e6b;
+				--white-piano-key: #ff8383;
+				--black-piano-key: #2b0806;
+				--white-piano-key-text: #131200;
+				--black-piano-key-text: #ffffff;
+				--use-color-formula: true;
+				--track-editor-bg-pitch: #a80b2b;
+				--track-editor-bg-pitch-dim: #38030e;
+				--track-editor-bg-noise: #3a3551;
+				--track-editor-bg-noise-dim: #272732;
+				--track-editor-bg-mod: #552045;
+				--track-editor-bg-mod-dim: #3e1442;
+				--multiplicative-mod-slider: #9f6095;
+				--overwriting-mod-slider: #b55050;
+				--indicator-primary: #f2f764;
+				--indicator-secondary: #4f3939;
+				--select2-opt-group: #673030;
+				--input-box-outline: #443131;
+				--mute-button-normal: #d81833;
+				--mute-button-mod: #9e2691;
+				--mod-label-primary: #5f2b39;
+				--mod-label-secondary-text: rgb(158, 66, 122);
+				--mod-label-primary-text: #e6caed;
+				--pitch-secondary-channel-hue: 0;
+				--pitch-secondary-channel-hue-scale: 11.8;
+				--pitch-secondary-channel-sat: 73.3;
+				--pitch-secondary-channel-sat-scale: 0.1;
+				--pitch-secondary-channel-lum: 40;
+				--pitch-secondary-channel-lum-scale: 0.05;
+				--pitch-primary-channel-hue: 0;
+				--pitch-primary-channel-hue-scale: 11.8;
+				--pitch-primary-channel-sat: 90;
+				--pitch-primary-channel-sat-scale: 0.1;
+				--pitch-primary-channel-lum: 67.5;
+				--pitch-primary-channel-lum-scale: 0.05;
+				--pitch-secondary-note-hue: 0;
+				--pitch-secondary-note-hue-scale: 11.8;
+				--pitch-secondary-note-sat: 83.9;
+				--pitch-secondary-note-sat-scale: 0.1;
+				--pitch-secondary-note-lum: 35;
+				--pitch-secondary-note-lum-scale: 0.05;
+				--pitch-primary-note-hue: 0;
+				--pitch-primary-note-hue-scale: 11.8;
+				--pitch-primary-note-sat: 100;
+				--pitch-primary-note-sat-scale: 0.05;
+				--pitch-primary-note-lum: 85.6;
+				--pitch-primary-note-lum-scale: 0.025;
+				--noise-secondary-channel-hue: 60;
+				--noise-secondary-channel-hue-scale: 2;
+				--noise-secondary-channel-sat: 25;
+				--noise-secondary-channel-sat-scale: 0;
+				--noise-secondary-channel-lum: 42;
+				--noise-secondary-channel-lum-scale: 0;
+				--noise-primary-channel-hue: 60;
+				--noise-primary-channel-hue-scale: 2;
+				--noise-primary-channel-sat: 33;
+				--noise-primary-channel-sat-scale: 0;
+				--noise-primary-channel-lum: 63.5;
+				--noise-primary-channel-lum-scale: 0;
+				--noise-secondary-note-hue: 60;
+				--noise-secondary-note-hue-scale: 2;
+				--noise-secondary-note-sat: 33.5;
+				--noise-secondary-note-sat-scale: 0;
+				--noise-secondary-note-lum: 55;
+				--noise-secondary-note-lum-scale: 0;
+				--noise-primary-note-hue: 60;
+				--noise-primary-note-hue-scale: 2;
+				--noise-primary-note-sat: 46.5;
+				--noise-primary-note-sat-scale: 0;
+				--noise-primary-note-lum: 74;
+				--noise-primary-note-lum-scale: 0;
+				--mod-secondary-channel-hue: 222;
+				--mod-secondary-channel-hue-scale: 1.5;
+				--mod-secondary-channel-sat: 88;
+				--mod-secondary-channel-sat-scale: 0;
+				--mod-secondary-channel-lum: 50;
+				--mod-secondary-channel-lum-scale: 0;
+				--mod-primary-channel-hue: 222;
+				--mod-primary-channel-hue-scale: 1.5;
+				--mod-primary-channel-sat: 96;
+				--mod-primary-channel-sat-scale: 0;
+				--mod-primary-channel-lum: 80;
+				--mod-primary-channel-lum-scale: 0;
+				--mod-secondary-note-hue: 222;
+				--mod-secondary-note-hue-scale: 1.5;
+				--mod-secondary-note-sat: 92;
+				--mod-secondary-note-sat-scale: 0;
+				--mod-secondary-note-lum: 54;
+				--mod-secondary-note-lum-scale: 0;
+				--mod-primary-note-hue: 222;
+				--mod-primary-note-hue-scale: 1.5;
+				--mod-primary-note-sat: 96;
+				--mod-primary-note-sat-scale: 0;
+				--mod-primary-note-lum: 75;
+				--mod-primary-note-lum-scale: 0;
+				--disabled-note-primary:    #515164;
+				--disabled-note-secondary:  #2a2a3a;
+			}
+			
+			* {
+				cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+				--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+				--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+				--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+				--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+				--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+				--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+				--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+				--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+				--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+				--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+				--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+				--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+				--export-instrument-symbol: var(--export-symbol);
+				--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
+				} 
+			
+			@font-face {
+				font-family: "AbyssType";
+				src:
+				 url("abysstype.otf") format("opentype") tech(color-COLRv1),
+				 }
+			
+				 @font-face {
+				font-family: "AbyssType_small";
+				src:
+				 url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+				 }
+			
+				 #pattern-area {
+					border-style: solid;
+					border-color: #0a0000;
+					border-bottom: 0;
+					border-right: 0;
+					border-top: 0;
+				 }
+			
+				 body {
+					background-image: url("https://choptop84.github.io/choptop84s-image-repository/canyonbg.png") !important;
+					background-size: 200% !important;
+					background-position: center top; /* Adjusted to align with the top */
+					  background-repeat: no-repeat !important;
+			
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */ 
+					 }
+			
+				 #text-content {
+					border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/canyon2_border.png");
+					border-image-slice: 16 fill; 
+					border-image-width: 32px; 
+					border-image-repeat: repeat; 
+					padding-left: 36px; 
+					padding-right: 36px; 
+					padding-bottom: 6px; 
+				
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+					background: #fff0;
+				 }
+			 #beepboxEditorContainer {
+					border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/canyon2_border.png");
+					border-image-slice: 16 fill; 
+					border-image-width: 32px; 
+					border-image-repeat: repeat; 
+					padding-left: 36px; 
+					padding-right: 36px; 
+					padding-bottom: 6px; 
+					
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+					background: #fff0;
+				 }
+			
+				 .beepboxEditor button,
+				 button.mobilePatternButton,
+				 button.mobileTrackButton,
+				 button.mobileSettingsButton,
+				 button.mobilePlayButton,
+				 button.mobilePauseButton,
+				 button.mobileNextBarButton,
+				 button.mobilePrevBarButton,
+				 button.playButton,
+				 button.pauseButton, 
+				 button.recordButton, 
+				 button.stopButton,
+				 button.nextBarButton, 
+				 button.prevBarButton, 
+				 button.copyButton, 
+				 button.pasteButton, 
+				 button.exportInstrumentButton, 
+				 button.importInstrumentButton, 
+				 .beepboxEditor select, 
+				 .beepboxEditor .select2-selection__rendered {
+						 border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/canyon2_button.png") !important;
+						 border-image-slice: 4 fill !important; 
+						border-image-width: 4px !important; 
+					 border-image-repeat: stretch !important;
+						 padding: 4px !important; 
+			
+						 image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						 image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						 image-rendering: -o-crisp-edges !important;            /* Opera */
+						 image-rendering: pixelated !important;                 /* Future browsers */
+						 image-rendering: optimizeSpeed !important;             /* IE */
+					 }
+			
+				button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+						--ui-widget-background: var(--editor-background) !important;
+						border-image-source: none !important;
+					}
+
+				 html {
+				 font-family: 'AbyssType';
+				 }
+				 div.channelBoxLabel {
+					 font-family: 'AbyssType_small' !important;
+				 }
+		`,
         "midnight": `
 		:root {
 			--page-margin: #000;
@@ -8024,7 +9876,7 @@ var beepbox = (function (exports) {
 					box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
 				}
 
-				.beepboxEditor button, .beepboxEditor select {
+				.beepboxEditor button, .beepboxEditor select, button {
 					background-color: var(--secondary-text);
 				}
 
@@ -9730,11 +11582,65 @@ var beepbox = (function (exports) {
 				
 				
 			}
+
+			.note-primary {
+				clip-path: polygon(
+					0px calc(100% - 4px),
+					4px calc(100% - 4px),
+					4px 100%,
+					calc(100% - 4px) 100%,
+					calc(100% - 4px) calc(100% - 4px),
+					100% calc(100% - 4px),
+					100% 4px,
+					calc(100% - 4px) 4px,
+					calc(100% - 4px) 0px,
+					4px 0px,
+					4px 4px,
+					0px 4px
+				  );
+			}
+			.note-secondary {
+				clip-path: polygon(
+					0px calc(100% - 4px),
+					4px calc(100% - 4px),
+					4px 100%,
+					calc(100% - 4px) 100%,
+					calc(100% - 4px) calc(100% - 4px),
+					100% calc(100% - 4px),
+					100% 4px,
+					calc(100% - 4px) 4px,
+					calc(100% - 4px) 0px,
+					4px 0px,
+					4px 4px,
+					0px 4px
+				  );
+			}
+			.note-flash {
+				clip-path: polygon(
+					0px calc(100% - 4px),
+					4px calc(100% - 4px),
+					4px 100%,
+					calc(100% - 4px) 100%,
+					calc(100% - 4px) calc(100% - 4px),
+					100% calc(100% - 4px),
+					100% 4px,
+					calc(100% - 4px) 4px,
+					calc(100% - 4px) 0px,
+					4px 0px,
+					4px 4px,
+					0px 4px
+				  );
+			}
+
+			.prompt.noSelection {
+				background: #040410 !important;
+			}
+
 			body {
 				background-image: url("https://choptop84.github.io/abyssbox-app/stars.gif") !important;
-				background-size: contain;
-				background-position: center top;
-				  background-repeat: repeat;
+				background-size: contain !important;
+				background-position: center top !important;
+				  background-repeat: repeat !important;
 
 			image-rendering: -moz-crisp-edges !important;         /* Firefox */
 			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
@@ -9773,7 +11679,7 @@ var beepbox = (function (exports) {
 					image-rendering: pixelated !important;                 /* Future browsers */
 					image-rendering: optimizeSpeed !important;             /* IE */ 
 				}
-			.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
+			.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered, button {
 					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border2.png") !important;
 					border-image-slice: 4 fill !important; 
 				   border-image-width: 4px !important; 
@@ -9794,6 +11700,25 @@ var beepbox = (function (exports) {
 			} */
 			* {
 				cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+				--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+				--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+				--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+				--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+				--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+				--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+				--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+				--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+				--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+				--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+				--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+				--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+				--export-instrument-symbol: var(--export-symbol);
+				--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
 				} 
 					@font-face {
 				   font-family: "AbyssType";
@@ -10052,7 +11977,7 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum: 55;
 			--mod-primary-note-lum-scale: 0;
 		}
-		.beepboxEditor button, .beepboxEditor select {
+		.beepboxEditor button, .beepboxEditor select, button {
 			box-shadow: inset 0 0 0 1px var(--secondary-text);
 		}
 		.select2-selection__rendered {
@@ -10534,6 +12459,378 @@ var beepbox = (function (exports) {
 			
 			
 	}`,
+        "Ghost House": `
+	:root { 
+		--page-margin: #120918; 
+		--editor-background: #120918; 
+		--hover-preview: #c6f7ff; 
+		--playhead: white; 
+		--primary-text: #bbb8db; 
+		--secondary-text: #6f72b5; 
+		--inverted-text: black; 
+		--text-selection: rgba(119,68,255,0.99); 
+		--box-selection-fill: rgb(43 70 171 / 62%); 
+		--loop-accent: #573ebb; 
+		--link-accent: #98f; 
+		--ui-widget-background: #1c1a2f; 
+		--ui-widget-focus: var(--ui-widget-background); 
+		--pitch-background: #3e3a5f; 
+		--tonic: #7874a1; 
+		--fifth-note: #423fff; 
+		--white-piano-key: #bbb8db; 
+		--black-piano-key: #1c1a2f; 
+		--white-piano-key-text: #1c1a2f; 
+		--black-piano-key-text: #bbb8db; 
+		--use-color-formula: false; 
+		--track-editor-bg-pitch: #3a3b5c; 
+		--track-editor-bg-pitch-dim: #1f2036; 
+		--track-editor-bg-noise: #3c3554; 
+		--track-editor-bg-noise-dim: #1e1834; 
+		--track-editor-bg-mod: #30335e; 
+		--track-editor-bg-mod-dim: #161938; 
+		--multiplicative-mod-slider: #573ebb; 
+		--overwriting-mod-slider: #495789; 
+		--indicator-primary: #573ebb; 
+		--indicator-secondary: #415187; 
+		--select2-opt-group: #22223a; 
+		--input-box-outline: #2d2648; 
+		--mute-button-normal: #7aceff; 
+		--mute-button-mod: #9d6bff; 
+		--pitch1-secondary-channel: #5f3ea5; 
+		--pitch1-primary-channel: #c1a4ff; 
+		--pitch1-secondary-note: #794fd3; 
+		--pitch1-primary-note: #d8c6ff; 
+		--pitch2-secondary-channel: #4f44bf; 
+		--pitch2-primary-channel: #9287ff; 
+		--pitch2-secondary-note: #5e51d9; 
+		--pitch2-primary-note: #b6afff; 
+		--pitch3-secondary-channel: #374eb9; 
+		--pitch3-primary-channel: #8097ff; 
+		--pitch3-secondary-note: #445cc9; 
+		--pitch3-primary-note: #a0b2ff; 
+		--pitch4-secondary-channel: #2867cf; 
+		--pitch4-primary-channel: #6fa5ff; 
+		--pitch4-secondary-note: #2e6ed7; 
+		--pitch4-primary-note: #a6c7ff; 
+		--pitch5-secondary-channel: #3175a7; 
+		--pitch5-primary-channel: #7ec9ff; 
+		--pitch5-secondary-note: #367eb3; 
+		--pitch5-primary-note: #9fd7ff; 
+		--pitch6-secondary-channel: #3993a9; 
+		--pitch6-primary-channel: #8ce9ff; 
+		--pitch6-secondary-note: #386da3; 
+		--pitch6-primary-note: #9eecff; 
+		--pitch7-secondary-channel: #369d8a; 
+		--pitch7-primary-channel: #8bfce7; 
+		--pitch7-secondary-note: #1c93a7; 
+		--pitch7-primary-note: #abffef; 
+		--pitch8-secondary-channel: #00A170; 
+		--pitch8-primary-channel: #50FFC9; 
+		--pitch8-secondary-note: #00C78A; 
+		--pitch8-primary-note: #83FFD9; 
+		--pitch9-secondary-channel: #49b374; 
+		--pitch9-primary-channel: #8affa9; 
+		--pitch9-secondary-note: #26815f; 
+		--pitch9-primary-note: #c8ffde; 
+		--pitch10-secondary-channel: #58a747; 
+		--pitch10-primary-channel: #bbffaa; 
+		--pitch10-secondary-note: #1d7c48; 
+		--pitch10-primary-note: #c7ffbc; 
+		--noise1-secondary-channel: #42829b; 
+		--noise1-primary-channel: #97d3fc; 
+		--noise1-secondary-note: #3f53b3; 
+		--noise1-primary-note: #97d3fc; 
+		--noise2-secondary-channel: #6354bb; 
+		--noise2-primary-channel: #9a89ff; 
+		--noise2-secondary-note: #5f4dcd; 
+		--noise2-primary-note: #c6bcff; 
+		--noise3-secondary-channel: #704a95; 
+		--noise3-primary-channel: #c285ff; 
+		--noise3-secondary-note: #ad5aff; 
+		--noise3-primary-note: #d3a6ff; 
+		--noise4-secondary-channel: #a53c65; 
+		--noise4-primary-channel: #f794bb; 
+		--noise4-secondary-note: #cb5080; 
+		--noise4-primary-note: #f794bb; 
+		--noise5-secondary-channel: #9b2d2d; 
+		--noise5-primary-channel: #ff7676; 
+		--noise5-secondary-note: #cb4444; 
+		--noise5-primary-note: #ff9999; 
+		--mod1-secondary-channel: #b7613c; 
+		--mod1-primary-channel: #ff9f76; 
+		--mod1-secondary-note: #e77e52; 
+		--mod1-primary-note: #ffb99b; 
+		--mod2-secondary-channel: #916d34; 
+		--mod2-primary-channel: #fece80; 
+		--mod2-secondary-note: #c58b35; 
+		--mod2-primary-note: #ffdda5; 
+		--mod3-secondary-channel: #83761a; 
+		--mod3-primary-channel: #fdf68c; 
+		--mod3-secondary-note: #c18e00; 
+		--mod3-primary-note: #fdf68c; 
+		--mod4-secondary-channel: #a86436; 
+		--mod4-primary-channel: #c8a825; 
+		--mod4-secondary-note: #e8ba46; 
+		--mod4-primary-note: #c8a825; 
+		--mod-label-primary: #37325e; 
+		--mod-label-secondary-text: #6e8aa7; 
+		--mod-label-primary-text: #c1ffff; 
+		--disabled-note-primary: #999; 
+		--disabled-note-secondary: #666; 
+		--note-flash: #ffffff; 
+		--note-flash-secondary: #ffffff77; }
+	`,
+        "Ghost House 2": `
+	:root { 
+		--page-margin: #120918; 
+		--editor-background: #1c1a2f; 
+		--hover-preview: #c6f7ff; 
+		--playhead: white; 
+		--primary-text: #bbb8db; 
+		--secondary-text: #6f72b5; 
+		--inverted-text: black; 
+		--text-selection: rgba(119,68,255,0.99); 
+		--box-selection-fill: rgb(43 70 171 / 62%); 
+		--loop-accent: #573ebb; 
+		--link-accent: #98f; 
+		--ui-widget-background: #3e3a5f; 
+		--ui-widget-focus: var(--ui-widget-background); 
+		--pitch-background: var(--ui-widget-background); 
+		--tonic: #7874a1; 
+		--fifth-note: #423fff; 
+		--white-piano-key: #bbb8db; 
+		--black-piano-key: #1c1a2f; 
+		--white-piano-key-text: #1c1a2f; 
+		--black-piano-key-text: #bbb8db; 
+		--use-color-formula: false; 
+		--track-editor-bg-pitch: #3a3b5c; 
+		--track-editor-bg-pitch-dim: #1f2036; 
+		--track-editor-bg-noise: #3c3554; 
+		--track-editor-bg-noise-dim: #1e1834; 
+		--track-editor-bg-mod: #30335e; 
+		--track-editor-bg-mod-dim: #161938; 
+		--multiplicative-mod-slider: #573ebb; 
+		--overwriting-mod-slider: #495789; 
+		--indicator-primary: #573ebb; 
+		--indicator-secondary: #415187; 
+		--select2-opt-group: #22223a; 
+		--input-box-outline: #2d2648; 
+		--mute-button-normal: #7aceff; 
+		--mute-button-mod: #9d6bff; 
+		--pitch1-secondary-channel: #5f3ea5; 
+		--pitch1-primary-channel: #c1a4ff; 
+		--pitch1-secondary-note: #794fd3; 
+		--pitch1-primary-note: #d8c6ff; 
+		--pitch2-secondary-channel: #4f44bf; 
+		--pitch2-primary-channel: #9287ff; 
+		--pitch2-secondary-note: #5e51d9; 
+		--pitch2-primary-note: #b6afff; 
+		--pitch3-secondary-channel: #374eb9; 
+		--pitch3-primary-channel: #8097ff; 
+		--pitch3-secondary-note: #445cc9; 
+		--pitch3-primary-note: #a0b2ff; 
+		--pitch4-secondary-channel: #2867cf; 
+		--pitch4-primary-channel: #6fa5ff; 
+		--pitch4-secondary-note: #2e6ed7; 
+		--pitch4-primary-note: #a6c7ff; 
+		--pitch5-secondary-channel: #3175a7; 
+		--pitch5-primary-channel: #7ec9ff; 
+		--pitch5-secondary-note: #367eb3; 
+		--pitch5-primary-note: #9fd7ff; 
+		--pitch6-secondary-channel: #3993a9; 
+		--pitch6-primary-channel: #8ce9ff; 
+		--pitch6-secondary-note: #386da3; 
+		--pitch6-primary-note: #9eecff; 
+		--pitch7-secondary-channel: #369d8a; 
+		--pitch7-primary-channel: #8bfce7; 
+		--pitch7-secondary-note: #1c93a7; 
+		--pitch7-primary-note: #abffef; 
+		--pitch8-secondary-channel: #00A170; 
+		--pitch8-primary-channel: #50FFC9; 
+		--pitch8-secondary-note: #00C78A; 
+		--pitch8-primary-note: #83FFD9; 
+		--pitch9-secondary-channel: #49b374; 
+		--pitch9-primary-channel: #8affa9; 
+		--pitch9-secondary-note: #26815f; 
+		--pitch9-primary-note: #c8ffde; 
+		--pitch10-secondary-channel: #58a747; 
+		--pitch10-primary-channel: #bbffaa; 
+		--pitch10-secondary-note: #1d7c48; 
+		--pitch10-primary-note: #c7ffbc; 
+		--noise1-secondary-channel: #42829b; 
+		--noise1-primary-channel: #97d3fc; 
+		--noise1-secondary-note: #3f53b3; 
+		--noise1-primary-note: #97d3fc; 
+		--noise2-secondary-channel: #6354bb; 
+		--noise2-primary-channel: #9a89ff; 
+		--noise2-secondary-note: #5f4dcd; 
+		--noise2-primary-note: #c6bcff; 
+		--noise3-secondary-channel: #704a95; 
+		--noise3-primary-channel: #c285ff; 
+		--noise3-secondary-note: #ad5aff; 
+		--noise3-primary-note: #d3a6ff; 
+		--noise4-secondary-channel: #a53c65; 
+		--noise4-primary-channel: #f794bb; 
+		--noise4-secondary-note: #cb5080; 
+		--noise4-primary-note: #f794bb; 
+		--noise5-secondary-channel: #9b2d2d; 
+		--noise5-primary-channel: #ff7676; 
+		--noise5-secondary-note: #cb4444; 
+		--noise5-primary-note: #ff9999; 
+		--mod1-secondary-channel: #b7613c; 
+		--mod1-primary-channel: #ff9f76; 
+		--mod1-secondary-note: #e77e52; 
+		--mod1-primary-note: #ffb99b; 
+		--mod2-secondary-channel: #916d34; 
+		--mod2-primary-channel: #fece80; 
+		--mod2-secondary-note: #c58b35; 
+		--mod2-primary-note: #ffdda5; 
+		--mod3-secondary-channel: #83761a; 
+		--mod3-primary-channel: #fdf68c; 
+		--mod3-secondary-note: #c18e00; 
+		--mod3-primary-note: #fdf68c; 
+		--mod4-secondary-channel: #a86436; 
+		--mod4-primary-channel: #c8a825; 
+		--mod4-secondary-note: #e8ba46; 
+		--mod4-primary-note: #c8a825; 
+		--mod-label-primary: #37325e; 
+		--mod-label-secondary-text: #6e8aa7; 
+		--mod-label-primary-text: #c1ffff; 
+		--disabled-note-primary: #999; 
+		--disabled-note-secondary: #666; 
+		--note-flash: #ffffff; 
+		--note-flash-secondary: #ffffff77; }
+	
+		* {
+		cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+		--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+		--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+		--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+		--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+		--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		--export-instrument-symbol: var(--export-symbol);
+		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
+		} 
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+			url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+	
+			#beepboxEditorContainer, .track-area, .beepboxEditor, #text-content, div.noSelection, .beepboxEditor .loopEditor {
+				background-color: #fff0 !important;
+			} 
+	
+			@font-face {
+		   font-family: "AbyssType_small";
+		   src:
+			url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			}
+	
+			body {
+				background-image: url("https://choptop84.github.io/choptop84s-image-repository/ghosthousebg.png") !important;
+				background-size: 256px;
+				background-position: center;
+				background-repeat: repeat;
+	
+				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+				image-rendering: -o-crisp-edges !important;            /* Opera */
+				image-rendering: pixelated !important;                 /* Future browsers */
+				image-rendering: optimizeSpeed !important;             /* IE */
+				}
+	
+			#text-content {
+				border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/ghosthousebg2.png");
+				border-image-slice: 16 fill; 
+			   border-image-width: 32px; 
+			border-image-repeat: repeat; 
+				padding-left: 32px; 
+				padding-right: 32px; 
+				padding-bottom: 16px; 
+				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+				image-rendering: -o-crisp-edges !important;            /* Opera */
+				image-rendering: pixelated !important;                 /* Future browsers */
+				image-rendering: optimizeSpeed !important;             /* IE */
+			}
+		#beepboxEditorContainer {
+				border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/ghosthousebg2.png");
+				border-image-slice: 16 fill; 
+			   border-image-width: 32px; 
+			border-image-repeat: repeat;
+				padding-left: 32px; 
+				padding-right: 32px; 
+				padding-bottom: 16px; 
+	
+				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+				image-rendering: -o-crisp-edges !important;            /* Opera */
+				image-rendering: pixelated !important;                 /* Future browsers */
+				image-rendering: optimizeSpeed !important;             /* IE */ 
+			}
+	
+			div.prompt.noSelection {
+				background-color: var(--editor-background) !important;
+			}
+			
+			.beepboxEditor button,
+			button.mobilePatternButton,
+			button.mobileTrackButton,
+			button.mobileSettingsButton,
+			button.mobilePlayButton,
+			button.mobilePauseButton,
+			button.mobileNextBarButton,
+			button.mobilePrevBarButton,
+			button.playButton,
+			button.pauseButton, 
+			button.recordButton, 
+			button.stopButton,
+			button.nextBarButton, 
+			button.prevBarButton, 
+			button.copyButton, 
+			button.pasteButton, 
+			button.exportInstrumentButton, 
+			button.importInstrumentButton, 
+			.beepboxEditor select, 
+			.beepboxEditor .select2-selection__rendered {
+					border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/ghosthouse_button.png") !important;
+					border-image-slice: 5 fill !important; 
+				   border-image-width: 5px !important;  
+				border-image-repeat: repeat !important;
+					padding: 4px !important; 
+	
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+				}
+	
+				button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+					--ui-widget-background: var(--editor-background) !important;
+					border-image-source: none !important;
+				}
+	
+			html {
+			font-family: 'AbyssType';
+			}
+			div.channelBoxLabel {
+				font-family: 'AbyssType_small' !important;
+			}
+	`,
         "modbox classic": `
 			:root {
 				--page-margin: black;
@@ -12511,7 +14808,7 @@ var beepbox = (function (exports) {
 					
 					
 				}
-				.beepboxEditor button, .beepboxEditor select {
+				.beepboxEditor button, .beepboxEditor select, button {
 					box-shadow: inset 0 0 0 1px var(--secondary-text);
 				}
 			`,
@@ -13915,7 +16212,7 @@ var beepbox = (function (exports) {
 			--noise5-primary-note:      #9787b3;
 		}
 		
-		.beepboxEditor button, .beepboxEditor select {
+		.beepboxEditor button, .beepboxEditor select, button {
 			box-shadow: inset 0 0 0 1px var(--secondary-text);
 		}
 		
@@ -14581,6 +16878,8 @@ var beepbox = (function (exports) {
     ColorConfig.blackPianoKey = "var(--black-piano-key)";
     ColorConfig.whitePianoKeyText = "var(--white-piano-key-text)";
     ColorConfig.blackPianoKeyText = "var(--black-piano-key-text)";
+    ColorConfig.songPlayerMargin = "var(--song-player-margin)";
+    ColorConfig.progressBar = "var(--progress-bar)";
     ColorConfig.useColorFormula = "var(--use-color-formula)";
     ColorConfig.pitchSecondaryChannelHue = "var(--pitch-secondary-channel-hue)";
     ColorConfig.pitchSecondaryChannelHueScale = "var(--pitch-secondary-channel-hue-scale)";
@@ -14673,6 +16972,8 @@ var beepbox = (function (exports) {
     ColorConfig.modLabelPrimaryText = "var(--mod-label-primary-text)";
     ColorConfig.disabledNotePrimary = "var(--disabled-note-primary)";
     ColorConfig.disabledNoteSecondary = "var(--disabled-note-secondary)";
+    ColorConfig.scrollbarColor = "var(--scrollbar-color)";
+    ColorConfig.songPlayerKeyColor = "var(--playing-key-color)";
     ColorConfig.c_pitchSecondaryChannelHue = 0;
     ColorConfig.c_pitchSecondaryChannelHueScale = 0;
     ColorConfig.c_pitchSecondaryChannelSat = 0;
@@ -14903,7 +17204,7 @@ var beepbox = (function (exports) {
 	--edit-pencil-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-5 -21 26 26"><path d="M 0 0 L 1 -4 L 4 -1 z M 2 -5 L 10 -13 L 13 -10 L 5 -2 zM 11 -14 L 13 -16 L 14 -16 L 16 -14 L 16 -13 L 14 -11 z" fill="gray"/></svg>');
 	--preferences-gear-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-13 -13 26 26"><path d="M 5.78 -1.6 L 7.93 -0.94 L 7.93 0.94 L 5.78 1.6 L 4.85 3.53 L 5.68 5.61 L 4.21 6.78 L 2.36 5.52 L 0.27 5.99 L -0.85 7.94 L -2.68 7.52 L -2.84 5.28 L -4.52 3.95 L -6.73 4.28 L -7.55 2.59 L -5.9 1.07 L -5.9 -1.07 L -7.55 -2.59 L -6.73 -4.28 L -4.52 -3.95 L -2.84 -5.28 L -2.68 -7.52 L -0.85 -7.94 L 0.27 -5.99 L 2.36 -5.52 L 4.21 -6.78 L 5.68 -5.61 L 4.85 -3.53 M 2.92 0.67 L 2.92 -0.67 L 2.35 -1.87 L 1.3 -2.7 L 0 -3 L -1.3 -2.7 L -2.35 -1.87 L -2.92 -0.67 L -2.92 0.67 L -2.35 1.87 L -1.3 2.7 L -0 3 L 1.3 2.7 L 2.35 1.87 z" fill="gray"/></svg>');
 	--customize-dial-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-13 -13 26 26"> \
-			<g transform="translate(0,1)" fill="gray"> \
+		<g transform="translate(0,1)" fill="gray"> \
 				<circle cx="0" cy="0" r="6.5" stroke="gray" stroke-width="1" fill="none"/> \
 				<rect x="-1" y="-5" width="2" height="4" transform="rotate(30)"/> \
 				<circle cx="-7.79" cy="4.5" r="0.75"/> \
@@ -14920,6 +17221,8 @@ var beepbox = (function (exports) {
 	--instrument-copy-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-5 -21 26 26"><path d="M 0 -15 L 1 -15 L 1 0 L 13 0 L 13 1 L 0 1 L 0 -15 z M 2 -1 L 2 -17 L 10 -17 L 14 -13 L 14 -1 z M 3 -2 L 13 -2 L 13 -12 L 9 -12 L 9 -16 L 3 -16 z" fill="currentColor"></path></svg>');
 	--instrument-paste-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"><path d="M 8 18 L 6 18 L 6 5 L 17 5 L 17 7 M 9 8 L 16 8 L 20 12 L 20 22 L 9 22 z" stroke="currentColor" fill="none"></path><path d="M 9 3 L 14 3 L 14 6 L 9 6 L 9 3 z M 16 8 L 20 12 L 16 12 L 16 8 z" fill="currentColor"></path></svg>');
 	--export-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-13 -13 26 26"><path fill="gray" d="M -8 3 L -8 8 L 8 8 L 8 3 L 6 3 L 6 6 L -6 6 L -6 3 z M 0 2 L -4 -2 L -1 -2 L -1 -8 L 1 -8 L 1 -2 L 4 -2 z"/></svg>');
+	--export-instrument-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 -960 960 960"><path fill="gray" d="M200-120v-40h560v40H200Zm279.231-150.769L254.615-568.462h130.769V-840h188.462v271.538h130.77L479.231-270.769Zm0-65.385 142.923-191.538h-88.308V-800H425.385v272.308h-88.308l142.154 191.538ZM480-527.692Z"/></svg>');
+	--import-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 -960 960 960"><path fill="gray" d="M200-120v-40h560v40H200Zm185.384-150.769v-271.539H254.615L480-840l224.616 297.692h-130.77v271.539H385.384Zm40.001-40h108.461v-272.308h88.308L480-774.615 337.077-583.077h88.308v272.308ZM480-583.077Z"/></svg>');
 	--close-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-13 -13 26 26"><path fill="gray" d="M -7.07 -5.66 L -5.66 -7.07 L 0 -1.4 L 5.66 -7.07 L 7.07 -5.66 L 1.4 0 L 7.07 5.66 L 5.66 7.07 L 0 1.4 L -5.66 7.07 L -7.07 5.66 L -1.4 0 z"/></svg>');
 	--add-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-13 -13 26 26"><path fill="gray" d="M -8 -1 L -1 -1 L -1 -8  L 1 -8 L 1 -1 L 8 -1 L 8 1 L 1 1 L 1 8 L -1 8 L -1 1 L -8 1 z"/></svg>');
 	--zoom-in-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-10 -10 20 20"><circle cx="-1" cy="-1" r="6" stroke-width="2" stroke="gray" fill="none"></circle><path stroke="gray" stroke-width="2" d="M 3 3 L 7 7 M -1 -4 L -1 2 M -4 -1 L 2 -1" fill="none"></path></svg>');
@@ -14936,6 +17239,11 @@ var beepbox = (function (exports) {
 	--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
 	--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
 	--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
+
+	--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
+	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
+	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+
 	--checkmark-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-13 -13 26 26"><path fill="gray" d="M -9 -2 L -8 -3 L -3 2 L 9 -8 L 10 -7 L -3 8 z"/></svg>');
 	--drum-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40"> \
 			<defs> \
@@ -15012,7 +17320,7 @@ var beepbox = (function (exports) {
 
 .obtrusive-scrollbars, .obtrusive-scrollbars * {
 	scrollbar-width: thin;
-	scrollbar-color: ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
+	scrollbar-color: ${ColorConfig.scrollbarColor} ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
 }
 .obtrusive-scrollbars::-webkit-scrollbar, .obtrusive-scrollbars *::-webkit-scrollbar {
 	width: 12px;
@@ -15023,6 +17331,28 @@ var beepbox = (function (exports) {
 .obtrusive-scrollbars::-webkit-scrollbar-thumb, .obtrusive-scrollbars *::-webkit-scrollbar-thumb {
 	background-color: ${ColorConfig.uiWidgetBackground};
 	border: 3px solid ${ColorConfig.editorBackground};
+}
+
+.songLoopButton::before {
+content: "";
+  position: absolute;
+  width: var(--button-size);
+  height: var(--button-size);
+  left: 3px;
+  top: 0;
+  mask-image: var(--loop-within-bar-symbol);
+  -webkit-mask-image: var(--loop-within-bar-symbol);
+  pointer-events: none;
+  background: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  image-rendering: -moz-crisp-edges !important;
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: -o-crisp-edges !important;
+  image-rendering: pixelated !important;
+  image-rendering: optimizeSpeed !important;
 }
 
 .beepboxEditor {
@@ -15150,7 +17480,6 @@ var beepbox = (function (exports) {
 
 .beepboxEditor .track-area {
 	grid-area: track-area;
-	background-image: url(${getLocalStorageItem("customTheme2", "")});
 }
 
 .beepboxEditor .loopEditor {
@@ -15297,11 +17626,7 @@ var beepbox = (function (exports) {
 	gap: 2px;
 }
 
-.beepboxEditor .copy-instrument {
-	margin: 2px 0;
-	flex-grow: 1;
-}
-.beepboxEditor .copy-instrument::before {
+.beepboxEditor .copyButton::before {
 	content: "";
 	flex-shrink: 0;
 	position: absolute;
@@ -15320,11 +17645,7 @@ var beepbox = (function (exports) {
 	mask-position: center;
 }
 
-.beepboxEditor .paste-instrument {
-	margin: 2px 0;
-	flex-grow: 1;
-}
-.beepboxEditor .paste-instrument::before {
+.beepboxEditor .pasteButton::before {
 	content: "";
 	flex-shrink: 0;
 	position: absolute;
@@ -15339,6 +17660,44 @@ var beepbox = (function (exports) {
 	-webkit-mask-repeat: no-repeat;
 	-webkit-mask-position: center;
 	mask-image: var(--instrument-paste-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+}
+
+.beepboxEditor .exportInstrumentButton::before {
+	content: "";
+	flex-shrink: 0;
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
+	width: var(--button-size);
+	height: var(--button-size);
+	background: currentColor;
+	-webkit-mask-image: var(--export-instrument-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-image: var(--export-instrument-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+}
+
+.beepboxEditor .importInstrumentButton::before {
+	content: "";
+	flex-shrink: 0;
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
+	width: var(--button-size);
+	height: var(--button-size);
+	background: currentColor;
+	-webkit-mask-image: var(--import-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-image: var(--import-symbol);
 	mask-repeat: no-repeat;
 	mask-position: center;
 }
@@ -16137,7 +18496,7 @@ var beepbox = (function (exports) {
 	.beepboxEditor select { padding: 0 2px; }
 }
 */
-.beepboxEditor button {
+.beepboxEditor button, button {
 	margin: 0;
 	position: relative;
 	height: var(--button-size);
@@ -16150,6 +18509,64 @@ var beepbox = (function (exports) {
 	font-weight: inherit;
 	cursor: pointer;
 }
+.mobileEditMenuIcon {
+  content: "";
+  pointer-events: none;
+  background: currentColor;
+  mask-image: var(--edit-pencil-symbol);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: var(--edit-pencil-symbol);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  image-rendering: -moz-crisp-edges !important;
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: -o-crisp-edges !important;
+  image-rendering: pixelated !important;
+  image-rendering: optimizeSpeed !important;
+  width: 100%;
+  height: 100%;
+  mask-size: 50%;
+  
+}
+.mobileTrackMenuIcon {
+	content: "";
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--insert-channel-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--insert-channel-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;
+	image-rendering: -webkit-optimize-contrast !important;
+	image-rendering: -o-crisp-edges !important;
+	image-rendering: pixelated !important;
+	image-rendering: optimizeSpeed !important;
+	width: 100%;
+	height: 100%;
+	mask-size: 50%;
+  }
+.mobileSettingsMenuIcon {
+	content: "";
+	pointer-events: none;
+	background: currentColor;
+	mask-image: var(--preferences-gear-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: var(--preferences-gear-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	image-rendering: -moz-crisp-edges !important;
+	image-rendering: -webkit-optimize-contrast !important;
+	image-rendering: -o-crisp-edges !important;
+	image-rendering: pixelated !important;
+	image-rendering: optimizeSpeed !important;
+	width: 100%;
+	height: 100%;
+	mask-size: 50%;
+  }
 .beepboxEditor button:focus {
 	background: ${ColorConfig.uiWidgetFocus};
 	outline: none;
@@ -16206,6 +18623,42 @@ var beepbox = (function (exports) {
 	mask-repeat: no-repeat;
 	mask-position: center;
 }
+button.mobilePlayButton::before {
+	content: "";
+	flex-shrink: 0;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	pointer-events: none;
+	width: var(--button-size);
+	height: var(--button-size);
+	background: currentColor;
+	-webkit-mask-image: var(--play-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-image: var(--play-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+}
+button.mobilePauseButton::before {
+	content: "";
+	flex-shrink: 0;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	pointer-events: none;
+	width: var(--button-size);
+	height: var(--button-size);
+	background: currentColor;
+	-webkit-mask-image: var(--pause-symbol);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-image: var(--pause-symbol);
+	mask-repeat: no-repeat;
+	mask-position: center;
+}
 .beepboxEditor button.recordButton::before {
 	content: "";
 	flex-shrink: 0;
@@ -16243,7 +18696,7 @@ var beepbox = (function (exports) {
 	mask-position: center;
 }
 
-.beepboxEditor button.prevBarButton::before {
+.beepboxEditor button.prevBarButton::before, button.mobilePrevBarButton::before {
 	content: "";
 	flex-shrink: 0;
 	position: absolute;
@@ -16262,7 +18715,7 @@ var beepbox = (function (exports) {
 	mask-position: center;
 }
 
-.beepboxEditor button.nextBarButton::before {
+.beepboxEditor button.nextBarButton::before, button.mobileNextBarButton::before {
 	content: "";
 	flex-shrink: 0;
 	position: absolute;
@@ -16591,6 +19044,10 @@ var beepbox = (function (exports) {
 	pointer-events: none;
 }
 
+#secondImage {
+	background-image: url(${getLocalStorageItem('customTheme2', '')});
+}
+
 .beepboxEditor .pitchShiftMarker {
 	width: 0;
 	height: 0;
@@ -16738,7 +19195,6 @@ li.select2-results__option[role=group] > strong:hover {
 /* wide screen */
 @media (min-width: 711px) {
 	#beepboxEditorContainer {
-		background-image: url(${getLocalStorageItem("customTheme2", "")});
 		display: table;
 	}
 	.beepboxEditor {
@@ -17485,6 +19941,16 @@ li.select2-results__option[role=group] > strong:hover {
         return 2.0 * Math.atan(radians * 0.5);
     }
 
+    let _loopType = 1;
+    function changeLoopType() {
+        if (_loopType < 3) {
+            _loopType += 1;
+        }
+        else {
+            _loopType = 1;
+        }
+        console.log("Loop count: " + _loopType);
+    }
     const epsilon = (1.0e-24);
     function clamp(min, max, val) {
         max = max - 1;
@@ -25308,16 +27774,21 @@ li.select2-results__option[role=group] > strong:hover {
         }
         getNextBar() {
             let nextBar = this.bar + 1;
-            if (this.isRecording) {
-                if (nextBar >= this.song.barCount) {
-                    nextBar = this.song.barCount - 1;
+            if (_loopType != 2) {
+                if (this.isRecording) {
+                    if (nextBar >= this.song.barCount) {
+                        nextBar = this.song.barCount - 1;
+                    }
+                }
+                else if ((this.bar == this.loopBarEnd && !this.renderingSong)) {
+                    nextBar = this.loopBarStart;
+                }
+                else if (this.loopRepeatCount != 0 && nextBar == Math.max(this.loopBarEnd + 1, this.song.loopStart + this.song.loopLength)) {
+                    nextBar = this.song.loopStart;
                 }
             }
-            else if (this.bar == this.loopBarEnd && !this.renderingSong) {
-                nextBar = this.loopBarStart;
-            }
-            else if (this.loopRepeatCount != 0 && nextBar == Math.max(this.loopBarEnd + 1, this.song.loopStart + this.song.loopLength)) {
-                nextBar = this.song.loopStart;
+            else if (_loopType == 2 && (this.bar == this.song.barCount - 1)) {
+                nextBar = 0;
             }
             return nextBar;
         }
@@ -29323,6 +31794,155 @@ li.select2-results__option[role=group] > strong:hover {
             newNotes.push(newNote);
         }
     }
+    function mod(a, b) {
+        return (a % b + b) % b;
+    }
+    function sigma(a, b, c) {
+        let result = 0;
+        for (let i = c; i <= a; i++) {
+            result += b(i);
+        }
+        return result;
+    }
+    function randomSineWave(wave) {
+        let randomRoundWave = new Float32Array(64);
+        let waveLength = 64;
+        let foundNonZero = false;
+        const roundedWaveType = (Math.random() * 2 + 1) | 0;
+        if (roundedWaveType == 1 || roundedWaveType == 3) {
+            let randomNumber1 = Math.random() * 2 + 0.5;
+            let randomNumber2 = Math.random() * 13 + 3;
+            let randomNumber3 = Math.random() * 48 - 24;
+            for (let i = 0; i < waveLength; i++) {
+                randomRoundWave[i] = clamp(-24, 24 + 1, Math.round(mod(randomNumber3 + ((Math.sin((i + randomNumber3) / randomNumber2) * 24) + i * randomNumber1), 48) - 24));
+            }
+        }
+        else if (roundedWaveType == 2) {
+            let randomNumber1 = Math.random() * 0.19 + 0.06;
+            let randomNumber2 = Math.random() * 2 + 1;
+            let randomNumber3 = Math.random() * 48 - 24;
+            let randomNumber4 = Math.random() * 2 - 1;
+            for (let i = 0; i < waveLength; i++) {
+                randomRoundWave[i] = clamp(-24, 24 + 1, Math.round(randomNumber4 * Math.abs(2 * Math.floor((Math.sin((i / randomNumber2) * randomNumber1 + randomNumber3) * Math.cos((i * randomNumber2) * (randomNumber1 / 2)) * 24))) - randomNumber4 * 24));
+            }
+        }
+        for (let i = 0; i < waveLength; i++) {
+            wave[i] = randomRoundWave[i];
+            let minimum = Infinity;
+            let maximum = -Infinity;
+            for (let i = 0; i < waveLength; i++) {
+                minimum = Math.min(minimum, wave[i]);
+                maximum = Math.max(maximum, wave[i]);
+            }
+            const distance = maximum - minimum;
+            if (distance >= 7) {
+                foundNonZero = true;
+            }
+        }
+        if (!foundNonZero)
+            randomSineWave(wave);
+    }
+    function randomPulses(wave) {
+        let randomPulse = new Float32Array(64);
+        let waveLength = 64;
+        let foundNonZero = false;
+        let randomNumber2 = Math.round(Math.random() * 15 + 15);
+        let randomNumber3 = Math.round(Math.random() * 3 + 1);
+        let randomNumber4 = Math.round(Math.random() * 13 + 2);
+        for (let i = 0; i < waveLength; i++) {
+            let randomNumber1 = sigma(mod(i, randomNumber2), (i) => 1, randomNumber4);
+            randomPulse[i] = clamp(-24, 24 + 1, Math.round(mod(24 * (sigma(i, (i) => randomNumber1, Math.round(randomNumber2 / randomNumber3))), 24.0000000000001)));
+        }
+        for (let i = 0; i < waveLength; i++) {
+            wave[i] = randomPulse[i];
+            let minimum = Infinity;
+            let maximum = -Infinity;
+            for (let i = 0; i < waveLength; i++) {
+                minimum = Math.min(minimum, wave[i]);
+                maximum = Math.max(maximum, wave[i]);
+            }
+            const distance = maximum - minimum;
+            if (distance >= 7) {
+                foundNonZero = true;
+            }
+        }
+        if (!foundNonZero)
+            randomPulses(wave);
+    }
+    function randomChipWave(wave) {
+        let randomChip = new Float32Array(64);
+        let waveLength = 64;
+        let foundNonZero = false;
+        const chipType = (Math.random() * 2 + 1) | 0;
+        if (chipType == 1) {
+            let randomNumber1 = Math.random() * 3;
+            let randomNumber2 = Math.random() * 0.99 - 1;
+            let randomNumber3 = Math.random() * 9 + 2;
+            let randomNumber4 = Math.random() * 2 - 1;
+            for (let i = 0; i < waveLength; i++) {
+                randomChip[i] = clamp(-24, 24 + 1, (Math.round(Math.abs(randomNumber4 * mod(((randomNumber2 / randomNumber3) * randomNumber3) + (sigma(i / (randomNumber1 * randomNumber1), (i) => randomNumber3, randomNumber1 * -randomNumber2)) * randomNumber4, 24)))) * 2 - 24);
+            }
+        }
+        else if (chipType == 2) {
+            let randomNumber1 = Math.random() * 3;
+            let randomNumber2 = Math.random() * 2 - 1;
+            let randomNumber3 = Math.random() * 100;
+            for (let i = 0; i < waveLength; i++) {
+                randomChip[i] = clamp(-24, 24 + 1, mod(Math.round(mod((sigma(i / randomNumber1, (i) => (randomNumber1 * randomNumber3), 0)), 25 + randomNumber2) * 24), 48) - 24);
+            }
+        }
+        for (let i = 0; i < waveLength; i++) {
+            wave[i] = randomChip[i];
+            let minimum = Infinity;
+            let maximum = -Infinity;
+            for (let i = 0; i < waveLength; i++) {
+                minimum = Math.min(minimum, wave[i]);
+                maximum = Math.max(maximum, wave[i]);
+            }
+            const distance = maximum - minimum;
+            if (distance >= 7) {
+                foundNonZero = true;
+            }
+        }
+        if (!foundNonZero)
+            randomChipWave(wave);
+    }
+    function biasedFullyRandom(wave) {
+        let fullyRandomWave = new Float32Array(64);
+        let waveLength = 64;
+        let foundNonZero = false;
+        for (let i = 0; i < waveLength; i++) {
+            const v = Math.random() * 2 - 1;
+            const bias = 6;
+            const biased = v > 0 ? Math.pow(v, bias) : -Math.pow(-v, bias);
+            fullyRandomWave[i] = clamp(-24, 24 + 1, Math.floor(biased * 24));
+        }
+        for (let i = 0; i < waveLength; i++) {
+            wave[i] = fullyRandomWave[i];
+            let minimum = Infinity;
+            let maximum = -Infinity;
+            for (let i = 0; i < waveLength; i++) {
+                minimum = Math.min(minimum, wave[i]);
+                maximum = Math.max(maximum, wave[i]);
+            }
+            const distance = maximum - minimum;
+            if (distance >= 7) {
+                foundNonZero = true;
+            }
+        }
+        if (!foundNonZero)
+            biasedFullyRandom(wave);
+    }
+    function fullyRandom(wave) {
+        let fullyRandomWave = new Float32Array(64);
+        let waveLength = 64;
+        for (let i = 0; i < waveLength; i++) {
+            fullyRandomWave[i] = clamp(-24, 24 + 1, ((Math.random() * 48) | 0) - 24);
+        }
+        for (let i = 0; i < waveLength; i++) {
+            wave[i] = fullyRandomWave[i];
+        }
+    }
     class ChangeMoveAndOverflowNotes extends ChangeGroup {
         constructor(doc, newBeatsPerBar, partsToMove) {
             super();
@@ -29655,12 +32275,15 @@ li.select2-results__option[role=group] > strong:hover {
             ]);
             if (isNoise) {
                 const type = selectWeightedRandom([
-                    { item: 2, weight: 1 },
+                    { item: 2, weight: 3 },
                     { item: 3, weight: 3 },
+                    { item: 4, weight: 1 },
                 ]);
                 instrument.preset = instrument.type = type;
-                instrument.fadeIn = (Math.random() < 0.8) ? 0 : selectCurvedDistribution(0, Config.fadeInRange - 1, 0, 2);
-                instrument.fadeOut = selectCurvedDistribution(0, Config.fadeOutTicks.length - 1, Config.fadeOutNeutral, 2);
+                if (type != 4) {
+                    instrument.fadeIn = (Math.random() < 0.8) ? 0 : selectCurvedDistribution(0, Config.fadeInRange - 1, 0, 2);
+                    instrument.fadeOut = selectCurvedDistribution(0, Config.fadeOutTicks.length - 1, Config.fadeOutNeutral, 2);
+                }
                 if (Math.random() < 0.1) {
                     instrument.effects |= 1 << 10;
                     instrument.transition = Config.transitions.dictionary[selectWeightedRandom([
@@ -29764,6 +32387,50 @@ li.select2-results__option[role=group] > strong:hover {
                     instrument.effects |= 1 << 0;
                     instrument.reverb = selectCurvedDistribution(1, Config.reverbRange - 1, 1, 1);
                 }
+                if (type == 2 || type == 3) {
+                    instrument.unison = Config.unisons.dictionary[selectWeightedRandom([
+                        { item: "none", weight: 100 },
+                        { item: "shimmer", weight: 10 },
+                        { item: "hum", weight: 8 },
+                        { item: "honky tonk", weight: 6 },
+                        { item: "dissonant", weight: 2 },
+                        { item: "fifth", weight: 4 },
+                        { item: "octave", weight: 5 },
+                        { item: "bowed", weight: 4 },
+                        { item: "piano", weight: 10 },
+                        { item: "warbled", weight: 5 },
+                        { item: "hecking gosh", weight: 3 },
+                        { item: "spinner", weight: 6 },
+                        { item: "detune", weight: 4 },
+                        { item: "rising", weight: 2 },
+                        { item: "vibrate", weight: 3 },
+                        { item: "bass", weight: 2 },
+                        { item: "recurve", weight: 3 },
+                        { item: "inject", weight: 2 },
+                        { item: "FART", weight: 1 },
+                    ])].index;
+                    if (instrument.unison != Config.unisons.dictionary["none"].index && Math.random() > 0.4)
+                        instrument.addEnvelope(Config.instrumentAutomationTargets.dictionary["unison"].index, 0, Config.envelopes.dictionary[selectWeightedRandom([
+                            { item: "twang -1", weight: 3 },
+                            { item: "twang 1", weight: 3 },
+                            { item: "twang 2", weight: 2 },
+                            { item: "swell 1", weight: 1 },
+                            { item: "decay -1", weight: 3 },
+                            { item: "decay 1", weight: 3 },
+                            { item: "decay 2", weight: 2 },
+                            { item: "wibble-1", weight: 2 },
+                            { item: "wibble 1", weight: 2 },
+                            { item: "wibble 2", weight: 1 },
+                            { item: "wibble 3", weight: 1 },
+                            { item: "linear-2", weight: 2 },
+                            { item: "linear-1", weight: 2 },
+                            { item: "linear 1", weight: 2 },
+                            { item: "linear 2", weight: 1 },
+                            { item: "linear 3", weight: 1 },
+                            { item: "rise 1", weight: 1 },
+                            { item: "rise 2", weight: 1 },
+                        ])].index);
+                }
                 function normalize(harmonics) {
                     let max = 0;
                     for (const value of harmonics) {
@@ -29818,24 +32485,49 @@ li.select2-results__option[role=group] > strong:hover {
                             instrument.spectrumWave.markCustomWaveDirty();
                         }
                         break;
+                    case 4:
+                        {
+                            for (let i = 0; i < Config.drumCount; i++) {
+                                instrument.drumsetEnvelopes[i] = Math.floor(Math.random() * Config.envelopes.length);
+                                const spectrum = [];
+                                let randomFactor = Math.floor(Math.random() * 3);
+                                for (let j = 0; j < Config.spectrumControlPoints; j++) {
+                                    if (randomFactor == 0 || randomFactor == 3)
+                                        spectrum[j] = Math.pow(Math.random(), 3) * 0.25;
+                                    else if (randomFactor == 1)
+                                        spectrum[j] = Math.pow(Math.random(), ((i / 8) + 1));
+                                    else if (randomFactor == 2)
+                                        spectrum[j] = (Math.pow(Math.random(), 2)) * ((i / 3) + 1);
+                                    else
+                                        spectrum[j] = Math.pow(Math.random(), 3) * 0.25;
+                                }
+                                normalize(spectrum);
+                                for (let j = 0; j < Config.spectrumControlPoints; j++) {
+                                    instrument.drumsetSpectrumWaves[i].spectrum[j] = Math.round(spectrum[j]);
+                                }
+                                instrument.drumsetSpectrumWaves[i].markCustomWaveDirty();
+                            }
+                        }
+                        break;
                     default: throw new Error("Unhandled noise instrument type in random generator.");
                 }
             }
             else {
                 const type = selectWeightedRandom([
-                    { item: 0, weight: 4 },
-                    { item: 6, weight: 4 },
-                    { item: 8, weight: 5 },
-                    { item: 5, weight: 5 },
-                    { item: 7, weight: 5 },
-                    { item: 3, weight: 1 },
-                    { item: 1, weight: 5 },
-                    { item: 11, weight: 3 },
+                    { item: 0, weight: 2 },
+                    { item: 6, weight: 2 },
+                    { item: 8, weight: 2 },
+                    { item: 9, weight: 2 },
+                    { item: 5, weight: 2 },
+                    { item: 7, weight: 2 },
+                    { item: 3, weight: 2 },
+                    { item: 1, weight: 2 },
+                    { item: 11, weight: 2 },
                 ]);
                 instrument.preset = instrument.type = type;
                 instrument.fadeIn = (Math.random() < 0.5) ? 0 : selectCurvedDistribution(0, Config.fadeInRange - 1, 0, 2);
                 instrument.fadeOut = selectCurvedDistribution(0, Config.fadeOutTicks.length - 1, Config.fadeOutNeutral, 2);
-                if (type == 0 || type == 5 || type == 7) {
+                if (type == 0 || type == 5 || type == 7 || type == 9 || type == 6 || type == 3) {
                     instrument.unison = Config.unisons.dictionary[selectWeightedRandom([
                         { item: "none", weight: 10 },
                         { item: "shimmer", weight: 5 },
@@ -30407,7 +33099,7 @@ li.select2-results__option[role=group] > strong:hover {
                             instrument.feedbackAmplitude = (Math.pow(Math.random(), 3) * Config.operatorAmplitudeMax) | 0;
                             if (instrument.envelopeCount < Config.maxEnvelopeCount && Math.random() < 0.4) {
                                 instrument.addEnvelope(Config.instrumentAutomationTargets.dictionary["feedbackAmplitude"].index, 0, Config.envelopes.dictionary[selectWeightedRandom([
-                                    { item: "steady", weight: 4 },
+                                    { item: "none", weight: 4 },
                                     { item: "punch", weight: 2 },
                                     { item: "flare -1", weight: 1 },
                                     { item: "flare 1", weight: 2 },
@@ -30448,6 +33140,34 @@ li.select2-results__option[role=group] > strong:hover {
                                     { item: "rise 3", weight: 1 },
                                 ])].index);
                             }
+                        }
+                        break;
+                    case 9:
+                        {
+                            let randomGeneratedArray = new Float32Array(64);
+                            let randomGeneratedArrayIntegral = new Float32Array(65);
+                            const algorithmFunction = selectWeightedRandom([
+                                { item: randomSineWave, weight: 4 },
+                                { item: randomPulses, weight: 4 },
+                                { item: randomChipWave, weight: 3 },
+                                { item: biasedFullyRandom, weight: 2 },
+                                { item: fullyRandom, weight: 1 },
+                            ]);
+                            algorithmFunction(randomGeneratedArray);
+                            let sum = 0.0;
+                            for (let i = 0; i < randomGeneratedArray.length; i++)
+                                sum += randomGeneratedArray[i];
+                            const average = sum / randomGeneratedArray.length;
+                            let cumulative = 0;
+                            let wavePrev = 0;
+                            for (let i = 0; i < randomGeneratedArray.length; i++) {
+                                cumulative += wavePrev;
+                                wavePrev = randomGeneratedArray[i] - average;
+                                randomGeneratedArrayIntegral[i] = cumulative;
+                            }
+                            randomGeneratedArrayIntegral[64] = 0.0;
+                            instrument.customChipWave = randomGeneratedArray;
+                            instrument.customChipWaveIntegral = randomGeneratedArrayIntegral;
                         }
                         break;
                     default: throw new Error("Unhandled pitched instrument type in random generator.");
@@ -30822,6 +33542,7 @@ li.select2-results__option[role=group] > strong:hover {
             if (oldValue != newValue || prevUnison != Config.unisons.length) {
                 instrument.unisonVoices = newValue;
                 instrument.unison = Config.unisons.length;
+                instrument.preset = instrument.type;
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -30835,6 +33556,7 @@ li.select2-results__option[role=group] > strong:hover {
             if (oldValue != newValue || prevUnison != Config.unisons.length) {
                 instrument.unisonSpread = newValue;
                 instrument.unison = Config.unisons.length;
+                instrument.preset = instrument.type;
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -30848,6 +33570,7 @@ li.select2-results__option[role=group] > strong:hover {
             if (oldValue != newValue || prevUnison != Config.unisons.length) {
                 instrument.unisonOffset = newValue;
                 instrument.unison = Config.unisons.length;
+                instrument.preset = instrument.type;
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -30861,6 +33584,7 @@ li.select2-results__option[role=group] > strong:hover {
             if (oldValue != newValue || prevUnison != Config.unisons.length) {
                 instrument.unisonExpression = newValue;
                 instrument.unison = Config.unisons.length;
+                instrument.preset = instrument.type;
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -30874,6 +33598,7 @@ li.select2-results__option[role=group] > strong:hover {
             if (oldValue != newValue || prevUnison != Config.unisons.length) {
                 instrument.unisonSign = newValue;
                 instrument.unison = Config.unisons.length;
+                instrument.preset = instrument.type;
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -30919,6 +33644,7 @@ li.select2-results__option[role=group] > strong:hover {
             if (oldValue != newValue || prevVibrato != Config.vibratos.length) {
                 instrument.vibratoDepth = newValue / 25;
                 instrument.vibrato = Config.vibratos.length;
+                instrument.preset = instrument.type;
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -30932,6 +33658,7 @@ li.select2-results__option[role=group] > strong:hover {
             doc.notifier.changed();
             if (oldValue != newValue) {
                 instrument.envelopeSpeed = newValue;
+                instrument.preset = instrument.type;
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -30947,6 +33674,7 @@ li.select2-results__option[role=group] > strong:hover {
             if (oldValue != newValue || prevVibrato != Config.vibratos.length) {
                 instrument.vibratoSpeed = newValue;
                 instrument.vibrato = Config.vibratos.length;
+                instrument.preset = instrument.type;
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -30962,6 +33690,7 @@ li.select2-results__option[role=group] > strong:hover {
             if (oldValue != newValue || prevVibrato != Config.vibratos.length) {
                 instrument.vibratoDelay = newValue;
                 instrument.vibrato = Config.vibratos.length;
+                instrument.preset = instrument.type;
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -30977,6 +33706,7 @@ li.select2-results__option[role=group] > strong:hover {
             if (oldValue != newValue || prevVibrato != Config.vibratos.length) {
                 instrument.vibratoType = newValue;
                 instrument.vibrato = Config.vibratos.length;
+                instrument.preset = instrument.type;
                 doc.notifier.changed();
                 this._didSomething();
             }
@@ -30989,8 +33719,10 @@ li.select2-results__option[role=group] > strong:hover {
             instrument.arpeggioSpeed = newValue;
             doc.synth.unsetMod(Config.modulators.dictionary["arp speed"].index, doc.channel, doc.getCurrentInstrument());
             doc.notifier.changed();
-            if (oldValue != newValue)
+            if (oldValue != newValue) {
+                instrument.preset = instrument.type;
                 this._didSomething();
+            }
         }
     }
     class ChangeFastTwoNoteArp extends Change {
@@ -31001,6 +33733,7 @@ li.select2-results__option[role=group] > strong:hover {
             doc.notifier.changed();
             if (oldValue != newValue) {
                 instrument.fastTwoNoteArp = newValue;
+                instrument.preset = instrument.type;
                 this._didSomething();
             }
         }
@@ -31013,6 +33746,7 @@ li.select2-results__option[role=group] > strong:hover {
             doc.notifier.changed();
             if (oldValue != newValue) {
                 instrument.clicklessTransition = newValue;
+                instrument.preset = instrument.type;
                 this._didSomething();
             }
         }
@@ -31025,6 +33759,7 @@ li.select2-results__option[role=group] > strong:hover {
             doc.notifier.changed();
             if (oldValue != newValue) {
                 instrument.aliases = newValue;
+                instrument.preset = instrument.type;
                 this._didSomething();
             }
         }
@@ -31037,6 +33772,7 @@ li.select2-results__option[role=group] > strong:hover {
             doc.notifier.changed();
             if (oldValue != newValue) {
                 instrument.discreteEnvelope = newValue;
+                instrument.preset = instrument.type;
                 this._didSomething();
             }
         }
@@ -33428,15 +36164,15 @@ li.select2-results__option[role=group] > strong:hover {
         }
     }
 
-    const { button: button$m, div: div$m, span: span$6, h2: h2$l, input: input$h, br: br$4, select: select$b, option: option$b } = HTML;
+    const { button: button$o, div: div$o, span: span$6, h2: h2$n, input: input$h, br: br$4, select: select$d, option: option$d } = HTML;
     class BeatsPerBarPrompt {
         constructor(_doc) {
             this._doc = _doc;
             this._beatsStepper = input$h({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
-            this._conversionStrategySelect = select$b({ style: "width: 100%;" }, option$b({ value: "splice" }, "Splice beats at end of bars."), option$b({ value: "stretch" }, "Stretch notes to fit in bars."), option$b({ value: "overflow" }, "Overflow notes across bars."));
-            this._cancelButton = button$m({ class: "cancelButton" });
-            this._okayButton = button$m({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$m({ class: "prompt noSelection", style: "width: 250px;" }, div$m({ class: "promptTitle" }, h2$l({ class: "bpmExt", style: "text-align: inherit;" }, ""), h2$l({ class: "bpmTitle" }, "Beats Per Bar")), div$m({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$m({ style: "text-align: right;" }, "Beats per bar:", br$4(), span$6({ style: "font-size: smaller; color: ${ColorConfig.secondaryText};" }, "(Multiples of 3 or 4 are recommended)")), this._beatsStepper), div$m({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$m({ class: "selectContainer", style: "width: 100%;" }, this._conversionStrategySelect)), div$m({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._conversionStrategySelect = select$d({ style: "width: 100%;" }, option$d({ value: "splice" }, "Splice beats at end of bars."), option$d({ value: "stretch" }, "Stretch notes to fit in bars."), option$d({ value: "overflow" }, "Overflow notes across bars."));
+            this._cancelButton = button$o({ class: "cancelButton" });
+            this._okayButton = button$o({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$o({ class: "prompt noSelection", style: "width: 250px;" }, div$o({ class: "promptTitle" }, h2$n({ class: "bpmExt", style: "text-align: inherit;" }, ""), h2$n({ class: "bpmTitle" }, "Beats Per Bar")), div$o({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$o({ style: "text-align: right;" }, "Beats per bar:", br$4(), span$6({ style: "font-size: smaller; color: ${ColorConfig.secondaryText};" }, "(Multiples of 3 or 4 are recommended)")), this._beatsStepper), div$o({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$o({ class: "selectContainer", style: "width: 100%;" }, this._conversionStrategySelect)), div$o({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -33489,7 +36225,7 @@ li.select2-results__option[role=group] > strong:hover {
         }
     }
 
-    const { button: button$l, div: div$l, label: label$3, br: br$3, h2: h2$k, input: input$g } = HTML;
+    const { button: button$n, div: div$n, label: label$3, br: br$3, h2: h2$m, input: input$g } = HTML;
     class ChannelSettingsPrompt {
         constructor(_doc) {
             this._doc = _doc;
@@ -33499,9 +36235,9 @@ li.select2-results__option[role=group] > strong:hover {
             this._modChannelStepper = input$g({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
             this._layeredInstrumentsBox = input$g({ style: "width: 3em; margin-left: 1em;", type: "checkbox" });
             this._patternInstrumentsBox = input$g({ style: "width: 3em; margin-left: 1em;", type: "checkbox" });
-            this._cancelButton = button$l({ class: "cancelButton" });
-            this._okayButton = button$l({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$l({ class: "prompt noSelection", style: "width: 250px; text-align: right;" }, div$l({ class: "promptTitle" }, h2$k({ class: "channelExt", style: "text-align: inherit;" }, ""), h2$k({ class: "channelTitle" }, "Channel Settings")), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Pitch channels:", this._pitchChannelStepper), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Drum channels:", this._drumChannelStepper), div$l({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Mod channels:", this._modChannelStepper), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Available patterns per channel:", this._patternsStepper), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Simultaneous instruments", br$3(), "per channel:", this._layeredInstrumentsBox), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Different instruments", br$3(), "per pattern:", this._patternInstrumentsBox), div$l({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._cancelButton = button$n({ class: "cancelButton" });
+            this._okayButton = button$n({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$n({ class: "prompt noSelection", style: "width: 250px; text-align: right;" }, div$n({ class: "promptTitle" }, h2$m({ class: "channelExt", style: "text-align: inherit;" }, ""), h2$m({ class: "channelTitle" }, "Channel Settings")), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Pitch channels:", this._pitchChannelStepper), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Drum channels:", this._drumChannelStepper), div$n({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Mod channels:", this._modChannelStepper), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Available patterns per channel:", this._patternsStepper), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Simultaneous instruments", br$3(), "per channel:", this._layeredInstrumentsBox), label$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Different instruments", br$3(), "per pattern:", this._patternInstrumentsBox), div$n({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -33576,7 +36312,7 @@ li.select2-results__option[role=group] > strong:hover {
         }
     }
 
-    const { button: button$k, div: div$k, h2: h2$j } = HTML;
+    const { button: button$m, div: div$m, h2: h2$l } = HTML;
     class CustomChipPromptCanvas {
         constructor(doc) {
             this._mouseX = 0;
@@ -33769,10 +36505,10 @@ li.select2-results__option[role=group] > strong:hover {
             this._doc = _doc;
             this._songEditor = _songEditor;
             this.customChipCanvas = new CustomChipPromptCanvas(this._doc);
-            this._playButton = button$k({ style: "width: 55%;", type: "button" });
-            this._cancelButton = button$k({ class: "cancelButton" });
-            this._okayButton = button$k({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$k({ class: "prompt noSelection", style: "width: 600px;" }, div$k({ class: "promptTitle" }, h2$j({ class: "edit-custom-chipExt", style: "text-align: inherit;" }, ""), h2$j({ class: "edit-custom-chipTitle" }, "Edit Custom Chip Instrument")), div$k({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), div$k({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, this.customChipCanvas.container), div$k({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._playButton = button$m({ style: "width: 55%;", type: "button" });
+            this._cancelButton = button$m({ class: "cancelButton" });
+            this._okayButton = button$m({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$m({ class: "prompt noSelection", style: "width: 600px;" }, div$m({ class: "promptTitle" }, h2$l({ class: "edit-custom-chipExt", style: "text-align: inherit;" }, ""), h2$l({ class: "edit-custom-chipTitle" }, "Edit Custom Chip Instrument")), div$m({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), div$m({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, this.customChipCanvas.container), div$m({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._togglePlay = () => {
                 this._songEditor.togglePlay();
                 this.updatePlayButton();
@@ -34435,7 +37171,7 @@ li.select2-results__option[role=group] > strong:hover {
         }
     }
 
-    const { button: button$j, div: div$j, h2: h2$i, p: p$7 } = HTML;
+    const { button: button$l, div: div$l, h2: h2$k, p: p$7 } = HTML;
     class CustomFilterPrompt {
         constructor(_doc, _songEditor, _useNoteFilter) {
             this._doc = _doc;
@@ -34444,29 +37180,29 @@ li.select2-results__option[role=group] > strong:hover {
             this.filterData = new FilterSettings;
             this.startingFilterData = new FilterSettings;
             this._subfilterIndex = 0;
-            this._playButton = button$j({ style: "width: 55%;", type: "button" });
+            this._playButton = button$l({ style: "width: 55%;", type: "button" });
             this._filterButtons = [];
-            this._filterButtonContainer = div$j({ class: "instrument-bar", style: "justify-content: center;" });
-            this._cancelButton = button$j({ class: "cancelButton" });
-            this._okayButton = button$j({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this._filterContainer = div$j({ style: "width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: center;" });
-            this._editorTitle = div$j({ class: "promptTitle" }, h2$i({ class: "edit-filterExt", style: "text-align: inherit;" }, ""), h2$i({ class: "edit-filterTitle" }, "Edit Filter"));
-            this._filterCopyButton = button$j({ style: "width:86px; margin-right: 5px;", class: "copyButton" }, [
+            this._filterButtonContainer = div$l({ class: "instrument-bar", style: "justify-content: center;" });
+            this._cancelButton = button$l({ class: "cancelButton" });
+            this._okayButton = button$l({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this._filterContainer = div$l({ style: "width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: center;" });
+            this._editorTitle = div$l({ class: "promptTitle" }, h2$k({ class: "edit-filterExt", style: "text-align: inherit;" }, ""), h2$k({ class: "edit-filterTitle" }, "Edit Filter"));
+            this._filterCopyButton = button$l({ style: "width:86px; margin-right: 5px;", class: "copyButton" }, [
                 "Copy",
                 SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "-5 -21 26 26" }, [
                     SVG.path({ d: "M 0 -15 L 1 -15 L 1 0 L 13 0 L 13 1 L 0 1 L 0 -15 z M 2 -1 L 2 -17 L 10 -17 L 14 -13 L 14 -1 z M 3 -2 L 13 -2 L 13 -12 L 9 -12 L 9 -16 L 3 -16 z", fill: "currentColor" }),
                 ]),
             ]);
-            this._filterPasteButton = button$j({ style: "width:86px;", class: "pasteButton" }, [
+            this._filterPasteButton = button$l({ style: "width:86px;", class: "pasteButton" }, [
                 "Paste",
                 SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "0 0 26 26" }, [
                     SVG.path({ d: "M 8 18 L 6 18 L 6 5 L 17 5 L 17 7 M 9 8 L 16 8 L 20 12 L 20 22 L 9 22 z", stroke: "currentColor", fill: "none" }),
                     SVG.path({ d: "M 9 3 L 14 3 L 14 6 L 9 6 L 9 3 z M 16 8 L 20 12 L 16 12 L 16 8 z", fill: "currentColor", }),
                 ]),
             ]);
-            this._filterCopyPasteContainer = div$j({ style: "width: 185px;" }, this._filterCopyButton, this._filterPasteButton);
-            this._filterCoordinateText = div$j({ style: "text-align: left; margin-bottom: 0px; font-size: x-small; height: 1.3em; color: " + ColorConfig.secondaryText + ";" }, p$7(""));
-            this.container = div$j({ class: "prompt noSelection", style: "width: 600px;" }, this._editorTitle, div$j({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), this._filterButtonContainer, this._filterContainer, div$j({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton, this._filterCopyPasteContainer), this._cancelButton);
+            this._filterCopyPasteContainer = div$l({ style: "width: 185px;" }, this._filterCopyButton, this._filterPasteButton);
+            this._filterCoordinateText = div$l({ style: "text-align: left; margin-bottom: 0px; font-size: x-small; height: 1.3em; color: " + ColorConfig.secondaryText + ";" }, p$7(""));
+            this.container = div$l({ class: "prompt noSelection", style: "width: 600px;" }, this._editorTitle, div$l({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), this._filterButtonContainer, this._filterContainer, div$l({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton, this._filterCopyPasteContainer), this._cancelButton);
             this._setSubfilter = (index, useHistory = true, doSwap = true) => {
                 this._filterButtons[this._subfilterIndex].classList.remove("selected-instrument");
                 if (doSwap)
@@ -34568,12 +37304,12 @@ li.select2-results__option[role=group] > strong:hover {
             this.filterEditor.container.insertBefore(this._filterCoordinateText, this.filterEditor.container.firstChild);
             this.filterEditor.coordText = this._filterCoordinateText;
             this._editorTitle.children[0].innerHTML = (_useNoteFilter) ? "Edit Note Filter" : "Edit EQ Filter";
-            let newButton = button$j({ class: "no-underline", style: "max-width: 5em;" }, "Main");
+            let newButton = button$l({ class: "no-underline", style: "max-width: 5em;" }, "Main");
             this._filterButtonContainer.appendChild(newButton);
             this._filterButtons.push(newButton);
             newButton.addEventListener("click", () => { this._setSubfilter(0); });
             for (let i = 1; i < Config.filterMorphCount; i++) {
-                let newSubButton = button$j({ class: "no-underline", style: "max-width: 2em;" }, "" + i);
+                let newSubButton = button$l({ class: "no-underline", style: "max-width: 2em;" }, "" + i);
                 this._filterButtons.push(newSubButton);
                 this._filterButtonContainer.appendChild(newSubButton);
                 newSubButton.addEventListener("click", () => { this._setSubfilter(i); });
@@ -34606,16 +37342,16 @@ li.select2-results__option[role=group] > strong:hover {
         }
     }
 
-    const { button: button$i, div: div$i, h2: h2$h, input: input$f, label: label$2, br: br$2 } = HTML;
+    const { button: button$k, div: div$k, h2: h2$j, input: input$f, label: label$2, br: br$2 } = HTML;
     class InstrumentExportPrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._cancelButton = button$i({ class: "cancelButton" });
-            this._exportButton = button$i({ class: "exportButton", style: "width:45%;" }, "Export");
+            this._cancelButton = button$k({ class: "cancelButton" });
+            this._exportButton = button$k({ class: "exportButton", style: "width:45%;" }, "Export");
             this._exportMultipleBox = input$f({ style: "width: 3em; margin-left: 1em;", type: "checkbox" });
             this._channelName = this._doc.song.channels[this._doc.channel].name == "" ? "Beepbox-Instrument" : this._doc.song.channels[this._doc.channel].name;
             this._fileName = input$f({ type: "text", style: "width: 10em;", value: this._channelName, maxlength: 250, "autofocus": "autofocus" });
-            this.container = div$i({ class: "prompt noSelection", style: "width: 200px;" }, div$i({ class: "promptTitle" }, h2$h({ class: "export-instrumentExt", style: "text-align: inherit;" }, ""), h2$h({ class: "export-instrumentTitle" }, "Export Instruments Options")), div$i({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "File name:", this._fileName), label$2({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Export all instruments", br$2(), "in channel:", this._exportMultipleBox), div$i({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._exportButton), this._cancelButton);
+            this.container = div$k({ class: "prompt noSelection", style: "width: 200px;" }, div$k({ class: "promptTitle" }, h2$j({ class: "export-instrumentExt", style: "text-align: inherit;" }, ""), h2$j({ class: "export-instrumentTitle" }, "Export Instruments Options")), div$k({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "File name:", this._fileName), label$2({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, "Export all instruments", br$2(), "in channel:", this._exportMultipleBox), div$k({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._exportButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -34682,14 +37418,16 @@ li.select2-results__option[role=group] > strong:hover {
         }
     }
 
-    const { button: button$h, div: div$h, h2: h2$g, input: input$e, select: select$a, option: option$a, code: code$1 } = HTML;
+    const { button: button$j, div: div$j, h2: h2$i, input: input$e, select: select$c, option: option$c, code: code$1 } = HTML;
     class InstrumentImportPrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._cancelButton = button$h({ class: "cancelButton" });
-            this._importStrategySelect = select$a({ style: "width: 100%;" }, option$a({ value: "append" }, "Append instruments to the end of the list."), option$a({ value: "replace" }, "Replace only the selected instrument."), option$a({ value: "all" }, "Replace all instruments in the channel."));
+            this._cancelButton = button$j({ class: "cancelButton" });
+            this._importStrategySelect = select$c({ style: "width: 100%;" }, option$c({ value: "append" }, "Append instruments to the end of the list."), option$c({ value: "replace" }, "Replace only the selected instrument."), option$c({ value: "all" }, "Replace all instruments in the channel."));
             this._fileInput = input$e({ type: "file", accept: ".json,application/json" });
-            this.container = div$h({ class: "prompt noSelection", style: "width: 300px;" }, div$h({ class: "promptTitle" }, h2$g({ class: "import-instrumentExt", style: "text-align: inherit;" }, ""), h2$g({ class: "import-instrumentTitle" }, "Import Instrument(s)")), div$h({ style: "text-align: left;" }, "You must enable either ", code$1("Simultaneous instruments per channel"), " or ", code$1("Different instruments per pattern"), " to change the import strategy."), div$h({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$h({ class: "selectContainer", style: "width: 100%;" }, this._importStrategySelect)), this._fileInput, this._cancelButton);
+            this.importStratSelectDiv = div$j({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$j({ class: "selectContainer", style: "width: 100%;" }, this._importStrategySelect));
+            this.warningText = div$j({}, div$j({ style: "text-align: left;" }, "You must enable either ", code$1("Simultaneous instruments per channel"), " or ", code$1("Different instruments per pattern"), " to change the import strategy."));
+            this.container = div$j({ class: "prompt noSelection", style: "width: 300px;" }, div$j({ class: "promptTitle" }, h2$i({ class: "import-instrumentExt", style: "text-align: inherit;" }, ""), h2$i({ class: "import-instrumentTitle" }, "Import Instrument(s)")), this.warningText, this.importStratSelectDiv, this._fileInput, this._cancelButton);
             this._whenFileSelected = () => {
                 const file = this._fileInput.files[0];
                 if (!file)
@@ -34817,18 +37555,22 @@ li.select2-results__option[role=group] > strong:hover {
             if ((_doc.song.patternInstruments || _doc.song.layeredInstruments) == false) {
                 this._importStrategySelect.disabled = true;
                 this._importStrategySelect.value = "replace";
+                this.importStratSelectDiv.style.display = "none";
+                this.warningText.style.display = "";
             }
             else {
                 const lastStrategy = window.localStorage.getItem("instrumentImportStrategy");
                 if (lastStrategy != null)
                     this._importStrategySelect.value = lastStrategy;
+                this.importStratSelectDiv.style.display = "";
+                this.warningText.style.display = "none";
             }
             this._fileInput.addEventListener("change", this._whenFileSelected);
             this._cancelButton.addEventListener("click", this._close);
         }
     }
 
-    const { button: button$g, div: div$g, h2: h2$f, input: input$d } = HTML;
+    const { button: button$i, div: div$i, h2: h2$h, input: input$d } = HTML;
     function gcd(x, y) {
         while (y !== 0) {
             const z = x % y;
@@ -34934,16 +37676,16 @@ li.select2-results__option[role=group] > strong:hover {
             this._clockPadding = this._clockWidth / this._maxSteps;
             this._clockRadius = this._clockWidth / 2 - this._clockPointMaxRadius - this._clockPadding;
             this._sequenceButtons = [];
-            this._sequenceRemoveButton = button$g({ class: "no-underline", style: "flex-grow: 0; flex-basis: 30px;" }, SVG.svg({ width: "26", height: "26", viewBox: "-13 -13 26 26", "pointer-events": "none" }, SVG.path({ d: "M -7.07 -5.66 L -5.66 -7.07 L 0 -1.4 L 5.66 -7.07 L 7.07 -5.66 L 1.4 0 L 7.07 5.66 L 5.66 7.07 L 0 1.4 L -5.66 7.07 L -7.07 5.66 L -1.4 0 z", fill: ColorConfig.primaryText })));
-            this._sequenceAddButton = button$g({ class: "no-underline last-button", style: "flex-grow: 0; flex-basis: 30px;" }, SVG.svg({ width: "26", height: "26", viewBox: "-13 -13 26 26", "pointer-events": "none" }, SVG.path({ d: "M -8 -1 L -1 -1 L -1 -8 L 1 -8 L 1 -1 L 8 -1 L 8 1 L 1 1 L 1 8 L -1 8 L -1 1 L -8 1 z", fill: ColorConfig.primaryText })));
-            this._sequenceButtonContainer = div$g({ class: "instrument-bar", style: "justify-content: center; width: 100%;" }, this._sequenceRemoveButton, this._sequenceAddButton);
+            this._sequenceRemoveButton = button$i({ class: "no-underline", style: "flex-grow: 0; flex-basis: 30px;" }, SVG.svg({ width: "26", height: "26", viewBox: "-13 -13 26 26", "pointer-events": "none" }, SVG.path({ d: "M -7.07 -5.66 L -5.66 -7.07 L 0 -1.4 L 5.66 -7.07 L 7.07 -5.66 L 1.4 0 L 7.07 5.66 L 5.66 7.07 L 0 1.4 L -5.66 7.07 L -7.07 5.66 L -1.4 0 z", fill: ColorConfig.primaryText })));
+            this._sequenceAddButton = button$i({ class: "no-underline last-button", style: "flex-grow: 0; flex-basis: 30px;" }, SVG.svg({ width: "26", height: "26", viewBox: "-13 -13 26 26", "pointer-events": "none" }, SVG.path({ d: "M -8 -1 L -1 -1 L -1 -8 L 1 -8 L 1 -1 L 8 -1 L 8 1 L 1 1 L 1 8 L -1 8 L -1 1 L -8 1 z", fill: ColorConfig.primaryText })));
+            this._sequenceButtonContainer = div$i({ class: "instrument-bar", style: "justify-content: center; width: 100%;" }, this._sequenceRemoveButton, this._sequenceAddButton);
             this._barPreviewBackground = SVG.svg({ "pointer-events": "none" });
             this._barPreviewSteps = SVG.svg({ "pointer-events": "none" });
-            this._barPreviewLabel = div$g({ style: `flex-grow: 1; color: ${ColorConfig.secondaryText}` });
-            this._barPreviewGoToFirstButton = button$g({ style: "height: auto; min-height: var(--button-size);" }, SVG.svg({ width: "26", height: "26", viewBox: "-13 -14 26 26", "pointer-events": "none" }, SVG.rect({ x: "-6", y: "-6", width: "2", height: "12", fill: ColorConfig.primaryText }), SVG.path({ d: "M 6 -6 L 6 6 L -3 0 z", fill: ColorConfig.primaryText })));
-            this._barPreviewGoBackButton = button$g({ style: "height: auto; min-height: var(--button-size); margin-left: 1em;" }, SVG.svg({ width: "24", height: "26", viewBox: "-10 -14 24 26", "pointer-events": "none" }, SVG.path({ d: "M 6 -6 L 6 6 L -3 0 z", fill: ColorConfig.primaryText })));
-            this._barPreviewGoForwardButton = button$g({ style: "height: auto; min-height: var(--button-size);" }, SVG.svg({ width: "24", height: "26", viewBox: "-14 -14 24 26", "pointer-events": "none" }, SVG.path({ d: "M -6 -6 L -6 6 L 3 0 z", fill: ColorConfig.primaryText })));
-            this._barPreviewGoToLastButton = button$g({ style: "height: auto; min-height: var(--button-size); margin-left: 1em;" }, SVG.svg({ width: "26", height: "26", viewBox: "-13 -14 26 26", "pointer-events": "none" }, SVG.rect({ x: "4", y: "-6", width: "2", height: "12", fill: ColorConfig.primaryText }), SVG.path({ d: "M -6 -6 L -6 6 L 3 0 z", fill: ColorConfig.primaryText })));
+            this._barPreviewLabel = div$i({ style: `flex-grow: 1; color: ${ColorConfig.secondaryText}` });
+            this._barPreviewGoToFirstButton = button$i({ style: "height: auto; min-height: var(--button-size);" }, SVG.svg({ width: "26", height: "26", viewBox: "-13 -14 26 26", "pointer-events": "none" }, SVG.rect({ x: "-6", y: "-6", width: "2", height: "12", fill: ColorConfig.primaryText }), SVG.path({ d: "M 6 -6 L 6 6 L -3 0 z", fill: ColorConfig.primaryText })));
+            this._barPreviewGoBackButton = button$i({ style: "height: auto; min-height: var(--button-size); margin-left: 1em;" }, SVG.svg({ width: "24", height: "26", viewBox: "-10 -14 24 26", "pointer-events": "none" }, SVG.path({ d: "M 6 -6 L 6 6 L -3 0 z", fill: ColorConfig.primaryText })));
+            this._barPreviewGoForwardButton = button$i({ style: "height: auto; min-height: var(--button-size);" }, SVG.svg({ width: "24", height: "26", viewBox: "-14 -14 24 26", "pointer-events": "none" }, SVG.path({ d: "M -6 -6 L -6 6 L 3 0 z", fill: ColorConfig.primaryText })));
+            this._barPreviewGoToLastButton = button$i({ style: "height: auto; min-height: var(--button-size); margin-left: 1em;" }, SVG.svg({ width: "26", height: "26", viewBox: "-13 -14 26 26", "pointer-events": "none" }, SVG.rect({ x: "4", y: "-6", width: "2", height: "12", fill: ColorConfig.primaryText }), SVG.path({ d: "M -6 -6 L -6 6 L 3 0 z", fill: ColorConfig.primaryText })));
             this._clockWire = SVG.circle({ cx: this._clockWidth / 2, cy: this._clockHeight / 2, r: this._clockRadius, stroke: ColorConfig.primaryText, "stroke-width": "0.5", fill: "none" });
             this._clockPoints = SVG.svg({ "pointer-events": "none" });
             this._stepsStepper = input$d({ style: "width: 3em; margin-left: 1em;", type: "number", min: this._minSteps, max: this._maxSteps, value: "8", step: "1" });
@@ -34954,12 +37696,12 @@ li.select2-results__option[role=group] > strong:hover {
             this._channelStepper = input$d({ style: "width: 3em; margin-left: 1em;", type: "number", min: "1", max: this._maxChannel + 1, value: "1", step: "1" });
             this._pitchStepper = input$d({ style: "width: 3em; margin-left: 1em;", type: "number", min: "0", max: Config.maxPitch, value: "0", step: "1" });
             this._barAmountStepper = input$d({ style: "width: 3em; margin-left: 1em;", type: "number", min: "1", max: Config.barCountMax, value: "1", step: "1" });
-            this._extendUntilLoopButton = button$g({ style: "height: auto; min-height: var(--button-size); margin-left: 1em;" }, "Extend until loop");
+            this._extendUntilLoopButton = button$i({ style: "height: auto; min-height: var(--button-size); margin-left: 1em;" }, "Extend until loop");
             this._generateFadingNotesBox = input$d({ type: "checkbox", style: "width: 1em; padding: 0; margin-left: 1em;" });
             this._invertBox = input$d({ type: "checkbox", style: "width: 1em; padding: 0; margin-left: 1em;" });
-            this._okayButton = button$g({ class: "okayButton", style: "width: 45%;" }, "Okay");
-            this._cancelButton = button$g({ class: "cancelButton" });
-            this.container = div$g({ class: "prompt noSelection", style: "width: 600px;" }, div$g({ class: "promptTitle" }, h2$f({ class: "gerExt", style: "text-align: inherit;" }, ""), h2$f({ class: "gerTitle" }, "Generate Euclidean Rhythm")), div$g({ style: "display: flex; flex-direction: row; align-items: center;" }, this._sequenceButtonContainer), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, div$g({ style: "flex-grow: 0; flex-shrink: 0;" }, this._barPreviewGoToFirstButton, this._barPreviewGoBackButton), this._barPreviewLabel, div$g({ style: "flex-grow: 0; flex-shrink: 0;" }, this._barPreviewGoForwardButton, this._barPreviewGoToLastButton)), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, SVG.svg({ "pointer-events": "none", style: "touch-action: none; overflow: hidden;", width: "100%", height: "20px", viewBox: `0 0 ${this._barPreviewWidth} ${this._barPreviewHeight}`, preserveAspectRatio: "none" }, this._barPreviewBackground, this._barPreviewSteps)), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-evenly;" }, div$g({ style: "max-width: 150px; height: 100%;" }, SVG.svg({ "pointer-events": "none", width: "100%", height: "100%", style: "touch-action: none; overflow: hidden; margin-right: 1.5em; max-width: 150px; height: 100%;", viewBox: `0 0 ${this._clockWidth} ${this._clockHeight}`, preserveAspectRatio: "none" }, this._clockWire, this._clockPoints)), div$g({ style: "display: flex; height: 100%;" }, div$g({ style: "flex-grow: 1; " }, div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Steps"), this._stepsStepper), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Pulses"), this._pulsesStepper), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Rotation"), this._rotationStepper)), div$g({ style: "flex-grow: 1; margin-left: 1em;" }, div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-bottom: 1em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Size"), div$g({ style: "display: flex; flex-direction: column;" }, this._stepSizeNumeratorStepper, this._stepSizeDenominatorStepper)), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Channel"), this._channelStepper), div$g({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$g({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Pitch"), this._pitchStepper)))), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, div$g({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Generate fading notes"), this._generateFadingNotesBox, div$g({ style: `text-align: right; color: ${ColorConfig.primaryText}; margin-left: 1em;` }, "Invert"), this._invertBox), div$g({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, div$g({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Length (in bars)"), this._barAmountStepper, this._extendUntilLoopButton), div$g({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._okayButton = button$i({ class: "okayButton", style: "width: 45%;" }, "Okay");
+            this._cancelButton = button$i({ class: "cancelButton" });
+            this.container = div$i({ class: "prompt noSelection", style: "width: 600px;" }, div$i({ class: "promptTitle" }, h2$h({ class: "gerExt", style: "text-align: inherit;" }, ""), h2$h({ class: "gerTitle" }, "Generate Euclidean Rhythm")), div$i({ style: "display: flex; flex-direction: row; align-items: center;" }, this._sequenceButtonContainer), div$i({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, div$i({ style: "flex-grow: 0; flex-shrink: 0;" }, this._barPreviewGoToFirstButton, this._barPreviewGoBackButton), this._barPreviewLabel, div$i({ style: "flex-grow: 0; flex-shrink: 0;" }, this._barPreviewGoForwardButton, this._barPreviewGoToLastButton)), div$i({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, SVG.svg({ "pointer-events": "none", style: "touch-action: none; overflow: hidden;", width: "100%", height: "20px", viewBox: `0 0 ${this._barPreviewWidth} ${this._barPreviewHeight}`, preserveAspectRatio: "none" }, this._barPreviewBackground, this._barPreviewSteps)), div$i({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-evenly;" }, div$i({ style: "max-width: 150px; height: 100%;" }, SVG.svg({ "pointer-events": "none", width: "100%", height: "100%", style: "touch-action: none; overflow: hidden; margin-right: 1.5em; max-width: 150px; height: 100%;", viewBox: `0 0 ${this._clockWidth} ${this._clockHeight}`, preserveAspectRatio: "none" }, this._clockWire, this._clockPoints)), div$i({ style: "display: flex; height: 100%;" }, div$i({ style: "flex-grow: 1; " }, div$i({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end;" }, div$i({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Steps"), this._stepsStepper), div$i({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$i({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Pulses"), this._pulsesStepper), div$i({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$i({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Rotation"), this._rotationStepper)), div$i({ style: "flex-grow: 1; margin-left: 1em;" }, div$i({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-bottom: 1em;" }, div$i({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Size"), div$i({ style: "display: flex; flex-direction: column;" }, this._stepSizeNumeratorStepper, this._stepSizeDenominatorStepper)), div$i({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$i({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Channel"), this._channelStepper), div$i({ style: "display: flex; flex-direction: row; align-items: center; height: 3em; justify-content: flex-end; margin-top: 0.5em;" }, div$i({ style: `text-align: right; flex-grow: 1; color: ${ColorConfig.primaryText};` }, "Pitch"), this._pitchStepper)))), div$i({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, div$i({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Generate fading notes"), this._generateFadingNotesBox, div$i({ style: `text-align: right; color: ${ColorConfig.primaryText}; margin-left: 1em;` }, "Invert"), this._invertBox), div$i({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, div$i({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Length (in bars)"), this._barAmountStepper, this._extendUntilLoopButton), div$i({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this.cleanUp = () => {
                 this._okayButton.removeEventListener("click", this._saveChanges);
                 this._cancelButton.removeEventListener("click", this._close);
@@ -35546,7 +38288,7 @@ li.select2-results__option[role=group] > strong:hover {
             this._renderSequenceButtons = () => {
                 const container = this._sequenceButtonContainer;
                 while (this._sequenceButtons.length < this._sequences.length) {
-                    const sequenceButton = button$g({ class: "no-underline" }, (this._sequenceButtons.length + 1) + "");
+                    const sequenceButton = button$i({ class: "no-underline" }, (this._sequenceButtons.length + 1) + "");
                     this._sequenceButtons.push(sequenceButton);
                     container.insertBefore(sequenceButton, this._sequenceRemoveButton);
                 }
@@ -36035,7 +38777,7 @@ li.select2-results__option[role=group] > strong:hover {
         return Math.pow(volumeMult, 0.25) * 127;
     }
 
-    const { button: button$f, div: div$f, h2: h2$e, input: input$c, select: select$9, option: option$9 } = HTML;
+    const { button: button$h, div: div$h, h2: h2$g, input: input$c, select: select$b, option: option$b } = HTML;
     function lerp(low, high, t) {
         return low + t * (high - low);
     }
@@ -36064,17 +38806,19 @@ li.select2-results__option[role=group] > strong:hover {
             this._doc = _doc;
             this.outputStarted = false;
             this._fileName = input$c({ type: "text", style: "width: 10em;", value: "BeepBox-Song", maxlength: 250, "autofocus": "autofocus" });
-            this._computedSamplesLabel = div$f({ style: "width: 10em;" }, new Text("0:00"));
+            this._computedSamplesLabel = div$h({ style: "width: 10em;" }, new Text("0:00"));
             this._enableIntro = input$c({ type: "checkbox" });
             this._loopDropDown = input$c({ style: "width: 3em;", type: "number", min: "1", max: "16", step: "1" });
             this._enableOutro = input$c({ type: "checkbox" });
-            this._formatSelect = select$9({ style: "width: 100%;" }, option$9({ value: "wav" }, "Export to .wav file."), option$9({ value: "mp3" }, "Export to .mp3 file."), option$9({ value: "midi" }, "Export to .mid file."), option$9({ value: "json" }, "Export to .json file."), option$9({ value: "html" }, "Export to .html file."));
-            this._cancelButton = button$f({ class: "cancelButton" });
-            this._exportButton = button$f({ class: "exportButton", style: "width:45%;" }, "Export");
-            this._outputProgressBar = div$f({ style: `width: 0%; background: ${ColorConfig.loopAccent}; height: 100%; position: absolute; z-index: 2;` });
-            this._outputProgressLabel = div$f({ style: `position: relative; top: -1px; z-index: 3;` }, "0%");
-            this._outputProgressContainer = div$f({ style: `height: 12px; background: ${ColorConfig.uiWidgetBackground}; display: block; position: relative; z-index: 1;` }, this._outputProgressBar, this._outputProgressLabel);
-            this.container = div$f({ class: "prompt noSelection", style: "width: 200px;" }, div$f({ class: "promptTitle" }, h2$e({ class: "exportExt", style: "text-align: inherit;" }, ""), h2$e({ class: "exportTitle" }, "Export Options")), div$f({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "File name:", this._fileName), div$f({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "Length:", this._computedSamplesLabel), div$f({ style: "display: table; width: 100%;" }, div$f({ style: "display: table-row;" }, div$f({ style: "display: table-cell;" }, "Intro:"), div$f({ style: "display: table-cell;" }, "Loop Count:"), div$f({ style: "display: table-cell;" }, "Outro:")), div$f({ style: "display: table-row;" }, div$f({ style: "display: table-cell; vertical-align: middle;" }, this._enableIntro), div$f({ style: "display: table-cell; vertical-align: middle;" }, this._loopDropDown), div$f({ style: "display: table-cell; vertical-align: middle;" }, this._enableOutro))), div$f({ class: "selectContainer", style: "width: 100%;" }, this._formatSelect), div$f({ style: "text-align: left;" }, "Exporting can be slow. Reloading the page or clicking the X will cancel it. Please be patient."), this._outputProgressContainer, div$f({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._exportButton), this._cancelButton);
+            this._formatSelect = select$b({ style: "width: 100%;" }, option$b({ value: "wav" }, "Export to .wav file."), option$b({ value: "mp3" }, "Export to .mp3 file."), option$b({ value: "midi" }, "Export to .mid file."), option$b({ value: "json" }, "Export to .json file."), option$b({ value: "html" }, "Export to .html file."));
+            this._removeWhitespace = input$c({ type: "checkbox" });
+            this._removeWhitespaceDiv = div$h({ style: "vertical-align: middle; align-items: center; justify-content: space-between;" }, "Remove Whitespace: ", this._removeWhitespace);
+            this._cancelButton = button$h({ class: "cancelButton" });
+            this._exportButton = button$h({ class: "exportButton", style: "width:45%;" }, "Export");
+            this._outputProgressBar = div$h({ style: `width: 0%; background: ${ColorConfig.loopAccent}; height: 100%; position: absolute; z-index: 2;` });
+            this._outputProgressLabel = div$h({ style: `position: relative; top: -1px; z-index: 3;` }, "0%");
+            this._outputProgressContainer = div$h({ style: `height: 12px; background: ${ColorConfig.uiWidgetBackground}; display: block; position: relative; z-index: 1;` }, this._outputProgressBar, this._outputProgressLabel);
+            this.container = div$h({ class: "prompt noSelection", style: "width: 200px;" }, div$h({ class: "promptTitle" }, h2$g({ class: "exportExt", style: "text-align: inherit;" }, ""), h2$g({ class: "exportTitle" }, "Export Options")), div$h({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "File name:", this._fileName), div$h({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between;" }, "Length:", this._computedSamplesLabel), div$h({ style: "display: table; width: 100%;" }, div$h({ style: "display: table-row;" }, div$h({ style: "display: table-cell;" }, "Intro:"), div$h({ style: "display: table-cell;" }, "Loop Count:"), div$h({ style: "display: table-cell;" }, "Outro:")), div$h({ style: "display: table-row;" }, div$h({ style: "display: table-cell; vertical-align: middle;" }, this._enableIntro), div$h({ style: "display: table-cell; vertical-align: middle;" }, this._loopDropDown), div$h({ style: "display: table-cell; vertical-align: middle;" }, this._enableOutro))), div$h({ class: "selectContainer", style: "width: 100%;" }, this._formatSelect), this._removeWhitespaceDiv, div$h({ class: "selectContainer", style: "width: 100%;" }, this._formatSelect), div$h({ style: "text-align: left;" }, "Exporting can be slow. Reloading the page or clicking the X will cancel it. Please be patient."), this._outputProgressContainer, div$h({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._exportButton), this._cancelButton);
             this._close = () => {
                 if (this.synth != null)
                     this.synth.renderingSong = false;
@@ -36096,6 +38840,8 @@ li.select2-results__option[role=group] > strong:hover {
             this._export = () => {
                 if (this.outputStarted == true)
                     return;
+                window.localStorage.setItem("exportFormat", this._formatSelect.value);
+                window.localStorage.setItem("exportWhitespace", this._removeWhitespace.value);
                 window.localStorage.setItem("exportFormat", this._formatSelect.value);
                 switch (this._formatSelect.value) {
                     case "wav":
@@ -36142,6 +38888,16 @@ li.select2-results__option[role=group] > strong:hover {
             if (lastExportFormat != null) {
                 this._formatSelect.value = lastExportFormat;
             }
+            const lastExportWhitespace = window.localStorage.getItem("exportWhitespace") == "true";
+            if (lastExportWhitespace != null) {
+                this._removeWhitespace.checked = lastExportWhitespace;
+            }
+            if (this._formatSelect.value == "json") {
+                this._removeWhitespaceDiv.style.display = "block";
+            }
+            else {
+                this._removeWhitespaceDiv.style.display = "none";
+            }
             this._fileName.select();
             setTimeout(() => this._fileName.focus());
             this._fileName.addEventListener("input", ExportPrompt._validateFileName);
@@ -36151,6 +38907,12 @@ li.select2-results__option[role=group] > strong:hover {
             this._enableOutro.addEventListener("click", () => { this._computedSamplesLabel.firstChild.textContent = this.samplesToTime(this._doc.synth.getTotalSamples(this._enableIntro.checked, this._enableOutro.checked, +this._loopDropDown.value - 1)); });
             this._enableIntro.addEventListener("click", () => { this._computedSamplesLabel.firstChild.textContent = this.samplesToTime(this._doc.synth.getTotalSamples(this._enableIntro.checked, this._enableOutro.checked, +this._loopDropDown.value - 1)); });
             this._loopDropDown.addEventListener("change", () => { this._computedSamplesLabel.firstChild.textContent = this.samplesToTime(this._doc.synth.getTotalSamples(this._enableIntro.checked, this._enableOutro.checked, +this._loopDropDown.value - 1)); });
+            this._formatSelect.addEventListener("change", () => { if (this._formatSelect.value == "json") {
+                this._removeWhitespaceDiv.style.display = "block";
+            }
+            else {
+                this._removeWhitespaceDiv.style.display = "none";
+            } });
             this.container.addEventListener("keydown", this._whenKeyPressed);
             this._fileName.value = _doc.song.title;
             ExportPrompt._validateFileName(null, this._fileName);
@@ -36723,7 +39485,8 @@ li.select2-results__option[role=group] > strong:hover {
         }
         _exportToJson() {
             const jsonObject = this._doc.song.toJsonObject(this._enableIntro.checked, Number(this._loopDropDown.value), this._enableOutro.checked);
-            const jsonString = JSON.stringify(jsonObject, null, '\t');
+            let whiteSpaceParam = this._removeWhitespace.checked ? undefined : '\t';
+            const jsonString = JSON.stringify(jsonObject, null, whiteSpaceParam);
             const blob = new Blob([jsonString], { type: "application/json" });
             save(blob, this._fileName.value.trim() + ".json");
             this._close();
@@ -36852,7 +39615,7 @@ You should be redirected to the song at:<br /><br />
 				}
 				.beepboxEditor .trackAndMuteContainer {
 					scrollbar-width: auto;
-					scrollbar-color: ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
+					scrollbar-color: ${ColorConfig.scrollbarColor} ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
 				}
 				.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar {
 					width: 20px;
@@ -36950,7 +39713,7 @@ You should be redirected to the song at:<br /><br />
 				}
 				.beepboxEditor .trackAndMuteContainer {
 					scrollbar-width: auto;
-					scrollbar-color: ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
+					scrollbar-color: ${ColorConfig.scrollbarColor} ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
 				}
 				.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar {
 					width: 20px;
@@ -37123,7 +39886,7 @@ You should be redirected to the song at:<br /><br />
 				}
 				.beepboxEditor .trackAndMuteContainer {
 					scrollbar-width: auto;
-					scrollbar-color: ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
+					scrollbar-color: ${ColorConfig.scrollbarColor} ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
 				}
 				.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar {
 					width: 20px;
@@ -37209,7 +39972,7 @@ You should be redirected to the song at:<br /><br />
 				}
 				.beepboxEditor .trackAndMuteContainer {
 					scrollbar-width: auto;
-					scrollbar-color: ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
+					scrollbar-color: ${ColorConfig.scrollbarColor} ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
 				}
 				.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar {
 					width: 20px;
@@ -37299,7 +40062,7 @@ You should be redirected to the song at:<br /><br />
 				}
 				.beepboxEditor .trackAndMuteContainer {
 					scrollbar-width: auto;
-					scrollbar-color: ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
+					scrollbar-color: ${ColorConfig.scrollbarColor} ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
 				}
 				.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar {
 					width: 20px;
@@ -37392,7 +40155,7 @@ You should be redirected to the song at:<br /><br />
 			}
 			.beepboxEditor .trackAndMuteContainer {
 				scrollbar-width: auto;
-				scrollbar-color: ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
+				scrollbar-color: ${ColorConfig.scrollbarColor} ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
 			}
 			.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar {
 				width: 20px;
@@ -37486,7 +40249,7 @@ You should be redirected to the song at:<br /><br />
 				}
 				.beepboxEditor .trackAndMuteContainer {
 					scrollbar-width: auto;
-					scrollbar-color: ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
+					scrollbar-color: ${ColorConfig.scrollbarColor} ${ColorConfig.uiWidgetBackground} ${ColorConfig.editorBackground};
 				}
 				.beepboxEditor .trackAndMuteContainer::-webkit-scrollbar {
 					width: 20px;
@@ -37813,13 +40576,13 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$e, p: p$6, div: div$e, h2: h2$d, input: input$b } = HTML;
+    const { button: button$g, p: p$6, div: div$g, h2: h2$f, input: input$b } = HTML;
     class ImportPrompt {
         constructor(_doc) {
             this._doc = _doc;
             this._fileInput = input$b({ type: "file", accept: ".json,application/json,.mid,.midi,audio/midi,audio/x-midi" });
-            this._cancelButton = button$e({ class: "cancelButton" });
-            this.container = div$e({ class: "prompt noSelection", style: "width: 300px;" }, div$e({ class: "promptTitle" }, h2$d({ class: "importExt", style: "text-align: inherit;" }, ""), h2$d({ class: "importTitle" }, "Import")), p$6({ style: "text-align: left; margin: 0.5em 0;" }, "BeepBox songs can be exported and re-imported as .json files. You could also use other means to make .json files for BeepBox as long as they follow the same structure."), p$6({ style: "text-align: left; margin: 0.5em 0;" }, "BeepBox can also (crudely) import .mid files. There are many tools available for creating .mid files. Shorter and simpler songs are more likely to work well."), this._fileInput, this._cancelButton);
+            this._cancelButton = button$g({ class: "cancelButton" });
+            this.container = div$g({ class: "prompt noSelection", style: "width: 300px;" }, div$g({ class: "promptTitle" }, h2$f({ class: "importExt", style: "text-align: inherit;" }, ""), h2$f({ class: "importTitle" }, "Import")), p$6({ style: "text-align: left; margin: 0.5em 0;" }, "BeepBox songs can be exported and re-imported as .json files. You could also use other means to make .json files for BeepBox as long as they follow the same structure."), p$6({ style: "text-align: left; margin: 0.5em 0;" }, "BeepBox can also (crudely) import .mid files. There are many tools available for creating .mid files. Shorter and simpler songs are more likely to work well."), this._fileInput, this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -38720,13 +41483,13 @@ You should be redirected to the song at:<br /><br />
     }
     ChannelRow.patternHeight = 28;
 
-    const { button: button$d, label: label$1, div: div$d, form, h2: h2$c, input: input$a } = HTML;
+    const { button: button$f, label: label$1, div: div$f, form, h2: h2$e, input: input$a } = HTML;
     class LayoutPrompt {
         constructor(_doc) {
             this._doc = _doc;
             this._fileInput = input$a({ type: "file", accept: ".json,application/json,.mid,.midi,audio/midi,audio/x-midi" });
-            this._okayButton = button$d({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this._cancelButton = button$d({ class: "cancelButton" });
+            this._okayButton = button$f({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this._cancelButton = button$f({ class: "cancelButton" });
             this._form = form({ style: "display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;" }, label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "small" }), SVG(`\
 					<svg viewBox="-4 -1 28 22">
 						<rect x="0" y="0" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
@@ -38734,7 +41497,7 @@ You should be redirected to the song at:<br /><br />
 						<rect x="14" y="2" width="4" height="16" fill="currentColor"/>
 						<rect x="2" y="13" width="11" height="5" fill="currentColor"/>
 					</svg>
-				`), div$d("Small")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "long" }), SVG(`\
+				`), div$f("Small")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "long" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
 						<rect x="2" y="2" width="12" height="10" fill="currentColor"/>
@@ -38742,14 +41505,14 @@ You should be redirected to the song at:<br /><br />
 						<rect x="20" y="2" width="4" height="10" fill="currentColor"/>
 						<rect x="2" y="13" width="22" height="5" fill="currentColor"/>
 					</svg>
-				`), div$d("Long")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "tall" }), SVG(`\
+				`), div$f("Long")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "tall" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
 						<rect x="11" y="2" width="8" height="16" fill="currentColor"/>
 						<rect x="20" y="2" width="4" height="16" fill="currentColor"/>
 						<rect x="2" y="2" width="8" height="16" fill="currentColor"/>
 					</svg>
-				`), div$d("Tall")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "wide" }), SVG(`\
+				`), div$f("Tall")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "wide" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
 						<rect x="2" y="2" width="4" height="16" fill="currentColor"/>
@@ -38757,7 +41520,7 @@ You should be redirected to the song at:<br /><br />
 						<rect x="21.5" y="2" width="2.5" height="16" fill="currentColor"/>
 						<rect x="7" y="2" width="10" height="16" fill="currentColor"/>
 					</svg>
-				`), div$d("Wide (JB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "AbyssBox Special" }), SVG(`\
+				`), div$f("Wide (JB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "AbyssBox Special" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
 						<rect x="7" y="2" width="4" height="11" fill="currentColor"/>
@@ -38765,14 +41528,14 @@ You should be redirected to the song at:<br /><br />
 						<rect x="10" y="2" width="14" height="11" fill="currentColor"/>
 						<rect x="2" y="14" width="22" height="4" fill="currentColor"/>
 					</svg>
-				`), div$d("Flipped (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "focus" }), SVG(`\
+				`), div$f("Flipped (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "focus" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
 						<rect x="2" y="2" width="17" height="10" fill="currentColor"/>
 						<rect x="20" y="2" width="4" height="16" fill="currentColor"/>
 						<rect x="2" y="13" width="17" height="5" fill="currentColor"/>
 					</svg>
-				`), div$d("Focus (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "long (AB)" }), SVG(`\
+				`), div$f("Focus (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "long (AB)" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
 						<rect x="2" y="2" width="12" height="10" fill="currentColor"/>
@@ -38780,7 +41543,7 @@ You should be redirected to the song at:<br /><br />
 						<rect x="20" y="2" width="4" height="16" fill="currentColor"/>
 						<rect x="2" y="13" width="12" height="5" fill="currentColor"/>
 					</svg>
-				`), div$d("Long (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "theatre" }), SVG(`\
+				`), div$f("Long (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "theatre" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
 						<rect x="2" y="2" width="22" height="10" fill="currentColor"></rect>
@@ -38788,15 +41551,15 @@ You should be redirected to the song at:<br /><br />
 						<rect x="19" y="13" width="2" height="5" fill="currentColor"></rect>
 						<rect x="22" y="13" width="2" height="5" fill="currentColor"></rect>
 					</svg>
-				`), div$d("theatre (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "Upside Down" }), SVG(`\
+				`), div$f("theatre (AB)")), label$1({ class: "layout-option" }, input$a({ type: "radio", name: "layout", value: "Upside Down" }), SVG(`\
 					<svg viewBox="-1 -1 28 22">
 						<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
 						<rect x="7" y="8" width="17" height="10" fill="currentColor"/> /* pattern area */
 						<rect x="2" y="2" width="4" height="16" fill="currentColor"/> /* settings area */
 						<rect x="7" y="2" width="17" height="5" fill="currentColor"/> /* track area */
 					</svg>
-				`), div$d("Upturn (AB)")));
-            this.container = div$d({ class: "prompt noSelection", style: "width: 300px;" }, div$d({ class: "promptTitle" }, h2$c({ class: "layoutExt", style: "text-align: inherit;" }, ""), h2$c({ class: "layoutTitle" }, "Layout")), this._form, div$d({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+				`), div$f("Upturn (AB)")));
+            this.container = div$f({ class: "prompt noSelection", style: "width: 300px;" }, div$f({ class: "promptTitle" }, h2$e({ class: "layoutExt", style: "text-align: inherit;" }, ""), h2$e({ class: "layoutTitle" }, "Layout")), this._form, div$f({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -39095,7 +41858,7 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$c, div: div$c, h2: h2$b, input: input$9 } = HTML;
+    const { button: button$e, div: div$e, h2: h2$d, input: input$9 } = HTML;
     class LimiterCanvas {
         constructor(lim) {
             this._editorWidth = 200;
@@ -39218,7 +41981,7 @@ You should be redirected to the song at:<br /><br />
             this._doc = _doc;
             this._songEditor = _songEditor;
             this.limiterCanvas = new LimiterCanvas(this);
-            this._playButton = button$c({ style: "width: 55%;", type: "button" });
+            this._playButton = button$e({ style: "width: 55%;", type: "button" });
             this.limitDecaySlider = input$9({ title: "limit decay", style: `width: 5em; flex-grow: 1; margin: 0;`, type: "range", min: "1", max: "30", value: "4", step: "1" });
             this.limitRiseSlider = input$9({ title: "limit rise", style: `width: 5em; flex-grow: 1; margin: 0;`, type: "range", min: "2000", max: "10000", value: "4000", step: "250" });
             this.compressionThresholdSlider = input$9({ title: "compressor threshold", style: `width: 100%; flex-grow: 1; margin: 0;`, type: "range", min: "0", max: "1.1", value: "1", step: "0.05" });
@@ -39230,10 +41993,10 @@ You should be redirected to the song at:<br /><br />
             this.inVolumeHistoricCap = 0.0;
             this.outVolumeHistoricTimer = 0.0;
             this.outVolumeHistoricCap = 0.0;
-            this._cancelButton = button$c({ class: "cancelButton" });
-            this._okayButton = button$c({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this._resetButton = button$c({ style: "width:45%;" }, "Reset");
-            this.container = div$c({ class: "prompt noSelection", style: "width: 250px;" }, div$c({ class: "promptTitle" }, h2$b({ class: "limiterExt", style: "text-align: inherit;" }, ""), h2$b({ class: "limiterTitle" }, "Limiter Options")), div$c({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), div$c({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, this.limiterCanvas.container), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; margin-top: 1.5em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, ""), div$c({ style: `text-align: center; width: 33%; margin-right: 4.5%; color: ${ColorConfig.textSelection};` }, "Boost"), div$c({ style: `text-align: center; width: 33%; margin-right: 0%; color: ${ColorConfig.linkAccent};` }, "Cutoff")), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; margin-top: 0.5em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, "Threshold:"), div$c({ style: `width: 33%; margin-right: 4.5%;` }, this.compressionThresholdSlider), div$c({ style: `width: 33%; margin-right: 0%;` }, this.limitThresholdSlider)), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, "Ratio:"), div$c({ style: `width: 33%; margin-right: 4.5%;` }, this.compressionRatioSlider), div$c({ style: `width: 33%; margin-right: 0%;` }, this.limitRatioSlider)), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Limit Decay:"), this.limitDecaySlider), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Limit Rise:"), this.limitRiseSlider), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Master Gain:"), this.masterGainSlider), div$c({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton, this._resetButton), this._cancelButton);
+            this._cancelButton = button$e({ class: "cancelButton" });
+            this._okayButton = button$e({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this._resetButton = button$e({ style: "width:45%;" }, "Reset");
+            this.container = div$e({ class: "prompt noSelection", style: "width: 250px;" }, div$e({ class: "promptTitle" }, h2$d({ class: "limiterExt", style: "text-align: inherit;" }, ""), h2$d({ class: "limiterTitle" }, "Limiter Options")), div$e({ style: "display: flex; width: 55%; align-self: center; flex-direction: row; align-items: center; justify-content: center;" }, this._playButton), div$e({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center;" }, this.limiterCanvas.container), div$e({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; margin-top: 1.5em; justify-content: flex-end;" }, div$e({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, ""), div$e({ style: `text-align: center; width: 33%; margin-right: 4.5%; color: ${ColorConfig.textSelection};` }, "Boost"), div$e({ style: `text-align: center; width: 33%; margin-right: 0%; color: ${ColorConfig.linkAccent};` }, "Cutoff")), div$e({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; margin-top: 0.5em; justify-content: flex-end;" }, div$e({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, "Threshold:"), div$e({ style: `width: 33%; margin-right: 4.5%;` }, this.compressionThresholdSlider), div$e({ style: `width: 33%; margin-right: 0%;` }, this.limitThresholdSlider)), div$e({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$e({ style: `text-align: right; width: 25%; margin-right: 4.5%; color: ${ColorConfig.primaryText};` }, "Ratio:"), div$e({ style: `width: 33%; margin-right: 4.5%;` }, this.compressionRatioSlider), div$e({ style: `width: 33%; margin-right: 0%;` }, this.limitRatioSlider)), div$e({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$e({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Limit Decay:"), this.limitDecaySlider), div$e({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$e({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Limit Rise:"), this.limitRiseSlider), div$e({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$e({ style: `text-align: right; width: 8.5em; margin-right: 1em; color: ${ColorConfig.primaryText};` }, "Master Gain:"), this.masterGainSlider), div$e({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton, this._resetButton), this._cancelButton);
             this._volumeUpdate = () => {
                 this.inVolumeHistoricTimer--;
                 if (this.inVolumeHistoricTimer <= 0) {
@@ -39376,15 +42139,15 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$b, div: div$b, h2: h2$a, input: input$8 } = HTML;
+    const { button: button$d, div: div$d, h2: h2$c, input: input$8 } = HTML;
     class CustomScalePrompt {
         constructor(_doc) {
             this._doc = _doc;
             this._flags = [];
             this._scaleFlags = [];
             this._scaleRows = [];
-            this._cancelButton = button$b({ class: "cancelButton" });
-            this._okayButton = button$b({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this._cancelButton = button$d({ class: "cancelButton" });
+            this._okayButton = button$d({ class: "okayButton", style: "width:45%;" }, "Okay");
             this._close = () => {
                 this._doc.undo();
             };
@@ -39406,15 +42169,15 @@ You should be redirected to the song at:<br /><br />
                 this._doc.record(new ChangeCustomScale(this._doc, this._flags));
             };
             this._flags = _doc.song.scaleCustom.slice();
-            let scaleHolder = div$b({});
+            let scaleHolder = div$d({});
             for (var i = 1; i < Config.pitchesPerOctave; i++) {
                 this._scaleFlags[i] = input$8({ type: "checkbox", style: "width: 1em; padding: 0; margin-right: 4em;", "checked": this._flags[i], "value": i });
-                this._scaleRows[i] = div$b({ style: "text-align: right; height: 2em;" }, "note " + i + ":", this._scaleFlags[i]);
+                this._scaleRows[i] = div$d({ style: "text-align: right; height: 2em;" }, "note " + i + ":", this._scaleFlags[i]);
                 scaleHolder.appendChild(this._scaleRows[i]);
             }
             this._okayButton.addEventListener("click", this._saveChanges);
             this._cancelButton.addEventListener("click", this._close);
-            this.container = div$b({ class: "prompt noSelection", style: "width: 250px;" }, div$b({ class: "promptTitle" }, h2$a({ class: "sclaeExt", style: "text-align: inherit;" }, ""), h2$a({ class: "scaleTitle" }, "Custom Scale")), div$b({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, scaleHolder), div$b({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this.container = div$d({ class: "prompt noSelection", style: "width: 250px;" }, div$d({ class: "promptTitle" }, h2$c({ class: "sclaeExt", style: "text-align: inherit;" }, ""), h2$c({ class: "scaleTitle" }, "Custom Scale")), div$d({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, scaleHolder), div$d({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this.container.addEventListener("keydown", this.whenKeyPressed);
         }
     }
@@ -39726,15 +42489,15 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$a, div: div$a, span: span$4, h2: h2$9, input: input$7, br: br$1, select: select$8, option: option$8 } = HTML;
+    const { button: button$c, div: div$c, span: span$4, h2: h2$b, input: input$7, br: br$1, select: select$a, option: option$a } = HTML;
     class MoveNotesSidewaysPrompt {
         constructor(_doc) {
             this._doc = _doc;
             this._beatsStepper = input$7({ style: "width: 3em; margin-left: 1em;", type: "number", step: "0.01", value: "0" });
-            this._conversionStrategySelect = select$8({ style: "width: 100%;" }, option$8({ value: "overflow" }, "Overflow notes across bars."), option$8({ value: "wrapAround" }, "Wrap notes around within bars."));
-            this._cancelButton = button$a({ class: "cancelButton" });
-            this._okayButton = button$a({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$a({ class: "prompt noSelection", style: "width: 250px;" }, div$a({ class: "promptTitle" }, h2$9({ class: "mnsExt", style: "text-align: inherit;" }, ""), h2$9({ class: "mnsTitle" }, "Move Notes Sideways")), div$a({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$a({ style: "text-align: right;" }, "Beats to move:", br$1(), span$4({ style: `font-size: smaller; color: ${ColorConfig.secondaryText};` }, "(Negative is left, positive is right)")), this._beatsStepper), div$a({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$a({ class: "selectContainer", style: "width: 100%;" }, this._conversionStrategySelect)), div$a({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._conversionStrategySelect = select$a({ style: "width: 100%;" }, option$a({ value: "overflow" }, "Overflow notes across bars."), option$a({ value: "wrapAround" }, "Wrap notes around within bars."));
+            this._cancelButton = button$c({ class: "cancelButton" });
+            this._okayButton = button$c({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$c({ class: "prompt noSelection", style: "width: 250px;" }, div$c({ class: "promptTitle" }, h2$b({ class: "mnsExt", style: "text-align: inherit;" }, ""), h2$b({ class: "mnsTitle" }, "Move Notes Sideways")), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ style: "text-align: right;" }, "Beats to move:", br$1(), span$4({ style: `font-size: smaller; color: ${ColorConfig.secondaryText};` }, "(Negative is left, positive is right)")), this._beatsStepper), div$c({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$c({ class: "selectContainer", style: "width: 100%;" }, this._conversionStrategySelect)), div$c({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -39781,6 +42544,7 @@ You should be redirected to the song at:<br /><br />
             this._doc = _doc;
             this._editor = _editor;
             this._cornerFiller = HTML.div({ style: `background: ${ColorConfig.editorBackground}; position: sticky; bottom: 0; left: 0; width: 32px; height: 30px;` });
+            this._loopButtonInput = HTML.button({ class: "songLoopButton", style: 'width: 100%;' });
             this._buttons = [];
             this._channelCounts = [];
             this._channelNameDisplay = HTML.div({ style: `background-color: ${ColorConfig.uiWidgetFocus}; white-space:nowrap; display: none; transform:translate(20px); width: auto; pointer-events: none; position: absolute; border-radius: 0.2em; z-index: 2;`, "color": ColorConfig.primaryText }, "");
@@ -39803,6 +42567,9 @@ You should be redirected to the song at:<br /><br />
             };
             this._channelNameInputClicked = (event) => {
                 event.stopPropagation();
+            };
+            this._changeLoopType = () => {
+                changeLoopType();
             };
             this._channelNameInputHide = () => {
                 this._channelNameInput.input.style.setProperty("display", "none");
@@ -39986,6 +42753,7 @@ You should be redirected to the song at:<br /><br />
             this._channelNameInput.input.addEventListener("blur", this._channelNameInputHide);
             this._channelNameInput.input.addEventListener("mousedown", this._channelNameInputClicked);
             this._channelNameInput.input.addEventListener("input", this._channelNameInputWhenInput);
+            this._loopButtonInput.addEventListener("click", this._changeLoopType);
         }
         onKeyUp(event) {
             switch (event.keyCode) {
@@ -40020,6 +42788,7 @@ You should be redirected to the song at:<br /><br />
                 }
                 this._buttons.length = this._doc.song.getChannelCount();
                 this.container.appendChild(this._cornerFiller);
+                this._cornerFiller.appendChild(this._loopButtonInput);
             }
             for (let y = 0; y < this._doc.song.getChannelCount(); y++) {
                 if (this._doc.song.channels[y].muted) {
@@ -40690,7 +43459,7 @@ You should be redirected to the song at:<br /><br />
             this._svgNoteBackground = SVG.pattern({ id: "patternEditorNoteBackground" + this._barOffset, x: "0", y: "0", patternUnits: "userSpaceOnUse" });
             this._svgDrumBackground = SVG.pattern({ id: "patternEditorDrumBackground" + this._barOffset, x: "0", y: "0", patternUnits: "userSpaceOnUse" });
             this._svgModBackground = SVG.pattern({ id: "patternEditorModBackground" + this._barOffset, x: "0", y: "0", patternUnits: "userSpaceOnUse" });
-            this._svgBackground = SVG.rect({ x: "0", y: "0", "pointer-events": "none", fill: "url(#patternEditorNoteBackground" + this._barOffset + ")" });
+            this._svgBackground = SVG.rect({ id: "pitchEditorBackground", x: "0", y: "0", style: `opacity: ${getLocalStorageItem("customThemeImageOpacity", "1")};`, "pointer-events": "none", fill: "url(#patternEditorNoteBackground" + this._barOffset + ")" });
             this._svgNoteContainer = SVG.svg();
             this._svgPlayhead = SVG.rect({ x: "0", y: "0", width: "4", fill: ColorConfig.playhead, "pointer-events": "none" });
             this._selectionRect = SVG.rect({ class: "dashed-line dash-move", fill: ColorConfig.boxSelectionFill, stroke: ColorConfig.hoverPreview, "stroke-width": 2, "stroke-dasharray": "5, 3", "fill-opacity": "0.4", "pointer-events": "none", visibility: "hidden" });
@@ -42820,6 +45589,7 @@ You should be redirected to the song at:<br /><br />
                         let colorSecondary = (disabled ? ColorConfig.disabledNoteSecondary : ColorConfig.getChannelColor(this._doc.song, this._doc.channel).secondaryNote);
                         notePath.setAttribute("fill", colorSecondary);
                         notePath.setAttribute("pointer-events", "none");
+                        notePath.setAttribute("class", "note-secondary");
                         this._drawNote(notePath, pitch, note.start, note.pins, (this._pitchHeight - this._pitchBorder) / 2 + 1, false, this._octaveOffset);
                         this._svgNoteContainer.appendChild(notePath);
                         notePath = SVG.path();
@@ -42827,6 +45597,7 @@ You should be redirected to the song at:<br /><br />
                         notePath.setAttribute("pointer-events", "none");
                         this._drawNote(notePath, pitch, note.start, note.pins, (this._pitchHeight - this._pitchBorder) / 2 + 1, true, this._octaveOffset);
                         this._svgNoteContainer.appendChild(notePath);
+                        notePath.setAttribute("class", "note-primary");
                         if (this._doc.prefs.notesFlashWhenPlayed && !disabled) {
                             notePath = SVG.path();
                             const noteFlashColor = ColorConfig.getComputed("--note-flash") !== "" ? "var(--note-flash)" : "#ffffff";
@@ -43441,15 +46212,15 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$9, div: div$9, span: span$3, h2: h2$8, input: input$6, br, select: select$7, option: option$7 } = HTML;
+    const { button: button$b, div: div$b, span: span$3, h2: h2$a, input: input$6, br, select: select$9, option: option$9 } = HTML;
     class SongDurationPrompt {
         constructor(_doc) {
             this._doc = _doc;
             this._barsStepper = input$6({ style: "width: 3em; margin-left: 1em;", type: "number", step: "1" });
-            this._positionSelect = select$7({ style: "width: 100%;" }, option$7({ value: "end" }, "Apply change at end of song."), option$7({ value: "beginning" }, "Apply change at beginning of song."));
-            this._cancelButton = button$9({ class: "cancelButton" });
-            this._okayButton = button$9({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$9({ class: "prompt noSelection", style: "width: 250px;" }, div$9({ class: "promptTitle" }, h2$8({ class: "song-lengthExt", style: "text-align: inherit;" }, ""), h2$8({ class: "song-lengthTitle" }, "Song Length")), div$9({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$9({ style: "display: inline-block; text-align: right;" }, "Bars per song:", br(), span$3({ style: `font-size: smaller; color: ${ColorConfig.secondaryText};` }, "(Multiples of 4 are recommended)")), this._barsStepper), div$9({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$9({ class: "selectContainer", style: "width: 100%;" }, this._positionSelect)), div$9({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._positionSelect = select$9({ style: "width: 100%;" }, option$9({ value: "end" }, "Apply change at end of song."), option$9({ value: "beginning" }, "Apply change at beginning of song."));
+            this._cancelButton = button$b({ class: "cancelButton" });
+            this._okayButton = button$b({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$b({ class: "prompt noSelection", style: "width: 250px;" }, div$b({ class: "promptTitle" }, h2$a({ class: "song-lengthExt", style: "text-align: inherit;" }, ""), h2$a({ class: "song-lengthTitle" }, "Song Length")), div$b({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$b({ style: "display: inline-block; text-align: right;" }, "Bars per song:", br(), span$3({ style: `font-size: smaller; color: ${ColorConfig.secondaryText};` }, "(Multiples of 4 are recommended)")), this._barsStepper), div$b({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$b({ class: "selectContainer", style: "width: 100%;" }, this._positionSelect)), div$b({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -43504,14 +46275,14 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$8, div: div$8, h2: h2$7, p: p$5, select: select$6, option: option$6 } = HTML;
+    const { button: button$a, div: div$a, h2: h2$9, p: p$5, select: select$8, option: option$8 } = HTML;
     class SustainPrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._typeSelect = select$6({ style: "width: 100%;" }, option$6({ value: "acoustic" }, "(A) Acoustic"), option$6({ value: "bright" }, "(B) Bright"));
-            this._cancelButton = button$8({ class: "cancelButton" });
-            this._okayButton = button$8({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.container = div$8({ class: "prompt", style: "width: 300px;" }, div$8(h2$7("String Sustain"), p$5("This setting controls how quickly the picked string vibration decays."), p$5("Unlike most of BeepBox's instrument synthesizer features, a picked string cannot change frequency suddenly while maintaining its decay. If a tone's pitch changes suddenly (e.g. if the chord type is set to \"arpeggio\" or the transition type is set to \"continues\") then the string will be re-picked and start decaying from the beginning again, even if the envelopes don't otherwise restart.")), div$8({ style: { display: Config.enableAcousticSustain ? undefined : "none" } }, p$5("BeepBox comes with two slightly different sustain designs. You can select one here and press \"Okay\" to confirm it."), div$8({ class: "selectContainer", style: "width: 100%;" }, this._typeSelect)), div$8({ style: { display: Config.enableAcousticSustain ? "flex" : "none", "flex-direction": "row-reverse", "justify-content": "space-between" } }, this._okayButton), this._cancelButton);
+            this._typeSelect = select$8({ style: "width: 100%;" }, option$8({ value: "acoustic" }, "(A) Acoustic"), option$8({ value: "bright" }, "(B) Bright"));
+            this._cancelButton = button$a({ class: "cancelButton" });
+            this._okayButton = button$a({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$a({ class: "prompt", style: "width: 300px;" }, div$a(h2$9("String Sustain"), p$5("This setting controls how quickly the picked string vibration decays."), p$5("Unlike most of BeepBox's instrument synthesizer features, a picked string cannot change frequency suddenly while maintaining its decay. If a tone's pitch changes suddenly (e.g. if the chord type is set to \"arpeggio\" or the transition type is set to \"continues\") then the string will be re-picked and start decaying from the beginning again, even if the envelopes don't otherwise restart.")), div$a({ style: { display: Config.enableAcousticSustain ? undefined : "none" } }, p$5("BeepBox comes with two slightly different sustain designs. You can select one here and press \"Okay\" to confirm it."), div$a({ class: "selectContainer", style: "width: 100%;" }, this._typeSelect)), div$a({ style: { display: Config.enableAcousticSustain ? "flex" : "none", "flex-direction": "row-reverse", "justify-content": "space-between" } }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -43674,13 +46445,13 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { button: button$7, div: div$7, h2: h2$6, p: p$4, select: select$5, option: option$5, iframe } = HTML;
+    const { button: button$9, div: div$9, h2: h2$8, p: p$4, select: select$7, option: option$7, iframe } = HTML;
     class SongRecoveryPrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._songContainer = div$7();
-            this._cancelButton = button$7({ class: "cancelButton" });
-            this.container = div$7({ class: "prompt", style: "width: 300px;" }, h2$6("Song Recovery"), div$7({ style: "max-height: 385px; overflow-y: auto;" }, p$4("This is a TEMPORARY list of songs you have recently modified. Please keep your own backups of songs you care about! SONGS THAT USE SAMPLES WILL TAKE A WHILE TO LOAD, so be patient!"), this._songContainer, p$4("(If \"Display Song Data in URL\" is enabled in your preferences, then you may also be able to find song versions in your browser history. However, song recovery won't work if you were browsing in private/incognito mode.)")), this._cancelButton);
+            this._songContainer = div$9();
+            this._cancelButton = button$9({ class: "cancelButton" });
+            this.container = div$9({ class: "prompt", style: "width: 300px;" }, div$9({ class: "promptTitle" }, h2$8({ class: "songRecovExt", style: "text-align: inherit;" }, ""), h2$8({ class: "songRecovTitle" }, "Song Recovery")), div$9({ style: "max-height: 385px; overflow-y: auto;" }, p$4("This is a TEMPORARY list of songs you have recently modified. Please keep your own backups of songs you care about! SONGS THAT USE SAMPLES WILL TAKE A WHILE TO LOAD, so be patient!"), this._songContainer, p$4("(If \"Display Song Data in URL\" is enabled in your preferences, then you may also be able to find song versions in your browser history. However, song recovery won't work if you were browsing in private/incognito mode.)")), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -43693,40 +46464,40 @@ You should be redirected to the song at:<br /><br />
                 this._songContainer.appendChild(p$4("There are no recovered songs available yet. Try making a song!"));
             }
             for (const song of songs) {
-                const versionMenu = select$5({ style: "width: 100%;" });
+                const versionMenu = select$7({ style: "width: 100%;" });
                 for (const version of song.versions) {
-                    versionMenu.appendChild(option$5({ value: version.time }, version.name + ": " + new Date(version.time).toLocaleString()));
+                    versionMenu.appendChild(option$7({ value: version.time }, version.name + ": " + new Date(version.time).toLocaleString()));
                 }
                 const player = iframe({ style: "width: 100%; height: 60px; border: none; display: block;" });
-                player.src = "player/#song=" + window.localStorage.getItem(versionToKey(song.versions[0]));
-                const container = div$7({ style: "margin: 4px 0;" }, div$7({ class: "selectContainer", style: "width: 100%; margin: 2px 0;" }, versionMenu), player);
+                player.src = "sr-player/#song=" + window.localStorage.getItem(versionToKey(song.versions[0]));
+                const container = div$9({ style: "margin: 4px 0;" }, div$9({ class: "selectContainer", style: "width: 100%; margin: 2px 0;" }, versionMenu), player);
                 this._songContainer.appendChild(container);
                 versionMenu.addEventListener("change", () => {
                     const version = song.versions[versionMenu.selectedIndex];
-                    player.contentWindow.location.replace("player/#song=" + window.localStorage.getItem(versionToKey(version)));
+                    player.contentWindow.location.replace("sr-player/#song=" + window.localStorage.getItem(versionToKey(version)));
                     player.contentWindow.dispatchEvent(new Event("hashchange"));
                 });
             }
         }
     }
 
-    const { button: button$6, label, div: div$6, p: p$3, a: a$2, h2: h2$5, input: input$5, select: select$4, option: option$4 } = HTML;
+    const { button: button$8, label, div: div$8, p: p$3, a: a$2, h2: h2$7, input: input$5, select: select$6, option: option$6 } = HTML;
     class RecordingSetupPrompt {
         constructor(_doc) {
             this._doc = _doc;
-            this._keyboardMode = select$4({ style: "width: 100%;" }, option$4({ value: "useCapsLockForNotes" }, "simple shortcuts, use caps lock to play notes"), option$4({ value: "pressControlForShortcuts" }, "simple notes, press " + EditorConfig.ctrlName + " for shortcuts"));
-            this._keyboardLayout = select$4({ style: "width: 100%;" }, option$4({ value: "wickiHayden" }, "Wicki-Hayden"), option$4({ value: "songScale" }, "selected song scale"), option$4({ value: "pianoAtC" }, "piano starting at C :)"), option$4({ value: "pianoAtA" }, "piano starting at A :("), option$4({ value: "pianoTransposingC" }, "piano transposing C :) to song key"), option$4({ value: "pianoTransposingA" }, "piano transposing A :( to song key"));
-            this._bassOffset = select$4({ style: "width: 100%;" }, option$4({ value: "0" }, "disabled"), option$4({ value: "-1" }, "before"), option$4({ value: "1" }, "after"));
-            this._keyboardLayoutPreview = div$6({ style: "display: grid; row-gap: 4px; margin: 4px auto; font-size: 10px;" });
+            this._keyboardMode = select$6({ style: "width: 100%;" }, option$6({ value: "useCapsLockForNotes" }, "simple shortcuts, use caps lock to play notes"), option$6({ value: "pressControlForShortcuts" }, "simple notes, press " + EditorConfig.ctrlName + " for shortcuts"));
+            this._keyboardLayout = select$6({ style: "width: 100%;" }, option$6({ value: "wickiHayden" }, "Wicki-Hayden"), option$6({ value: "songScale" }, "selected song scale"), option$6({ value: "pianoAtC" }, "piano starting at C :)"), option$6({ value: "pianoAtA" }, "piano starting at A :("), option$6({ value: "pianoTransposingC" }, "piano transposing C :) to song key"), option$6({ value: "pianoTransposingA" }, "piano transposing A :( to song key"));
+            this._bassOffset = select$6({ style: "width: 100%;" }, option$6({ value: "0" }, "disabled"), option$6({ value: "-1" }, "before"), option$6({ value: "1" }, "after"));
+            this._keyboardLayoutPreview = div$8({ style: "display: grid; row-gap: 4px; margin: 4px auto; font-size: 10px;" });
             this._enableMidi = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._showRecordButton = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._snapRecordedNotesToRhythm = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._ignorePerformedNotesNotInScale = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._metronomeCountIn = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
             this._metronomeWhileRecording = input$5({ style: "width: 2em; margin-left: 1em;", type: "checkbox" });
-            this._okayButton = button$6({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this._cancelButton = button$6({ class: "cancelButton" });
-            this.container = div$6({ class: "prompt noSelection recordingSetupPrompt", style: "width: 600px; text-align: right; max-height: 90%;" }, div$6({ class: "promptTitle" }, h2$5({ class: "nrsExt", style: "text-align: inherit;" }, ""), h2$5({ class: "nrsTitle" }, "Note Recording Setup")), div$6({ style: "display: grid; overflow-y: auto; overflow-x: hidden; flex-shrink: 1;" }, p$3("AbyssBox can record notes as you perform them. You can start recording by pressing Ctrl+Space (or " + EditorConfig.ctrlSymbol + "P)."), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Add ● record button next to ▶ play button:", this._showRecordButton), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Snap recorded notes to the song's rhythm:", this._snapRecordedNotesToRhythm), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Ignore notes not in the song's scale:", this._ignorePerformedNotesNotInScale), p$3("While recording, you can perform notes on your keyboard!"), label({ style: "display: flex; flex-direction: row; align-items: center; margin-top: 0.5em; margin-bottom: 0.5em; height: 2em; justify-content: center;" }, "Keyboard layout:", div$6({ class: "selectContainer", style: "width: 65%; margin-left: 1em;" }, this._keyboardLayout)), this._keyboardLayoutPreview, p$3("When not recording, you can use the computer keyboard either for shortcuts (like C and V for copy and paste) or for performing notes, depending on this mode:"), label({ style: "display: flex; margin-top: 0.5em; margin-bottom: 0.5em; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, div$6({ class: "selectContainer", style: "width: 50%;" }, this._keyboardMode)), p$3("Performing music takes practice! Try slowing the tempo and using this metronome to help you keep a rhythm."), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Hear metronome while recording:", this._metronomeWhileRecording), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Count-in 1 bar of metronome before recording:", this._metronomeCountIn), p$3("If you have a ", a$2({ href: "https://caniuse.com/midi", target: "_blank" }, "compatible browser"), " on a device connected to a MIDI keyboard, you can use it to perform notes in AbyssBox! (Or you could buy ", a$2({ href: "https://imitone.com/", target: "_blank" }, "Imitone"), " or ", a$2({ href: "https://vochlea.com/", target: "_blank" }, "Dubler"), " to hum notes into a microphone while wearing headphones!)"), label({ style: "display: flex; flex-direction: row; align-items: center; margin-top: 0.5em; height: 2em; justify-content: center;" }, "Enable MIDI performance:", this._enableMidi), p$3("The range of pitches available to play via your computer keyboard is affected by the octave scrollbar of the currently selected channel."), p$3("If you set the channel offset below to 'before' or 'after', notes below the middle octave in the view will be 'bass' notes, and placed in the channel before or after the viewed one. Using this, you can play bass and lead at the same time!"), label({ style: "display: flex; flex-direction: row; align-items: center; margin-top: 0.5em; margin-bottom: 0.5em; height: 2em; justify-content: center;" }, "Bass Offset:", div$6({ class: "selectContainer", style: "width: 50%; margin-left: 1em;" }, this._bassOffset)), p$3("Once you enable the setting, the keyboard layout above will darken to denote the new bass notes. The notes will be recorded with independent timing and this works with MIDI devices, too. Be aware that the octave offset of both used channels will impact how high/low the bass/lead are relative to one another."), p$3("Recorded notes often overlap such that one note ends after the next note already started. In UltraBox, these notes get split into multiple notes which may sound different when re-played than they did when you were recording. To fix the sound, you can either manually clean up the notes in the pattern editor, or you could try enabling the \"transition type\" effect on the instrument and setting it to \"continue\"."), div$6({ style: `width: 100%; height: 80px; background: linear-gradient(rgba(0,0,0,0), ${ColorConfig.editorBackground}); position: sticky; bottom: 0; pointer-events: none;` })), div$6({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._okayButton = button$8({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this._cancelButton = button$8({ class: "cancelButton" });
+            this.container = div$8({ class: "prompt noSelection recordingSetupPrompt", style: "width: 600px; text-align: right; max-height: 90%;" }, div$8({ class: "promptTitle" }, h2$7({ class: "nrsExt", style: "text-align: inherit;" }, ""), h2$7({ class: "nrsTitle" }, "Note Recording Setup")), div$8({ style: "display: grid; overflow-y: auto; overflow-x: hidden; flex-shrink: 1;" }, p$3("AbyssBox can record notes as you perform them. You can start recording by pressing Ctrl+Space (or " + EditorConfig.ctrlSymbol + "P)."), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Add ● record button next to ▶ play button:", this._showRecordButton), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Snap recorded notes to the song's rhythm:", this._snapRecordedNotesToRhythm), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Ignore notes not in the song's scale:", this._ignorePerformedNotesNotInScale), p$3("While recording, you can perform notes on your keyboard!"), label({ style: "display: flex; flex-direction: row; align-items: center; margin-top: 0.5em; margin-bottom: 0.5em; height: 2em; justify-content: center;" }, "Keyboard layout:", div$8({ class: "selectContainer", style: "width: 65%; margin-left: 1em;" }, this._keyboardLayout)), this._keyboardLayoutPreview, p$3("When not recording, you can use the computer keyboard either for shortcuts (like C and V for copy and paste) or for performing notes, depending on this mode:"), label({ style: "display: flex; margin-top: 0.5em; margin-bottom: 0.5em; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, div$8({ class: "selectContainer", style: "width: 50%;" }, this._keyboardMode)), p$3("Performing music takes practice! Try slowing the tempo and using this metronome to help you keep a rhythm."), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Hear metronome while recording:", this._metronomeWhileRecording), label({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: center;" }, "Count-in 1 bar of metronome before recording:", this._metronomeCountIn), p$3("If you have a ", a$2({ href: "https://caniuse.com/midi", target: "_blank" }, "compatible browser"), " on a device connected to a MIDI keyboard, you can use it to perform notes in AbyssBox! (Or you could buy ", a$2({ href: "https://imitone.com/", target: "_blank" }, "Imitone"), " or ", a$2({ href: "https://vochlea.com/", target: "_blank" }, "Dubler"), " to hum notes into a microphone while wearing headphones!)"), label({ style: "display: flex; flex-direction: row; align-items: center; margin-top: 0.5em; height: 2em; justify-content: center;" }, "Enable MIDI performance:", this._enableMidi), p$3("The range of pitches available to play via your computer keyboard is affected by the octave scrollbar of the currently selected channel."), p$3("If you set the channel offset below to 'before' or 'after', notes below the middle octave in the view will be 'bass' notes, and placed in the channel before or after the viewed one. Using this, you can play bass and lead at the same time!"), label({ style: "display: flex; flex-direction: row; align-items: center; margin-top: 0.5em; margin-bottom: 0.5em; height: 2em; justify-content: center;" }, "Bass Offset:", div$8({ class: "selectContainer", style: "width: 50%; margin-left: 1em;" }, this._bassOffset)), p$3("Once you enable the setting, the keyboard layout above will darken to denote the new bass notes. The notes will be recorded with independent timing and this works with MIDI devices, too. Be aware that the octave offset of both used channels will impact how high/low the bass/lead are relative to one another."), p$3("Recorded notes often overlap such that one note ends after the next note already started. In UltraBox, these notes get split into multiple notes which may sound different when re-played than they did when you were recording. To fix the sound, you can either manually clean up the notes in the pattern editor, or you could try enabling the \"transition type\" effect on the instrument and setting it to \"continue\"."), div$8({ style: `width: 100%; height: 80px; background: linear-gradient(rgba(0,0,0,0), ${ColorConfig.editorBackground}); position: sticky; bottom: 0; pointer-events: none;` })), div$8({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.undo();
             };
@@ -43760,12 +46531,12 @@ You should be redirected to the song at:<br /><br />
                 const rowLengths = [12, 12, 11, 10];
                 const scale = Config.scales[this._doc.song.scale].flags;
                 for (let rowIndex = 0; rowIndex < 4; rowIndex++) {
-                    const row = div$6({ style: "display: flex;" });
+                    const row = div$8({ style: "display: flex;" });
                     this._keyboardLayoutPreview.appendChild(row);
-                    const spacer = div$6({ style: "width: " + (rowIndex * 12) + "px; height: 20px; flex-shrink: 0;" });
+                    const spacer = div$8({ style: "width: " + (rowIndex * 12) + "px; height: 20px; flex-shrink: 0;" });
                     row.appendChild(spacer);
                     for (let colIndex = 0; colIndex < rowLengths[rowIndex]; colIndex++) {
-                        const key = div$6({ style: `width: 20px; height: 20px; margin: 0 2px; box-sizing: border-box; flex-shrink: 0; display: flex; justify-content: center; align-items: center;` });
+                        const key = div$8({ style: `width: 20px; height: 20px; margin: 0 2px; box-sizing: border-box; flex-shrink: 0; display: flex; justify-content: center; align-items: center;` });
                         row.appendChild(key);
                         const pitch = KeyboardLayout.keyPosToPitch(this._doc, colIndex, 3 - rowIndex, this._keyboardLayout.value);
                         if (pitch != null) {
@@ -43979,21 +46750,68 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
+    const { button: button$7, div: div$7, h2: h2$6, select: select$5, option: option$5 } = HTML;
+    class ThemePrompt {
+        constructor(_doc) {
+            this._doc = _doc;
+            this._themeSelect = select$5({ style: "width: 100%;" }, option$5({ value: "AbyssBox Classic" }, "AbyssBox Classic"), option$5({ value: "AbyssBox Competitive" }, "AbyssBox Competitive"), option$5({ value: "AbyssBox Light" }, "AbyssBox Light"), option$5({ value: "AbyssBox 0.8" }, "AbyssBox 0.8"), option$5({ value: "Half-Life" }, "Half-Life"), option$5({ value: "Half-Life: Source" }, "Half-Life: Source"), option$5({ value: "Doom 1993" }, "Doom 1993"), option$5({ value: "Undertale" }, "Undertale"), option$5({ value: "Scratch" }, "Scratch"), option$5({ value: "Scratch Addons" }, "Scratch Addons"), option$5({ value: "Windows Xp" }, "Windows Xp"), option$5({ value: "Frutiger Aero" }, "Frutiger Aero"), option$5({ value: "Skeuomorphic" }, "Skeuomorphic/Early 2000's (LeoV)"), option$5({ value: "Glyde" }, "Glyde"), option$5({ value: "starry studio" }, "Starry Studio"), option$5({ value: "Terminal 2.0 (AB)" }, "Terminal 2.0 (AB)"), option$5({ value: "Slushie" }, "Slushie"), option$5({ value: "Slushie Pixel" }, "Slushie 2"), option$5({ value: "dark classic" }, "BeepBox Dark"), option$5({ value: "light classic" }, "BeepBox Light"), option$5({ value: "dark competition" }, "BeepBox Competition Dark"), option$5({ value: "BeepBox Pixel" }, "BeepBox Pixel"), option$5({ value: "jummbox classic" }, "JummBox Dark"), option$5({ value: "jummbox light" }, "JummBox Light"), option$5({ value: "gold light" }, "Gold Light"), option$5({ value: "forest" }, "Forest"), option$5({ value: "forest 2" }, "Forest 2"), option$5({ value: "canyon" }, "Canyon"), option$5({ value: "canyon 2" }, "Canyon 2"), option$5({ value: "midnight" }, "Midnight"), option$5({ value: "beachcombing" }, "Beachcombing"), option$5({ value: "violet verdant" }, "Violet Verdant"), option$5({ value: "sunset" }, "Sunset"), option$5({ value: "autumn" }, "Autumn"), option$5({ value: "fruit" }, "Shadowfruit"), option$5({ value: "toxic" }, "Toxic"), option$5({ value: "roe" }, "Roe"), option$5({ value: "moonlight" }, "Moonlight"), option$5({ value: "portal" }, "Portal"), option$5({ value: "fusion" }, "Fusion"), option$5({ value: "inverse" }, "Inverse"), option$5({ value: "nebula" }, "Nebula"), option$5({ value: "Nebula 2" }, "Nebula 2"), option$5({ value: "roe light" }, "Roe Light"), option$5({ value: "amoled dark" }, "High Contrast Dark"), option$5({ value: "energized" }, "Energized"), option$5({ value: "neapolitan" }, "Neapolitan"), option$5({ value: "mono" }, "Poly"), option$5({ value: "blutonium" }, "Blutonium"), option$5({ value: "Ghost House" }, "Ghost House"), option$5({ value: "Ghost House 2" }, "Ghost House 2"), option$5({ value: "azur lane" }, "Azur Lane"), option$5({ value: "modbox classic" }, "Modbox"), option$5({ value: "sandbox classic" }, "Sandbox"), option$5({ value: "harrybox" }, "Haileybox"), option$5({ value: "brucebox" }, "Brucebox"), option$5({ value: "shitbox 3.0" }, "Shitbox 1.0/3.0"), option$5({ value: "shitbox 2.0" }, "Shitbox 2.0"), option$5({ value: "nerdbox" }, "NerdBox"), option$5({ value: "zefbox" }, "Zefbox"), option$5({ value: "cardboardbox classic" }, "Cardboardbox"), option$5({ value: "blubox classic" }, "Blubox"), option$5({ value: "dogebox classic" }, "Dogebox"), option$5({ value: "wackybox" }, "Wackybox"), option$5({ value: "todbox dark mode" }, "Todbox Dark Mode"), option$5({ value: "mainbox 1.0" }, "Mainbox"), option$5({ value: "microbox" }, "MicroBox"), option$5({ value: "paandorasbox" }, "PaandorasBox"), option$5({ value: "foxbox" }, "FoxBox"), option$5({ value: "midbox" }, "Midbox"), option$5({ value: "dogebox2" }, "Dogebox2"), option$5({ value: "nepbox" }, "Nepbox"), option$5({ value: "WeebBox" }, "WeebBox"), option$5({ value: "BoxBeep Dark" }, "BoxBeep Dark"), option$5({ value: "BoxBeep light" }, "BoxBeep Light"), option$5({ value: "AWeebyssBox" }, "AWeebyssBox"), option$5({ value: "Deuteranopia" }, "Deuteranopia"), option$5({ value: "Protanopia" }, "Protanopia"), option$5({ value: "Tritanopia" }, "Tritanopia"), option$5({ value: "2012 Video Tutorial" }, "2012 Video Tutorial"), option$5({ value: "I am on fire" }, "I am on fire"), option$5({ value: "custom" }, "Custom"));
+            this._cancelButton = button$7({ class: "cancelButton" });
+            this._okayButton = button$7({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$7({ class: "prompt noSelection", style: "width: 220px;" }, div$7({ class: "promptTitle" }, h2$6({ class: "themeExt", style: "text-align: inherit;" }, ""), h2$6({ class: "themeTitle", style: "margin-bottom: 0.5em;" }, "Set Theme")), div$7({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$7({ class: "selectContainer", style: "width: 100%;" }, this._themeSelect)), div$7({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this.lastTheme = window.localStorage.getItem("colorTheme");
+            this._close = () => {
+                if (this.lastTheme != null) {
+                    ColorConfig.setTheme(this.lastTheme);
+                }
+                else {
+                    ColorConfig.setTheme("dark classic");
+                }
+                this._doc.undo();
+            };
+            this.cleanUp = () => {
+                this._okayButton.removeEventListener("click", this._saveChanges);
+                this._cancelButton.removeEventListener("click", this._close);
+                this.container.removeEventListener("keydown", this._whenKeyPressed);
+            };
+            this._whenKeyPressed = (event) => {
+                if (event.target.tagName != "BUTTON" && event.keyCode == 13) {
+                    this._saveChanges();
+                }
+            };
+            this._saveChanges = () => {
+                window.localStorage.setItem("colorTheme", this._themeSelect.value);
+                this._doc.prompt = null;
+                this._doc.prefs.colorTheme = this._themeSelect.value;
+                this._doc.undo();
+            };
+            this._previewTheme = () => {
+                ColorConfig.setTheme(this._themeSelect.value);
+                this._doc.notifier.changed();
+            };
+            if (this.lastTheme != null) {
+                this._themeSelect.value = this.lastTheme;
+            }
+            this._okayButton.addEventListener("click", this._saveChanges);
+            this._cancelButton.addEventListener("click", this._close);
+            this.container.addEventListener("keydown", this._whenKeyPressed);
+            this._themeSelect.addEventListener("change", this._previewTheme);
+        }
+    }
+
     const t={id:"",classname:"",theme:"light",toggle:!0,popover:!0,position:"bottom-start",margin:4,preset:!0,color:"#000",default:"#000",target:"",disabled:!1,format:"rgb",singleInput:!1,inputs:!0,opacity:!0,preview:!0,copy:!0,swatches:[],toggleSwatches:!1,closeOnScroll:!1,i18n:{palette:"Color picker",buttons:{copy:"Copy color to clipboard",changeFormat:"Change color format",swatch:"Color swatch",toggleSwatches:"Toggle Swatches"},sliders:{hue:"Change hue",alpha:"Change opacity"}}},e="alwan",s=`${e}__container`,o=`${e}__palette`,r=`${e}__marker`,n=`${e}__preview`,i=`${e}__button `,a$1=`${e}__copy-button`,l=`${e}__slider `,h=`${e}__hue`,c=`${e}__alpha`,p$2=`${e}__input`,g=`${e}__inputs`,u=`${e}__swatch`,d=`${e}__swatches`,_=`${e}__reference `,b=`${e}__backdrop`,w=`${e}__toggle-button`,f=`${e}--open`,$$1=`${e}--collapse`,y=parseInt,{min:v,max:m,abs:x,round:A,PI:C}=Math,S=(t,e=100,s=0)=>t>e?e:t<s?s:t,k=t=>A((t%=360)<0?t+360:t),H=document,L=H.documentElement,M="button",O="open",V="close",z="color",B="click",E="pointerdown",I="keydown",j="input",D="change",F="blur",P="rgb",T="hsl",Z=["hex",P,T],K="afterbegin",N="afterend",R="beforeend",U="aria-label",q={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowRight:[1,0],ArrowLeft:[-1,0]},G={deg:1,turn:360,rad:180/C,grad:.9},J=/^#[0-9a-f]{6}$/i,Q=/^hsla?\(\s*([+-]?\d*\.?\d+)(\w*)?\s*[\s,]\s*([+-]?\d*\.?\d+)%?\s*,?\s*([+-]?\d*\.?\d+)%?(?:\s*[\/,]\s*([+-]?\d*\.?\d+)(%)?)?\s*\)?$/,W=(t,e,s,o)=>{t.addEventListener(e,s,o);},X=(t,e,s)=>{t.removeEventListener(e,s);},Y=t=>"string"==typeof t,tt=t=>null!=t,et=t=>t instanceof Element,st=t=>Number.isFinite(Y(t)&&""!==t.trim()?+t:t),{keys:ot,assign:rt,setPrototypeOf:nt,prototype:it}=Object,{from:at,isArray:lt}=Array,ht=t=>tt(t)&&"object"==typeof t&&!lt(t)&&!et(t),ct=(t,e)=>ot(t).forEach((s=>e(s,t[s]))),pt=(t,e)=>(ht(t)||(t={}),ct(e,((e,s)=>{tt(s)&&rt(t,{[e]:ht(s)?pt(t[e]||{},s):s});})),t),gt=()=>H.body,ut=(t,e=gt())=>Y(t)&&t.trim()?at(e.querySelectorAll(t)):et(t)&&gt().contains(t)&&t!==gt()?[t]:[],dt=t=>ut(`${j},${M},[tabindex]`,t),_t=(t,e,s=R)=>{t&&e&&e.insertAdjacentElement(s,t);},bt=(t,e)=>{t.innerHTML=e;},wt=(t,e,s)=>{t&&t.setAttribute(e,s+"");},ft=(t,e,s,o,r,n)=>{const i=H.createElement(t);return e&&(i.className=e),o&&bt(i,o),ct(r||{},((t,e)=>{tt(e)&&wt(i,t,e);})),s&&_t(i,s,n),i},$t=(t,e,s,o)=>ft("div",t,e,"",s,o),yt=t=>(t&&t.remove(),null),vt=(t,e)=>(t.replaceWith(e),e),mt=(t,e,s,o,r,n,a)=>ft(M,i+t,e,s,rt({type:M,[U]:r,title:n||r},o),a),xt=(t,e,s,o=1)=>ft(j,l+t,e,"",{max:s,step:o,type:"range"}),At=(t,e)=>$t(s,t,{},e),Ct=(t,e,s)=>{t&&t.style.setProperty("--"+e,s+"");},St=(t,e,s)=>t.classList.toggle(e,s),kt=(t,e,s)=>{t.style.transform=`translate(${e}px,${s}px)`;},Ht=(t,e=[H])=>(t&&(t=t.parentElement),t&&t!==gt()?(/auto|scroll|overflow|clip|hidden/.test(getComputedStyle(t).overflow)&&e.push(t),Ht(t,e)):e),Lt=t=>{let e,s,o,r,n,i;return et(t)?({x:e,y:s,width:o,height:r,right:n,bottom:i}=t.getBoundingClientRect()):(e=s=0,o=n=L.clientWidth,r=i=L.clientHeight),[e,s,o,r,n,i]},Mt='<svg width="18" height="18" viewBox="0 0 24 24" aria-role="none"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg>',Ot=(t,e=P)=>{let s=t.a,o="",r=e;return s<1&&(o+=", "+s,r+="a"),e===P?r+`(${t.r}, ${t.g}, ${t.b+o})`:r+`(${t.h}, ${t.s}%, ${t.l}%${o})`},Vt=ft("canvas").getContext("2d");function zt(t,e){let s,o,r="";Y(t)?r=t.trim():ht(t)&&(s=[P,T].find((e=>e.split("").every((e=>st(t[e]))))),s&&(r=Ot(t,s)));const[n,i,a,l,h,c="1",p]=Q.exec(r)||[];if(n)o={h:k(+i*(G[a]?G[a]:1)),s:S(+l),l:S(+h),a:S(+c/(p?100:1),1)},s=T;else if(s=P,Vt.fillStyle="#000",Vt.fillStyle=r,r=Vt.fillStyle,J.test(r))o={r:y(r.slice(1,3),16),g:y(r.slice(3,5),16),b:y(r.slice(5,7),16),a:1};else {const[t,e,s,n]=/\((.+)\)/.exec(r)[1].split(",").map((t=>+t));o={r:t,g:e,b:s,a:n};}return o.a=A(100*o.a)/100,r=Ot(o,s),e?r:[o,s,r]}const Bt={top:[1,5,4,0],bottom:[5,1,4,0],right:[4,0,1,5],left:[0,4,1,5]},Et={start:[0,1,2],center:[1,0,2],end:[2,1,0]},It=(t,e,s,{margin:o,position:r,toggle:n,closeOnScroll:i},{t:a,o:l})=>{o=st(o)?+o:0;const[h,c]=Y(r)?r.split("-"):[],p=Bt[h]||Bt.bottom,g=Et[c]||Et.center,u=Ht(t),d=e.style,_=()=>{d.height="";const s=Lt(H),r=Lt(t),n=Lt(e),i=[null,null];p.some((t=>{let e=t%2;const a=s[t],l=r[t],h=o+n[e+2];if(h<=x(a-l)){i[e]=l+(t<=1?-h:o),e=(e+1)%2;const a=n[e+2],c=r[e],p=r[e+4],u=s[e+4]-c,d=(a+r[e+2])/2;return g.some((t=>0===t&&a<=u?(i[e]=c,!0):1===t&&d<=p&&d<=u?(i[e]=p-d,!0):2===t&&a<=p&&(i[e]=p-a,!0))),!0}})),kt(e,...i.map(((t,e)=>(e&&null===t&&n[3]>s[5]&&(d.height=s[5]-6+"px",n[3]=s[5]-3),A(tt(t)?t:(s[e+4]-n[e+2])/2)))));},b=()=>{!a()&&n||(((t,e)=>e.every((e=>{const[s,o,,,r,n]=Lt(t),[i,a,,,l,h]=Lt(e);return o<h&&n>a&&s<l&&r>i})))(t,u)?a()?(_(),i&&l(!1)):l(!0,!0):l(!1,!0));},w=t=>{if(a()){const{target:o,key:r,shiftKey:n}=t;if("Escape"===r)l(!1);else if("Tab"===r){const r=dt(e),i=r[0],a=r.pop(),l=o!==s||n?n&&o===i||!n&&o===a?s:null:i;l&&(t.preventDefault(),l.focus());}}},f=({target:t})=>{!a()||t===s||e.contains(t)||at(s.labels||[]).some((e=>e.contains(t)))||l(!1);},$=t=>{u.forEach((e=>{t(e,"scroll",b);})),t(window,"resize",b),t(H,I,w),t(H,E,f);};return _(),$(W),{i:_,p:()=>{$(X),e.style.transform="";}}},jt=(t,s)=>{const l=t.config,y=$t(e,gt()),x=((t,e)=>{let s=e||mt("",gt());const o=()=>{t.u.o();};return {_:()=>s,$({preset:t,classname:r}){e&&t!==(e!==s)&&(t?(s=vt(e,mt()),e.id&&(s.id=e.id)):s=vt(s,e)),W(s,B,o),e&&!t||!Y(r)||(s.className=(i+_+r).trim());},p(){e?e!==s&&vt(s,e):yt(s);}}})(t,ut(s)[0]),A=(({v:t},e)=>{let s,n,i,a;const l=$t(o,e),h=$t(r,l),c=(e,[o,r]=[0,0])=>{let a,l,[c,p,g,u]=i;e?(s=e.clientX-c,n=e.clientY-p):(s+=o*g/100,n+=r*u/100),s=S(s,g),n=S(n,u),kt(h,s,n),a=1-n/u,l=a*(1-s/(2*g)),t.i({s:1===l||0===l?0:(a-l)/v(l,1-l)*100,l:100*l},1);},p=t=>{t.buttons?c(t):d(!1);},g=()=>{t.m(),d(!1);},u=()=>{t.m();},d=t=>{St(L,b,t),(t?W:X)(H,"pointermove",p),(t?W:X)(window,F,u);};return W(l,E,(e=>{a||(t.A(),i=Lt(l),c(e),d(!0),W(H,"pointerup",g,{once:!0}));})),W(l,I,(e=>{const s=q[e.key];s&&(e.preventDefault(),i=Lt(l),t.A(),c(null,s),t.m());})),{el:l,$({i18n:t,disabled:e}){wt(l,U,t.palette),wt(l,"tabindex",e?"":0),a=e;},C(t,e){let o=e+t*v(e,1-e);i=Lt(l),s=(o?2*(1-e/o):0)*i[2],n=(1-o)*i[3],kt(h,s,n);}}})(t,y),C=At(y),k=((t,e)=>{let s,o,r=!1;const i=t=>{r=t,bt(o,t?'<svg width="18" height="18" viewBox="0 0 24 24" aria-role="none"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"></path></svg>':Mt);},l=t=>{const e=ft(j,"",L,"",{value:t});e.select(),H.execCommand("copy"),yt(e),o.focus(),i(!0);},h=()=>{if(!r){const e=navigator.clipboard,s=t.v.S();e?e.writeText(s).then((()=>i(!0))).catch((()=>l(s))):l(s);}};return {$({preview:t,copy:l,i18n:c}){s=yt(s),o=yt(o),t&&(s=$t(n,e,{},K)),l&&(o=mt(a$1,s||e,Mt,{},c.buttons.copy,"",K),W(o,B,h),W(o,F,(()=>r&&i(!1))),W(o,"mouseout",(()=>o.blur())));}}})(t,C),M=(({v:t,k:e},s)=>{let o;const r=$t("",s),n=xt(h,r,360);return W(n,j,(()=>t.i({h:+n.value},2))),W(r,D,(()=>e.H(D))),{$({opacity:e,i18n:{sliders:s}}){o=yt(o),e?(o=xt(c,r,1,.01),W(o,j,(()=>t.i({a:+o.value},2)))):t.i({a:1}),wt(n,U,s.hue),wt(o,U,s.alpha);},L(t,e){n.value=t+"",o&&(o.value=e+"");}}})(t,C),T=((t,e)=>{let s,o,r,n,i,{config:a,v:l}=t,h=[],c=!1;const u=()=>a.singleInput||"hex"===h[n],d=t=>{let e=t.target.value,s={};c||(l.A(),c=!0),u()||(ct(i,((t,e)=>{s[t]=+e.value;})),e=Ot(s,h[n])),l.M(e,3,!1,!0);},_=()=>{i={},yt(o),o=$t(g,s,{},K);const e=h[n],r=u()?[e]:(e+(a.opacity?"a":"")).split(""),_=l.O;r.forEach((t=>{const e=ft("label","",o);i[t]=ft(j,p$2,e,"",{type:"text",value:_[t]}),ft("span","",e,t);})),W(o,j,d),W(o,D,(()=>{l.m(),c=!1;})),W(o,"focusin",(t=>t.target.select())),W(o,I,(e=>"Enter"===e.key&&t.u.o(!1)));},b=()=>{n=(n+1)%h.length,l.V(h[n]),_();};return {$({inputs:t,format:o,i18n:i}){s=yt(s),r=yt(r),h=Z,!0!==t&&(t=t||{},h=h.filter((e=>t[e])));const a=h.length;a||(h=Z),n=m(h.indexOf(o),0),l.V(h[n]),a&&(s=At(e,N),_(),a>1&&(r=mt("",s,'<svg width="15" height="15" viewBox="0 0 20 20" aria-role="none"><path d="M10 1L5 8h10l-5-7zm0 18l5-7H5l5 7z"></path></svg>',{},i.buttons.changeFormat),W(r,B,b)));},L(t){ct(i||{},((e,s)=>{s.value=t[e]+"";}));}}})(t,C),G=((t,e)=>{let s,o;return {$({swatches:r,toggleSwatches:n,i18n:{buttons:i}}){lt(r)&&(s=yt(s),o=yt(o),r.length&&(s=$t(d,e),r.forEach((t=>{Ct(mt(u,s,"",{},i.swatch,Y(t)?t:zt(t,!0)),z,zt(t,!0));})),n&&(o=mt(w,e,'<svg width="20" height="20" viewBox="0 0 24 24" aria-role="none"><path d="M6.984 14.016l5.016-5.016 5.016 5.016h-10.031z"></path></svg>',{},i.toggleSwatches),W(o,B,(()=>{St(s,$$1),t.u.B();}))),W(s,B,(({target:e})=>{e!==s&&t.v.M(e.style.getPropertyValue("--"+z),0,!0,!0);}))));}}})(t,y);let J,Q=!1,et=null;return {I(e){e=e||{};const s=this,o=y.dataset,r=t.v,{id:n,color:i}=e,{theme:a,toggle:h,popover:c,target:p,disabled:g}=pt(l,e);[x,A,k,M,T,G].forEach((t=>t.$(l))),J=x._();let u=ut(p)[0]||J;Y(n)&&(y.id=n),o.theme=a,o.display=c?"popover":"block",h||s.o(!0,!0),J.style.display=c||h?"":"none",et&&(et.p(),et=null),c?et=It(u,y,J,l,s):_t(y,u,u===J?N:R),tt(i)?r.M(i):r.i({}),[J,...dt(y)].forEach((t=>{t.disabled=!!g;})),g&&(c?s.o(!1,!0):h||s.o(!0,!0));},i(t,e){const{r:s,g:o,b:r,a:n,h:i,s:a,l:l,rgb:h}=t;Ct(J,z,h),Ct(y,P,`${s},${o},${r}`),Ct(y,"a",n),Ct(A.el,"h",i),1!==e&&2!==e&&(A.C(a/100,l/100),M.L(i,n)),3!==e&&T.L(t);},o(e=!Q,s=!1){e===Q||l.disabled&&(!s||e&&l.popover)||!l.toggle&&!s||(e&&et&&et.i(),Q=e,St(y,f,e),t.k.H(Q?O:V));},t:()=>Q,B(){et&&et.i();},p(){yt(y),et&&et.p(),x.p();}}},Dt=t=>(t<16?"0":"")+t.toString(16),Ft=(t,e,s)=>(t%=12,A(255*(s-e*v(s,1-s)*m(-1,v(t-3,9-t,1))))),Pt=t=>{const e={h:0,s:0,l:0,r:0,g:0,b:0,a:1,rgb:"",hsl:"",hex:""},s=t.k.H;let o,r,n;return {O:e,i(o,r,i=!0,a){n=e.hex,rt(e,o),rt(e,a||(({h:t,s:e,l:s})=>({r:Ft(t/=30,e/=100,s/=100),g:Ft(t+8,e,s),b:Ft(t+4,e,s)}))(e)),e.s=A(e.s),e.l=A(e.l),e.rgb=Ot(e),e.hsl=Ot(e,T),e.hex=(({r:t,g:e,b:s,a:o})=>"#"+Dt(t)+Dt(e)+Dt(s)+(o<1?Dt(A(255*o)):""))(e),t.u.i(e,r),i&&n!==e.hex&&s(z,e);},M(t,o,r,n){const[i,a,l]=zt(t);let h,c;e[a]!==l&&(a===P?(h=i,c=(({r:t,g:e,b:s,a:o})=>{const r=m(t/=255,e/=255,s/=255),n=v(t,e,s),i=r-n,a=(r+n)/2;return {h:k(60*(0===i?0:r===t?(e-s)/i%6:r===e?(s-t)/i+2:r===s?(t-e)/i+4:0)),s:i?i/(1-x(2*a-1))*100:0,l:100*a,a:o}})(h)):c=i,this.i(c,o,n,h),r&&s(D,e));},A(){r=e[o];},m(){r!==e[o]&&s(D,e);},V(e){o=t.config.format=e;},S:()=>e[o]}};class Tt{static version(){return "2.0.2"}static setDefaults(e){pt(t,e);}constructor(e,s){this.config=pt({},t),this.k=(t=>{const e={[O]:[],[V]:[],[D]:[],[z]:[]};return {H(s,o=t.v.O){t.config.disabled||(e[s]||[]).forEach((e=>{e(rt({type:s,source:t},o));}));},j(t,s){e[t]&&!e[t].includes(s)&&"function"==typeof s&&e[t].push(s);},D(t,s){tt(t)?e[t]&&(tt(s)?e[t]=e[t].filter((t=>t!==s)):e[t]=[]):ct(e,(t=>{e[t]=[];}));}}})(this),this.v=Pt(this),this.u=jt(this,e),this.u.I(s);}setOptions(t){this.u.I(t);}setColor(t){return this.v.M(t),this}getColor(){return {...this.v.O}}isOpen(){return this.u.t()}open(){this.u.o(!0);}close(){this.u.o(!1);}toggle(){this.u.o();}on(t,e){this.k.j(t,e);}off(t,e){this.k.D(t,e);}addSwatches(...t){this.u.I({swatches:this.config.swatches.concat(t)});}removeSwatches(...t){this.u.I({swatches:this.config.swatches.filter(((e,s)=>!t.some((t=>st(t)?+t===s:t===e))))});}enable(){this.u.I({disabled:!1});}disable(){this.u.I({disabled:!0});}reset(){this.v.M(this.config.default);}reposition(){this.u.B();}trigger(t){this.k.H(t);}destroy(){this.u.p(),ct(this,(t=>delete this[t])),nt(this,it);}}
 
-    const { button: button$5, div: div$5, h2: h2$4, input: input$4, p: p$1, option: option$3, select: select$3 } = HTML;
+    const { button: button$6, div: div$6, h2: h2$5, input: input$4, p: p$1, option: option$4, select: select$4 } = HTML;
     let doReload = false;
-    class ThemePrompt {
+    class CustomPrompt {
         constructor(_doc, _pattern, _pattern2, _pattern3) {
             this._doc = _doc;
             this._pattern = _pattern;
             this._pattern2 = _pattern2;
             this._pattern3 = _pattern3;
-            this._themeSelect = select$3({ style: "width: 100%;" }, option$3({ value: "AbyssBox Classic" }, "AbyssBox Classic"), option$3({ value: "AbyssBox Competitive" }, "AbyssBox Competitive"), option$3({ value: "AbyssBox Light" }, "AbyssBox Light"), option$3({ value: "AbyssBox 0.8" }, "AbyssBox 0.8"), option$3({ value: "Half-Life" }, "Half-Life"), option$3({ value: "Half-Life: Source" }, "Half-Life: Source"), option$3({ value: "Doom 1993" }, "Doom 1993"), option$3({ value: "Undertale" }, "Undertale"), option$3({ value: "Scratch" }, "Scratch"), option$3({ value: "Scratch Addons" }, "Scratch Addons"), option$3({ value: "Windows Xp" }, "Windows Xp"), option$3({ value: "Frutiger Aero" }, "Frutiger Aero"), option$3({ value: "Glyde" }, "Glyde"), option$3({ value: "Terminal 2.0 (AB)" }, "Terminal 2.0 (AB)"), option$3({ value: "dark classic" }, "BeepBox Dark"), option$3({ value: "light classic" }, "BeepBox Light"), option$3({ value: "dark competition" }, "BeepBox Competition Dark"), option$3({ value: "jummbox classic" }, "JummBox Dark"), option$3({ value: "jummbox light" }, "JummBox Light"), option$3({ value: "gold light" }, "Gold Light"), option$3({ value: "forest" }, "Forest"), option$3({ value: "forest 2" }, "Forest 2"), option$3({ value: "canyon" }, "Canyon"), option$3({ value: "midnight" }, "Midnight"), option$3({ value: "beachcombing" }, "Beachcombing"), option$3({ value: "violet verdant" }, "Violet Verdant"), option$3({ value: "sunset" }, "Sunset"), option$3({ value: "autumn" }, "Autumn"), option$3({ value: "fruit" }, "Shadowfruit"), option$3({ value: "toxic" }, "Toxic"), option$3({ value: "roe" }, "Roe"), option$3({ value: "moonlight" }, "Moonlight"), option$3({ value: "portal" }, "Portal"), option$3({ value: "fusion" }, "Fusion"), option$3({ value: "inverse" }, "Inverse"), option$3({ value: "nebula" }, "Nebula"), option$3({ value: "Nebula 2" }, "Nebula 2"), option$3({ value: "roe light" }, "Roe Light"), option$3({ value: "amoled dark" }, "High Contrast Dark"), option$3({ value: "energized" }, "Energized"), option$3({ value: "neapolitan" }, "Neapolitan"), option$3({ value: "mono" }, "Poly"), option$3({ value: "blutonium" }, "Blutonium"), option$3({ value: "azur lane" }, "Azur Lane"), option$3({ value: "modbox classic" }, "Modbox"), option$3({ value: "sandbox classic" }, "Sandbox"), option$3({ value: "harrybox" }, "Haileybox"), option$3({ value: "brucebox" }, "Brucebox"), option$3({ value: "shitbox 3.0" }, "Shitbox 1.0/3.0"), option$3({ value: "shitbox 2.0" }, "Shitbox 2.0"), option$3({ value: "nerdbox" }, "NerdBox"), option$3({ value: "zefbox" }, "Zefbox"), option$3({ value: "cardboardbox classic" }, "Cardboardbox"), option$3({ value: "blubox classic" }, "Blubox"), option$3({ value: "dogebox classic" }, "Dogebox"), option$3({ value: "wackybox" }, "Wackybox"), option$3({ value: "todbox dark mode" }, "Todbox Dark Mode"), option$3({ value: "mainbox 1.0" }, "Mainbox"), option$3({ value: "microbox" }, "MicroBox"), option$3({ value: "paandorasbox" }, "PaandorasBox"), option$3({ value: "foxbox" }, "FoxBox"), option$3({ value: "midbox" }, "Midbox"), option$3({ value: "dogebox2" }, "Dogebox2"), option$3({ value: "nepbox" }, "Nepbox"), option$3({ value: "WeebBox" }, "WeebBox"), option$3({ value: "BoxBeep Dark" }, "BoxBeep Dark"), option$3({ value: "BoxBeep light" }, "BoxBeep Light"), option$3({ value: "AWeebyssBox" }, "AWeebyssBox"), option$3({ value: "Deuteranopia" }, "Deuteranopia"), option$3({ value: "Protanopia" }, "Protanopia"), option$3({ value: "Tritanopia" }, "Tritanopia"), option$3({ value: "2012 Video Tutorial" }, "2012 Video Tutorial"), option$3({ value: "I am on fire" }, "I am on fire"), option$3({ value: "custom" }, "Custom"));
             this._currentThemeProperty = "--page-margin";
             this._fileInput = input$4({ type: "file", accept: ".png,.jpg,.jpeg", text: "choose editor background image" });
             this._fileInput2 = input$4({ type: "file", accept: ".png,.jpg,.jpeg", text: "choose website background image" });
-            this._colorMenu = select$3({ style: "width: 100%;" }, option$3({ selected: true, disabled: true, hidden: false }, "Select an asset to change"), option$3({ selected: false, disabled: true, hidden: false }, "General Items"), option$3({ value: "--page-margin" }, "Page Margin"), option$3({ value: "--editor-background" }, "Editor Background"), option$3({ value: "--primary-text" }, "Primary Text"), option$3({ value: "--secondary-text" }, "Secondary Text"), option$3({ value: "--inverted-text" }, "Inverted Text"), option$3({ value: "--loop-accent" }, "Loop Accent"), option$3({ value: "--link-accent" }, "Link Accent"), option$3({ value: "--ui-widget-background" }, "UI Widget Background"), option$3({ value: "--ui-widget-focus" }, "UI Widget Focus"), option$3({ value: "--pitch-background" }, "Pitch Background"), option$3({ value: "--tonic" }, "Tonic"), option$3({ value: "--fifth-note" }, "Fifth note"), option$3({ value: "--white-piano-key" }, "White Piano Key"), option$3({ value: "--black-piano-key" }, "Black Piano Key"), option$3({ value: "--white-piano-key-text" }, "White Piano Key Text"), option$3({ value: "--black-piano-key-text" }, "Black Piano Key Text"), option$3({ selected: false, disabled: true, hidden: false }, "Track Editor Backgrounds"), option$3({ value: "--track-editor-bg-pitch" }, "Track Editor Pitch BG"), option$3({ value: "--track-editor-bg-pitch-dim" }, "Empty Track Editor Pitch BG"), option$3({ value: "--track-editor-bg-noise" }, "Track Editor Noise BG"), option$3({ value: "--track-editor-bg-noise-dim" }, "Empty Track Editor Noise BG"), option$3({ value: "--track-editor-bg-mod" }, "Track Editor Mod BG"), option$3({ value: "--track-editor-bg-mod-dim" }, "Empty Track Editor Mod BG"), option$3({ selected: false, disabled: true, hidden: false }, "Extras"), option$3({ value: "--multiplicative-mod-slider" }, "Multiplicative Mod Slider"), option$3({ value: "--overwriting-mod-slider" }, "Overwriting Mod Slider"), option$3({ value: "--indicator-primary" }, "Primary Indicator"), option$3({ value: "--indicator-secondary" }, "Secondary Indicator"), option$3({ value: "--select2-opt-group" }, "Preset Catagory Background"), option$3({ value: "--input-box-outline" }, "Input Box Outline"), option$3({ value: "--mute-button-normal" }, "Mute Button (Normal)"), option$3({ value: "--mute-button-mod" }, "Mute Button (Mod)"), option$3({ value: "--mod-label-primary" }, "Mod Label Primary"), option$3({ value: "--mod-label-secondary-text" }, "Mod Label Secondary"), option$3({ value: "--mod-label-primary-text" }, "Mod Label Primary Text"), option$3({ value: "--note-flash" }, "Note Flash"), option$3({ value: "--note-flash-secondary" }, "Note Flash Secondary"));
+            this._colorMenu = select$4({ style: "width: 100%;" }, option$4({ selected: true, disabled: true, hidden: false }, "Select an asset to change"), option$4({ selected: false, disabled: true, hidden: false }, "General Items"), option$4({ value: "--page-margin" }, "Page Margin"), option$4({ value: "--editor-background" }, "Editor Background"), option$4({ value: "--primary-text" }, "Primary Text"), option$4({ value: "--secondary-text" }, "Secondary Text"), option$4({ value: "--inverted-text" }, "Inverted Text"), option$4({ value: "--loop-accent" }, "Loop Accent"), option$4({ value: "--link-accent" }, "Link Accent"), option$4({ value: "--ui-widget-background" }, "UI Widget Background"), option$4({ value: "--ui-widget-focus" }, "UI Widget Focus"), option$4({ value: "--pitch-background" }, "Pitch Background"), option$4({ value: "--tonic" }, "Tonic"), option$4({ value: "--fifth-note" }, "Fifth note"), option$4({ value: "--white-piano-key" }, "White Piano Key"), option$4({ value: "--black-piano-key" }, "Black Piano Key"), option$4({ value: "--white-piano-key-text" }, "White Piano Key Text"), option$4({ value: "--black-piano-key-text" }, "Black Piano Key Text"), option$4({ selected: false, disabled: true, hidden: false }, "Track Editor Backgrounds"), option$4({ value: "--track-editor-bg-pitch" }, "Track Editor Pitch BG"), option$4({ value: "--track-editor-bg-pitch-dim" }, "Empty Track Editor Pitch BG"), option$4({ value: "--track-editor-bg-noise" }, "Track Editor Noise BG"), option$4({ value: "--track-editor-bg-noise-dim" }, "Empty Track Editor Noise BG"), option$4({ value: "--track-editor-bg-mod" }, "Track Editor Mod BG"), option$4({ value: "--track-editor-bg-mod-dim" }, "Empty Track Editor Mod BG"), option$4({ selected: false, disabled: true, hidden: false }, "Extras"), option$4({ value: "--multiplicative-mod-slider" }, "Multiplicative Mod Slider"), option$4({ value: "--overwriting-mod-slider" }, "Overwriting Mod Slider"), option$4({ value: "--indicator-primary" }, "Primary Indicator"), option$4({ value: "--indicator-secondary" }, "Secondary Indicator"), option$4({ value: "--select2-opt-group" }, "Preset Catagory Background"), option$4({ value: "--input-box-outline" }, "Input Box Outline"), option$4({ value: "--mute-button-normal" }, "Mute Button (Normal)"), option$4({ value: "--mute-button-mod" }, "Mute Button (Mod)"), option$4({ value: "--mod-label-primary" }, "Mod Label Primary"), option$4({ value: "--mod-label-secondary-text" }, "Mod Label Secondary"), option$4({ value: "--mod-label-primary-text" }, "Mod Label Primary Text"), option$4({ value: "--note-flash" }, "Note Flash"), option$4({ value: "--note-flash-secondary" }, "Note Flash Secondary"));
             this._colorInput = input$4({ type: "text", value: localStorage.getItem("customColors") || `:root {
 			--page-margin: black;
 			--editor-background: black;
@@ -44116,17 +46934,33 @@ You should be redirected to the song at:<br /><br />
 		}` });
             this._colorpickerInput = input$4({ type: "color", id: "colorPicker", value: "#000000", style: "width: 50%; height: 30px;" });
             this._hexColorInput = input$4({ type: "text", value: "#000000", style: "width: 25%; height: 30px;" });
-            this._cancelButton = button$5({ class: "cancelButton" });
-            this._okayButton = button$5({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this._resetButton = button$5({ style: "height: auto; min-height: var(--button-size);" }, "Reset to defaults");
-            this.container = div$5({ class: "prompt noSelection", style: "width: 500px; left: 4;" }, div$5({ class: "promptTitle" }, h2$4({ class: "set-themeExt", style: "text-align: inherit;" }, ""), h2$4({ class: "set-themeTitle" }, "Set Theme")), div$5({ style: "display: flex; flex-direction: row; align-items: center; height: 1em; justify-content: flex-end;" }, div$5({ class: "selectContainer", style: "width: 40%; margin: 0 auto;" }, this._themeSelect)), h2$4("Custom Theme Editor"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Thank you to leoV on discord for basically writing the whole system on how this works, without him this wouldn't be possible!"), p$1({ style: "text-align: left; margin: 0em auto; font-size: 26px; color: red;" }, "PLEASE READ THIS!"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Before you use the Custom Theme Editor! Setting your theme above and changing one of the assets causes your custom theme to be overwritten! Do NOT change an asset unless your current custom theme is custom or your theme will be lost!"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "To use the custom theme editor, simply use the options below!"), div$5(), p$1({ style: "text-align: left; margin: 0;" }, "Editor Background Image:", this._fileInput), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Website Background Image:", this._fileInput2), div$5(), p$1({ style: "text-align: center; margin: 1em 0;" }, this._colorMenu), p$1({ style: "text-align: center; margin: 1em 0;" }, "Pick a color: ", this._colorpickerInput), div$5({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._resetButton), p$1({ style: "text-align: center; margin: 1em 0;" }, this._colorInput), div$5({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
-            this.lastTheme = window.localStorage.getItem("colorTheme");
+            this._cancelButton = button$6({ class: "cancelButton" });
+            this._okayButton = button$6({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this._resetButton = button$6({ style: "height: auto; min-height: var(--button-size);" }, "Reset to defaults");
+            this._removeFirstImageButton = button$6({ style: "height: auto; min-height: var(--button-size); margin-bottom: 0.5em;" }, "Remove First Image");
+            this._removeSecondImageButton = button$6({ style: "height: auto; min-height: var(--button-size); margin-bottom: 0.5em;" }, "Remove Second Image");
+            this.container = div$6({ class: "prompt noSelection", style: "width: 500px; left: 4;" }, div$6({ class: "promptTitle" }, h2$5({ class: "customThemeExt", style: "text-align: inherit;" }, ""), h2$5({ class: "customThemeTitle", style: "margin-bottom: 0.5em;" }, "Custom Theme Editor")), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Thank you to leoV on discord for basically writing the whole system on how this works, without him this wouldn't be possible!"), p$1({ style: "text-align: left; margin: 0em auto; font-size: 26px; color: red;" }, "PLEASE READ THIS!"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "Before you use the Custom Theme Editor! Setting your theme above and changing one of the assets causes your custom theme to be overwritten! Do NOT change an asset unless your current custom theme is custom or your theme will be lost!"), p$1({ style: "text-align: left; margin: 0.5em 0;" }, "To use the custom theme editor, simply use the options below!"), div$6(), p$1({ style: "text-align: left; margin: 0;" }, "Editor Background Image:", this._fileInput), p$1({ style: "text-align: left;" }, "Website Background Image:", this._fileInput2), div$6(), p$1({ style: "text-align: center; margin: 1em 0;" }, this._colorMenu), p$1({ style: "text-align: center; margin: 1em 0;" }, "Pick a color: ", this._colorpickerInput), div$6({ style: "display: flex; flex-direction: column; justify-content: space-between; width: 30%; align-self: end; margin: 0.5em;" }, this._removeFirstImageButton, this._removeSecondImageButton, this._resetButton), p$1({ style: "text-align: center; margin: 1em 0;" }, this._colorInput), div$6({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
             this._close = () => {
                 this._doc.prompt = null;
                 this._doc.undo();
                 if (doReload) {
                     setTimeout(() => { window.location.reload(); }, 50);
                 }
+            };
+            this._removeCustomTheme1 = () => {
+                window.localStorage.removeItem("customTheme");
+                window.localStorage.removeItem("customThemeImageOpacity");
+                this._pattern._svg.style.backgroundImage = "";
+                document.body.style.backgroundImage = "";
+                doReload = true;
+            };
+            this._removeCustomTheme2 = () => {
+                window.localStorage.removeItem("customTheme2");
+                const secondImage = document.getElementById("secondImage");
+                if (secondImage != null) {
+                    secondImage.style.backgroundImage = "";
+                }
+                doReload = true;
             };
             this.cleanUp = () => {
                 this._okayButton.removeEventListener("click", this._close);
@@ -44150,21 +46984,6 @@ You should be redirected to the song at:<br /><br />
                 doReload = true;
                 this._close();
             };
-            this._whenKeyPressed = (event) => {
-                if (event.target.tagName != "BUTTON" && event.keyCode == 13) {
-                    this._saveChanges();
-                }
-            };
-            this._saveChanges = () => {
-                window.localStorage.setItem("colorTheme", this._themeSelect.value);
-                this._doc.prompt = null;
-                this._doc.prefs.colorTheme = this._themeSelect.value;
-                this._doc.undo();
-            };
-            this._previewTheme = () => {
-                ColorConfig.setTheme(this._themeSelect.value);
-                this._doc.notifier.changed();
-            };
             this._whenColorsChanged = () => {
                 localStorage.setItem("customColors", this._colorInput.value);
                 window.localStorage.setItem("colorTheme", "custom");
@@ -44173,6 +46992,7 @@ You should be redirected to the song at:<br /><br />
             };
             this._whenFileSelected = () => {
                 const file = this._fileInput.files[0];
+                const opacityValue = "0.2";
                 if (!file)
                     return;
                 const reader = new FileReader();
@@ -44185,6 +47005,8 @@ You should be redirected to the song at:<br /><br />
                     console.log('done');
                 });
                 reader.readAsDataURL(file);
+                localStorage.setItem("customThemeImageOpacity", opacityValue);
+                doReload = true;
             };
             this._whenColorsPicked = (ev) => {
                 ColorConfig.setThemeProperty(this._currentThemeProperty, ev.hex);
@@ -44208,10 +47030,7 @@ You should be redirected to the song at:<br /><br />
                 reader.addEventListener("load", (event) => {
                     let base64 = reader.result;
                     window.localStorage.setItem("customTheme2", base64);
-                    const value = `url("${window.localStorage.getItem('customTheme2')}")`;
                     document.body.style.backgroundImage = `url(${base64})`;
-                    this._pattern2.style.backgroundImage = value;
-                    this._pattern3.style.backgroundImage = value;
                     const secondImage = document.getElementById("secondImage");
                     if (secondImage != null) {
                         secondImage.style.backgroundImage = `url(${base64})`;
@@ -44234,21 +47053,16 @@ You should be redirected to the song at:<br /><br />
             this._resetButton.addEventListener("click", this._reset);
             this._hexColorInput.addEventListener("change", this._whenHexColorsPicked);
             this._colorMenu.addEventListener("change", this._whenMenuChanged);
-            if (this.lastTheme != null) {
-                this._themeSelect.value = this.lastTheme;
-            }
-            this._okayButton.addEventListener("click", this._saveChanges);
-            this._cancelButton.addEventListener("click", this._close);
-            this.container.addEventListener("keydown", this._whenKeyPressed);
-            this._themeSelect.addEventListener("change", this._previewTheme);
+            this._removeFirstImageButton.addEventListener("click", this._removeCustomTheme1);
+            this._removeSecondImageButton.addEventListener("click", this._removeCustomTheme2);
         }
     }
 
-    const { button: button$4, div: div$4, p, h2: h2$3, h3 } = HTML;
+    const { button: button$5, div: div$5, p, h2: h2$4, h3 } = HTML;
     class TipPrompt {
         constructor(_doc, type) {
             this._doc = _doc;
-            this._closeButton = button$4({ class: "cancelButton" });
+            this._closeButton = button$5({ class: "cancelButton" });
             this._close = () => {
                 this._doc.undo();
             };
@@ -44259,387 +47073,387 @@ You should be redirected to the song at:<br /><br />
             switch (type) {
                 case "scale":
                     {
-                        message = div$4(h2$3("Scale"), p("This setting limits the available pitches for adding notes. You may think that there's no point in limiting your choices, but the set of pitches you use has a strong influence on the mood and feel of your song, and these scales serve as guides to help you choose appropriate pitches. Don't worry, you can change the scale at any time, so you're not locked into it. Try making little melodies using all the available pitches of a scale to get a sense for how it sounds."), p("The most common scales are major and minor. Assuming your song uses all pitches in the scale and especially \"tonic\" pitches (the purple rows in the pattern editor) then major scales tend to sound more playful or optimistic, whereas minor scales sound more serious or sad."));
+                        message = div$5(h2$4("Scale"), p("This setting limits the available pitches for adding notes. You may think that there's no point in limiting your choices, but the set of pitches you use has a strong influence on the mood and feel of your song, and these scales serve as guides to help you choose appropriate pitches. Don't worry, you can change the scale at any time, so you're not locked into it. Try making little melodies using all the available pitches of a scale to get a sense for how it sounds."), p("The most common scales are major and minor. Assuming your song uses all pitches in the scale and especially \"tonic\" pitches (the purple rows in the pattern editor) then major scales tend to sound more playful or optimistic, whereas minor scales sound more serious or sad."));
                     }
                     break;
                 case "key":
                     {
-                        message = div$4(h2$3("Song Key"), p("This setting can shift the frequency of every note in your entire song up or down, keeping the \"tonic\" pitches (the brown rows in the pattern editor) aligned with the selected \"key\" pitch."), p("If you've already placed some notes but they don't emphasize \"tonic\" pitches then the selected key isn't very meaningful. You can select the \"Detect Key\" option in the key menu to automatically align the most emphasized notes with \"tonic\" pitches."));
+                        message = div$5(h2$4("Song Key"), p("This setting can shift the frequency of every note in your entire song up or down, keeping the \"tonic\" pitches (the brown rows in the pattern editor) aligned with the selected \"key\" pitch."), p("If you've already placed some notes but they don't emphasize \"tonic\" pitches then the selected key isn't very meaningful. You can select the \"Detect Key\" option in the key menu to automatically align the most emphasized notes with \"tonic\" pitches."));
                     }
                     break;
                 case "key_octave":
                     {
-                        message = div$4(h2$3("Octave"), p("This setting can shift the \"key\" by an octave, allowing you to use a B- or C+ key."), p(`This goes from ${Config.octaveMin} to ${Config.octaveMax}.`));
+                        message = div$5(h2$4("Octave"), p("This setting can shift the \"key\" by an octave, allowing you to use a B- or C+ key."), p(`This goes from ${Config.octaveMin} to ${Config.octaveMax}.`));
                     }
                     break;
                 case "tempo":
                     {
-                        message = div$4(h2$3("Song Tempo"), p("This setting controls the speed of your song, measured in beats-per-minute. A \"beat\" is the duration of the little gray rectangles in the pattern editor. (In conventional music notation, a \"quarter note\" is usually equivalent to \"beat\".)"));
+                        message = div$5(h2$4("Song Tempo"), p("This setting controls the speed of your song, measured in beats-per-minute. A \"beat\" is the duration of the little gray rectangles in the pattern editor. (In conventional music notation, a \"quarter note\" is usually equivalent to \"beat\".)"));
                     }
                     break;
                 case "reverb":
                     {
-                        message = div$4(h2$3("Reverb"), p("Reverb is like a continuous echo effect. A little bit helps instruments sound more natural. Adding a lot of reverb can add sense of depth or mystery, but too much reverb can kinda \"smear\" sounds so that it's harder to distinguish notes or instruments, especially for lower \"bass\" notes."));
+                        message = div$5(h2$4("Reverb"), p("Reverb is like a continuous echo effect. A little bit helps instruments sound more natural. Adding a lot of reverb can add sense of depth or mystery, but too much reverb can kinda \"smear\" sounds so that it's harder to distinguish notes or instruments, especially for lower \"bass\" notes."));
                     }
                     break;
                 case "rhythm":
                     {
-                        message = div$4(h2$3("Rhythm"), p("This setting determines how beats are divided. The pattern editor helps you align notes to fractions of a beat based on this setting."), p("If you've already placed some notes but they don't align with the selected rhythm, you can select the \"Snap Notes To Rhythm\" option in the rhythm menu to force the notes in the currently selected pattern(s) to align with the selected rhythm."));
+                        message = div$5(h2$4("Rhythm"), p("This setting determines how beats are divided. The pattern editor helps you align notes to fractions of a beat based on this setting."), p("If you've already placed some notes but they don't align with the selected rhythm, you can select the \"Snap Notes To Rhythm\" option in the rhythm menu to force the notes in the currently selected pattern(s) to align with the selected rhythm."));
                     }
                     break;
                 case "instrumentIndex":
                     {
-                        message = div$4(h2$3("Instrument Number"), p("In the \"Channel Settings\" option from UltraBox's \"Edit\" menu, there are a few ways to enable multiple instruments per channel."), p("First, you could enable multiple simultaneous instruments per channel. All of the channel's instruments will play all of the notes in the channel at the same time, and you can click an instrument number to view and edit its settings."), p("Second, you could enable different instruments per pattern. Only one of the instruments will play at any given time, but you can click the instrument number to change which instrument is used for the currently selected pattern(s)."), p("Finally, you can enable them both, in which case you can click an instrument number once to view it, and again to toggle whether the instrument is used for the currently selected pattern(s)."), p("Either way, you can click the + button to add more instruments to a channel, and you can press shift and a number key on your keyboard to select an instrument as if you had clicked the corresponding button here."));
+                        message = div$5(h2$4("Instrument Number"), p("In the \"Channel Settings\" option from UltraBox's \"Edit\" menu, there are a few ways to enable multiple instruments per channel."), p("First, you could enable multiple simultaneous instruments per channel. All of the channel's instruments will play all of the notes in the channel at the same time, and you can click an instrument number to view and edit its settings."), p("Second, you could enable different instruments per pattern. Only one of the instruments will play at any given time, but you can click the instrument number to change which instrument is used for the currently selected pattern(s)."), p("Finally, you can enable them both, in which case you can click an instrument number once to view it, and again to toggle whether the instrument is used for the currently selected pattern(s)."), p("Either way, you can click the + button to add more instruments to a channel, and you can press shift and a number key on your keyboard to select an instrument as if you had clicked the corresponding button here."));
                     }
                     break;
                 case "instrumentVolume":
                     {
-                        message = div$4(h2$3("Instrument Volume"), p("This setting controls the volume of the selected instrument without affecting the volume of the other instruments. This allows you to balance the loudness of each instrument relative to each other."), p("Please be careful when using volume settings above 0. This indicates amplification and too much of that can trip the audio limiter built into this tool. This can lead to your song sounding muffled if overused. But when used carefully, amplification can be a powerful tool!"));
+                        message = div$5(h2$4("Instrument Volume"), p("This setting controls the volume of the selected instrument without affecting the volume of the other instruments. This allows you to balance the loudness of each instrument relative to each other."), p("Please be careful when using volume settings above 0. This indicates amplification and too much of that can trip the audio limiter built into this tool. This can lead to your song sounding muffled if overused. But when used carefully, amplification can be a powerful tool!"));
                     }
                     break;
                 case "pan":
                     {
-                        message = div$4(h2$3("Instrument Panning"), p("If you're listening through headphones or some other stereo sound system, this controls the position of the instrument and where the sound is coming from, ranging from left to right."), p("As a suggestion, composers often put lead melodies, drums, and basses in the center, and spread other instruments toward either side. If too many instruments seem like they're coming from the same place, it can feel crowded and harder to distinguish individual sounds, especially if they cover a similar pitch range."));
+                        message = div$5(h2$4("Instrument Panning"), p("If you're listening through headphones or some other stereo sound system, this controls the position of the instrument and where the sound is coming from, ranging from left to right."), p("As a suggestion, composers often put lead melodies, drums, and basses in the center, and spread other instruments toward either side. If too many instruments seem like they're coming from the same place, it can feel crowded and harder to distinguish individual sounds, especially if they cover a similar pitch range."));
                     }
                     break;
                 case "panDelay":
                     {
-                        message = div$4(h2$3("Stereo Delay"), p("When panning, a slight delay is often added between the left and right ear to help make a sound feel more 'directional'. For example, in the real world your left ear will hear a sound coming from the left just slightly before the right ear."), p("This setting controls how much delay is added. When this is set to minimum, panning only affects the volume of the left/right ear without changing the delay. This can help to get a more 'uniform' feeling sound, which can be desirable for making 8-bit music."));
+                        message = div$5(h2$4("Stereo Delay"), p("When panning, a slight delay is often added between the left and right ear to help make a sound feel more 'directional'. For example, in the real world your left ear will hear a sound coming from the left just slightly before the right ear."), p("This setting controls how much delay is added. When this is set to minimum, panning only affects the volume of the left/right ear without changing the delay. This can help to get a more 'uniform' feeling sound, which can be desirable for making 8-bit music."));
                     }
                     break;
                 case "arpeggioSpeed":
                     {
-                        message = div$4(h2$3("Arpeggio Speed"), p("This setting affects how fast your chord will 'arpeggiate', or cycle between notes. With a fast arpeggio speed it will sound rapid-fire, with a slow speed you can hear each note one after another."));
+                        message = div$5(h2$4("Arpeggio Speed"), p("This setting affects how fast your chord will 'arpeggiate', or cycle between notes. With a fast arpeggio speed it will sound rapid-fire, with a slow speed you can hear each note one after another."));
                     }
                     break;
                 case "twoNoteArpeggio":
                     {
-                        message = div$4(h2$3("Faster Two-Note Arpeggio"), p("This setting makes arpeggios with only two notes in them happen twice as fast. Arpeggios with more notes in them are unaffected."));
+                        message = div$5(h2$4("Faster Two-Note Arpeggio"), p("This setting makes arpeggios with only two notes in them happen twice as fast. Arpeggios with more notes in them are unaffected."));
                     }
                     break;
                 case "detune":
                     {
-                        message = div$4(h2$3("Detune"), p("This setting can be used to finely control the pitch of your instrument. It is in units of 'cents', 100 of which equal a pitch shift of one semitone."), p("Careful - you can quickly get very dissonant sounding songs by using this setting."));
+                        message = div$5(h2$4("Detune"), p("This setting can be used to finely control the pitch of your instrument. It is in units of 'cents', 100 of which equal a pitch shift of one semitone."), p("Careful - you can quickly get very dissonant sounding songs by using this setting."));
                     }
                     break;
                 case "instrumentType":
                     {
-                        message = div$4(h2$3("Instrument Type"), p("UltraBox comes with many instrument presets, try them out! You can also create your own custom instruments!"), p("There are also options for copying and pasting instrument settings and for generating random instruments at the top of the instrument type menu."));
+                        message = div$5(h2$4("Instrument Type"), p("UltraBox comes with many instrument presets, try them out! You can also create your own custom instruments!"), p("There are also options for copying and pasting instrument settings and for generating random instruments at the top of the instrument type menu."));
                     }
                     break;
                 case "eqFilter":
                     {
-                        message = div$4(h2$3("EQ Filter"), p("Filters are a way of emphasizing or diminishing different parts of a sound. Musical notes have a fundamental (base) frequency, but the sound of a musical note also has parts at higher frequencies and filters can adjust the volume of each of these parts based on their frequency."), p("Click in the filter editor to insert, delete, or drag a filter control point. The horizontal position of the point determines which frequencies it affects, and the vertical position determines how the volume is affected at that frequency."), p("Insert a new point on the left side of the filter editor to add a \"high-pass\" filter point, which additionally reduces the volume of lower frequencies, or insert a new point on the right side to add a \"low-pass\" filter point which reduces the volume of higher frequencies."), p("You can also enable a \"Note Filter\" as an effect. EQ and note filters are mostly the same, but have different purposes. EQ filters are for overall adjustments, whereas note filters are for dynamic control and can be moved with envelopes. Note filters also change how the distortion effect sounds."));
+                        message = div$5(h2$4("EQ Filter"), p("Filters are a way of emphasizing or diminishing different parts of a sound. Musical notes have a fundamental (base) frequency, but the sound of a musical note also has parts at higher frequencies and filters can adjust the volume of each of these parts based on their frequency."), p("Click in the filter editor to insert, delete, or drag a filter control point. The horizontal position of the point determines which frequencies it affects, and the vertical position determines how the volume is affected at that frequency."), p("Insert a new point on the left side of the filter editor to add a \"high-pass\" filter point, which additionally reduces the volume of lower frequencies, or insert a new point on the right side to add a \"low-pass\" filter point which reduces the volume of higher frequencies."), p("You can also enable a \"Note Filter\" as an effect. EQ and note filters are mostly the same, but have different purposes. EQ filters are for overall adjustments, whereas note filters are for dynamic control and can be moved with envelopes. Note filters also change how the distortion effect sounds."));
                     }
                     break;
                 case "noteFilter":
                     {
-                        message = div$4(h2$3("Note Filter"), p("Note filters are mostly the same as EQ filters, but have a different purpose. EQ filters are for overall adjustments, whereas note filters are for dynamic control and can be moved with envelopes. Note filters also change how the distortion effect sounds."), p("Filters are a way of emphasizing or diminishing different parts of a sound. Musical notes have a fundamental (base) frequency, but the sound of a musical note also has parts at higher frequencies and filters can adjust the volume of each of these parts based on their frequency."), p("Click in the filter editor to insert, delete, or drag a filter control point. The horizontal position of the point determines which frequencies it affects, and the vertical position determines how the volume is affected at that frequency."), p("Insert a new point on the left side of the filter editor to add a \"high-pass\" filter point, which additionally reduces the volume of lower frequencies, or insert a new point on the right side to add a \"low-pass\" filter point which reduces the volume of higher frequencies."));
+                        message = div$5(h2$4("Note Filter"), p("Note filters are mostly the same as EQ filters, but have a different purpose. EQ filters are for overall adjustments, whereas note filters are for dynamic control and can be moved with envelopes. Note filters also change how the distortion effect sounds."), p("Filters are a way of emphasizing or diminishing different parts of a sound. Musical notes have a fundamental (base) frequency, but the sound of a musical note also has parts at higher frequencies and filters can adjust the volume of each of these parts based on their frequency."), p("Click in the filter editor to insert, delete, or drag a filter control point. The horizontal position of the point determines which frequencies it affects, and the vertical position determines how the volume is affected at that frequency."), p("Insert a new point on the left side of the filter editor to add a \"high-pass\" filter point, which additionally reduces the volume of lower frequencies, or insert a new point on the right side to add a \"low-pass\" filter point which reduces the volume of higher frequencies."));
                     }
                     break;
                 case "fadeInOut":
                     {
-                        message = div$4(h2$3("Fade In/Out"), p("This setting controls how long it takes for notes to reach full volume at the beginning or decay to silence at the end."), p("An instant fade-in sounds like instruments that are played by hitting or plucking, whereas slower fade-ins sound like instruments that are played by blowing air."), p("You can also make the fade-out start before the note ends to leave a gap before the next note starts, or after the note ends to allow the sound of the end of the note to overlap with the start of the next note."));
+                        message = div$5(h2$4("Fade In/Out"), p("This setting controls how long it takes for notes to reach full volume at the beginning or decay to silence at the end."), p("An instant fade-in sounds like instruments that are played by hitting or plucking, whereas slower fade-ins sound like instruments that are played by blowing air."), p("You can also make the fade-out start before the note ends to leave a gap before the next note starts, or after the note ends to allow the sound of the end of the note to overlap with the start of the next note."));
                     }
                     break;
                 case "transition":
                     {
-                        message = div$4(h2$3("Transition"), p("Usually, when one note ends at the same time another begins, the old note will fade out and the new note will fade in based on the fade in/out settings, but this setting can override that, connecting the end of one note to the beginning of the next."), p("The \"interrupt\" transition makes the wave suddenly change from the old note's frequency to the new note's frequency without any fading, but still restarts envelopes at the beginning of the new note. The \"continue\" transition is similar but it doesn't even restart envelopes, and can be used to make each of the notes in a chord start or stop at different times!"), p("The \"slide\" transition makes the pitch shift quickly but not instantaneously from the old note's frequency to the new note's frequency, and softly restarts envelopes. The \"slide in pattern\" transition is the same except it doesn't connect the last note in a pattern to the first note in the next pattern."));
+                        message = div$5(h2$4("Transition"), p("Usually, when one note ends at the same time another begins, the old note will fade out and the new note will fade in based on the fade in/out settings, but this setting can override that, connecting the end of one note to the beginning of the next."), p("The \"interrupt\" transition makes the wave suddenly change from the old note's frequency to the new note's frequency without any fading, but still restarts envelopes at the beginning of the new note. The \"continue\" transition is similar but it doesn't even restart envelopes, and can be used to make each of the notes in a chord start or stop at different times!"), p("The \"slide\" transition makes the pitch shift quickly but not instantaneously from the old note's frequency to the new note's frequency, and softly restarts envelopes. The \"slide in pattern\" transition is the same except it doesn't connect the last note in a pattern to the first note in the next pattern."));
                     }
                     break;
                 case "chipWave":
                     {
-                        message = div$4(h2$3("Chip Wave"), p("UltraBox comes with some sound waves based on classic electronic sound chips, as well as several unique waves. This is the basic source of the sound of the instrument, which is modified by the other instrument settings."));
+                        message = div$5(h2$4("Chip Wave"), p("UltraBox comes with some sound waves based on classic electronic sound chips, as well as several unique waves. This is the basic source of the sound of the instrument, which is modified by the other instrument settings."));
                     }
                     break;
                 case "chipNoise":
                     {
-                        message = div$4(h2$3("Noise"), p("UltraBox comes with several basic noise sounds. These do not have any distinct musical pitch, and can be used like drums to create beats and emphasize your song's rhythm."));
+                        message = div$5(h2$4("Noise"), p("UltraBox comes with several basic noise sounds. These do not have any distinct musical pitch, and can be used like drums to create beats and emphasize your song's rhythm."));
                     }
                     break;
                 case "supersawDynamism":
                     {
-                        message = div$4(h2$3("Supersaw Dynamism"), p("A supersaw is a combination of many sawtooth waves, and this setting controls the contribution of extra sawtooth waves."), p("At the low end of the slider, only the first wave is contributing to the sound, which sounds like an ordinary static sawtooth wave. At the maximum setting, all of the waves are contributing equally and the resulting tone can randomly shift depending on how the waves line up with each other, similar to the \"unison\" and \"chorus\" settings."));
+                        message = div$5(h2$4("Supersaw Dynamism"), p("A supersaw is a combination of many sawtooth waves, and this setting controls the contribution of extra sawtooth waves."), p("At the low end of the slider, only the first wave is contributing to the sound, which sounds like an ordinary static sawtooth wave. At the maximum setting, all of the waves are contributing equally and the resulting tone can randomly shift depending on how the waves line up with each other, similar to the \"unison\" and \"chorus\" settings."));
                     }
                     break;
                 case "supersawSpread":
                     {
-                        message = div$4(h2$3("Supersaw Spread"), p("A supersaw is a combination of many sawtooth waves, and this setting controls the distance between their frequencies. The dynamism setting must be used for the extra waves to have any effect."), p("At the low end of the spread slider, all of the voices have the same frequency but random phase, resulting in a different sound every time a note starts. In the middle, the waves all have slightly different frequencies that shift in and out of phase over time similar to the \"unison\" and \"chorus\" settings, creating a classic supersaw sound. At the extreme end, the frequencies are so far apart they sound dissonant."));
+                        message = div$5(h2$4("Supersaw Spread"), p("A supersaw is a combination of many sawtooth waves, and this setting controls the distance between their frequencies. The dynamism setting must be used for the extra waves to have any effect."), p("At the low end of the spread slider, all of the voices have the same frequency but random phase, resulting in a different sound every time a note starts. In the middle, the waves all have slightly different frequencies that shift in and out of phase over time similar to the \"unison\" and \"chorus\" settings, creating a classic supersaw sound. At the extreme end, the frequencies are so far apart they sound dissonant."));
                     }
                     break;
                 case "supersawShape":
                     {
-                        message = div$4(h2$3("Supersaw Shape"), p("This supersaw instrument includes an option to change the shape of the waves from sawtooth waves to pulse waves. Use this setting to morph between the two shapes."), p("When a pulse wave shape is used, you can also control the pulse width with a separate setting."));
+                        message = div$5(h2$4("Supersaw Shape"), p("This supersaw instrument includes an option to change the shape of the waves from sawtooth waves to pulse waves. Use this setting to morph between the two shapes."), p("When a pulse wave shape is used, you can also control the pulse width with a separate setting."));
                     }
                     break;
                 case "pulseWidth":
                     {
-                        message = div$4(h2$3("Pulse Wave Width"), p("This setting controls the shape and sound of a pulse wave. At the minimum width, it sounds light and buzzy. At the maximum width, it is shaped like a classic square wave."));
+                        message = div$5(h2$4("Pulse Wave Width"), p("This setting controls the shape and sound of a pulse wave. At the minimum width, it sounds light and buzzy. At the maximum width, it is shaped like a classic square wave."));
                     }
                     break;
                 case "unison":
                     {
-                        message = div$4(h2$3("Unison"), p("This instrument can play two identical waves at different frequencies. When two waves play at slightly different frequencies, they move in and out of phase with each other over time as different parts of the waves line up. This creates a dynamic, shifting sound. Pianos are a common example of this kind of sound, because each piano key strikes multiple strings that are tuned to slightly different frequencies."), p("The distance between two frequencies is called an \"interval\", and this setting controls how large it is. If the interval is too wide, then the waves may sound out-of-tune and \"dissonant\". However, if the interval is even larger, then the two frequencies can even be distinct pitches."));
+                        message = div$5(h2$4("Unison"), p("This instrument can play two identical waves at different frequencies. When two waves play at slightly different frequencies, they move in and out of phase with each other over time as different parts of the waves line up. This creates a dynamic, shifting sound. Pianos are a common example of this kind of sound, because each piano key strikes multiple strings that are tuned to slightly different frequencies."), p("The distance between two frequencies is called an \"interval\", and this setting controls how large it is. If the interval is too wide, then the waves may sound out-of-tune and \"dissonant\". However, if the interval is even larger, then the two frequencies can even be distinct pitches."));
                     }
                     break;
                 case "chords":
                     {
-                        message = div$4(h2$3("Chords"), p("When multiple different notes occur at the same time, this is called a chord. Chords can be created in UltraBox's pattern editor by adding notes above or below another note."), p("This setting determines how chords are played. The standard option is \"simultaneous\" which starts playing all of the pitches in a chord at the same instant. The \"strum\" option is similar, but plays the notes starting at slightly different times. The \"arpeggio\" option is used in \"chiptune\" style music and plays a single tone that rapidly alternates between all of the pitches in the chord."), p("Some UltraBox instruments have an option called \"custom interval\" which uses the chord notes to control the interval between the waves of a single tone. This can create strange sound effects when combined with FM modulators."));
+                        message = div$5(h2$4("Chords"), p("When multiple different notes occur at the same time, this is called a chord. Chords can be created in UltraBox's pattern editor by adding notes above or below another note."), p("This setting determines how chords are played. The standard option is \"simultaneous\" which starts playing all of the pitches in a chord at the same instant. The \"strum\" option is similar, but plays the notes starting at slightly different times. The \"arpeggio\" option is used in \"chiptune\" style music and plays a single tone that rapidly alternates between all of the pitches in the chord."), p("Some UltraBox instruments have an option called \"custom interval\" which uses the chord notes to control the interval between the waves of a single tone. This can create strange sound effects when combined with FM modulators."));
                     }
                     break;
                 case "vibrato":
                     {
-                        message = div$4(h2$3("Vibrato"), p("This setting causes the frequency of a note to wobble slightly. Singers and violinists often use vibrato."));
+                        message = div$5(h2$4("Vibrato"), p("This setting causes the frequency of a note to wobble slightly. Singers and violinists often use vibrato."));
                     }
                     break;
                 case "vibratoDepth":
                     {
-                        message = div$4(h2$3("Vibrato Depth"), p("This setting affects the depth of your instrument's vibrato, making the wobbling effect sound stronger or weaker."));
+                        message = div$5(h2$4("Vibrato Depth"), p("This setting affects the depth of your instrument's vibrato, making the wobbling effect sound stronger or weaker."));
                     }
                     break;
                 case "vibratoDelay":
                     {
-                        message = div$4(h2$3("Vibrato Delay"), p("This setting changes when vibrato starts to kick in after a note is played. Vibrato is most common for long held notes and less common in short notes, so this can help you achieve that effect."));
+                        message = div$5(h2$4("Vibrato Delay"), p("This setting changes when vibrato starts to kick in after a note is played. Vibrato is most common for long held notes and less common in short notes, so this can help you achieve that effect."));
                     }
                     break;
                 case "vibratoSpeed":
                     {
-                        message = div$4(h2$3("Vibrato Speed"), p("This setting determines how fast the vibrato's up-and-down wobble effect will happen for your instrument."));
+                        message = div$5(h2$4("Vibrato Speed"), p("This setting determines how fast the vibrato's up-and-down wobble effect will happen for your instrument."));
                     }
                     break;
                 case "vibratoType":
                     {
-                        message = div$4(h2$3("Vibrato Type"), p("This determines the way vibrato causes your instrument's pitch to wobble. The normal type is smooth up and down, the shaky type is chaotic."));
+                        message = div$5(h2$4("Vibrato Type"), p("This determines the way vibrato causes your instrument's pitch to wobble. The normal type is smooth up and down, the shaky type is chaotic."));
                     }
                     break;
                 case "algorithm":
                     {
-                        message = div$4(h2$3("FM Algorithm"), p('FM Synthesis is a mysterious but powerful technique for crafting sounds, popularized by Yamaha keyboards and the Sega Genesis/Mega Drive. It may seem confusing, but try playing around with the options until you get a feel for it, or check out some of the preset examples!'), p('This FM synthesizer uses up to four waves, numbered 1, 2, 3, and 4. Each wave may have its own frequency and volume.'), p('There are two kinds of waves: "carrier" waves play a tone out loud, but "modulator" waves distort other waves instead. Wave 1 is always a carrier and plays a tone, but other waves may distort it. The "Algorithm" setting determines which waves are modulators, and which other waves those modulators distort. For example, "1←2" means that wave 2 modulates wave 1, and wave 1 plays out loud.'));
+                        message = div$5(h2$4("FM Algorithm"), p('FM Synthesis is a mysterious but powerful technique for crafting sounds, popularized by Yamaha keyboards and the Sega Genesis/Mega Drive. It may seem confusing, but try playing around with the options until you get a feel for it, or check out some of the preset examples!'), p('This FM synthesizer uses up to four waves, numbered 1, 2, 3, and 4. Each wave may have its own frequency and volume.'), p('There are two kinds of waves: "carrier" waves play a tone out loud, but "modulator" waves distort other waves instead. Wave 1 is always a carrier and plays a tone, but other waves may distort it. The "Algorithm" setting determines which waves are modulators, and which other waves those modulators distort. For example, "1←2" means that wave 2 modulates wave 1, and wave 1 plays out loud.'));
                     }
                     break;
                 case "feedbackType":
                     {
-                        message = div$4(h2$3("Feedback Type"), p('Modulators distort in one direction (like 1←2), but you can also use the feedback setting to make any wave distort in the opposite direction (1→2), or even itself (1⟲).'));
+                        message = div$5(h2$4("Feedback Type"), p('Modulators distort in one direction (like 1←2), but you can also use the feedback setting to make any wave distort in the opposite direction (1→2), or even itself (1⟲).'));
                     }
                     break;
                 case "feedbackVolume":
                     {
-                        message = div$4(h2$3("Feedback Distortion"), p("This setting controls the amount of feedback distortion based on the feedback type setting."));
+                        message = div$5(h2$4("Feedback Distortion"), p("This setting controls the amount of feedback distortion based on the feedback type setting."));
                     }
                     break;
                 case "operatorFrequency":
                     {
-                        message = div$4(h2$3("Operator Frequency"), p('This setting controls the frequency of an individual FM wave, relative to the fundamental frequency of the note. The multiplier 1× is the same as the fundamental frequency, whereas 2x would be an octave (12 semitones) above it. The frequencies with a "~" are slightly detuned and shift in and out of phase over time compared to the other frequencies.'), p('Try different combinations of a "carrier" wave and a "modulator" wave with different frequencies to get a feel for how they sound together.'));
+                        message = div$5(h2$4("Operator Frequency"), p('This setting controls the frequency of an individual FM wave, relative to the fundamental frequency of the note. The multiplier 1× is the same as the fundamental frequency, whereas 2x would be an octave (12 semitones) above it. The frequencies with a "~" are slightly detuned and shift in and out of phase over time compared to the other frequencies.'), p('Try different combinations of a "carrier" wave and a "modulator" wave with different frequencies to get a feel for how they sound together.'));
                     }
                     break;
                 case "operatorVolume":
                     {
-                        message = div$4(h2$3("Operator Volume"), p("This setting controls the volume of \"carrier\" waves, or the amount of distortion that \"modulator\" waves apply to other waves."));
+                        message = div$5(h2$4("Operator Volume"), p("This setting controls the volume of \"carrier\" waves, or the amount of distortion that \"modulator\" waves apply to other waves."));
                     }
                     break;
                 case "spectrum":
                     {
-                        message = div$4(h2$3("Spectrum"), p("This setting allows you to draw your own noise spectrum! This is good for making drum sounds."), p("If you only use certain frequencies and a soft fade in/out, it's also possible to make howling wind sounds or even musical wind instruments."), p("The left side of the spectrum editor controls the noise energy at lower frequencies, and the right side controls higher frequencies."));
+                        message = div$5(h2$4("Spectrum"), p("This setting allows you to draw your own noise spectrum! This is good for making drum sounds."), p("If you only use certain frequencies and a soft fade in/out, it's also possible to make howling wind sounds or even musical wind instruments."), p("The left side of the spectrum editor controls the noise energy at lower frequencies, and the right side controls higher frequencies."));
                     }
                     break;
                 case "harmonics":
                     {
-                        message = div$4(h2$3("Harmonics"), p("This setting allows you to design your own sound wave! Most musical waves are actually a combination of sine waves at certain frequencies, and this lets you control the volume of each sine wave individually."), p("The left side of the harmonics editor controls the sine wave volumes at lower frequencies, and the right side controls higher frequencies."));
+                        message = div$5(h2$4("Harmonics"), p("This setting allows you to design your own sound wave! Most musical waves are actually a combination of sine waves at certain frequencies, and this lets you control the volume of each sine wave individually."), p("The left side of the harmonics editor controls the sine wave volumes at lower frequencies, and the right side controls higher frequencies."));
                     }
                     break;
                 case "effects":
                     {
-                        message = div$4(h2$3("Effects"), p("UltraBox has many different kinds of special effects you can add to instruments. You can turn on multiple effects at once, and they can be configured individually. Try them all out!"));
+                        message = div$5(h2$4("Effects"), p("UltraBox has many different kinds of special effects you can add to instruments. You can turn on multiple effects at once, and they can be configured individually. Try them all out!"));
                     }
                     break;
                 case "drumsetEnvelope":
                     {
-                        message = div$4(h2$3("Drumset Envelope"), p("This drumset comes with a low-pass filter, and this setting can dynamically change the low-pass filter frequency over time. Each row in the pattern editor can have a different envelope shape."));
+                        message = div$5(h2$4("Drumset Envelope"), p("This drumset comes with a low-pass filter, and this setting can dynamically change the low-pass filter frequency over time. Each row in the pattern editor can have a different envelope shape."));
                     }
                     break;
                 case "drumsetSpectrum":
                     {
-                        message = div$4(h2$3("Drumset Spectrum"), p("This setting allows you to draw your own noise spectrum! This is good for making drumsets. Each row in the pattern editor gets its own spectrum."), p("The left side of the spectrum editor controls the noise energy at lower frequencies, and the right side controls higher frequencies."));
+                        message = div$5(h2$4("Drumset Spectrum"), p("This setting allows you to draw your own noise spectrum! This is good for making drumsets. Each row in the pattern editor gets its own spectrum."), p("The left side of the spectrum editor controls the noise energy at lower frequencies, and the right side controls higher frequencies."));
                     }
                     break;
                 case "chorus":
                     {
-                        message = div$4(h2$3("Chorus"), p("The chorus effect combines multiple copies of the instrument's sound and adds a bit of vibrato to simulate an ensemble of instruments or voices. Drag the slider to control how much chorus is added."));
+                        message = div$5(h2$4("Chorus"), p("The chorus effect combines multiple copies of the instrument's sound and adds a bit of vibrato to simulate an ensemble of instruments or voices. Drag the slider to control how much chorus is added."));
                     }
                     break;
                 case "echoSustain":
                     {
-                        message = div$4(h2$3("Echo Volume"), p("The echo effect repeats the instrument's sound after a delay. Each echo is a little bit quieter than the last, and this setting controls how much quieter."));
+                        message = div$5(h2$4("Echo Volume"), p("The echo effect repeats the instrument's sound after a delay. Each echo is a little bit quieter than the last, and this setting controls how much quieter."));
                     }
                     break;
                 case "echoDelay":
                     {
-                        message = div$4(h2$3("Echo Delay"), p("The echo effect repeats the instrument's sound after a delay, and this setting controls how long the delay is."));
+                        message = div$5(h2$4("Echo Delay"), p("The echo effect repeats the instrument's sound after a delay, and this setting controls how long the delay is."));
                     }
                     break;
                 case "pitchShift":
                     {
-                        message = div$4(h2$3("Pitch Shift"), p("This setting makes instruments play higher or lower pitches than the ones displayed in the pattern editor. Be careful that you don't confuse yourself!"), p("You can combine this with envelopes to bend pitch over time, or play multiple simultaneous instruments with different pitch shifts for interesting layered sounds."), p("The intervals created by this setting are in \"just intonation\" which means they stay in phase with the original pitch instead of shifting in and out of phase over time. If you want the shifting, add the detune effect!"));
+                        message = div$5(h2$4("Pitch Shift"), p("This setting makes instruments play higher or lower pitches than the ones displayed in the pattern editor. Be careful that you don't confuse yourself!"), p("You can combine this with envelopes to bend pitch over time, or play multiple simultaneous instruments with different pitch shifts for interesting layered sounds."), p("The intervals created by this setting are in \"just intonation\" which means they stay in phase with the original pitch instead of shifting in and out of phase over time. If you want the shifting, add the detune effect!"));
                     }
                     break;
                 case "detune":
                     {
-                        message = div$4(h2$3("Detune"), p("This setting slightly adjusts the frequency of notes played by the instrument. You can use a little bit to add a pleasing shifting sound similar to the \"unison\" feature when combined with other instruments. If you use too much, then the instrument may sound unpleasantly out-of-tune."));
+                        message = div$5(h2$4("Detune"), p("This setting slightly adjusts the frequency of notes played by the instrument. You can use a little bit to add a pleasing shifting sound similar to the \"unison\" feature when combined with other instruments. If you use too much, then the instrument may sound unpleasantly out-of-tune."));
                     }
                     break;
                 case "distortion":
                     {
-                        message = div$4(h2$3("Distortion"), p("This is the famous electric guitar effect! However, there are some things to be aware of."), p("First, most chords don't sound right when combined with heavy distortion. The only chords commonly used with distorted electric guitars are \"power chords\" which consist of a root note, a \"fifth\" note above that, and/or any octaves of those two notes."), p("Second, the distortion sound depends a lot on filtering. In particular, I recommend enabling the note filter effect, and adding both high-pass and low-pass points to the note filter. (Note filters are applied first, then distortion which transforms the sound based on that filtering, then the EQ filter is applied last.)"), p("Finally, I recommend adjusting the fade-out setting to allow the end of each note to overlap a little bit with the beginning of the next, but not too much!"));
+                        message = div$5(h2$4("Distortion"), p("This is the famous electric guitar effect! However, there are some things to be aware of."), p("First, most chords don't sound right when combined with heavy distortion. The only chords commonly used with distorted electric guitars are \"power chords\" which consist of a root note, a \"fifth\" note above that, and/or any octaves of those two notes."), p("Second, the distortion sound depends a lot on filtering. In particular, I recommend enabling the note filter effect, and adding both high-pass and low-pass points to the note filter. (Note filters are applied first, then distortion which transforms the sound based on that filtering, then the EQ filter is applied last.)"), p("Finally, I recommend adjusting the fade-out setting to allow the end of each note to overlap a little bit with the beginning of the next, but not too much!"));
                     }
                     break;
                 case "bitcrusherQuantization":
                     {
-                        message = div$4(h2$3("Bitcrusher Quantization"), p("This effect makes stuff sounds harsher, artificial, and \"low quality\", which is great if that's what you're going for!"));
+                        message = div$5(h2$4("Bitcrusher Quantization"), p("This effect makes stuff sounds harsher, artificial, and \"low quality\", which is great if that's what you're going for!"));
                     }
                     break;
                 case "bitcrusherFreq":
                     {
-                        message = div$4(h2$3("Frequency Quantization"), p("The bitcrusher effect comes with an additional frequency quantization effect! This is a fun one to play with, especially when combined with the note filter effect."), p("Every other notch on this slider is aligned with the currently selected key of the song, and the in-between notches are aligned with the tritones of the key."));
+                        message = div$5(h2$4("Frequency Quantization"), p("The bitcrusher effect comes with an additional frequency quantization effect! This is a fun one to play with, especially when combined with the note filter effect."), p("Every other notch on this slider is aligned with the currently selected key of the song, and the in-between notches are aligned with the tritones of the key."));
                     }
                     break;
                 case "envelopes":
                     {
-                        message = div$4(h2$3("Envelopes"), p("Envelopes are a way to dynamically adjust various other settings over time, usually based on how long the note lasts. Press the + button to add an envelope, then use the menus below to select which setting to control and the curve of the envelope. Try different combinations to see how they sound!"), p("Most envelope curves restart from the beginning every time a new note plays. The \"note size\" option is based on the note width as drawn in the pattern editor."), p("Envelope curves move in the range from 0 to 1 (or vice versa), where 0 means as quiet as possible and 1 is the same as the corresponding position selected in the instrument settings above. If multiple envelopes are targetting the same setting, they are multiplied before applying to the setting."));
+                        message = div$5(h2$4("Envelopes"), p("Envelopes are a way to dynamically adjust various other settings over time, usually based on how long the note lasts. Press the + button to add an envelope, then use the menus below to select which setting to control and the curve of the envelope. Try different combinations to see how they sound!"), p("Most envelope curves restart from the beginning every time a new note plays. The \"note size\" option is based on the note width as drawn in the pattern editor."), p("Envelope curves move in the range from 0 to 1 (or vice versa), where 0 means as quiet as possible and 1 is the same as the corresponding position selected in the instrument settings above. If multiple envelopes are targetting the same setting, they are multiplied before applying to the setting."));
                     }
                     break;
                 case "discreteEnvelope":
                     {
-                        message = div$4(h2$3("Use Discrete Envelopes?"), p("Envelopes are usually interpolated, meaning they change continuously and smoothly. This setting, when ticked, makes envelopes not interpolate. It's a small difference, but can be helpful for some chip noises, and it's most noticeable with the 'blip' transitions."));
+                        message = div$5(h2$4("Use Discrete Envelopes?"), p("Envelopes are usually interpolated, meaning they change continuously and smoothly. This setting, when ticked, makes envelopes not interpolate. It's a small difference, but can be helpful for some chip noises, and it's most noticeable with the 'blip' transitions."));
                     }
                     break;
                 case "envelopeSpeed":
                     {
-                        message = div$4(h2$3("Envelope Speed"), p("This setting controls the speed of ALL envelopes for the instrument. Each envelope 'plays' at a certain speed, and this slider can scale it to play faster or slower. Use this to fine-tune your tremolo or how fast something decays to get just the right effect."), p("Note that, while this setting is limited in the sense that it controls all envelopes at once, you can still achieve a variety of outcomes by trying combinations of modes of each envelope type, which typically differ only in speed."));
+                        message = div$5(h2$4("Envelope Speed"), p("This setting controls the speed of ALL envelopes for the instrument. Each envelope 'plays' at a certain speed, and this slider can scale it to play faster or slower. Use this to fine-tune your tremolo or how fast something decays to get just the right effect."), p("Note that, while this setting is limited in the sense that it controls all envelopes at once, you can still achieve a variety of outcomes by trying combinations of modes of each envelope type, which typically differ only in speed."));
                     }
                     break;
                 case "usedInstrument":
                     {
-                        message = div$4(h3("'Is this instrument used somewhere else?'"), p("This indicator will light up when the instrument you're currently looking at is used in another place in your song (outside the selection)."), p("This can be useful when you're not sure if you've used the instrument before and making edits carelessly could change other parts of the song."));
+                        message = div$5(h3("'Is this instrument used somewhere else?'"), p("This indicator will light up when the instrument you're currently looking at is used in another place in your song (outside the selection)."), p("This can be useful when you're not sure if you've used the instrument before and making edits carelessly could change other parts of the song."));
                     }
                     break;
                 case "usedPattern":
                     {
-                        message = div$4(h3("'Is this pattern used somewhere else?'"), p("This indicator will light up when the pattern you're currently looking at is used in another place in your song (outside the selection)."), p("This can be useful when you're not sure if you've used the pattern before and making edits carelessly could change other parts of the song."));
+                        message = div$5(h3("'Is this pattern used somewhere else?'"), p("This indicator will light up when the pattern you're currently looking at is used in another place in your song (outside the selection)."), p("This can be useful when you're not sure if you've used the pattern before and making edits carelessly could change other parts of the song."));
                     }
                     break;
                 case "modChannel":
                     {
-                        message = div$4(h2$3("Modulator Channel"), p("Modulators can be used to change settings in your song automatically over time. This technique is also known as automation."), p("This setting controls which channel the modulators will take effect for. If you choose 'Song', you can change song-wide settings too!"));
+                        message = div$5(h2$4("Modulator Channel"), p("Modulators can be used to change settings in your song automatically over time. This technique is also known as automation."), p("This setting controls which channel the modulators will take effect for. If you choose 'Song', you can change song-wide settings too!"));
                     }
                     break;
                 case "modInstrument":
                     {
-                        message = div$4(h2$3("Modulator Instrument"), p("Modulators can be used to change settings in your song automatically over time. This technique is also known as automation."), p("This setting controls which instrument your modulator will apply to within the given channel you've chosen."), p("If you choose 'all', every instrument in the channel will be affected. If you choose 'active', just the current ones used in this pattern will be instead."), p("Note that with 'all' or 'active', effects will only be applied to instruments that the effect is applicable on. For example if an instrument does not have panning effects, modulating panning will not affect it."));
+                        message = div$5(h2$4("Modulator Instrument"), p("Modulators can be used to change settings in your song automatically over time. This technique is also known as automation."), p("This setting controls which instrument your modulator will apply to within the given channel you've chosen."), p("If you choose 'all', every instrument in the channel will be affected. If you choose 'active', just the current ones used in this pattern will be instead."), p("Note that with 'all' or 'active', effects will only be applied to instruments that the effect is applicable on. For example if an instrument does not have panning effects, modulating panning will not affect it."));
                     }
                     break;
                 case "modSet":
                     {
-                        message = div$4(h2$3("Modulator Setting"), p("This is the parameter that you want to change with this modulator. For example, if you set this to 'Tempo', you can speed up or slow down your song by laying notes in the pattern editor."), p("Note that you'll see different options if your channel is set to 'Song' versus a channel number. With 'Song', you'll see song-wide settings such as tempo. With a channel, you'll see specific instrument settings. Adding more effects to the instrument causes modulators for them to be available, so be sure to experiment!"), p("Most modulators behave as you'd expect and work just as if you were moving their associated slider. Click the '?' when you have a setting selected to get more info about it!"));
+                        message = div$5(h2$4("Modulator Setting"), p("This is the parameter that you want to change with this modulator. For example, if you set this to 'Tempo', you can speed up or slow down your song by laying notes in the pattern editor."), p("Note that you'll see different options if your channel is set to 'Song' versus a channel number. With 'Song', you'll see song-wide settings such as tempo. With a channel, you'll see specific instrument settings. Adding more effects to the instrument causes modulators for them to be available, so be sure to experiment!"), p("Most modulators behave as you'd expect and work just as if you were moving their associated slider. Click the '?' when you have a setting selected to get more info about it!"));
                     }
                     break;
                 case "modFilter":
                     {
-                        message = div$4(h2$3("Filter Target"), p("This setting specifies which parameter of your targeted filter you would like to change."), p("With the 'morph' setting, the note value for your modulator represents the number of a subfilter to 'morph' into over time. For example, dragging a note from 0 to 7 will morph from your main filter to the 7th subfilter. To change how your subfilters are set up, click the '+' button on the target filter."), p("With a Dot setting, you can fine-tune the exact location of every dot on your filter graph. Note that this is extremely intensive if you want to modulate all dots - a morph is better in that case - but this can come in handy for small adjustments."));
+                        message = div$5(h2$4("Filter Target"), p("This setting specifies which parameter of your targeted filter you would like to change."), p("With the 'morph' setting, the note value for your modulator represents the number of a subfilter to 'morph' into over time. For example, dragging a note from 0 to 7 will morph from your main filter to the 7th subfilter. To change how your subfilters are set up, click the '+' button on the target filter."), p("With a Dot setting, you can fine-tune the exact location of every dot on your filter graph. Note that this is extremely intensive if you want to modulate all dots - a morph is better in that case - but this can come in handy for small adjustments."));
                     }
                     break;
                 case "transitionBar":
                     {
-                        message = div$4(h2$3("Tie Notes Over Bars"), p("With this option ticked, notes won't transition across bars if you put notes with the same pitches at the start of the next bar. Instead they will 'tie over' and sound like one long note."));
+                        message = div$5(h2$4("Tie Notes Over Bars"), p("With this option ticked, notes won't transition across bars if you put notes with the same pitches at the start of the next bar. Instead they will 'tie over' and sound like one long note."));
                     }
                     break;
                 case "clicklessTransition":
                     {
-                        message = div$4(h2$3("Clickless Transition"), p("Sometimes, seamless and other transition types can make audible 'clicks' when changing between notes. Ticking this option will cause those clicks to be silenced as much as possible."));
+                        message = div$5(h2$4("Clickless Transition"), p("Sometimes, seamless and other transition types can make audible 'clicks' when changing between notes. Ticking this option will cause those clicks to be silenced as much as possible."));
                     }
                     break;
                 case "aliases":
                     {
-                        message = div$4(h2$3("Aliasing"), p("UltraBox applies a technique called 'anti-aliasing' to instruments normally to help them sound cleaner even at high frequencies and low sample rates."), p("When this setting is ticked that technique is disabled, so you may hear strange audio artifacts especially at high pitches and when bending notes. However, this can lend a grungy sound to an instrument that could be desirable."));
+                        message = div$5(h2$4("Aliasing"), p("UltraBox applies a technique called 'anti-aliasing' to instruments normally to help them sound cleaner even at high frequencies and low sample rates."), p("When this setting is ticked that technique is disabled, so you may hear strange audio artifacts especially at high pitches and when bending notes. However, this can lend a grungy sound to an instrument that could be desirable."));
                     }
                     break;
                 case "operatorWaveform":
                     {
-                        message = div$4(h2$3("Operator Waveform"), p('This setting controls the what kind of sound wave an individual FM wave uses.'), p('By defualt the FM synth uses sinewaves.'));
+                        message = div$5(h2$4("Operator Waveform"), p('This setting controls the what kind of sound wave an individual FM wave uses.'), p('By defualt the FM synth uses sinewaves.'));
                     }
                     break;
                 case "filterType":
                     {
-                        message = div$4(h2$3("Filter Type"), p('Toggling these buttons lets you choose between a simple filter interface with two sliders, or the more advanced filter graph.'), p('The two-slider version controls a single low-pass filter and was used in legacy versions. It is not as powerful, but if you feel overwhelmed you can start with this.'), p('Note that switching from the simple interface to the advanced interface will convert your current settings, so you can also use it as a basis for later tweaking.'));
+                        message = div$5(h2$4("Filter Type"), p('Toggling these buttons lets you choose between a simple filter interface with two sliders, or the more advanced filter graph.'), p('The two-slider version controls a single low-pass filter and was used in legacy versions. It is not as powerful, but if you feel overwhelmed you can start with this.'), p('Note that switching from the simple interface to the advanced interface will convert your current settings, so you can also use it as a basis for later tweaking.'));
                     }
                     break;
                 case "filterCutoff":
                     {
-                        message = div$4(h2$3("Low-Pass Filter Cutoff Frequency"), p("The lowest setting feels \"muffled\" or \"dark\", and the highest setting feels \"harsh\" or \"bright\"."), p("Most sounds include a range of frequencies from low to high. UltraBox instruments have a filter that allows the lowest frequencies to pass through at full volume, but can reduce the volume of the higher frequencies that are above a cutoff frequency. This setting controls the cutoff frequency and thus the range of higher frequencies that are reduced."), p("This cutoff setting also determines which frequency resonates when the resonance peak setting is used."));
+                        message = div$5(h2$4("Low-Pass Filter Cutoff Frequency"), p("The lowest setting feels \"muffled\" or \"dark\", and the highest setting feels \"harsh\" or \"bright\"."), p("Most sounds include a range of frequencies from low to high. UltraBox instruments have a filter that allows the lowest frequencies to pass through at full volume, but can reduce the volume of the higher frequencies that are above a cutoff frequency. This setting controls the cutoff frequency and thus the range of higher frequencies that are reduced."), p("This cutoff setting also determines which frequency resonates when the resonance peak setting is used."));
                     }
                     break;
                 case "filterResonance":
                     {
-                        message = div$4(h2$3("Low-Pass Filter Resonance Peak"), p("Increasing this setting emphasizes a narrow range of frequencies, based on the position of the filter cutoff setting. This can be used to imitate the resonant bodies of acoustic instruments and other interesting effects."), p("The filter preserves the volume of frequencies that are below the cutoff frequency, and reduces the volume of frequencies that are above the cutoff. If this setting is used, the filter also increases the volume of frequencies that are near the cutoff."));
+                        message = div$5(h2$4("Low-Pass Filter Resonance Peak"), p("Increasing this setting emphasizes a narrow range of frequencies, based on the position of the filter cutoff setting. This can be used to imitate the resonant bodies of acoustic instruments and other interesting effects."), p("The filter preserves the volume of frequencies that are below the cutoff frequency, and reduces the volume of frequencies that are above the cutoff. If this setting is used, the filter also increases the volume of frequencies that are near the cutoff."));
                     }
                     break;
                 case "loopControls":
                     {
-                        message = div$4(h2$3("Loop Controls"), p("This enables the use of parameters that control how a chip wave should repeat."));
+                        message = div$5(h2$4("Loop Controls"), p("This enables the use of parameters that control how a chip wave should repeat."));
                     }
                     break;
                 case "loopMode":
                     {
-                        message = div$4(h2$3("Loop Mode"), p("This sets the way the chip wave loops when its ends are reached."), p("The \"Loop\" mode is the default: when the end of the loop is reached, it will jump back to the starting point of the loop."), p("The \"Ping-Pong\" mode starts playing the chip wave backwards when the end of the loop is reached. Once it reaches the start of the loop, it will start playing forwards again, endlessly going back and forth."), p("The \"Play Once\" mode stops the chip wave once the end is reached (or the start of the loop, if it's playing backwards)."), p("The \"Play Loop Once\" mode stops the chip wave once the end of the loop is reached (or the start of the loop, if it's playing backwards)."));
+                        message = div$5(h2$4("Loop Mode"), p("This sets the way the chip wave loops when its ends are reached."), p("The \"Loop\" mode is the default: when the end of the loop is reached, it will jump back to the starting point of the loop."), p("The \"Ping-Pong\" mode starts playing the chip wave backwards when the end of the loop is reached. Once it reaches the start of the loop, it will start playing forwards again, endlessly going back and forth."), p("The \"Play Once\" mode stops the chip wave once the end is reached (or the start of the loop, if it's playing backwards)."), p("The \"Play Loop Once\" mode stops the chip wave once the end of the loop is reached (or the start of the loop, if it's playing backwards)."));
                     }
                     break;
                 case "loopStart":
                     {
-                        message = div$4(h2$3("Loop Start Point"), p("This specifies where the loop region of the chip wave starts. It's measured in \"samples\", or rather, it refers to a point on a waveform."), p("Be careful with tiny loop sizes (especially combined with high pitches), they may re-introduce aliasing even if the \"Aliasing\" checkbox is unchecked."));
+                        message = div$5(h2$4("Loop Start Point"), p("This specifies where the loop region of the chip wave starts. It's measured in \"samples\", or rather, it refers to a point on a waveform."), p("Be careful with tiny loop sizes (especially combined with high pitches), they may re-introduce aliasing even if the \"Aliasing\" checkbox is unchecked."));
                     }
                     break;
                 case "loopEnd":
                     {
-                        message = div$4(h2$3("Loop End Point"), p("This specifies where the loop region of the chip wave ends. It's measured in \"samples\", or rather, it refers to a point on a waveform."), p("The button next to the input box sets this to end of the chip wave."), p("Be careful with tiny loop sizes (especially combined with high pitches), they may re-introduce aliasing even if the \"Aliasing\" checkbox is unchecked."));
+                        message = div$5(h2$4("Loop End Point"), p("This specifies where the loop region of the chip wave ends. It's measured in \"samples\", or rather, it refers to a point on a waveform."), p("The button next to the input box sets this to end of the chip wave."), p("Be careful with tiny loop sizes (especially combined with high pitches), they may re-introduce aliasing even if the \"Aliasing\" checkbox is unchecked."));
                     }
                     break;
                 case "offset":
                     {
-                        message = div$4(h2$3("Offset"), p("This specifies where the chip wave should start playing from. You can use this to chop up a large sample, to say, turn a drum loop into a drum kit! It's measured in \"samples\", or rather, it refers to a point on a waveform."));
+                        message = div$5(h2$4("Offset"), p("This specifies where the chip wave should start playing from. You can use this to chop up a large sample, to say, turn a drum loop into a drum kit! It's measured in \"samples\", or rather, it refers to a point on a waveform."));
                     }
                     break;
                 case "backwards":
                     {
-                        message = div$4(h2$3("Backwards"), p("When set, the chip wave will start playing backwards. After checking this, you may want to adjust the offset to start from a different point that makes sense for this mode."));
+                        message = div$5(h2$4("Backwards"), p("When set, the chip wave will start playing backwards. After checking this, you may want to adjust the offset to start from a different point that makes sense for this mode."));
                     }
                     break;
                 case "decimalOffset":
                     {
-                        message = div$4(h2$3("Decimal Offset"), p("The decimal offset is subtracted from the pulse width value, enabling the use of numbers such as 12.5 or 6.25. This could be useful if you're trying to recreate the sound of old soundchips."));
+                        message = div$5(h2$4("Decimal Offset"), p("The decimal offset is subtracted from the pulse width value, enabling the use of numbers such as 12.5 or 6.25. This could be useful if you're trying to recreate the sound of old soundchips."));
                     }
                     break;
                 case "unisonVoices":
                     {
-                        message = div$4(h2$3("Unison Voices"), p("This setting controls how many voices there are in a unison. Unisons such as \"none\" or \"detune\" use 1 voice, while most other unisons use 2 voices."));
+                        message = div$5(h2$4("Unison Voices"), p("This setting controls how many voices there are in a unison. Unisons such as \"none\" or \"detune\" use 1 voice, while most other unisons use 2 voices."));
                     }
                     break;
                 case "unisonSpread":
                     {
-                        message = div$4(h2$3("Unison Spread"), p("This setting controls the distance between the two voices, in semitones. A small amount of spread causes the voice's waves to shift in and out from each other, causing a shimmering effect. Larger spread will cause the voices to act like separate notes."), p("This setting will only work correctly with two voices."));
+                        message = div$5(h2$4("Unison Spread"), p("This setting controls the distance between the two voices, in semitones. A small amount of spread causes the voice's waves to shift in and out from each other, causing a shimmering effect. Larger spread will cause the voices to act like separate notes."), p("This setting will only work correctly with two voices."));
                     }
                     break;
                 case "unisonOffset":
                     {
-                        message = div$4(h2$3("Unison Offset"), p("This setting controls the detune applied to BOTH voices, in semitones."));
+                        message = div$5(h2$4("Unison Offset"), p("This setting controls the detune applied to BOTH voices, in semitones."));
                     }
                     break;
                 case "unisonExpression":
                     {
-                        message = div$4(h2$3("Unison Expression"), p("This setting controls the unison volume. Use this if the unison makes your instrument too loud in comparison to other instruments."));
+                        message = div$5(h2$4("Unison Expression"), p("This setting controls the unison volume. Use this if the unison makes your instrument too loud in comparison to other instruments."));
                     }
                     break;
                 case "unisonSign":
                     {
-                        message = div$4(h2$3("Unison Sign"), p("This setting is a volume multiplier applied to the second voice. This setting will only work correctly with two voices."));
+                        message = div$5(h2$4("Unison Sign"), p("This setting is a volume multiplier applied to the second voice. This setting will only work correctly with two voices."));
                     }
                     break;
                 default:
@@ -44654,14 +47468,14 @@ You should be redirected to the song at:<br /><br />
                                 .replace("$HI", "" + (Config.modulators[modulator].convertRealFactor + Config.modulators[modulator].maxRawVol))));
                         }
                         pList[pList.length - 1].style.setProperty("color", "var(--secondary-text)");
-                        message = div$4(h2$3(Config.modulators[modulator].promptName), pList);
+                        message = div$5(h2$4(Config.modulators[modulator].promptName), pList);
                         break;
                     }
                     else {
                         throw new Error("Unhandled TipPrompt type: " + type);
                     }
             }
-            this.container = div$4({ class: "prompt", style: "width: 300px;" }, message, this._closeButton);
+            this.container = div$5({ class: "prompt", style: "width: 300px;" }, message, this._closeButton);
             setTimeout(() => this._closeButton.focus());
             this._closeButton.addEventListener("click", this._close);
         }
@@ -45060,7 +47874,7 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { div: div$3, input: input$3, button: button$3, h2: h2$2, select: select$2, option: option$2, canvas: canvas$1 } = HTML;
+    const { div: div$4, input: input$3, button: button$4, h2: h2$3, select: select$3, option: option$3, canvas: canvas$1 } = HTML;
     const defaultShapeFunction = (cnv, ctx, x, y, w, h) => {
         ctx.fillRect(x, y, w, h);
     };
@@ -45304,22 +48118,22 @@ You should be redirected to the song at:<br /><br />
             this._waveformContext = null;
             this._overlayCanvas = canvas$1({ width: this._waveformCanvasWidth, height: this._waveformCanvasHeight, style: "cursor: default; position: absolute; top: 0; left: 0; width: 100%;" });
             this._overlayContext = null;
-            this._waveformContainer = div$3({ style: `position: relative; margin-bottom: 0.5em; margin-left: auto; margin-right: auto; width: 100%; outline: 1px solid ${ColorConfig.uiWidgetBackground};` }, this._waveformCanvas, this._overlayCanvas);
+            this._waveformContainer = div$4({ style: `position: relative; margin-bottom: 0.5em; margin-left: auto; margin-right: auto; width: 100%; outline: 1px solid ${ColorConfig.uiWidgetBackground};` }, this._waveformCanvas, this._overlayCanvas);
             this._viewportOffsetSlider = input$3({ style: "width: 100%; flex-grow: 1; margin: 0;", type: "range", min: "0", max: "1", value: "0", step: "0.00001" });
-            this._zoomInButton = button$3({ type: "button", title: "Zoom In", style: "height: var(--button-size); margin-left: 0.5em;" }, SVG.svg({ width: "20", height: "20", viewBox: "-10 -10 20 20", "pointer-events": "none", style: "width: 100%; height: 100%;" }, SVG.circle({ cx: -1, cy: -1, r: 6, "stroke-width": 2, stroke: ColorConfig.primaryText, fill: "none" }), SVG.path({ stroke: ColorConfig.primaryText, "stroke-width": 2, d: "M 3 3 L 7 7 M -1 -4 L -1 2 M -4 -1 L 2 -1", fill: "none" })));
-            this._zoomOutButton = button$3({ type: "button", title: "Zoom Out", style: "height: var(--button-size); margin-left: 0.5em;" }, SVG.svg({ width: "20", height: "20", viewBox: "-10 -10 20 20", "pointer-events": "none", style: "width: 100%; height: 100%;" }, SVG.circle({ cx: -1, cy: -1, r: 6, "stroke-width": 2, stroke: ColorConfig.primaryText, fill: "none" }), SVG.path({ stroke: ColorConfig.primaryText, "stroke-width": 2, d: "M 3 3 L 7 7 M -4 -1 L 2 -1", fill: "none" })));
-            this._zoom100Button = button$3({ type: "button", title: "Zoom 100%", style: "height: var(--button-size); margin-left: 0.5em;" }, "100%");
-            this._loopModeSelect = select$2({ style: "width: 100%; flex-grow: 1; margin-left: 0.5em;" }, option$2({ value: 0 }, "Loop"), option$2({ value: 1 }, "Ping-Pong"), option$2({ value: 2 }, "Play Once"), option$2({ value: 3 }, "Play Loop Once"));
+            this._zoomInButton = button$4({ type: "button", title: "Zoom In", style: "height: var(--button-size); margin-left: 0.5em;" }, SVG.svg({ width: "20", height: "20", viewBox: "-10 -10 20 20", "pointer-events": "none", style: "width: 100%; height: 100%;" }, SVG.circle({ cx: -1, cy: -1, r: 6, "stroke-width": 2, stroke: ColorConfig.primaryText, fill: "none" }), SVG.path({ stroke: ColorConfig.primaryText, "stroke-width": 2, d: "M 3 3 L 7 7 M -1 -4 L -1 2 M -4 -1 L 2 -1", fill: "none" })));
+            this._zoomOutButton = button$4({ type: "button", title: "Zoom Out", style: "height: var(--button-size); margin-left: 0.5em;" }, SVG.svg({ width: "20", height: "20", viewBox: "-10 -10 20 20", "pointer-events": "none", style: "width: 100%; height: 100%;" }, SVG.circle({ cx: -1, cy: -1, r: 6, "stroke-width": 2, stroke: ColorConfig.primaryText, fill: "none" }), SVG.path({ stroke: ColorConfig.primaryText, "stroke-width": 2, d: "M 3 3 L 7 7 M -4 -1 L 2 -1", fill: "none" })));
+            this._zoom100Button = button$4({ type: "button", title: "Zoom 100%", style: "height: var(--button-size); margin-left: 0.5em;" }, "100%");
+            this._loopModeSelect = select$3({ style: "width: 100%; flex-grow: 1; margin-left: 0.5em;" }, option$3({ value: 0 }, "Loop"), option$3({ value: 1 }, "Ping-Pong"), option$3({ value: 2 }, "Play Once"), option$3({ value: 3 }, "Play Loop Once"));
             this._startOffsetStepper = input$3({ style: "flex-grow: 1; margin-left: 1em; width: 100%;", type: "number", value: this._chipWaveStartOffset, min: "0", step: "1" });
             this._loopStartStepper = input$3({ style: "flex-grow: 1; margin-left: 1em; width: 100%;", type: "number", value: this._chipWaveLoopStart, min: "0", step: "1" });
             this._loopEndStepper = input$3({ style: "flex-grow: 1; margin-left: 1em; width: 100%;", type: "number", value: this._chipWaveLoopEnd, min: "0", step: "1" });
             this._playBackwardsBox = input$3({ type: "checkbox", style: "width: 1em; padding: 0; margin-left: auto; margin-right: auto;" });
-            this._playSongButton = button$3({ style: "width: 55%;", type: "button" });
-            this._cancelButton = button$3({ class: "cancelButton" });
-            this._okayButton = button$3({ class: "okayButton", style: "width: 25%;" }, "Okay");
-            this._sampleIsLoadingMessage = div$3({ style: "margin-bottom: 0.5em; display: none;" }, "Sample is loading");
-            this._loopControlsContainer = div$3(div$3({ style: "display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, div$3({ style: `width: 100%; margin-bottom: 0.5em; text-align: center; color: ${ColorConfig.secondaryText};` }, "You can also zoom by dragging horizontally on the waveform.")), this._startOffsetHandle.canvas, this._waveformContainer, this._loopStartHandle.canvas, this._loopEndHandle.canvas, div$3({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, this._viewportOffsetSlider, this._zoomInButton, this._zoomOutButton, this._zoom100Button), div$3({ style: "display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$3({ style: `flex-shrink: 0; text-align: right: color: ${ColorConfig.primaryText}; align-self: center;` }, "Loop Mode"), this._loopModeSelect), div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$3({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Offset"), this._startOffsetStepper), div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$3({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Loop Start"), this._loopStartStepper), div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$3({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Loop End"), this._loopEndStepper), div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$3({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Backwards"), this._playBackwardsBox), div$3({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em; justify-content: center;" }, this._playSongButton)));
-            this.container = div$3({ class: "prompt noSelection", style: "width: 500px;" }, div$3(div$3({ class: "promptTitle" }, h2$2({ class: "loop-controlsExt", style: "text-align: inherit;" }, ""), h2$2({ class: "loop-controlsTitle" }, "Loop Controls")), this._sampleIsLoadingMessage, this._loopControlsContainer, div$3({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton)), this._cancelButton);
+            this._playSongButton = button$4({ style: "width: 55%;", type: "button" });
+            this._cancelButton = button$4({ class: "cancelButton" });
+            this._okayButton = button$4({ class: "okayButton", style: "width: 25%;" }, "Okay");
+            this._sampleIsLoadingMessage = div$4({ style: "margin-bottom: 0.5em; display: none;" }, "Sample is loading");
+            this._loopControlsContainer = div$4(div$4({ style: "display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, div$4({ style: `width: 100%; margin-bottom: 0.5em; text-align: center; color: ${ColorConfig.secondaryText};` }, "You can also zoom by dragging horizontally on the waveform.")), this._startOffsetHandle.canvas, this._waveformContainer, this._loopStartHandle.canvas, this._loopEndHandle.canvas, div$4({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, this._viewportOffsetSlider, this._zoomInButton, this._zoomOutButton, this._zoom100Button), div$4({ style: "display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, div$4({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$4({ style: `flex-shrink: 0; text-align: right: color: ${ColorConfig.primaryText}; align-self: center;` }, "Loop Mode"), this._loopModeSelect), div$4({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$4({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Offset"), this._startOffsetStepper), div$4({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$4({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Loop Start"), this._loopStartStepper), div$4({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$4({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Loop End"), this._loopEndStepper), div$4({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em;" }, div$4({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText}; align-self: center;` }, "Backwards"), this._playBackwardsBox), div$4({ style: "width: 100%; display: flex; flex-direction: row; margin-bottom: 0.5em; justify-content: center;" }, this._playSongButton)));
+            this.container = div$4({ class: "prompt noSelection", style: "width: 500px;" }, div$4(div$4({ class: "promptTitle" }, h2$3({ class: "loop-controlsExt", style: "text-align: inherit;" }, ""), h2$3({ class: "loop-controlsTitle" }, "Loop Controls")), this._sampleIsLoadingMessage, this._loopControlsContainer, div$4({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton)), this._cancelButton);
             this.gotMouseUp = false;
             this._waveformSampleLookup = (x) => {
                 const n = this._waveformDataLength;
@@ -45836,16 +48650,16 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { div: div$2, h2: h2$1, span: span$2, input: input$2, button: button$2 } = HTML;
+    const { div: div$3, h2: h2$2, span: span$2, input: input$2, button: button$3 } = HTML;
     class SampleLoadingStatusPrompt {
         constructor(_doc) {
             this._intervalDuration = 2000;
             this._interval = null;
             this._renderedWhenAllHaveStoppedChanging = false;
-            this._cancelButton = button$2({ class: "cancelButton" });
-            this._statusesContainer = div$2();
-            this._noSamplesMessage = div$2({ style: "margin-top: 0.5em; display: none;" }, "There's no custom samples in this song.");
-            this.container = div$2({ class: "prompt noSelection", style: "width: 350px;" }, div$2(h2$1("Sample Loading Status"), div$2({ style: "display: flex; flex-direction: column; align-items: center; margin-bottom: 0.5em;" }, this._noSamplesMessage, div$2({ style: "width: 100%; max-height: 350px; overflow-y: scroll;" }, this._statusesContainer))), this._cancelButton);
+            this._cancelButton = button$3({ class: "cancelButton" });
+            this._statusesContainer = div$3();
+            this._noSamplesMessage = div$3({ style: "margin-top: 0.5em; display: none;" }, "There's no custom samples in this song.");
+            this.container = div$3({ class: "prompt noSelection", style: "width: 350px;" }, div$3(h2$2("Sample Loading Status"), div$3({ style: "display: flex; flex-direction: column; align-items: center; margin-bottom: 0.5em;" }, this._noSamplesMessage, div$3({ style: "width: 100%; max-height: 350px; overflow-y: scroll;" }, this._statusesContainer))), this._cancelButton);
             this._close = () => {
                 this._doc.prompt = null;
                 this._doc.undo();
@@ -45890,11 +48704,11 @@ You should be redirected to the song at:<br /><br />
                     const urlDisplay = input$2({ style: `margin-left: 0.5em; color: ${ColorConfig.primaryText}; background-color: ${ColorConfig.editorBackground}; width: 100%; border: 1px solid ${ColorConfig.uiWidgetBackground}; -webkit-user-select: none; -webkit-touch-callout: none; -moz-user-select: none; -ms-user-select: none; user-select: none;`, value: url, title: url, disabled: true });
                     const loadingStatusColor = loadingStatus === "loaded" ? ColorConfig.indicatorPrimary : ColorConfig.secondaryText;
                     const loadingStatusDisplay = span$2({ style: `margin-left: 0.5em; color: ${loadingStatusColor}` }, loadingStatus);
-                    const chipWaveElement = div$2({ style: `padding: 0.6em; margin: 0.4em; border: 1px solid ${ColorConfig.uiWidgetBackground}; border-radius: 4px;` }, div$2({
+                    const chipWaveElement = div$3({ style: `padding: 0.6em; margin: 0.4em; border: 1px solid ${ColorConfig.uiWidgetBackground}; border-radius: 4px;` }, div$3({
                         class: "add-sample-prompt-sample-name",
                         style: `margin-bottom: 0.5em; color: ${ColorConfig.secondaryText}; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;`,
                         title: sampleName,
-                    }, sampleName), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, div$2({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "URL"), urlDisplay), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, div$2({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Status"), loadingStatusDisplay));
+                    }, sampleName), div$3({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, div$3({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "URL"), urlDisplay), div$3({ style: "display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 0.5em;" }, div$3({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Status"), loadingStatusDisplay));
                     this._statusesContainer.appendChild(chipWaveElement);
                 }
                 if (allHaveStoppedChanging) {
@@ -45908,29 +48722,29 @@ You should be redirected to the song at:<br /><br />
         }
     }
 
-    const { div: div$1, input: input$1, button: button$1, a, code, textarea, details, summary, span: span$1, ul, li, select: select$1, option: option$1, h2 } = HTML;
+    const { div: div$2, input: input$1, button: button$2, a, code, textarea, details, summary, span: span$1, ul, li, select: select$2, option: option$2, h2: h2$1 } = HTML;
     class AddSamplesPrompt {
         constructor(_doc) {
             this._maxSamples = 64;
             this._entries = [];
             this._entryOptionsDisplayStates = {};
-            this._cancelButton = button$1({ class: "cancelButton" });
-            this._okayButton = button$1({ class: "okayButton", style: "width: 45%;" }, "Okay");
-            this._addSampleButton = button$1({ style: "height: auto; min-height: var(--button-size);" }, "Add sample");
-            this._entryContainer = div$1();
-            this._addMultipleSamplesButton = button$1({ style: "height: auto; min-height: var(--button-size); margin-left: 0.5em;" }, "Add multiple samples");
-            this._addSamplesAreaBottom = div$1({ style: "margin-top: 0.5em;" }, this._addSampleButton, this._addMultipleSamplesButton);
+            this._cancelButton = button$2({ class: "cancelButton" });
+            this._okayButton = button$2({ class: "okayButton", style: "width: 45%;" }, "Okay");
+            this._addSampleButton = button$2({ style: "height: auto; min-height: var(--button-size);" }, "Add sample");
+            this._entryContainer = div$2();
+            this._addMultipleSamplesButton = button$2({ style: "height: auto; min-height: var(--button-size); margin-left: 0.5em;" }, "Add multiple samples");
+            this._addSamplesAreaBottom = div$2({ style: "margin-top: 0.5em;" }, this._addSampleButton, this._addMultipleSamplesButton);
             this._instructionsLink = a({ href: "#" }, "Wanna add your own samples? Click here!");
-            this._description = div$1(div$1({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "Before you ask: "), div$1({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "legacySamples", " = Pandoras Box's Samples "), div$1({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "nintariboxSamples", " = nintaribox's Samples "), div$1({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "marioPaintboxSamples", " = MarioPaintBox's Samples."), div$1({ style: "margin-bottom: 0.5em;" }, "The order of these samples is important - if you change it you'll break your song!", "Since they're sorted by which ones you added first, changing the position of the sample in the list will", "change your instruments' sample to a different sample!"), div$1({ style: "margin-bottom: 0.5em;" }, this._instructionsLink));
-            this._closeInstructionsButton = button$1({ style: "height: auto; min-height: var(--button-size); width: 100%;" }, "Close instructions");
-            this._instructionsArea = div$1({ style: "display: none; margin-top: 0; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text; overflow-y: auto;" }, div$1({ class: "promptTitle" }, h2({ class: "samplesExt", style: "text-align: inherit;" }, ""), h2({ class: "samplesTitle", style: "margin-bottom: 0.5em;" }, "Add Samples")), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "In UB and in turn AB, custom samples are loaded from arbitrary URLs."), div$1({ style: `margin-top: 0.5em; margin-bottom: 0.5em; color: ${ColorConfig.secondaryText};` }, "(Technically, the web server behind the URL needs to support ", a({ href: "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS", target: "_blank", }, "CORS"), ", but you don't need to know about that: ", " the sample just won't load if that's not the case)"), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, details(summary("Why arbitrary URLs?"), a({ href: "https://pandoras-box-archive.neptendo.repl.co/" }, "A certain BeepBox mod"), " did this with one central server, but it went down, taking down", " the samples with it, though thankfully it got archived.", " This is always an issue with servers: it may run out of space,", " stop working, and so on. With arbitrary URLs, you can always ", " change them to different ones if they stop working.")), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "As for where to upload your samples, here are some suggestions:", ul({ style: "text-align: left;" }, li(a({ href: "https://filegarden.com" }, "File Garden")), li(a({ href: "https://catbox.moe/" }, "Catbox")), li(a({ href: "https://www.dropbox.com" }, "Dropbox"), " (domain needs to be ", code("https://dl.dropboxusercontent.com"), ")"))), div$1({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "Static website hosting services may also work (such as ", a({ href: "https://pages.github.com" }, "GitHub Pages"), ")", " but those require a bit more setup."), div$1({ style: "margin-top: 0.5em; margin-bottom: 1em;" }, "Finally, if have a soundfont you'd like to get samples from, consider using this ", a({ href: "./sample_extractor.html", target: "_blank" }, "sample extractor"), "!"), div$1({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between; margin-top: 0.5em;" }, this._closeInstructionsButton));
-            this._addSamplesArea = div$1({ style: "overflow-y: auto;" }, div$1({ class: "promptTitle" }, h2({ class: "samplesExt", style: "text-align: inherit;" }, ""), h2({ class: "samplesTitle", style: "margin-bottom: 0.5em;" }, "Add Samples")), div$1({ style: "display: flex; flex-direction: column; align-items: center; margin-bottom: 0.5em;" }, this._description, div$1({ style: "width: 100%; max-height: 450px; overflow-y: scroll;" }, this._entryContainer), this._addSamplesAreaBottom), div$1({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton));
+            this._description = div$2(div$2({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "Before you ask: "), div$2({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "legacySamples", " = Pandoras Box's Samples "), div$2({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "nintariboxSamples", " = nintaribox's Samples "), div$2({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" }, "marioPaintboxSamples", " = MarioPaintBox's Samples."), div$2({ style: "margin-bottom: 0.5em;" }, "The order of these samples is important - if you change it you'll break your song!", "Since they're sorted by which ones you added first, changing the position of the sample in the list will", "change your instruments' sample to a different sample!"), div$2({ style: "margin-bottom: 0.5em;" }, this._instructionsLink));
+            this._closeInstructionsButton = button$2({ style: "height: auto; min-height: var(--button-size); width: 100%;" }, "Close instructions");
+            this._instructionsArea = div$2({ style: "display: none; margin-top: 0; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text; overflow-y: auto;" }, div$2({ class: "promptTitle" }, h2$1({ class: "samplesExt", style: "text-align: inherit;" }, ""), h2$1({ class: "samplesTitle", style: "margin-bottom: 0.5em;" }, "Add Samples")), div$2({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "In UB and in turn AB, custom samples are loaded from arbitrary URLs."), div$2({ style: `margin-top: 0.5em; margin-bottom: 0.5em; color: ${ColorConfig.secondaryText};` }, "(Technically, the web server behind the URL needs to support ", a({ href: "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS", target: "_blank", }, "CORS"), ", but you don't need to know about that: ", " the sample just won't load if that's not the case)"), div$2({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, details(summary("Why arbitrary URLs?"), a({ href: "https://pandoras-box-archive.neptendo.repl.co/" }, "A certain BeepBox mod"), " did this with one central server, but it went down, taking down", " the samples with it, though thankfully it got archived.", " This is always an issue with servers: it may run out of space,", " stop working, and so on. With arbitrary URLs, you can always ", " change them to different ones if they stop working.")), div$2({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "As for where to upload your samples, here are some suggestions:", ul({ style: "text-align: left;" }, li(a({ href: "https://filegarden.com" }, "File Garden")), li(a({ href: "https://catbox.moe/" }, "Catbox")), li(a({ href: "https://www.dropbox.com" }, "Dropbox"), " (domain needs to be ", code("https://dl.dropboxusercontent.com"), ")"))), div$2({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" }, "Static website hosting services may also work (such as ", a({ href: "https://pages.github.com" }, "GitHub Pages"), ")", " but those require a bit more setup."), div$2({ style: "margin-top: 0.5em; margin-bottom: 1em;" }, "Finally, if have a soundfont you'd like to get samples from, consider using this ", a({ href: "./sample_extractor.html", target: "_blank" }, "sample extractor"), "!"), div$2({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between; margin-top: 0.5em;" }, this._closeInstructionsButton));
+            this._addSamplesArea = div$2({ style: "overflow-y: auto;" }, div$2({ class: "promptTitle" }, h2$1({ class: "samplesExt", style: "text-align: inherit;" }, ""), h2$1({ class: "samplesTitle", style: "margin-bottom: 0.5em;" }, "Add Samples")), div$2({ style: "display: flex; flex-direction: column; align-items: center; margin-bottom: 0.5em;" }, this._description, div$2({ style: "width: 100%; max-height: 450px; overflow-y: scroll;" }, this._entryContainer), this._addSamplesAreaBottom), div$2({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton));
             this._bulkAddTextarea = textarea({
                 style: "width: 100%; height: 100%; resize: none; box-sizing: border-box;",
             });
-            this._bulkAddConfirmButton = button$1({ style: "height: auto; min-height: var(--button-size); width: 100%;" }, "Add");
-            this._bulkAddArea = div$1({ style: "display: none; overflow-y: auto;" }, h2({ style: "margin-bottom: 0.5em;" }, "Add Multiple Samples"), div$1({ style: "display: flex; flex-direction: column; align-items: center;" }, div$1(`Add one URL per line. Remember that you can only have ${this._maxSamples} samples!`), div$1({ style: `color: ${ColorConfig.secondaryText}` }, "(This supports the syntax used to store samples in the song URLs as well)"), div$1({ style: "width: 100%; height: 250px; margin-top: 0.5em; margin-bottom: 0.5em;" }, this._bulkAddTextarea)), div$1({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._bulkAddConfirmButton));
-            this.container = div$1({ class: "prompt noSelection", style: "width: 450px; max-height: calc(100% - 100px);" }, this._addSamplesArea, this._bulkAddArea, this._instructionsArea, this._cancelButton);
+            this._bulkAddConfirmButton = button$2({ style: "height: auto; min-height: var(--button-size); width: 100%;" }, "Add");
+            this._bulkAddArea = div$2({ style: "display: none; overflow-y: auto;" }, h2$1({ style: "margin-bottom: 0.5em;" }, "Add Multiple Samples"), div$2({ style: "display: flex; flex-direction: column; align-items: center;" }, div$2(`Add one URL per line. Remember that you can only have ${this._maxSamples} samples!`), div$2({ style: `color: ${ColorConfig.secondaryText}` }, "(This supports the syntax used to store samples in the song URLs as well)"), div$2({ style: "width: 100%; height: 250px; margin-top: 0.5em; margin-bottom: 0.5em;" }, this._bulkAddTextarea)), div$2({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._bulkAddConfirmButton));
+            this.container = div$2({ class: "prompt noSelection", style: "width: 450px; max-height: calc(100% - 100px);" }, this._addSamplesArea, this._bulkAddArea, this._instructionsArea, this._cancelButton);
             this.cleanUp = () => {
                 while (this._entryContainer.firstChild !== null) {
                     this._entryContainer.removeChild(this._entryContainer.firstChild);
@@ -46402,7 +49216,7 @@ You should be redirected to the song at:<br /><br />
                     const chipWaveLoopStartStepper = input$1({ style: "flex-grow: 1; margin-left: 1em; width: 100%;", type: "number", value: "" + (entry.chipWaveLoopStart != null ? entry.chipWaveLoopStart : ""), min: "0", step: "1" });
                     const chipWaveLoopEndStepper = input$1({ style: "flex-grow: 1; margin-left: 1em; width: 100%;", type: "number", value: "" + (entry.chipWaveLoopEnd != null ? entry.chipWaveLoopEnd : ""), min: "0", step: "1" });
                     const chipWaveStartOffsetStepper = input$1({ style: "flex-grow: 1; margin-left: 1em; width: 100%;", type: "number", value: "" + (entry.chipWaveStartOffset != null ? entry.chipWaveStartOffset : ""), min: "0", step: "1" });
-                    const chipWaveLoopModeSelect = select$1({ style: "width: 100%; flex-grow: 1; margin-left: 0.5em;" }, option$1({ value: -1 }, ""), option$1({ value: 0 }, "Loop"), option$1({ value: 1 }, "Ping-Pong"), option$1({ value: 2 }, "Play Once"), option$1({ value: 3 }, "Play Loop Once"));
+                    const chipWaveLoopModeSelect = select$2({ style: "width: 100%; flex-grow: 1; margin-left: 0.5em;" }, option$2({ value: -1 }, ""), option$2({ value: 0 }, "Loop"), option$2({ value: 1 }, "Ping-Pong"), option$2({ value: 2 }, "Play Once"), option$2({ value: 3 }, "Play Loop Once"));
                     if (entry.chipWaveLoopMode != null) {
                         chipWaveLoopModeSelect.value = "" + entry.chipWaveLoopMode;
                     }
@@ -46410,11 +49224,11 @@ You should be redirected to the song at:<br /><br />
                     chipWavePlayBackwardsBox.checked = entry.chipWavePlayBackwards;
                     const sampleName = this._getSampleName(entry);
                     percussionBox.checked = entry.percussion;
-                    const copyLinkPresetButton = button$1({ style: "height: auto; min-height: var(--button-size);", title: "For use with \"Add multiple samples\"" }, "Copy link preset");
-                    const removeButton = button$1({ style: "height: auto; min-height: var(--button-size); margin-left: 0.5em;" }, "Remove");
-                    const moveUpButton = button$1({ style: "height: auto; min-height: var(--button-size); margin-left: 0.5em;" }, SVG.svg({ width: "16", height: "16", viewBox: "-13 -14 26 26", "pointer-events": "none", style: "width: 100%; height: 100%;" }, SVG.path({ d: "M -6 6 L 0 -6 L 6 6 z", fill: ColorConfig.primaryText })));
-                    const moveDownButton = button$1({ style: "height: auto; min-height: var(--button-size); margin-left: 0.5em;" }, SVG.svg({ width: "16", height: "16", viewBox: "-13 -14 26 26", "pointer-events": "none", style: "width: 100%; height: 100%;" }, SVG.path({ d: "M -6 -6 L 6 -6 L 0 6 z", fill: ColorConfig.primaryText })));
-                    const optionsContainer = details({ open: optionsVisible, style: "margin-bottom: 2em; margin-top: 1em;" }, summary({ style: "margin-bottom: 1em;" }, "Options"), div$1({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$1({ style: `flex-shrink: 0; :text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "What rate to resample to" }, "Sample rate")), sampleRateStepper), div$1({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$1({ style: `text-align: right; color: ${ColorConfig.primaryText}; flex-shrink: 0;` }, span$1({ title: "Pitch where the sample is played as-is" }, "Root key")), rootKeyDisplay, rootKeyStepper), div$1({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 0.5em;" }, div$1({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Percussion (pitch doesn't change with key)"), percussionBox), div$1({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$1({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "Applies to the \"Loop Start\" loop control option of the preset created for this sample" }, "Loop Start")), chipWaveLoopStartStepper), div$1({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$1({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "Applies to the \"Loop End\" loop control option of the preset created for this sample" }, "Loop End")), chipWaveLoopEndStepper), div$1({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$1({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "Applies to the \"Offset\" loop control option of the preset created for this sample" }, "Sample Start Offset")), chipWaveStartOffsetStepper), div$1({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$1({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "Applies to the \"Loop Mode\" loop control option of the preset created for this sample" }, "Loop Mode")), chipWaveLoopModeSelect), div$1({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$1({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "Applies to the \"Backwards\" loop control option of the preset created for this sample" }, "Backwards")), chipWavePlayBackwardsBox));
+                    const copyLinkPresetButton = button$2({ style: "height: auto; min-height: var(--button-size);", title: "For use with \"Add multiple samples\"" }, "Copy link preset");
+                    const removeButton = button$2({ style: "height: auto; min-height: var(--button-size); margin-left: 0.5em;" }, "Remove");
+                    const moveUpButton = button$2({ style: "height: auto; min-height: var(--button-size); margin-left: 0.5em;" }, SVG.svg({ width: "16", height: "16", viewBox: "-13 -14 26 26", "pointer-events": "none", style: "width: 100%; height: 100%;" }, SVG.path({ d: "M -6 6 L 0 -6 L 6 6 z", fill: ColorConfig.primaryText })));
+                    const moveDownButton = button$2({ style: "height: auto; min-height: var(--button-size); margin-left: 0.5em;" }, SVG.svg({ width: "16", height: "16", viewBox: "-13 -14 26 26", "pointer-events": "none", style: "width: 100%; height: 100%;" }, SVG.path({ d: "M -6 -6 L 6 -6 L 0 6 z", fill: ColorConfig.primaryText })));
+                    const optionsContainer = details({ open: optionsVisible, style: "margin-bottom: 2em; margin-top: 1em;" }, summary({ style: "margin-bottom: 1em;" }, "Options"), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$2({ style: `flex-shrink: 0; :text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "What rate to resample to" }, "Sample rate")), sampleRateStepper), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$2({ style: `text-align: right; color: ${ColorConfig.primaryText}; flex-shrink: 0;` }, span$1({ title: "Pitch where the sample is played as-is" }, "Root key")), rootKeyDisplay, rootKeyStepper), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 0.5em;" }, div$2({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "Percussion (pitch doesn't change with key)"), percussionBox), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$2({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "Applies to the \"Loop Start\" loop control option of the preset created for this sample" }, "Loop Start")), chipWaveLoopStartStepper), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$2({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "Applies to the \"Loop End\" loop control option of the preset created for this sample" }, "Loop End")), chipWaveLoopEndStepper), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$2({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "Applies to the \"Offset\" loop control option of the preset created for this sample" }, "Sample Start Offset")), chipWaveStartOffsetStepper), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$2({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "Applies to the \"Loop Mode\" loop control option of the preset created for this sample" }, "Loop Mode")), chipWaveLoopModeSelect), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$2({ style: `flex-shrink: 0; text-align: right; color: ${ColorConfig.primaryText};` }, span$1({ title: "Applies to the \"Backwards\" loop control option of the preset created for this sample" }, "Backwards")), chipWavePlayBackwardsBox));
                     urlInput.dataset.index = "" + entryIndex;
                     sampleRateStepper.dataset.index = "" + entryIndex;
                     rootKeyStepper.dataset.index = "" + entryIndex;
@@ -46429,18 +49243,18 @@ You should be redirected to the song at:<br /><br />
                     moveUpButton.dataset.index = "" + entryIndex;
                     moveDownButton.dataset.index = "" + entryIndex;
                     optionsContainer.dataset.index = "" + entryIndex;
-                    const bottomButtons = div$1({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, copyLinkPresetButton, removeButton);
+                    const bottomButtons = div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end;" }, copyLinkPresetButton, removeButton);
                     if (canMoveUp) {
                         bottomButtons.appendChild(moveUpButton);
                     }
                     if (canMoveDown) {
                         bottomButtons.appendChild(moveDownButton);
                     }
-                    const entryElement = div$1({ style: `padding: 0.6em; margin: 0.4em; border: 1px solid ${ColorConfig.uiWidgetBackground}; border-radius: 4px;` }, div$1({
+                    const entryElement = div$2({ style: `padding: 0.6em; margin: 0.4em; border: 1px solid ${ColorConfig.uiWidgetBackground}; border-radius: 4px;` }, div$2({
                         class: "add-sample-prompt-sample-name",
                         style: `margin-bottom: 0.5em; color: ${ColorConfig.secondaryText}; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;`,
                         title: sampleName,
-                    }, sampleName), div$1({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$1({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "URL"), urlInput), optionsContainer, bottomButtons);
+                    }, sampleName), div$2({ style: "display: flex; flex-direction: row; align-items: center; justify-content: flex-end; margin-bottom: 0.5em;" }, div$2({ style: `text-align: right; color: ${ColorConfig.primaryText};` }, "URL"), urlInput), optionsContainer, bottomButtons);
                     optionsContainer.addEventListener("toggle", this._whenOptionsAreToggled);
                     urlInput.addEventListener("change", this._whenURLChanges);
                     sampleRateStepper.addEventListener("change", this._whenSampleRateChanges);
@@ -46499,6 +49313,42 @@ You should be redirected to the song at:<br /><br />
             this.container.focus({ preventScroll: true });
             if (!succeeded)
                 window.prompt("Copy this:", text);
+        }
+    }
+
+    const { button: button$1, div: div$1, h2, select: select$1, option: option$1 } = HTML;
+    class ShortenerConfigPrompt {
+        constructor(_doc) {
+            this._doc = _doc;
+            this._shortenerStrategySelect = select$1({ style: "width: 100%;" }, option$1({ value: "tinyurl" }, "tinyurl.com"), option$1({ value: "isgd" }, "is.gd"));
+            this._cancelButton = button$1({ class: "cancelButton" });
+            this._okayButton = button$1({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$1({ class: "prompt noSelection", style: "width: 250px;" }, div$1({ class: "promptTitle" }, h2({ class: "configShortenerExt", style: "text-align: inherit;" }, ""), h2({ class: "configShortenerTitle" }, "Configure Shortener")), div$1({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$1({ class: "selectContainer", style: "width: 100%;" }, this._shortenerStrategySelect)), div$1({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._close = () => {
+                this._doc.undo();
+            };
+            this.cleanUp = () => {
+                this._okayButton.removeEventListener("click", this._saveChanges);
+                this._cancelButton.removeEventListener("click", this._close);
+                this.container.removeEventListener("keydown", this._whenKeyPressed);
+            };
+            this._whenKeyPressed = (event) => {
+                if (event.target.tagName != "BUTTON" && event.keyCode == 13) {
+                    this._saveChanges();
+                }
+            };
+            this._saveChanges = () => {
+                window.localStorage.setItem("shortenerStrategySelect", this._shortenerStrategySelect.value);
+                this._doc.prompt = null;
+                this._doc.undo();
+            };
+            const lastStrategy = window.localStorage.getItem("shortenerStrategySelect");
+            if (lastStrategy != null) {
+                this._shortenerStrategySelect.value = lastStrategy;
+            }
+            this._okayButton.addEventListener("click", this._saveChanges);
+            this._cancelButton.addEventListener("click", this._close);
+            this.container.addEventListener("keydown", this._whenKeyPressed);
         }
     }
 
@@ -47056,6 +49906,15 @@ You should be redirected to the song at:<br /><br />
         constructor(_doc) {
             this._doc = _doc;
             this.prompt = null;
+            this._menuMode = 1;
+            this._instSettingMode = 1;
+            this._mobilePatternButton = button({ class: "mobilePatternButton", type: "button", style: "display:none; width: 33vw; height: 75%; left: 0; position: absolute; bottom: 0px;" });
+            this._mobileTrackButton = button({ class: "mobileTrackButton", type: "button", style: "display:none; width: 34vw; height: 60%; right: 33vw; position: absolute; bottom: 0px;" });
+            this._mobileSettingsButton = button({ class: "mobileSettingsButton", type: "button", style: "display:none; width: 33vw; height: 60%; right: 0; position: absolute; bottom: 0px;" });
+            this._mobileMenu = div({ class: "mobileMenu", style: "position: fixed; bottom: 0px; height: 20vh; width: 100vw; display:none; background: var(--editor-background); z-index: 5;" });
+            this._mobileEditMenuIcon = div({ class: "mobileEditMenuIcon" });
+            this._mobileTrackMenuIcon = div({ class: "mobileTrackMenuIcon" });
+            this._mobileSettingsMenuIcon = div({ class: "mobileSettingsMenuIcon" });
             this._keyboardLayout = new KeyboardLayout(this._doc);
             this._patternEditorPrev = new PatternEditor(this._doc, false, -1);
             this._patternEditor = new PatternEditor(this._doc, true, 0);
@@ -47071,6 +49930,10 @@ You should be redirected to the song at:<br /><br />
             this._stopButton = button({ class: "stopButton", style: "display: none;", type: "button", title: "Stop Recording (Space)" }, "Stop Recording");
             this._prevBarButton = button({ class: "prevBarButton", type: "button", title: "Previous Bar (left bracket)" });
             this._nextBarButton = button({ class: "nextBarButton", type: "button", title: "Next Bar (right bracket)" });
+            this._mobilePlayButton = button({ class: "mobilePlayButton", style: "width: 33%;", type: "button", title: "Play" });
+            this._mobilePauseButton = button({ class: "mobilePauseButton", style: "display: none; width: 33%;", type: "button", title: "Pause", });
+            this._mobilePrevBarButton = button({ class: "mobilePrevBarButton", type: "button", title: "Previous Bar", style: "width:34%" });
+            this._mobileNextBarButton = button({ class: "mobileNextBarButton", type: "button", title: "Next Bar", style: "width:33%" });
             this._volumeSlider = new Slider(input({ title: "main volume", style: "width: 5em; flex-grow: 1; margin: 0;", type: "range", min: "0", max: "75", value: "50", step: "1" }), this._doc, null, false);
             this._outVolumeBarBg = SVG.rect({ "pointer-events": "none", width: "90%", height: "50%", x: "5%", y: "25%", fill: ColorConfig.uiWidgetBackground });
             this._outVolumeBar = SVG.rect({ "pointer-events": "none", height: "50%", width: "0%", x: "5%", y: "25%", fill: "url('#volumeGrad2')" });
@@ -47082,12 +49945,12 @@ You should be redirected to the song at:<br /><br />
             this._defs = SVG.defs({}, this._gradient);
             this._volumeBarContainer = SVG.svg({ style: `touch-action: none; overflow: visible; margin: auto; max-width: 20vw;`, width: "160px", height: "100%", preserveAspectRatio: "none", viewBox: "0 0 160 12" }, this._defs, this._outVolumeBarBg, this._outVolumeBar, this._outVolumeCap);
             this._volumeBarBox = div({ class: "playback-volume-bar", style: "height: 12px; align-self: center;" }, this._volumeBarContainer);
-            this._fileMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "File"), option({ value: "new" }, "+ New Blank Song"), option({ value: "import" }, "↑ > Import Song (" + EditorConfig.ctrlSymbol + "O)"), option({ value: "export" }, "↓ > Export Song (" + EditorConfig.ctrlSymbol + "S)"), option({ value: "copyUrl" }, "⎘ Copy Song URL"), option({ value: "shareUrl" }, "⤳ Share Song URL"), option({ value: "shortenUrl" }, "… Shorten Song URL"), option({ value: "viewPlayer" }, "▶ View in Song Player"), option({ value: "copyEmbed" }, "⎘ Copy HTML Embed Code"), option({ value: "songRecovery" }, "⚠ > Recover Recent Song"));
+            this._fileMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "File"), option({ value: "new" }, "+ New Blank Song"), option({ value: "import" }, "↑ > Import Song (" + EditorConfig.ctrlSymbol + "O)"), option({ value: "export" }, "↓ > Export Song (" + EditorConfig.ctrlSymbol + "S)"), option({ value: "copyUrl" }, "⎘ Copy Song URL"), option({ value: "shareUrl" }, "⤳ Share Song URL"), option({ value: "shortenUrl" }, "… Shorten Song URL"), option({ value: "configureShortener" }, "🛠 Customize Url Shortener..."), option({ value: "viewPlayer" }, "▶ View in Song Player"), option({ value: "copyEmbed" }, "⎘ Copy HTML Embed Code"), option({ value: "songRecovery" }, "⚠ > Recover Recent Song"));
             this._editMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Edit"), option({ value: "undo" }, "Undo (Z)"), option({ value: "redo" }, "Redo (Y)"), option({ value: "copy" }, "Copy Pattern (C)"), option({ value: "pasteNotes" }, "Paste Pattern Notes (V)"), option({ value: "pasteNumbers" }, "Paste Pattern Numbers (" + EditorConfig.ctrlSymbol + "⇧V)"), option({ value: "insertBars" }, "Insert Bar (⏎)"), option({ value: "deleteBars" }, "Delete Selected Bars (⌫)"), option({ value: "insertChannel" }, "Insert Channel (" + EditorConfig.ctrlSymbol + "⏎)"), option({ value: "deleteChannel" }, "Delete Selected Channels (" + EditorConfig.ctrlSymbol + "⌫)"), option({ value: "selectChannel" }, "Select Channel (⇧A)"), option({ value: "selectAll" }, "Select All (A)"), option({ value: "duplicatePatterns" }, "Duplicate Reused Patterns (D)"), option({ value: "transposeUp" }, "Move Notes Up (+ or ⇧+)"), option({ value: "transposeDown" }, "Move Notes Down (- or ⇧-)"), option({ value: "moveNotesSideways" }, "> Move All Notes Sideways (W)"), option({ value: "generateEuclideanRhythm" }, "> Generate Euclidean Rhythm (E)"), option({ value: "beatsPerBar" }, "> Change Beats Per Bar (B)"), option({ value: "barCount" }, "> Change Song Length (L)"), option({ value: "channelSettings" }, "> Channel Settings (Q)"), option({ value: "limiterSettings" }, "> Limiter Settings (⇧L)"), option({ value: "addExternal" }, "> Add Custom Samples (⇧Q)"));
-            this._optionsMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Preferences"), optgroup({ label: "Technical" }, option({ value: "autoPlay" }, "Auto Play on Load"), option({ value: "autoFollow" }, "Auto Follow Playhead"), option({ value: "enableNotePreview" }, "Hear Added Notes"), option({ value: "notesOutsideScale" }, "Place Notes Out of Scale"), option({ value: "setDefaultScale" }, "Set Current Scale as Default"), option({ value: "alwaysFineNoteVol" }, "Always Fine Note Volume"), option({ value: "enableChannelMuting" }, "Enable Channel Muting"), option({ value: "instrumentCopyPaste" }, "Enable Copy/Paste Buttons"), option({ value: "instrumentImportExport" }, "Enable Import/Export Buttons"), option({ value: "displayBrowserUrl" }, "Enable Song Data in URL"), option({ value: "closePromptByClickoff" }, "Close prompts on click off"), option({ value: "recordingSetup" }, "Note Recording...")), optgroup({ label: "Appearance" }, option({ value: "showFifth" }, 'Highlight "Fifth" Note'), option({ value: "notesFlashWhenPlayed" }, "Notes Flash When Played (DB2)"), option({ value: "showChannels" }, "Show All Channels"), option({ value: "showScrollBar" }, "Show Octave Scroll Bar"), option({ value: "showLetters" }, "Show Piano Keys"), option({ value: "displayVolumeBar" }, "Show Playback Volume"), option({ value: "showOscilloscope" }, "Show Oscilloscope"), option({ value: "showSampleLoadingStatus" }, "Show Sample Loading Status"), option({ value: "showDescription" }, "Show Description"), option({ value: "frostedGlassBackground" }, "Use Frosted Glass Prompt Backdrops"), option({ value: "layout" }, "> Set Layout"), option({ value: "colorTheme" }, "> Set Theme")));
+            this._optionsMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Preferences"), optgroup({ label: "Technical" }, option({ value: "autoPlay" }, "Auto Play on Load"), option({ value: "autoFollow" }, "Auto Follow Playhead"), option({ value: "enableNotePreview" }, "Hear Added Notes"), option({ value: "notesOutsideScale" }, "Place Notes Out of Scale"), option({ value: "setDefaultScale" }, "Set Current Scale as Default"), option({ value: "alwaysFineNoteVol" }, "Always Fine Note Volume"), option({ value: "enableChannelMuting" }, "Enable Channel Muting"), option({ value: "instrumentCopyPaste" }, "Enable Copy/Paste Buttons"), option({ value: "instrumentImportExport" }, "Enable Import/Export Buttons"), option({ value: "displayBrowserUrl" }, "Enable Song Data in URL"), option({ value: "closePromptByClickoff" }, "Close prompts on click off"), option({ value: "oldMobileLayout" }, "Use the Old mobile layout (Reload)"), option({ value: "recordingSetup" }, "Note Recording...")), optgroup({ label: "Appearance" }, option({ value: "showFifth" }, 'Highlight "Fifth" Note'), option({ value: "notesFlashWhenPlayed" }, "Notes Flash When Played (DB2)"), option({ value: "showChannels" }, "Show All Channels"), option({ value: "showScrollBar" }, "Show Octave Scroll Bar"), option({ value: "showLetters" }, "Show Piano Keys"), option({ value: "displayVolumeBar" }, "Show Playback Volume"), option({ value: "showOscilloscope" }, "Show Oscilloscope"), option({ value: "showSampleLoadingStatus" }, "Show Sample Loading Status"), option({ value: "showDescription" }, "Show Description"), option({ value: "frostedGlassBackground" }, "Use Frosted Glass Prompt Backdrops"), option({ value: "displayShortcutButtons" }, "Display Mobile Shortcut Buttons"), option({ value: "layout" }, "> Set Layout"), option({ value: "colorTheme" }, "> Set Theme"), option({ value: "customTheme" }, "> Custom Theme")));
             this._scaleSelect = buildOptions(select(), Config.scales.map(scale => scale.name));
             this._keySelect = buildOptions(select(), Config.keys.map(key => key.name).reverse());
-            this._octaveStepper = input({ type: "number", min: Config.octaveMin, max: Config.octaveMax, value: "0" });
+            this._octaveStepper = input({ style: "width: 59.5%;", type: "number", min: Config.octaveMin, max: Config.octaveMax, value: "0" });
             this._tempoSlider = new Slider(input({ style: "margin: 0; vertical-align: middle;", type: "range", min: "1", max: "500", value: "160", step: "1" }), this._doc, (oldValue, newValue) => new ChangeTempo(this._doc, oldValue, newValue), false);
             this._tempoStepper = input({ style: "width: 4em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", type: "number", step: "1" });
             this._chorusSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.chorusRange - 1, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeChorus(this._doc, oldValue, newValue), false);
@@ -47173,11 +50036,11 @@ You should be redirected to the song at:<br /><br />
             this._supersawShapeSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.supersawShapeMax, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeSupersawShape(this._doc, oldValue, newValue), false);
             this._supersawShapeRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("supersawShape"), style: "overflow: clip;" }, "Saw↔Pulse:"), this._supersawShapeSlider.container);
             this._pulseWidthSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "1", max: Config.pulseWidthRange, value: "1", step: "1" }), this._doc, (oldValue, newValue) => new ChangePulseWidth(this._doc, oldValue, newValue), false);
-            this._pulseWidthDropdown = button({ style: "margin-right:10px; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(5) }, "▼");
+            this._pulseWidthDropdown = button({ style: "margin-left:53px; position: absolute; margin-top: 15px; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(5) }, "▼");
             this._pwmSliderInputBox = input({ style: "width: 4em; font-size: 80%;", id: "pwmSliderInputBox", type: "number", step: "1", min: "1", max: Config.pulseWidthRange, value: "1" });
-            this._pulseWidthRow = div({ class: "selectRow" }, div({}, span({ class: "tip", tabindex: "0", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("pulseWidth") }, "Pulse", div, "Width:"), div({ style: `color: ${ColorConfig.secondaryText}; margin-top: -3px;` }, this._pwmSliderInputBox)), this._pulseWidthDropdown, this._pulseWidthSlider.container);
+            this._pulseWidthRow = div({ class: "selectRow" }, div({}, span({ class: "tip", tabindex: "0", style: "height:1em; font-size: smaller; white-space: nowrap;", onclick: () => this._openPrompt("pulseWidth") }, "Pulse", div, "Width:"), div({ style: `color: ${ColorConfig.secondaryText}; margin-top: -3px;` }, this._pwmSliderInputBox)), this._pulseWidthDropdown, this._pulseWidthSlider.container);
             this._decimalOffsetSlider = new Slider(input({ style: "margin: 0; transform: scaleX(-1);", type: "range", min: "0", max: "99", value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeDecimalOffset(this._doc, oldValue, newValue), false);
-            this._decimalOffsetRow = div({ class: "selectRow" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("decimalOffset") }, "‣ Offset:"), this._decimalOffsetSlider.container);
+            this._decimalOffsetRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:10px;", onclick: () => this._openPrompt("decimalOffset") }, "‣ Offset:"), this._decimalOffsetSlider.container);
             this._pulseWidthDropdownGroup = div({ class: "editor-controls", style: "display: none;" }, this._decimalOffsetRow);
             this._pitchShiftSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.pitchShiftRange - 1, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangePitchShift(this._doc, oldValue, newValue), true);
             this._pitchShiftTonicMarkers = [div({ class: "pitchShiftMarker", style: { color: ColorConfig.tonic } }), div({ class: "pitchShiftMarker", style: { color: ColorConfig.tonic, left: "50%" } }), div({ class: "pitchShiftMarker", style: { color: ColorConfig.tonic, left: "100%" } })];
@@ -47201,16 +50064,16 @@ You should be redirected to the song at:<br /><br />
             this._unisonDropdown = button({ style: "margin-left:0em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(6) }, "▼");
             this._unisonSelect = buildOptions(select(), Config.unisons.map(unison => unison.name));
             this._unisonSelectRow = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("unison") }, "Unison:"), this._unisonDropdown, div({ class: "selectContainer", style: "width: 61.5%;" }, this._unisonSelect));
-            this._unisonVoicesInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonVoicesInputBox", type: "number", step: "1", min: 1, max: 2, value: 1 });
-            this._unisonVoicesRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonVoices") }, "‣ Voices: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonVoicesInputBox)));
-            this._unisonSpreadInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonSpreadInputBox", type: "number", step: "0.001", min: -96, max: 96, value: 0.0 });
-            this._unisonSpreadRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonSpread") }, "‣ Spread: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonSpreadInputBox)));
-            this._unisonOffsetInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonOffsetInputBox", type: "number", step: "0.001", min: -96, max: 96, value: 0.0 });
-            this._unisonOffsetRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonOffset") }, "‣ Offset: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonOffsetInputBox)));
-            this._unisonExpressionInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonExpressionInputBox", type: "number", step: "0.001", min: -2, max: 2, value: 1.4 });
-            this._unisonExpressionRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonExpression") }, "‣ Expression: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonExpressionInputBox)));
-            this._unisonSignInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonSignInputBox", type: "number", step: "0.001", min: -2, max: 2, value: 1.0 });
-            this._unisonSignRow = div({ class: "selectRow" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonSign") }, "‣ Sign: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonSignInputBox)));
+            this._unisonVoicesInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonVoicesInputBox", type: "number", step: "1", min: Config.unisonVoicesMin, max: Config.unisonVoicesMax, value: 1 });
+            this._unisonVoicesRow = div({ class: "selectRow dropFader" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonVoices") }, "‣ Voices: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonVoicesInputBox)));
+            this._unisonSpreadInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonSpreadInputBox", type: "number", step: "0.001", min: Config.unisonSpreadMin, max: Config.unisonSpreadMax, value: 0.0 });
+            this._unisonSpreadRow = div({ class: "selectRow dropFader" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonSpread") }, "‣ Spread: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonSpreadInputBox)));
+            this._unisonOffsetInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonOffsetInputBox", type: "number", step: "0.001", min: Config.unisonOffsetMin, max: Config.unisonOffsetMax, value: 0.0 });
+            this._unisonOffsetRow = div({ class: "selectRow dropFader" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonOffset") }, "‣ Offset: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonOffsetInputBox)));
+            this._unisonExpressionInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonExpressionInputBox", type: "number", step: "0.001", min: Config.unisonExpressionMin, max: Config.unisonExpressionMax, value: 1.4 });
+            this._unisonExpressionRow = div({ class: "selectRow dropFader" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonExpression") }, "‣ Volume: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonExpressionInputBox)));
+            this._unisonSignInputBox = input({ style: "width: 150%; height: 1.5em; font-size: 80%; margin-left: 0.4em; vertical-align: middle;", id: "unisonSignInputBox", type: "number", step: "0.001", min: Config.unisonSignMin, max: Config.unisonSignMax, value: 1.0 });
+            this._unisonSignRow = div({ class: "selectRow dropFader" }, div({}, span({ class: "tip", style: "height:1em; font-size: smaller;", onclick: () => this._openPrompt("unisonSign") }, "‣ Sign: "), div({ style: "color: " + ColorConfig.secondaryText + "; margin-top: -3px;" }, this._unisonSignInputBox)));
             this._unisonDropdownGroup = div({ class: "editor-controls", style: "display: none;" }, this._unisonVoicesRow, this._unisonSpreadRow, this._unisonOffsetRow, this._unisonExpressionRow, this._unisonSignRow);
             this._chordSelect = buildOptions(select(), Config.chords.map(chord => chord.name));
             this._chordDropdown = button({ style: "margin-left:0em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(2) }, "▼");
@@ -47248,7 +50111,7 @@ You should be redirected to the song at:<br /><br />
             this._envelopeSpeedSlider = new Slider(input({ style: "margin: 0;", type: "range", min: "0", max: Config.modulators.dictionary["envelope speed"].maxRawVol, value: "0", step: "1" }), this._doc, (oldValue, newValue) => new ChangeEnvelopeSpeed(this._doc, oldValue, newValue), false);
             this._envelopeSpeedRow = div({ class: "selectRow dropFader" }, span({ class: "tip", style: "margin-left:4px;", onclick: () => this._openPrompt("envelopeSpeed") }, "‣ Spd:"), this._envelopeSpeedDisplay, this._envelopeSpeedSlider.container);
             this._envelopeDropdownGroup = div({ class: "editor-controls", style: "display: none;" }, this._discreteEnvelopeRow, this._envelopeSpeedRow);
-            this._envelopeDropdown = button({ style: "margin-left:0em; margin-right: 1em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(7) }, "▼");
+            this._envelopeDropdown = button({ class: "envelopeDropdown", style: "margin-left:0em; margin-right: 1em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: () => this._toggleDropdownMenu(7) }, "▼");
             this._drumsetGroup = div({ class: "editor-controls" });
             this._modulatorGroup = div({ class: "editor-controls" });
             this._feedback6OpTypeSelect = buildOptions(select(), Config.feedbacks6Op.map(feedback => feedback.name));
@@ -47259,28 +50122,15 @@ You should be redirected to the song at:<br /><br />
             this._algorithm6OpSelectRow = div(div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("algorithm") }, "Algorithm: "), div({ class: "selectContainer" }, this._algorithm6OpSelect)), div({ style: "height:144px; display:flex; flex-direction: row; align-items:center; justify-content:center;" }, div({ style: "display:block; width:10px; margin-right: 0.2em" }, this._algorithmCanvasSwitch), div({ style: "width:144px; height:144px;" }, this._customAlgorithmCanvas.canvas)));
             this._instrumentCopyButton = button({ style: "max-width:86px; width: 86px;", class: "copyButton", title: "Copy Instrument (⇧C)" }, [
                 "Copy",
-                SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "-5 -21 26 26" }, [
-                    SVG.path({ d: "M 0 -15 L 1 -15 L 1 0 L 13 0 L 13 1 L 0 1 L 0 -15 z M 2 -1 L 2 -17 L 10 -17 L 14 -13 L 14 -1 z M 3 -2 L 13 -2 L 13 -12 L 9 -12 L 9 -16 L 3 -16 z", fill: "currentColor" }),
-                ]),
             ]);
             this._instrumentPasteButton = button({ style: "max-width:86px;", class: "pasteButton", title: "Paste Instrument (⇧V)" }, [
                 "Paste",
-                SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "0 0 26 26" }, [
-                    SVG.path({ d: "M 8 18 L 6 18 L 6 5 L 17 5 L 17 7 M 9 8 L 16 8 L 20 12 L 20 22 L 9 22 z", stroke: "currentColor", fill: "none" }),
-                    SVG.path({ d: "M 9 3 L 14 3 L 14 6 L 9 6 L 9 3 z M 16 8 L 20 12 L 16 12 L 16 8 z", fill: "currentColor", }),
-                ]),
             ]);
             this._instrumentExportButton = button({ style: "max-width:86px; width: 86px;", class: "exportInstrumentButton" }, [
                 "Export",
-                SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "0 -960 960 960" }, [
-                    SVG.path({ d: "M200-120v-40h560v40H200Zm279.231-150.769L254.615-568.462h130.769V-840h188.462v271.538h130.77L479.231-270.769Zm0-65.385 142.923-191.538h-88.308V-800H425.385v272.308h-88.308l142.154 191.538ZM480-527.692Z", fill: "currentColor" }),
-                ]),
             ]);
             this._instrumentImportButton = button({ style: "max-width:86px;", class: "importInstrumentButton" }, [
                 "Import",
-                SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 50%; margin-top: -1em; pointer-events: none;", width: "2em", height: "2em", viewBox: "0 -960 960 960" }, [
-                    SVG.path({ d: "M200-120v-40h560v40H200Zm185.384-150.769v-271.539H254.615L480-840l224.616 297.692h-130.77v271.539H385.384Zm40.001-40h108.461v-272.308h88.308L480-774.615 337.077-583.077h88.308v272.308ZM480-583.077Z", fill: "currentColor" }),
-                ]),
             ]);
             this._globalOscscope = new oscilascopeCanvas(canvas({ width: 144, height: 32, style: `border: 2px solid ${ColorConfig.uiWidgetBackground}; position: static;`, id: "oscilascopeAll" }), 1);
             this._globalOscscopeContainer = div({ style: "height: 38px; margin-left: auto; margin-right: auto;" }, this._globalOscscope.canvas);
@@ -47295,12 +50145,43 @@ You should be redirected to the song at:<br /><br />
             this._feedbackAmplitudeSlider = new Slider(input({ type: "range", min: "0", max: Config.operatorAmplitudeMax, value: "0", step: "1", title: "Feedback Amplitude" }), this._doc, (oldValue, newValue) => new ChangeFeedbackAmplitude(this._doc, oldValue, newValue), false);
             this._feedbackRow2 = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("feedbackVolume") }, "Fdback Vol:"), this._feedbackAmplitudeSlider.container);
             this._addEnvelopeButton = button({ type: "button", class: "add-envelope" });
-            this._customInstrumentSettingsGroup = div({ class: "editor-controls" }, this._panSliderRow, this._panDropdownGroup, this._chipWaveSelectRow, this._chipNoiseSelectRow, this._useChipWaveAdvancedLoopControlsRow, this._chipWaveLoopModeSelectRow, this._chipWaveLoopStartRow, this._chipWaveLoopEndRow, this._chipWaveStartOffsetRow, this._chipWavePlayBackwardsRow, this._customWaveDraw, this._eqFilterTypeRow, this._eqFilterRow, this._eqFilterSimpleCutRow, this._eqFilterSimplePeakRow, this._fadeInOutRow, this._algorithmSelectRow, this._algorithm6OpSelectRow, this._phaseModGroup, this._feedbackRow1, this._feedback6OpRow1, this._feedbackRow2, this._spectrumRow, this._harmonicsRow, this._drumsetGroup, this._supersawDynamismRow, this._supersawSpreadRow, this._supersawShapeRow, this._pulseWidthRow, this._pulseWidthDropdownGroup, this._stringSustainRow, this._unisonSelectRow, this._unisonDropdownGroup, div({ style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("effects") }, "Effects")), div({ class: "effects-menu" }, this._effectsSelect)), this._transitionRow, this._transitionDropdownGroup, this._chordSelectRow, this._chordDropdownGroup, this._pitchShiftRow, this._detuneSliderRow, this._vibratoSelectRow, this._vibratoDropdownGroup, this._noteFilterTypeRow, this._noteFilterRow, this._noteFilterSimpleCutRow, this._noteFilterSimplePeakRow, this._distortionRow, this._aliasingRow, this._bitcrusherQuantizationRow, this._bitcrusherFreqRow, this._chorusRow, this._echoSustainRow, this._echoDelayRow, this._reverbRow, div({ style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("envelopes") }, "Envelopes")), this._envelopeDropdown, this._addEnvelopeButton), this._envelopeDropdownGroup, this._envelopeEditor.container);
+            this._customInstrumentSettingsGroup = div({ class: "editor-controls" }, div({ id: "InstrumentDiv" }, this._panSliderRow, this._panDropdownGroup, this._chipWaveSelectRow, this._chipNoiseSelectRow, this._useChipWaveAdvancedLoopControlsRow, this._chipWaveLoopModeSelectRow, this._chipWaveLoopStartRow, this._chipWaveLoopEndRow, this._chipWaveStartOffsetRow, this._chipWavePlayBackwardsRow, this._customWaveDraw, this._eqFilterTypeRow, this._eqFilterRow, this._eqFilterSimpleCutRow, this._eqFilterSimplePeakRow, this._fadeInOutRow, this._algorithmSelectRow, this._algorithm6OpSelectRow, this._phaseModGroup, this._feedbackRow1, this._feedback6OpRow1, this._feedbackRow2, this._spectrumRow, this._harmonicsRow, this._drumsetGroup, this._supersawDynamismRow, this._supersawSpreadRow, this._supersawShapeRow, this._pulseWidthRow, this._pulseWidthDropdownGroup, this._stringSustainRow, this._unisonSelectRow, this._unisonDropdownGroup), div({ id: "effectsDiv" }, div({ class: "effectsNameDiv", style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("effects") }, "Effects")), div({ class: "effects-menu" }, this._effectsSelect)), div({ class: "effectsOpDiv" }, this._transitionRow, this._transitionDropdownGroup, this._chordSelectRow, this._chordDropdownGroup, this._pitchShiftRow, this._detuneSliderRow, this._vibratoSelectRow, this._vibratoDropdownGroup, this._noteFilterTypeRow, this._noteFilterRow, this._noteFilterSimpleCutRow, this._noteFilterSimplePeakRow, this._distortionRow, this._aliasingRow, this._bitcrusherQuantizationRow, this._bitcrusherFreqRow, this._chorusRow, this._echoSustainRow, this._echoDelayRow, this._reverbRow)), div({ id: "envelopesDiv" }, div({ class: "envelopesNameDiv", style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("envelopes") }, "Envelopes")), this._envelopeDropdown, this._addEnvelopeButton), div({ class: "envelopesOpDiv" }, this._envelopeDropdownGroup, this._envelopeEditor.container)));
             this._instrumentCopyGroup = div({ class: "editor-controls" }, div({ class: "selectRow" }, this._instrumentCopyButton, this._instrumentPasteButton));
             this._instrumentExportGroup = div({ class: "editor-controls" }, div({ class: "selectRow" }, this._instrumentExportButton, this._instrumentImportButton));
             this._instrumentSettingsTextRow = div({ id: "instrumentSettingsText", style: `padding: 3px 0; max-width: 15em; text-align: center; color: ${ColorConfig.secondaryText};` }, "Instrument Settings");
             this._instrumentTypeSelectRow = div({ class: "selectRow", id: "typeSelectRow" }, span({ class: "tip", onclick: () => this._openPrompt("instrumentType") }, "Type:"), div(div({ class: "pitchSelect" }, this._pitchedPresetSelect), div({ class: "drumSelect" }, this._drumPresetSelect)));
-            this._instrumentSettingsGroup = div({ class: "editor-controls" }, this._instrumentSettingsTextRow, this._instrumentsButtonRow, this._instrumentTypeSelectRow, this._instrumentVolumeSliderRow, this._customInstrumentSettingsGroup);
+            this._mobileInstSettingsButton = button({ class: "mobileInstButton", type: "button", style: "width:33%;", onclick: () => this._setSettingToInstrument() }, "Settings");
+            this._mobileEffectsButton = button({ class: "mobileEffectsButton", type: "button", style: "width:30%;", onclick: () => this._setSettingToEffect() }, "Effects");
+            this._mobileEnvelopesButton = button({ class: "mobileEnvelopesButton", type: "button", style: "width:37%;", onclick: () => this._setSettingToEnvelope() }, "Envelope");
+            this._instOptionsDiv = div({ class: "instMobileOptions", style: "display:none; padding-bottom: 4px;" }, this._mobileInstSettingsButton, this._mobileEffectsButton, this._mobileEnvelopesButton);
+            this._setSettingToInstrument = () => {
+                const instStuffs = document.getElementById('InstrumentDiv');
+                const effectStuffs = document.getElementById('effectsDiv');
+                const envelopeStuffs = document.getElementById('envelopesDiv');
+                this._instSettingMode = 1;
+                instStuffs.style.display = "";
+                effectStuffs.style.display = "none";
+                envelopeStuffs.style.display = "none";
+            };
+            this._setSettingToEffect = () => {
+                const instStuffs = document.getElementById('InstrumentDiv');
+                const effectStuffs = document.getElementById('effectsDiv');
+                const envelopeStuffs = document.getElementById('envelopesDiv');
+                this._instSettingMode = 2;
+                instStuffs.style.display = "none";
+                effectStuffs.style.display = "";
+                envelopeStuffs.style.display = "none";
+            };
+            this._setSettingToEnvelope = () => {
+                const instStuffs = document.getElementById('InstrumentDiv');
+                const effectStuffs = document.getElementById('effectsDiv');
+                const envelopeStuffs = document.getElementById('envelopesDiv');
+                this._instSettingMode = 3;
+                instStuffs.style.display = "none";
+                effectStuffs.style.display = "none";
+                envelopeStuffs.style.display = "";
+            };
+            this._instrumentSettingsGroup = div({ class: "editor-controls" }, this._instrumentSettingsTextRow, this._instOptionsDiv, this._instrumentsButtonRow, this._instrumentTypeSelectRow, this._instrumentVolumeSliderRow, this._customInstrumentSettingsGroup);
             this._usedPatternIndicator = SVG.path({ d: "M -6 -6 H 6 V 6 H -6 V -6 M -2 -3 L -2 -3 L -1 -4 H 1 V 4 H -1 V -1.2 L -1.2 -1 H -2 V -3 z", fill: ColorConfig.indicatorSecondary, "fill-rule": "evenodd" });
             this._usedInstrumentIndicator = SVG.path({ d: "M -6 -0.8 H -3.8 V -6 H 0.8 V 4.4 H 2.2 V -0.8 H 6 V 0.8 H 3.8 V 6 H -0.8 V -4.4 H -2.2 V 0.8 H -6 z", fill: ColorConfig.indicatorSecondary });
             this._jumpToModIndicator = SVG.svg({ style: "width: 92%; height: 1.3em; flex-shrink: 0; position: absolute;", viewBox: "0 0 200 200" }, [
@@ -47327,7 +50208,7 @@ You should be redirected to the song at:<br /><br />
             this._loopBarButton = button({ class: "loopBarButton", type: "button", title: "Loop only on the Currently Selected Bar" });
             this._fullscreenButton = button({ class: "fullscreenButton", type: "button", title: "Make the screen fit fully in your browser (Mobile Only)" });
             this._patternEditorRow = div({ style: "flex: 1; height: 100%; display: flex; overflow: hidden; justify-content: center;" }, this._patternEditorPrev.container, this._patternEditor.container, this._patternEditorNext.container);
-            this._patternArea = div({ class: "pattern-area" }, this._piano.container, this._patternEditorRow, this._octaveScrollBar.container, this._zoomInButton, this._zoomOutButton, this._undoButton, this._redoButton, this._copyPatternButton, this._pastePatternButton, this._insertChannelButton, this._deleteChannelButton, this._selectAllButton, this._duplicateButton, this._notesUpButton, this._notesDownButton, this._loopBarButton, this._fullscreenButton);
+            this._patternArea = div({ class: "pattern-area", id: "pattern-area" }, this._piano.container, this._patternEditorRow, this._octaveScrollBar.container, this._zoomInButton, this._zoomOutButton, this._undoButton, this._redoButton, this._copyPatternButton, this._pastePatternButton, this._insertChannelButton, this._deleteChannelButton, this._selectAllButton, this._duplicateButton, this._notesUpButton, this._notesDownButton, this._loopBarButton, this._fullscreenButton);
             this._trackContainer = div({ class: "trackContainer" }, this._trackEditor.container, this._loopEditor.container);
             this._trackVisibleArea = div({ style: "position: absolute; width: 100%; height: 100%; pointer-events: none;" });
             this._trackAndMuteContainer = div({ class: "trackAndMuteContainer" }, this._muteEditor.container, this._trackContainer, this._trackVisibleArea);
@@ -47339,7 +50220,9 @@ You should be redirected to the song at:<br /><br />
             this._sampleLoadingStatusContainer = div({ style: "cursor: pointer;" }, div({ style: `margin-top: 0.5em; text-align: center; color: ${ColorConfig.secondaryText};` }, "Sample Loading Status"), div({ class: "selectRow", style: "height: 6px; margin-bottom: 0.5em;" }, this._sampleLoadingBarContainer));
             this._songSettingsArea = div({ class: "song-settings-area" }, div({ class: "editor-controls" }, div({ class: "editor-song-settings" }, div({ style: "margin: 3px 0; position: relative; text-align: center; color: ${ColorConfig.secondaryText};" }, div({ class: "tip", style: "flex-shrink: 0; position:absolute; left: 0; top: 0; width: 12px; height: 12px", onclick: () => this._openPrompt("usedPattern") }, SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 0; pointer-events: none;", width: "12px", height: "12px", "margin-right": "0.5em", viewBox: "-6 -6 12 12" }, this._usedPatternIndicator)), div({ class: "tip", style: "flex-shrink: 0; position: absolute; left: 14px; top: 0; width: 12px; height: 12px", onclick: () => this._openPrompt("usedInstrument") }, SVG.svg({ style: "flex-shrink: 0; position: absolute; left: 0; top: 0; pointer-events: none;", width: "12px", height: "12px", "margin-right": "1em", viewBox: "-6 -6 12 12" }, this._usedInstrumentIndicator)), "Song Settings", div({ style: "width: 100%; left: 0; top: -1px; position:absolute; overflow-x:clip;" }, this._jumpToModIndicator))), div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("scale") }, "Scale: "), div({ class: "selectContainer" }, this._scaleSelect)), div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("key") }, "Key: "), div({ class: "selectContainer" }, this._keySelect)), div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("key_octave") }, "Octave: "), this._octaveStepper), div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("tempo") }, "Tempo: "), span({ style: "display: flex;" }, this._tempoSlider.container, this._tempoStepper)), div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("rhythm") }, "Rhythm: "), div({ class: "selectContainer" }, this._rhythmSelect)), this._sampleLoadingStatusContainer));
             this._instrumentSettingsArea = div({ class: "instrument-settings-area" }, this._instrumentSettingsGroup, this._modulatorGroup);
-            this._settingsArea = div({ class: "settings-area noSelection" }, div({ class: "version-area" }, div({ style: `text-align: center; margin: 3px 0; color: ${ColorConfig.secondaryText};` }, this._songTitleInputBox.input)), div({ class: "play-pause-area" }, this._volumeBarBox, div({ class: "playback-bar-controls" }, this._playButton, this._pauseButton, this._recordButton, this._stopButton, this._prevBarButton, this._nextBarButton), div({ class: "playback-volume-controls" }, span({ class: "volume-speaker" }), this._volumeSlider.container), this._globalOscscopeContainer), this._menuArea, this._songSettingsArea, this._instrumentSettingsArea);
+            this._playbackMobileDiv = div({ class: "playback-bar-controls2", id: 'playback-bar-controls2', style: 'width: 100%; display: flex; background: var(--editor-background); z-index: 6;' }, this._mobilePlayButton, this._mobilePauseButton, this._mobilePrevBarButton, this._mobileNextBarButton);
+            this._playPauseAreaMobile = div({ class: "play-pause-area2", id: "play-pause-area2", style: 'flex-direction:row; position: absolute; width: 100%; display: flex; bottom: 16vh;' }, this._playbackMobileDiv);
+            this._settingsArea = div({ class: "settings-area noSelection" }, div({ class: "version-area" }, div({ style: `text-align: center; margin: 3px 0; color: ${ColorConfig.secondaryText};` }, this._songTitleInputBox.input)), div({ class: "play-pause-area", id: "play-pause-area" }, this._volumeBarBox, div({ class: "playback-bar-controls" }, this._playButton, this._pauseButton, this._recordButton, this._stopButton, this._prevBarButton, this._nextBarButton), div({ class: "playback-volume-controls" }, span({ class: "volume-speaker" }), this._volumeSlider.container), this._globalOscscopeContainer), this._menuArea, this._songSettingsArea, this._instrumentSettingsArea);
             this.mainLayer = div({ class: "beepboxEditor", tabIndex: "0" }, this._patternArea, this._trackArea, this._settingsArea, this._promptContainer);
             this._wasPlaying = false;
             this._currentPromptName = null;
@@ -47382,6 +50265,29 @@ You should be redirected to the song at:<br /><br />
             this._modRecTimeout = -1;
             this._whenSampleLoadingStatusClicked = () => {
                 this._openPrompt("sampleLoadingStatus");
+            };
+            this._loopTypeEvent = () => {
+                if (_loopType == 3) {
+                    this._doc.synth.loopRepeatCount = 0;
+                    this._loopEditor.container.style.display = "none";
+                    SongEditor._styleElement.textContent = SongEditor._setLoopIcon[3];
+                    this._doc.synth.loopBarStart = -1;
+                    this._doc.synth.loopBarEnd = -1;
+                    this._loopEditor.setLoopAt(this._doc.synth.loopBarStart, this._doc.synth.loopBarEnd);
+                }
+                else if (_loopType == 2) {
+                    this._doc.synth.loopRepeatCount = -1;
+                    this._loopEditor.container.style.display = "none";
+                    SongEditor._styleElement.textContent = SongEditor._setLoopIcon[2];
+                    this._doc.synth.loopBarStart = -1;
+                    this._doc.synth.loopBarEnd = -1;
+                    this._loopEditor.setLoopAt(this._doc.synth.loopBarStart, this._doc.synth.loopBarEnd);
+                }
+                else if (_loopType == 1) {
+                    this._doc.synth.loopRepeatCount = -1;
+                    this._loopEditor.container.style.display = "";
+                    SongEditor._styleElement.textContent = SongEditor._setLoopIcon[1];
+                }
             };
             this.refocusStage = () => {
                 this.mainLayer.focus({ preventScroll: true });
@@ -47427,6 +50333,7 @@ You should be redirected to the song at:<br /><br />
                 if (document.getElementById('text-content'))
                     document.getElementById('text-content').style.display = this._doc.prefs.showDescription ? "" : "none";
                 if (!isMobile) {
+                    this._playPauseAreaMobile.style.display = "none";
                     if (this._doc.getFullScreen()) {
                         const semitoneHeight = this._patternEditorRow.clientHeight / this._doc.getVisiblePitchCount();
                         const targetBeatWidth = semitoneHeight * 5;
@@ -47456,15 +50363,37 @@ You should be redirected to the song at:<br /><br />
                         this._zoomOutButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
                         this._zoomInButton.style.right = prefs.showScrollBar ? "24px" : "4px";
                         this._zoomOutButton.style.right = prefs.showScrollBar ? "24px" : "4px";
-                        this._undoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._redoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._copyPatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._pastePatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._insertChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._deleteChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._selectAllButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._duplicateButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._loopBarButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        if (this._doc.prefs.displayShortcutButtons == false) {
+                            this._undoButton.style.display = "none";
+                            this._redoButton.style.display = "none";
+                            this._copyPatternButton.style.display = "none";
+                            this._pastePatternButton.style.display = "none";
+                            this._insertChannelButton.style.display = "none";
+                            this._deleteChannelButton.style.display = "none";
+                            this._selectAllButton.style.display = "none";
+                            this._duplicateButton.style.display = "none";
+                            this._loopBarButton.style.display = "none";
+                            this._notesDownButton.style.display = "none";
+                            this._notesUpButton.style.display = "none";
+                        }
+                        else {
+                            this._undoButton.style.display = "";
+                            this._redoButton.style.display = "";
+                            this._copyPatternButton.style.display = "";
+                            this._pastePatternButton.style.display = "";
+                            this._insertChannelButton.style.display = "";
+                            this._deleteChannelButton.style.display = "";
+                            this._selectAllButton.style.display = "";
+                            this._duplicateButton.style.display = "";
+                            if (_loopType != 1) {
+                                this._loopBarButton.style.display = "none";
+                            }
+                            else if (_loopType == 1) {
+                                this._loopBarButton.style.display = "";
+                            }
+                            this._notesDownButton.style.display = "";
+                            this._notesUpButton.style.display = "";
+                        }
                         this._undoButton.style.left = prefs.showScrollBar ? "40px" : "40px";
                         this._redoButton.style.left = prefs.showScrollBar ? "70px" : "70px";
                         this._copyPatternButton.style.left = prefs.showScrollBar ? "40px" : "40px";
@@ -47485,17 +50414,37 @@ You should be redirected to the song at:<br /><br />
                         this._patternEditorNext.container.style.display = "none";
                         this._zoomInButton.style.display = "none";
                         this._zoomOutButton.style.display = "none";
-                        this._undoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._redoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._copyPatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._pastePatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._insertChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._deleteChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._selectAllButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._duplicateButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._notesUpButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._notesDownButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                        this._loopBarButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                        if (this._doc.prefs.displayShortcutButtons == false) {
+                            this._undoButton.style.display = "none";
+                            this._redoButton.style.display = "none";
+                            this._copyPatternButton.style.display = "none";
+                            this._pastePatternButton.style.display = "none";
+                            this._insertChannelButton.style.display = "none";
+                            this._deleteChannelButton.style.display = "none";
+                            this._selectAllButton.style.display = "none";
+                            this._duplicateButton.style.display = "none";
+                            this._loopBarButton.style.display = "none";
+                            this._notesDownButton.style.display = "none";
+                            this._notesUpButton.style.display = "none";
+                        }
+                        else {
+                            this._undoButton.style.display = "";
+                            this._redoButton.style.display = "";
+                            this._copyPatternButton.style.display = "";
+                            this._pastePatternButton.style.display = "";
+                            this._insertChannelButton.style.display = "";
+                            this._deleteChannelButton.style.display = "";
+                            this._selectAllButton.style.display = "";
+                            this._duplicateButton.style.display = "";
+                            if (_loopType != 1) {
+                                this._loopBarButton.style.display = "none";
+                            }
+                            else if (_loopType == 1) {
+                                this._loopBarButton.style.display = "";
+                            }
+                            this._notesDownButton.style.display = "";
+                            this._notesUpButton.style.display = "";
+                        }
                         this._undoButton.style.left = prefs.showScrollBar ? "-80px" : "-80px";
                         this._redoButton.style.left = prefs.showScrollBar ? "-50px" : "-50px";
                         this._copyPatternButton.style.left = prefs.showScrollBar ? "-80px" : "-80px";
@@ -47513,21 +50462,275 @@ You should be redirected to the song at:<br /><br />
                     }
                 }
                 else {
+                    if (this._doc.prefs.oldMobileLayout != true) {
+                        this._promptContainer.style.left = "50vw";
+                        const effectStuffs = document.getElementById('effectsDiv');
+                        const envelopeStuffs = document.getElementById('envelopesDiv');
+                        const instStuffs = document.getElementById('InstrumentDiv');
+                        if (this._instSettingMode == 1) {
+                            instStuffs.style.display = "";
+                            effectStuffs.style.display = "none";
+                            envelopeStuffs.style.display = "none";
+                            console.log("Instrument Settings");
+                        }
+                        else if (this._instSettingMode == 2) {
+                            instStuffs.style.display = "none";
+                            effectStuffs.style.display = "";
+                            envelopeStuffs.style.display = "none";
+                            console.log("Effects Settings");
+                        }
+                        else if (this._instSettingMode == 3) {
+                            instStuffs.style.display = "none";
+                            effectStuffs.style.display = "none";
+                            envelopeStuffs.style.display = "";
+                            console.log("Envelopes Settings");
+                        }
+                        console.log("Current Setting: " + this._instSettingMode);
+                        beepboxEditorContainer$1.style.borderImageSource = "";
+                        this._settingsArea.style.display = "none";
+                        this._trackArea.style.display = "none";
+                        this._patternArea.style.display = "";
+                        this.mainLayer.style.display = "unset";
+                        if (window.innerWidth > window.innerHeight) {
+                            this._mobileMenu.style.right = "0px";
+                            this._mobileMenu.style.left = "";
+                            this._mobileMenu.style.height = "100vh";
+                            this._mobileMenu.style.width = "15vw";
+                            this._patternArea.style.width = "75vw";
+                            this._patternArea.style.height = "100vh";
+                            this._patternArea.style.maxHeight = "100vh";
+                            beepboxEditorContainer$1.style.maxWidth = "100vw";
+                            this._playPauseAreaMobile.style.height = "100vh";
+                            this._playPauseAreaMobile.style.width = "4vw";
+                            this._playPauseAreaMobile.style.right = "16vw";
+                            this._playPauseAreaMobile.style.bottom = "0";
+                            this._playPauseAreaMobile.style.left = "";
+                            this._playbackMobileDiv.style.flexDirection = "column";
+                            this._mobilePlayButton.style.width = "100%";
+                            this._mobilePauseButton.style.width = "100%";
+                            this._mobileNextBarButton.style.width = "100%";
+                            this._mobilePrevBarButton.style.width = "100%";
+                            this._mobilePlayButton.style.height = "33vh";
+                            this._mobilePauseButton.style.height = "33vh";
+                            this._mobileNextBarButton.style.height = "34vh";
+                            this._mobilePrevBarButton.style.height = "33vh";
+                            this._settingsArea.style.gridTemplateColumns = "33% 34% 33%";
+                            this._settingsArea.style.gridTemplateRows = "min-content min-content min-content min-content 1fr";
+                            this._mobilePatternButton.style.right = "0";
+                            this._mobilePatternButton.style.bottom = "";
+                            this._mobileTrackButton.style.right = "0";
+                            this._mobileTrackButton.style.bottom = "";
+                            this._mobileSettingsButton.style.right = "0";
+                            this._mobileSettingsButton.style.bottom = "";
+                            this._settingsArea.style.gridTemplateAreas = '"version-area version-area version-area" "play-pause-area menu-area instrument-settings-area" "play-pause-area menu-area instrument-settings-area" "song-settings-area song-settings-area instrument-settings-area" "song-settings-area song-settings-area instrument-settings-area"';
+                            this._settingsArea.style.width = "78vw";
+                            this._trackArea.style.width = "78vw";
+                            if (this._menuMode == 1) {
+                                this._patternArea.style.display = "";
+                                this._trackArea.style.display = "none";
+                                this._settingsArea.style.display = "none";
+                                this._mobilePatternButton.style.width = "100%";
+                                this._mobileTrackButton.style.width = "80%";
+                                this._mobileSettingsButton.style.width = "80%";
+                                this._mobilePatternButton.style.height = "33vh";
+                                this._mobileTrackButton.style.height = "34vh";
+                                this._mobileSettingsButton.style.height = "33vh";
+                                this._mobilePatternButton.style.left = "";
+                                this._mobileTrackButton.style.left = "";
+                                this._mobilePatternButton.style.top = "0";
+                                this._mobileTrackButton.style.top = "33vh";
+                                this._mobileSettingsButton.style.bottom = "0";
+                                this._mobileMenu.style.width = "15vw";
+                                this._mobileMenu.style.height = "100vh";
+                                this._mobileMenu.style.right = "0";
+                                this._playPauseAreaMobile.style.display = "flex";
+                            }
+                            if (this._menuMode == 2) {
+                                this._patternArea.style.display = "none";
+                                this._trackArea.style.display = "";
+                                this._settingsArea.style.display = "none";
+                                this._mobilePatternButton.style.width = "80%";
+                                this._mobileTrackButton.style.width = "100%";
+                                this._mobileSettingsButton.style.width = "80%";
+                                this._mobilePatternButton.style.height = "33vh";
+                                this._mobileTrackButton.style.height = "34vh";
+                                this._mobileSettingsButton.style.height = "33vh";
+                                this._mobilePatternButton.style.top = "0";
+                                this._mobileTrackButton.style.top = "33vh";
+                                this._mobileSettingsButton.style.bottom = "0";
+                                this._mobileTrackButton.style.left = "";
+                                this._mobilePatternButton.style.left = "";
+                                this._mobileMenu.style.width = "15vw";
+                                this._mobileMenu.style.height = "100vh";
+                                this._mobileMenu.style.right = "0";
+                                this._playPauseAreaMobile.style.display = "none";
+                            }
+                            if (this._menuMode == 3) {
+                                this._patternArea.style.display = "none";
+                                this._trackArea.style.display = "none";
+                                this._settingsArea.style.display = "";
+                                this._mobilePatternButton.style.width = "80%";
+                                this._mobileTrackButton.style.width = "80%";
+                                this._mobileSettingsButton.style.width = "100%";
+                                this._mobilePatternButton.style.height = "33vh";
+                                this._mobileTrackButton.style.height = "34vh";
+                                this._mobileSettingsButton.style.height = "33vh";
+                                this._mobilePatternButton.style.top = "0";
+                                this._mobileTrackButton.style.top = "33vh";
+                                this._mobileSettingsButton.style.bottom = "0";
+                                this._mobileTrackButton.style.left = "";
+                                this._mobilePatternButton.style.left = "";
+                                this._mobileMenu.style.width = "15vw";
+                                this._mobileMenu.style.height = "100vh";
+                                this._mobileMenu.style.right = "0";
+                                this._playPauseAreaMobile.style.display = "none";
+                            }
+                        }
+                        else if (window.innerWidth < window.innerHeight) {
+                            this._playPauseAreaMobile.style.height = "";
+                            this._playPauseAreaMobile.style.width = "100vw";
+                            this._playPauseAreaMobile.style.bottom = "16vh";
+                            this._playPauseAreaMobile.style.left = "0";
+                            this._playbackMobileDiv.style.flexDirection = "row";
+                            this._mobilePlayButton.style.height = "";
+                            this._mobilePauseButton.style.height = "";
+                            this._mobileNextBarButton.style.height = "";
+                            this._mobilePrevBarButton.style.height = "";
+                            this._mobilePlayButton.style.width = "33vh";
+                            this._mobilePauseButton.style.width = "33vh";
+                            this._mobileNextBarButton.style.width = "34vh";
+                            this._mobilePrevBarButton.style.width = "33vh";
+                            beepboxEditorContainer$1.style.maxWidth = "710px";
+                            this._settingsArea.style.gridTemplateRows = "min-content min-content min-content min-content 1fr";
+                            this._settingsArea.style.gridTemplateAreas = '"version-area version-area" "play-pause-area instrument-settings-area" "play-pause-area instrument-settings-area" "menu-area instrument-settings-area" "song-settings-area instrument-settings-area"';
+                            this._mobileMenu.style.bottom = "0px";
+                            this._mobileMenu.style.width = "100vw";
+                            this._mobileMenu.style.height = "20vh";
+                            this._settingsArea.style.width = "98vw";
+                            this._patternArea.style.width = "91vw";
+                            this._trackArea.style.width = "98vw";
+                            this._mobileMenu.style.right = "";
+                            this._mobileMenu.style.left = "";
+                            this._mobileMenu.style.height = "100vh";
+                            this._mobileMenu.style.width = "15vw";
+                            beepboxEditorContainer$1.style.maxWidth = "100vw";
+                            this._settingsArea.style.gridTemplateColumns = "50% 50%";
+                            this._mobilePatternButton.style.bottom = "0";
+                            this._mobileTrackButton.style.bottom = "0";
+                            this._mobileSettingsButton.style.bottom = "0";
+                            if (this._menuMode == 1) {
+                                this._patternArea.style.width = "91vw";
+                                this._patternArea.style.display = "";
+                                this._trackArea.style.display = "none";
+                                this._settingsArea.style.display = "none";
+                                this._mobilePatternButton.style.height = "100%";
+                                this._mobileTrackButton.style.height = "80%";
+                                this._mobileSettingsButton.style.height = "80%";
+                                this._mobilePatternButton.style.width = "33vw";
+                                this._mobileTrackButton.style.width = "34vw";
+                                this._mobileSettingsButton.style.width = "33vw";
+                                this._mobilePatternButton.style.top = "";
+                                this._mobilePatternButton.style.left = "0";
+                                this._mobileTrackButton.style.left = "33vw";
+                                this._mobileSettingsButton.style.right = "0";
+                                this._mobilePatternButton.style.bottom = "0";
+                                this._mobileTrackButton.style.bottom = "0";
+                                this._mobileTrackButton.style.top = "";
+                                this._mobileTrackButton.style.right = "";
+                                this._mobileSettingsButton.style.bottom = "0";
+                                this._mobileMenu.style.height = "15vh";
+                                this._mobileMenu.style.width = "100vw";
+                                this._mobileMenu.style.right = "";
+                                this._playPauseAreaMobile.style.display = "flex";
+                            }
+                            else if (this._menuMode == 2) {
+                                this._trackArea.style.width = "100vw";
+                                this._patternArea.style.display = "none";
+                                this._trackArea.style.display = "";
+                                this._settingsArea.style.display = "none";
+                                this._mobilePatternButton.style.height = "80%";
+                                this._mobileTrackButton.style.height = "100%";
+                                this._mobileSettingsButton.style.height = "80%";
+                                this._mobilePatternButton.style.width = "33vw";
+                                this._mobileTrackButton.style.width = "34vw";
+                                this._mobileSettingsButton.style.width = "33vw";
+                                this._mobilePatternButton.style.top = "";
+                                this._mobilePatternButton.style.left = "0";
+                                this._mobileTrackButton.style.left = "33vw";
+                                this._mobileSettingsButton.style.right = "0";
+                                this._mobilePatternButton.style.bottom = "0";
+                                this._mobileTrackButton.style.bottom = "0";
+                                this._mobileTrackButton.style.top = "";
+                                this._mobileTrackButton.style.right = "";
+                                this._mobileSettingsButton.style.bottom = "0";
+                                this._mobileMenu.style.height = "15vh";
+                                this._mobileMenu.style.width = "100vw";
+                                this._playPauseAreaMobile.style.display = "none";
+                            }
+                            else if (this._menuMode == 3) {
+                                this._settingsArea.style.width = "96vw";
+                                this._patternArea.style.display = "none";
+                                this._trackArea.style.display = "none";
+                                this._settingsArea.style.display = "";
+                                this._mobilePatternButton.style.height = "80%";
+                                this._mobileTrackButton.style.height = "80%";
+                                this._mobileSettingsButton.style.height = "100%";
+                                this._mobilePatternButton.style.width = "33vw";
+                                this._mobileTrackButton.style.width = "34vw";
+                                this._mobileSettingsButton.style.width = "33vw";
+                                this._mobilePatternButton.style.top = "";
+                                this._mobilePatternButton.style.left = "0";
+                                this._mobileTrackButton.style.left = "33vw";
+                                this._mobileSettingsButton.style.right = "0";
+                                this._mobilePatternButton.style.bottom = "0";
+                                this._mobileTrackButton.style.bottom = "0";
+                                this._mobileTrackButton.style.top = "";
+                                this._mobileTrackButton.style.right = "";
+                                this._mobileSettingsButton.style.bottom = "0";
+                                this._mobileMenu.style.height = "15vh";
+                                this._mobileMenu.style.width = "100vw";
+                                this._playPauseAreaMobile.style.display = "none";
+                            }
+                            this._patternArea.style.maxHeight = "75vh";
+                            this._patternArea.style.height = "70vh";
+                        }
+                        this.mainLayer.style.minHeight = "80vh";
+                        beepboxEditorContainer$1.style.maxHeight = "80vh";
+                        this._mobilePatternButton.style.display = "";
+                        this._mobileTrackButton.style.display = "";
+                        this._mobileSettingsButton.style.display = "";
+                        this._mobileMenu.style.display = "";
+                        this._instOptionsDiv.style.display = "";
+                        beepboxEditorContainer$1.appendChild(this._playPauseAreaMobile);
+                        const playPauseArea = document.getElementById('play-pause-area');
+                        const textContentMobile = document.getElementById('text-content');
+                        textContentMobile.style.display = "none";
+                        this._trackAndMuteContainer.style.maxHeight = "85vh";
+                        playPauseArea.style.display = "flex";
+                        playPauseArea.style.flexDirection = "column";
+                    }
+                    document.body.appendChild(this._mobileMenu);
+                    this._mobileMenu.appendChild(this._mobilePatternButton);
+                    this._mobileMenu.appendChild(this._mobileTrackButton);
+                    this._mobileMenu.appendChild(this._mobileSettingsButton);
+                    this._mobilePatternButton.appendChild(this._mobileEditMenuIcon);
+                    this._mobileTrackButton.appendChild(this._mobileTrackMenuIcon);
+                    this._mobileSettingsButton.appendChild(this._mobileSettingsMenuIcon);
                     this._patternEditor.container.style.width = "";
                     this._patternEditor.container.style.flexShrink = "";
                     this._patternEditorPrev.container.style.display = "none";
                     this._patternEditorNext.container.style.display = "none";
-                    this._undoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._redoButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._copyPatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._pastePatternButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._insertChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._deleteChannelButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._selectAllButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._duplicateButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._notesUpButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._notesDownButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
-                    this._loopBarButton.style.display = (this._doc.channel < this._doc.song.pitchChannelCount) ? "" : "none";
+                    this._undoButton.style.display = "";
+                    this._redoButton.style.display = "";
+                    this._copyPatternButton.style.display = "";
+                    this._pastePatternButton.style.display = "";
+                    this._insertChannelButton.style.display = "";
+                    this._deleteChannelButton.style.display = "";
+                    this._selectAllButton.style.display = "";
+                    this._duplicateButton.style.display = "";
+                    this._loopBarButton.style.display = "";
+                    this._notesDownButton.style.display = "";
+                    this._notesUpButton.style.display = "";
                     this._undoButton.style.top = prefs.showScrollBar ? "0px" : "0px";
                     this._undoButton.style.left = prefs.showScrollBar ? "2px" : "2px";
                     this._redoButton.style.top = prefs.showScrollBar ? "30px" : "30px";
@@ -47572,6 +50775,7 @@ You should be redirected to the song at:<br /><br />
                     (prefs.instrumentImportExport ? textOnIcon : textOffIcon) + "Enable Import/Export Buttons",
                     (prefs.displayBrowserUrl ? textOnIcon : textOffIcon) + "Enable Song Data in URL",
                     (prefs.closePromptByClickoff ? textOnIcon : textOffIcon) + "Close Prompts on Click Off",
+                    (prefs.oldMobileLayout ? textOnIcon : textOffIcon) + "Use the Old mobile layout (Reload)",
                     "> Note Recording",
                     "Appearance",
                     (prefs.showFifth ? textOnIcon : textOffIcon) + 'Highlight "Fifth" Note',
@@ -47584,20 +50788,22 @@ You should be redirected to the song at:<br /><br />
                     (prefs.showSampleLoadingStatus ? textOnIcon : textOffIcon) + "Show Sample Loading Status",
                     (prefs.showDescription ? textOnIcon : textOffIcon) + "Show Description",
                     (prefs.frostedGlassBackground ? textOnIcon : textOffIcon) + "Use Frosted Glass Prompt Backdrop",
+                    (prefs.displayShortcutButtons ? textOnIcon : textOffIcon) + "Display Mobile Shortcut Buttons",
                     "> Set Layout",
                     "> Set Theme",
+                    "> Custom Theme",
                 ];
                 const technicalOptionGroup = this._optionsMenu.children[1];
-                for (let i = 0; i < 12; i++) {
+                for (let i = 0; i < technicalOptionGroup.children.length; i++) {
                     const option = technicalOptionGroup.children[i];
                     if (option.textContent != optionCommands[i + 1])
                         option.textContent = optionCommands[i + 1];
                 }
                 const appearanceOptionGroup = this._optionsMenu.children[2];
-                for (let i = 0; i < 12; i++) {
+                for (let i = 0; i < appearanceOptionGroup.children.length; i++) {
                     const option = appearanceOptionGroup.children[i];
-                    if (option.textContent != optionCommands[i + 14])
-                        option.textContent = optionCommands[i + 14];
+                    if (option.textContent != optionCommands[i + (technicalOptionGroup.children.length + 2)])
+                        option.textContent = optionCommands[i + (technicalOptionGroup.children.length + 2)];
                 }
                 const channel = this._doc.song.channels[this._doc.channel];
                 const instrumentIndex = this._doc.getCurrentInstrument();
@@ -48606,12 +51812,15 @@ You should be redirected to the song at:<br /><br />
                         this.refocusStage();
                     }
                     this._playButton.style.display = "none";
+                    this._mobilePlayButton.style.display = "none";
                     this._pauseButton.style.display = "none";
+                    this._mobilePauseButton.style.display = "none";
                     this._recordButton.style.display = "none";
                     this._stopButton.style.display = "none";
                     this._prevBarButton.style.display = "";
                     this._nextBarButton.style.display = "";
                     this._playButton.classList.remove("shrunk");
+                    this._mobilePlayButton.classList.remove("shrunk");
                     this._recordButton.classList.remove("shrunk");
                     this._patternEditorRow.style.pointerEvents = "";
                     this._octaveScrollBar.container.style.pointerEvents = "";
@@ -48642,11 +51851,13 @@ You should be redirected to the song at:<br /><br />
                     }
                     else if (this._doc.synth.playing) {
                         this._pauseButton.style.display = "";
+                        this._mobilePauseButton.style.display = "";
                     }
                     else if (this._doc.prefs.showRecordButton) {
                         this._playButton.style.display = "";
                         this._recordButton.style.display = "";
                         this._playButton.classList.add("shrunk");
+                        this._mobilePlayButton.classList.add("shrunk");
                         this._recordButton.classList.add("shrunk");
                     }
                     else if (this._ctrlHeld) {
@@ -48654,6 +51865,7 @@ You should be redirected to the song at:<br /><br />
                     }
                     else {
                         this._playButton.style.display = "";
+                        this._mobilePlayButton.style.display = "";
                     }
                 }
                 window.requestAnimationFrame(this.updatePlayButton);
@@ -48847,31 +52059,33 @@ You should be redirected to the song at:<br /><br />
                             break;
                         if (needControlForShortcuts == (event.ctrlKey || event.metaKey)) {
                             if (event.shiftKey) {
-                                const leftSel = Math.min(this._doc.selection.boxSelectionX0, this._doc.selection.boxSelectionX1);
-                                const rightSel = Math.max(this._doc.selection.boxSelectionX0, this._doc.selection.boxSelectionX1);
-                                if ((leftSel < this._doc.synth.loopBarStart || this._doc.synth.loopBarStart == -1)
-                                    || (rightSel > this._doc.synth.loopBarEnd || this._doc.synth.loopBarEnd == -1)) {
-                                    this._doc.synth.loopBarStart = leftSel;
-                                    this._doc.synth.loopBarEnd = rightSel;
-                                    if (!this._doc.synth.playing) {
+                                if (_loopType == 1) {
+                                    const leftSel = Math.min(this._doc.selection.boxSelectionX0, this._doc.selection.boxSelectionX1);
+                                    const rightSel = Math.max(this._doc.selection.boxSelectionX0, this._doc.selection.boxSelectionX1);
+                                    if ((leftSel < this._doc.synth.loopBarStart || this._doc.synth.loopBarStart == -1)
+                                        || (rightSel > this._doc.synth.loopBarEnd || this._doc.synth.loopBarEnd == -1)) {
+                                        this._doc.synth.loopBarStart = leftSel;
+                                        this._doc.synth.loopBarEnd = rightSel;
+                                        if (!this._doc.synth.playing) {
+                                            this._doc.synth.snapToBar();
+                                            this._doc.performance.play();
+                                        }
+                                    }
+                                    else {
+                                        this._doc.synth.loopBarStart = -1;
+                                        this._doc.synth.loopBarEnd = -1;
+                                    }
+                                    if (this._doc.bar != Math.floor(this._doc.synth.playhead) && this._doc.synth.loopBarStart != -1) {
+                                        this._doc.synth.goToBar(this._doc.bar);
                                         this._doc.synth.snapToBar();
-                                        this._doc.performance.play();
+                                        this._doc.synth.initModFilters(this._doc.song);
+                                        this._doc.synth.computeLatestModValues();
+                                        if (this._doc.prefs.autoFollow) {
+                                            this._doc.selection.setChannelBar(this._doc.channel, Math.floor(this._doc.synth.playhead));
+                                        }
                                     }
+                                    this._loopEditor.setLoopAt(this._doc.synth.loopBarStart, this._doc.synth.loopBarEnd);
                                 }
-                                else {
-                                    this._doc.synth.loopBarStart = -1;
-                                    this._doc.synth.loopBarEnd = -1;
-                                }
-                                if (this._doc.bar != Math.floor(this._doc.synth.playhead) && this._doc.synth.loopBarStart != -1) {
-                                    this._doc.synth.goToBar(this._doc.bar);
-                                    this._doc.synth.snapToBar();
-                                    this._doc.synth.initModFilters(this._doc.song);
-                                    this._doc.synth.computeLatestModValues();
-                                    if (this._doc.prefs.autoFollow) {
-                                        this._doc.selection.setChannelBar(this._doc.channel, Math.floor(this._doc.synth.playhead));
-                                    }
-                                }
-                                this._loopEditor.setLoopAt(this._doc.synth.loopBarStart, this._doc.synth.loopBarEnd);
                             }
                             else {
                                 this._openPrompt("beatsPerBar");
@@ -48937,6 +52151,8 @@ You should be redirected to the song at:<br /><br />
                         }
                         break;
                     case 69:
+                        if (canPlayNotes)
+                            break;
                         if (event.shiftKey) {
                             const instrument = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()];
                             if (!instrument.eqFilterType && this._doc.channel < this._doc.song.pitchChannelCount + this._doc.song.noiseChannelCount)
@@ -48950,7 +52166,34 @@ You should be redirected to the song at:<br /><br />
                     case 70:
                         if (canPlayNotes)
                             break;
-                        if (needControlForShortcuts == (event.ctrlKey || event.metaKey)) {
+                        if (_loopType == 1) {
+                            if (event.shiftKey) {
+                                this._doc.synth.loopBarStart = -1;
+                                this._doc.synth.loopBarEnd = -1;
+                                this._loopEditor.setLoopAt(this._doc.synth.loopBarStart, this._doc.synth.loopBarEnd);
+                                this._doc.synth.goToBar(this._doc.song.loopStart);
+                                this._doc.synth.snapToBar();
+                                this._doc.synth.initModFilters(this._doc.song);
+                                this._doc.synth.computeLatestModValues();
+                                if (this._doc.prefs.autoFollow) {
+                                    this._doc.selection.setChannelBar(this._doc.channel, Math.floor(this._doc.synth.playhead));
+                                }
+                                event.preventDefault();
+                            }
+                            else if (needControlForShortcuts == (event.ctrlKey || event.metaKey)) {
+                                this._doc.synth.loopBarStart = -1;
+                                this._doc.synth.loopBarEnd = -1;
+                                this._loopEditor.setLoopAt(this._doc.synth.loopBarStart, this._doc.synth.loopBarEnd);
+                                this._doc.synth.snapToStart();
+                                this._doc.synth.initModFilters(this._doc.song);
+                                this._doc.synth.computeLatestModValues();
+                                if (this._doc.prefs.autoFollow) {
+                                    this._doc.selection.setChannelBar(this._doc.channel, Math.floor(this._doc.synth.playhead));
+                                }
+                                event.preventDefault();
+                            }
+                        }
+                        else if (needControlForShortcuts == (event.ctrlKey || event.metaKey)) {
                             this._doc.synth.loopBarStart = -1;
                             this._doc.synth.loopBarEnd = -1;
                             this._loopEditor.setLoopAt(this._doc.synth.loopBarStart, this._doc.synth.loopBarEnd);
@@ -49410,6 +52653,169 @@ You should be redirected to the song at:<br /><br />
                     this._doc.performance.record();
                 }
             };
+            this._displayPatternEditor = () => {
+                this._menuMode = 1;
+                if (this._menuMode == 1) {
+                    this._patternArea.style.display = "";
+                    this._trackArea.style.display = "none";
+                    this._settingsArea.style.display = "none";
+                    this.whenUpdated();
+                    if (window.innerWidth < window.innerHeight) {
+                        this._mobilePatternButton.style.height = "100%";
+                        this._mobileTrackButton.style.height = "80%";
+                        this._mobileSettingsButton.style.height = "80%";
+                        this._mobilePatternButton.style.width = "33vw";
+                        this._mobileTrackButton.style.width = "34vw";
+                        this._mobileSettingsButton.style.width = "33vw";
+                        this._mobilePatternButton.style.top = "";
+                        this._mobilePatternButton.style.left = "0";
+                        this._mobileTrackButton.style.left = "33vw";
+                        this._mobileSettingsButton.style.right = "0";
+                        this._mobilePatternButton.style.bottom = "0";
+                        this._mobileTrackButton.style.bottom = "0";
+                        this._mobileTrackButton.style.top = "";
+                        this._mobileTrackButton.style.right = "33vw";
+                        this._mobileSettingsButton.style.bottom = "0";
+                        this._mobileMenu.style.height = "15vh";
+                        this._mobileMenu.style.width = "100vw";
+                        this._mobileMenu.style.right = "";
+                        this._patternArea.style.width = "98vw";
+                        this._playPauseAreaMobile.style.display = "flex";
+                    }
+                    else if (window.innerWidth > window.innerHeight) {
+                        this._mobilePatternButton.style.width = "100%";
+                        this._mobileTrackButton.style.width = "80%";
+                        this._mobileSettingsButton.style.width = "80%";
+                        this._mobilePatternButton.style.height = "33vh";
+                        this._mobileTrackButton.style.height = "34vh";
+                        this._mobileSettingsButton.style.height = "33vh";
+                        this._mobilePatternButton.style.left = "";
+                        this._mobileTrackButton.style.left = "";
+                        this._mobilePatternButton.style.top = "0";
+                        this._mobileTrackButton.style.top = "33vh";
+                        this._mobileSettingsButton.style.bottom = "0";
+                        this._mobileMenu.style.width = "15vw";
+                        this._mobileMenu.style.height = "100vh";
+                        this._mobileMenu.style.right = "0";
+                        this._playPauseAreaMobile.style.display = "flex";
+                    }
+                }
+            };
+            this._displayTrackEditor = () => {
+                this._menuMode = 2;
+                if (this._menuMode == 2) {
+                    this._patternArea.style.display = "none";
+                    this._trackArea.style.display = "";
+                    this._settingsArea.style.display = "none";
+                    this.whenUpdated();
+                    if (window.innerWidth < window.innerHeight) {
+                        this._mobilePatternButton.style.height = "80%";
+                        this._mobileTrackButton.style.height = "100%";
+                        this._mobileSettingsButton.style.height = "80%";
+                        this._mobilePatternButton.style.width = "33vw";
+                        this._mobileTrackButton.style.width = "34vw";
+                        this._mobileSettingsButton.style.width = "33vw";
+                        this._mobilePatternButton.style.top = "";
+                        this._mobilePatternButton.style.left = "0";
+                        this._mobileTrackButton.style.left = "33vw";
+                        this._mobileSettingsButton.style.right = "0";
+                        this._mobilePatternButton.style.bottom = "0";
+                        this._mobileTrackButton.style.left = "";
+                        this._mobileTrackButton.style.top = "";
+                        this._mobileTrackButton.style.right = "33vw";
+                        this._mobileTrackButton.style.bottom = "0";
+                        this._mobileSettingsButton.style.bottom = "0";
+                        this._patternArea.style.width = "98vw";
+                        this._mobileMenu.style.height = "15vh";
+                        this._mobileMenu.style.width = "100vw";
+                        this._playPauseAreaMobile.style.display = "none";
+                    }
+                    else if (window.innerWidth > window.innerHeight) {
+                        this._mobilePatternButton.style.width = "80%";
+                        this._mobileTrackButton.style.width = "100%";
+                        this._mobileSettingsButton.style.width = "80%";
+                        this._mobilePatternButton.style.height = "33vh";
+                        this._mobileTrackButton.style.height = "34vh";
+                        this._mobileSettingsButton.style.height = "33vh";
+                        this._mobilePatternButton.style.top = "0";
+                        this._mobileTrackButton.style.top = "33vh";
+                        this._mobileSettingsButton.style.bottom = "0";
+                        this._mobileTrackButton.style.left = "";
+                        this._mobilePatternButton.style.left = "";
+                        this._mobileMenu.style.width = "15vw";
+                        this._mobileMenu.style.height = "100vh";
+                        this._mobileMenu.style.right = "0";
+                        this._playPauseAreaMobile.style.display = "none";
+                    }
+                }
+            };
+            this._displaySettingsEditor = () => {
+                this._menuMode = 3;
+                const effectStuffs = document.getElementById('effectsDiv');
+                const envelopeStuffs = document.getElementById('envelopesDiv');
+                const instStuffs = document.getElementById('InstrumentDiv');
+                if (this._menuMode == 3) {
+                    this._patternArea.style.display = "none";
+                    this._trackArea.style.display = "none";
+                    this._settingsArea.style.display = "";
+                    this.whenUpdated();
+                    if (this._instSettingMode == 1) {
+                        instStuffs.style.display = "";
+                        effectStuffs.style.display = "none";
+                        envelopeStuffs.style.display = "none";
+                        console.log("Instrument Settings");
+                    }
+                    else if (this._instSettingMode == 2) {
+                        instStuffs.style.display = "none";
+                        effectStuffs.style.display = "";
+                        envelopeStuffs.style.display = "none";
+                        console.log("Effects Settings");
+                    }
+                    else if (this._instSettingMode == 3) {
+                        instStuffs.style.display = "none";
+                        effectStuffs.style.display = "none";
+                        envelopeStuffs.style.display = "";
+                        console.log("Envelopes Settings");
+                    }
+                    if (window.innerWidth < window.innerHeight) {
+                        this._mobilePatternButton.style.height = "80%";
+                        this._mobileTrackButton.style.height = "80%";
+                        this._mobileSettingsButton.style.height = "100%";
+                        this._mobilePatternButton.style.width = "33vw";
+                        this._mobileTrackButton.style.width = "34vw";
+                        this._mobileSettingsButton.style.width = "33vw";
+                        this._mobilePatternButton.style.top = "";
+                        this._mobilePatternButton.style.left = "0";
+                        this._mobileSettingsButton.style.right = "0";
+                        this._mobilePatternButton.style.bottom = "0";
+                        this._mobileTrackButton.style.top = "";
+                        this._mobileTrackButton.style.right = "33vw";
+                        this._mobileTrackButton.style.bottom = "0";
+                        this._mobileSettingsButton.style.bottom = "0";
+                        this._patternArea.style.width = "98vw";
+                        this._mobileMenu.style.height = "15vh";
+                        this._mobileMenu.style.width = "100vw";
+                        this._playPauseAreaMobile.style.display = "none";
+                    }
+                    else if (window.innerWidth > window.innerHeight) {
+                        this._mobilePatternButton.style.width = "80%";
+                        this._mobileTrackButton.style.width = "80%";
+                        this._mobileSettingsButton.style.width = "100%";
+                        this._mobilePatternButton.style.height = "33vh";
+                        this._mobileTrackButton.style.height = "34vh";
+                        this._mobileSettingsButton.style.height = "33vh";
+                        this._mobilePatternButton.style.top = "0";
+                        this._mobileTrackButton.style.top = "33vh";
+                        this._mobileSettingsButton.style.bottom = "0";
+                        this._mobileTrackButton.style.left = "";
+                        this._mobilePatternButton.style.left = "";
+                        this._mobileMenu.style.width = "15vw";
+                        this._mobileMenu.style.height = "100vh";
+                        this._mobileMenu.style.right = "0";
+                        this._playPauseAreaMobile.style.display = "none";
+                    }
+                }
+            };
             this._animate = () => {
                 this._modSliderUpdate();
                 if (this._doc.prefs.displayVolumeBar) {
@@ -49741,7 +53147,7 @@ You should be redirected to the song at:<br /><br />
             this._notesDown = () => {
                 this._doc.selection.transpose(false, false);
             };
-            this._loopBar = () => {
+            this._tempLoopBar = () => {
                 const leftSel = Math.min(this._doc.selection.boxSelectionX0, this._doc.selection.boxSelectionX1);
                 const rightSel = Math.max(this._doc.selection.boxSelectionX0, this._doc.selection.boxSelectionX1);
                 if ((leftSel < this._doc.synth.loopBarStart || this._doc.synth.loopBarStart == -1)
@@ -49796,7 +53202,14 @@ You should be redirected to the song at:<br /><br />
                         navigator.share({ url: new URL("#" + this._doc.song.toBase64String(), location.href).href });
                         break;
                     case "shortenUrl":
-                        window.open("https://tinyurl.com/api-create.php?url=" + encodeURIComponent(new URL("#" + this._doc.song.toBase64String(), location.href).href));
+                        let shortenerStrategy = "https://tinyurl.com/api-create.php?url=";
+                        const localShortenerStrategy = window.localStorage.getItem("shortenerStrategySelect");
+                        if (localShortenerStrategy == "isgd")
+                            shortenerStrategy = "https://is.gd/create.php?format=simple&url=";
+                        window.open(shortenerStrategy + encodeURIComponent(new URL("#" + this._doc.song.toBase64String(), location.href).href));
+                        break;
+                    case "configureShortener":
+                        this._openPrompt("configureShortener");
                         break;
                     case "viewPlayer":
                         location.href = "player/#song=" + this._doc.song.toBase64String();
@@ -49914,6 +53327,8 @@ You should be redirected to the song at:<br /><br />
                         this._doc.prefs.enableChannelMuting = !this._doc.prefs.enableChannelMuting;
                         for (const channel of this._doc.song.channels)
                             channel.muted = false;
+                        this._doc.synth.loopRepeatCount = -1;
+                        this._loopEditor.container.style.display = "";
                         break;
                     case "displayBrowserUrl":
                         this._doc.toggleDisplayBrowserUrl();
@@ -49956,6 +53371,13 @@ You should be redirected to the song at:<br /><br />
                         break;
                     case "frostedGlassBackground":
                         this._doc.prefs.frostedGlassBackground = !this._doc.prefs.frostedGlassBackground;
+                        break;
+                    case "displayShortcutButtons":
+                        this._doc.prefs.displayShortcutButtons = !this._doc.prefs.displayShortcutButtons;
+                        break;
+                    case "oldMobileLayout":
+                        this._doc.prefs.oldMobileLayout = !this._doc.prefs.oldMobileLayout;
+                        location.reload();
                         break;
                 }
                 this._optionsMenu.selectedIndex = 0;
@@ -50123,8 +53545,12 @@ You should be redirected to the song at:<br /><br />
             this._vibratoTypeSelect.addEventListener("change", this._whenSetVibratoType);
             this._playButton.addEventListener("click", this.togglePlay);
             this._pauseButton.addEventListener("click", this.togglePlay);
-            this._recordButton.addEventListener("click", this._toggleRecord);
-            this._stopButton.addEventListener("click", this._toggleRecord);
+            this._mobilePlayButton.addEventListener("click", this.togglePlay);
+            this._mobilePauseButton.addEventListener("click", this.togglePlay);
+            this._mobilePatternButton.addEventListener("click", this._displayPatternEditor);
+            this._mobileTrackButton.addEventListener("click", this._displayTrackEditor);
+            this._mobileSettingsButton.addEventListener("click", this._displaySettingsEditor);
+            this._muteEditor._loopButtonInput.addEventListener("click", this._loopTypeEvent);
             this._recordButton.addEventListener("contextmenu", (event) => {
                 if (event.ctrlKey) {
                     event.preventDefault();
@@ -50139,6 +53565,8 @@ You should be redirected to the song at:<br /><br />
             });
             this._prevBarButton.addEventListener("click", this._whenPrevBarPressed);
             this._nextBarButton.addEventListener("click", this._whenNextBarPressed);
+            this._mobilePrevBarButton.addEventListener("click", this._whenPrevBarPressed);
+            this._mobileNextBarButton.addEventListener("click", this._whenNextBarPressed);
             this._volumeSlider.input.addEventListener("input", this._setVolumeSlider);
             this._zoomInButton.addEventListener("click", this._zoomIn);
             this._zoomOutButton.addEventListener("click", this._zoomOut);
@@ -50152,7 +53580,7 @@ You should be redirected to the song at:<br /><br />
             this._duplicateButton.addEventListener("click", this._duplicate);
             this._notesUpButton.addEventListener("click", this._notesUp);
             this._notesDownButton.addEventListener("click", this._notesDown);
-            this._loopBarButton.addEventListener("click", this._loopBar);
+            this._loopBarButton.addEventListener("click", this._tempLoopBar);
             this._fullscreenButton.addEventListener("click", this._goFullscreen);
             this._patternArea.addEventListener("mousedown", this._refocusStageNotEditing);
             this._trackArea.addEventListener("mousedown", this.refocusStage);
@@ -50201,11 +53629,11 @@ You should be redirected to the song at:<br /><br />
             this._panSliderInputBox.addEventListener("input", () => { this._doc.record(new ChangePan(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].pan, Math.min(100.0, Math.max(0.0, Math.round(+this._panSliderInputBox.value))))); });
             this._pwmSliderInputBox.addEventListener("input", () => { this._doc.record(new ChangePulseWidth(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].pulseWidth, Math.min(Config.pulseWidthRange, Math.max(1.0, Math.round(+this._pwmSliderInputBox.value))))); });
             this._detuneSliderInputBox.addEventListener("input", () => { this._doc.record(new ChangeDetune(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].detune, Math.min(Config.detuneMax - Config.detuneCenter, Math.max(Config.detuneMin - Config.detuneCenter, Math.round(+this._detuneSliderInputBox.value))))); });
-            this._unisonVoicesInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonVoices(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonVoices, Math.min(2.0, Math.max(1.0, Math.round(+this._unisonVoicesInputBox.value))))); });
-            this._unisonSpreadInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonSpread(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonSpread, Math.min(96.0, Math.max(-96.0, +this._unisonSpreadInputBox.value)))); });
-            this._unisonOffsetInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonOffset(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonOffset, Math.min(96.0, Math.max(-96.0, +this._unisonOffsetInputBox.value)))); });
-            this._unisonExpressionInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonExpression(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonExpression, Math.min(2.0, Math.max(-2.0, +this._unisonExpressionInputBox.value)))); });
-            this._unisonSignInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonSign(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonSign, Math.min(2.0, Math.max(-2.0, +this._unisonSignInputBox.value)))); });
+            this._unisonVoicesInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonVoices(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonVoices, Math.min(Config.unisonVoicesMax, Math.max(Config.unisonVoicesMin, Math.round(+this._unisonVoicesInputBox.value))))); });
+            this._unisonSpreadInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonSpread(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonSpread, Math.min(Config.unisonSpreadMax, Math.max(Config.unisonSpreadMin, +this._unisonSpreadInputBox.value)))); });
+            this._unisonOffsetInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonOffset(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonOffset, Math.min(Config.unisonOffsetMax, Math.max(Config.unisonOffsetMin, +this._unisonOffsetInputBox.value)))); });
+            this._unisonExpressionInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonExpression(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonExpression, Math.min(Config.unisonExpressionMax, Math.max(Config.unisonExpressionMin, +this._unisonExpressionInputBox.value)))); });
+            this._unisonSignInputBox.addEventListener("input", () => { this._doc.record(new ChangeUnisonSign(this._doc, this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].unisonSign, Math.min(Config.unisonSignMax, Math.max(Config.unisonSignMin, +this._unisonSignInputBox.value)))); });
             this._customWaveDraw.addEventListener("input", () => { this._doc.record(new ChangeCustomWave(this._doc, this._customWaveDrawCanvas.newArray)); });
             this._twoNoteArpBox.addEventListener("input", () => { this._doc.record(new ChangeFastTwoNoteArp(this._doc, this._twoNoteArpBox.checked)); });
             this._clicklessTransitionBox.addEventListener("input", () => { this._doc.record(new ChangeClicklessTransition(this._doc, this._clicklessTransitionBox.checked)); });
@@ -50226,10 +53654,23 @@ You should be redirected to the song at:<br /><br />
                 autoPlayOption.disabled = true;
                 autoPlayOption.setAttribute("hidden", "");
             }
+            else {
+                const oldMobileLayoutOption = this._optionsMenu.querySelector("[value=oldMobileLayout]");
+                oldMobileLayoutOption.disabled = true;
+                oldMobileLayoutOption.setAttribute("hidden", "");
+            }
             if (window.screen.availWidth < 710) {
                 const layoutOption = this._optionsMenu.querySelector("[value=layout]");
                 layoutOption.disabled = true;
                 layoutOption.setAttribute("hidden", "");
+                const MobileButtonOption = this._optionsMenu.querySelector("[value=displayShortcutButtons]");
+                MobileButtonOption.disabled = true;
+                MobileButtonOption.setAttribute("hidden", "");
+                if (this._doc.prefs.oldMobileLayout == false) {
+                    const showDescOption = this._optionsMenu.querySelector("[value=showDescription]");
+                    showDescOption.disabled = true;
+                    showDescOption.setAttribute("hidden", "");
+                }
             }
         }
         _updateSampleLoadingBar(_e) {
@@ -50527,7 +53968,10 @@ You should be redirected to the song at:<br /><br />
                         this.prompt = new CustomFilterPrompt(this._doc, this, true);
                         break;
                     case "theme":
-                        this.prompt = new ThemePrompt(this._doc, this._patternEditor, this._trackArea, document.getElementById("beepboxEditorContainer"));
+                        this.prompt = new ThemePrompt(this._doc);
+                        break;
+                    case "custom":
+                        this.prompt = new CustomPrompt(this._doc, this._patternEditor, this._trackArea, document.getElementById("beepboxEditorContainer"));
                         break;
                     case "layout":
                         this.prompt = new LayoutPrompt(this._doc);
@@ -50557,6 +54001,9 @@ You should be redirected to the song at:<br /><br />
                         break;
                     case "sampleLoadingStatus":
                         this.prompt = new SampleLoadingStatusPrompt(this._doc);
+                        break;
+                    case "configureShortener":
+                        this.prompt = new ShortenerConfigPrompt(this._doc);
                         break;
                     default:
                         this.prompt = new TipPrompt(this._doc, promptName);
@@ -50839,6 +54286,27 @@ You should be redirected to the song at:<br /><br />
             }
         }
     }
+    SongEditor._styleElement = document.head.appendChild(HTML.style({ type: "text/css" }));
+    SongEditor._setLoopIcon = {
+        "1": `
+        .songLoopButton::before {
+              mask-image: var(--loop-within-bar-symbol);
+              -webkit-mask-image: var(--loop-within-bar-symbol);
+            }
+        `,
+        "2": `
+        .songLoopButton::before {
+            mask-image: var(--loop-full-song-symbol);
+            -webkit-mask-image: var(--loop-full-song-symbol);
+          }
+        `,
+        "3": `
+        .songLoopButton::before {
+            mask-image: var(--dont-loop-symbol);
+            -webkit-mask-image: var(--dont-loop-symbol);
+          }
+        `,
+    };
 
     class SongPerformance {
         constructor(_doc) {
@@ -52135,7 +55603,9 @@ You should be redirected to the song at:<br /><br />
                 window.localStorage.removeItem("fullScreen");
             }
             this.closePromptByClickoff = window.localStorage.getItem("closePromptByClickoff") != "false";
-            this.frostedGlassBackground = window.localStorage.getItem("frostedGlassBackground") != "true";
+            this.frostedGlassBackground = window.localStorage.getItem("frostedGlassBackground") == "true";
+            this.displayShortcutButtons = window.localStorage.getItem("displayShortcutButtons") != "false";
+            this.oldMobileLayout = window.localStorage.getItem("oldMobileLayout") == "true";
         }
         save() {
             window.localStorage.setItem("autoPlay", this.autoPlay ? "true" : "false");
@@ -52174,6 +55644,8 @@ You should be redirected to the song at:<br /><br />
             window.localStorage.setItem("visibleOctaves", String(this.visibleOctaves));
             window.localStorage.setItem("closePromptByClickoff", this.closePromptByClickoff ? "true" : "false");
             window.localStorage.setItem("frostedGlassBackground", this.frostedGlassBackground ? "true" : "false");
+            window.localStorage.setItem("displayShortcutButtons", this.displayShortcutButtons ? "true" : "false");
+            window.localStorage.setItem("oldMobileLayout", this.oldMobileLayout ? "true" : "false");
         }
     }
     Preferences.defaultVisibleOctaves = 3;
@@ -52272,7 +55744,7 @@ You should be redirected to the song at:<br /><br />
                 this._sequenceNumber = state.sequenceNumber;
                 this.prompt = state.prompt;
                 try {
-                    new ChangeSong(this, window.location.hash);
+                    new ChangeSong(this, this._getHash());
                 }
                 catch (error) {
                     errorAlert(error);

@@ -942,6 +942,16 @@ var beepbox = (function (exports) {
     Config.detuneMin = 0;
     Config.songDetuneMin = 0;
     Config.songDetuneMax = 500;
+    Config.unisonVoicesMin = 1;
+    Config.unisonVoicesMax = 2;
+    Config.unisonSpreadMin = -96;
+    Config.unisonSpreadMax = 96;
+    Config.unisonOffsetMin = -96;
+    Config.unisonOffsetMax = 96;
+    Config.unisonExpressionMin = -2;
+    Config.unisonExpressionMax = 2;
+    Config.unisonSignMin = -2;
+    Config.unisonSignMax = 2;
     Config.sineWaveLength = 1 << 8;
     Config.sineWaveMask = Config.sineWaveLength - 1;
     Config.sineWave = generateSineWave();
@@ -964,7 +974,7 @@ var beepbox = (function (exports) {
         { name: "noteVolume", computeIndex: 0, displayName: "note volume", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: null },
         { name: "pulseWidth", computeIndex: 2, displayName: "pulse width", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 8] },
         { name: "stringSustain", computeIndex: 3, displayName: "sustain", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [7] },
-        { name: "unison", computeIndex: 4, displayName: "unison", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [0, 5, 7, 9] },
+        { name: "unison", computeIndex: 4, displayName: "unison", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [0, 5, 7, 9, 6, 2, 3] },
         { name: "operatorFrequency", computeIndex: 5, displayName: "fm# freq", interleave: true, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 11] },
         { name: "operatorAmplitude", computeIndex: 11, displayName: "fm# volume", interleave: false, isFilter: false, maxCount: Config.operatorCount + 2, effect: null, compatibleInstruments: [1, 11] },
         { name: "feedbackAmplitude", computeIndex: 17, displayName: "fm feedback", interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [1, 11] },
@@ -2051,7 +2061,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #541625; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--mod-title: #bf2c5d;
+			--progress-bar: #bf2c5d;
+			
 			--pitch-secondary-channel-hue: -80; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -2138,6 +2150,9 @@ var beepbox = (function (exports) {
 
 			--note-flash: #ffffff;
 			--note-flash-secondary: #ffffff77;
+
+			--oscilloscope-line-R: var(--ui-widget-background);
+			--oscilloscope-line-L: var(--secondary-text);
 				}
 		* {
 		cursor: url("abyssbox_cursor.png"), auto;
@@ -2158,6 +2173,8 @@ var beepbox = (function (exports) {
 		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
 		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		--export-instrument-symbol: var(--export-symbol);
+		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
 		}
 		
 			@font-face {
@@ -2210,6 +2227,13 @@ var beepbox = (function (exports) {
     				image-rendering: optimizeSpeed !important;             /* IE */ 
 				}
 			.beepboxEditor button,
+			button.mobilePatternButton,
+			button.mobileTrackButton,
+			button.mobileSettingsButton,
+			button.mobilePlayButton,
+			button.mobilePauseButton,
+			button.mobileNextBarButton,
+			button.mobilePrevBarButton,
 			button.playButton,
 			button.pauseButton, 
 			button.recordButton, 
@@ -2246,6 +2270,11 @@ var beepbox = (function (exports) {
 					border-image: none !important;
 				}
 				
+				button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+					--ui-widget-background: var(--editor-background) !important;
+					border-image-source: none !important;
+				}
+
 			@font-face {
 		   font-family: "AbyssType_small";
 		   src:
@@ -2371,7 +2400,9 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #541625; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--mod-title: #bf2c5d;
+			--progress-bar: #bf2c5d;
+
 			--pitch-secondary-channel-hue: -80; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -2458,6 +2489,9 @@ var beepbox = (function (exports) {
 
 			--note-flash: #ffffff;
 			--note-flash-secondary: #ffffff77;
+
+			--oscilloscope-line-R: var(--ui-widget-background);
+			--oscilloscope-line-L: var(--secondary-text);
 				}		
 		/* sets cursor */ 
 		* {
@@ -2479,7 +2513,16 @@ var beepbox = (function (exports) {
 		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
 		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		--export-instrument-symbol: var(--export-symbol);
+		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
 		}
+		
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+ 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
@@ -2493,6 +2536,15 @@ var beepbox = (function (exports) {
 			}
 
 			.beepboxEditor button,
+			button.mobilePatternButton,
+			button.mobileTrackButton,
+			button.mobileSettingsButton,
+			button.mobilePlayButton,
+			button.mobilePauseButton,
+			button.cancelButton,
+			button.mobileNextBarButton,
+			button.mobilePrevBarButton,
+			button.insertChannelButton,
 			button.playButton,
 			button.pauseButton, 
 			button.recordButton, 
@@ -2502,7 +2554,9 @@ var beepbox = (function (exports) {
 			button.copyButton, 
 			button.pasteButton, 
 			button.exportInstrumentButton, 
-			button.importInstrumentButton, 
+			button.importInstrumentButton,
+			button.okayButton, 
+			button.songLoopButton,
 			.beepboxEditor select, 
 			.beepboxEditor .select2-selection__rendered {
 					border-style: double !important;
@@ -2515,6 +2569,7 @@ var beepbox = (function (exports) {
 			button.notesUpButton::before,
 			button.copyPatternButton::before,
 			button.pastePatternButton::before,
+			button.insertChannelButton::before,
 			button.undoButton::before,
 			button.redoButton::before,
 			button.loopBarButton::before,
@@ -2522,9 +2577,16 @@ var beepbox = (function (exports) {
 			button.selectAllButton::before,
 			button.deleteChannelButton::before, 
 			button.insertRowButton::before,
+			button.okayButton::before, 
+			button.songLoopButton::before,
 			.delete-envelope::before {
 				left: -3px !important;
 				top: -3px !important;
+			}
+
+			button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+				--ui-widget-background: var(--editor-background) !important;
+				border-image-source: none !important;
 			}
 
 			div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
@@ -2657,7 +2719,8 @@ var beepbox = (function (exports) {
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
 			--mod-title: #cc1338;
-		
+			--progress-bar: #cc1338;
+
 			--pitch-secondary-channel-hue: -80; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 255; 		
@@ -2743,6 +2806,9 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum-scale: 0; 	
 			--note-flash: #ffffff;
 			--note-flash-secondary: #ffffff77;
+
+			--oscilloscope-line-R: var(--ui-widget-background);
+			--oscilloscope-line-L: var(--secondary-text);
 				}
 
 				.promptContainerBG::before {
@@ -2788,6 +2854,13 @@ var beepbox = (function (exports) {
     				image-rendering: optimizeSpeed !important;             /* IE */ 
 				}
 				.beepboxEditor button,
+				button.mobilePatternButton,
+				button.mobileTrackButton,
+				button.mobileSettingsButton,
+				button.mobilePlayButton,
+				button.mobilePauseButton,
+				button.mobileNextBarButton,
+				button.mobilePrevBarButton,
 				button.playButton,
 				button.pauseButton, 
 				button.recordButton, 
@@ -2844,7 +2917,16 @@ var beepbox = (function (exports) {
 		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
 		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		--export-instrument-symbol: var(--export-symbol);
+		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
 		}
+		
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+ 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
@@ -2855,6 +2937,11 @@ var beepbox = (function (exports) {
 		   font-family: "AbyssType_small";
 		   src:
  		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+				--ui-widget-background: var(--editor-background) !important;
+				border-image-source: none !important;
 			}
 
 			html {
@@ -3104,7 +3191,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #341a7b; 		
 			--mod-label-secondary-text: rgb(86, 93, 120);
 			--mod-label-primary-text: gray; 
-		
+			--progress-bar: #84aef0;
+
 			--pitch-secondary-channel-hue: 110; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 63; 		
@@ -3377,7 +3465,7 @@ var beepbox = (function (exports) {
    					border-image-width: 4px !important; 
 					border-image-repeat: stretch; 
 				}
-				.beepboxEditor button
+				.beepboxEditor button, button
 				{
 					--ui-widget-background: linear-gradient(#84aef0, #2a3d6a) !important;
 					box-shadow:
@@ -3388,6 +3476,7 @@ var beepbox = (function (exports) {
 				}
 				.beepboxEditor .select2-container--open .select2-selection__rendered,
 				.beepboxEditor button:focus,
+				button:focus,
 				.beepboxEditor .instrument-bar .selected-instrument,
 				.beepboxEditor .eq-filter-type-bar button:not(.deactivated),
 				.beepboxEditor .note-filter-type-bar button:not(.deactivated)
@@ -3601,9 +3690,509 @@ var beepbox = (function (exports) {
 		  }
 
 			`,
+        "Skeuomorphic": `
+		:root {
+			--page-margin: #020202;
+			--editor-background: #1e1e1e;
+			--hover-preview: white;
+			--playhead: rgba(255, 255, 255, 0.9);
+			--primary-text: white;
+			--secondary-text: #848484;
+			--inverted-text: black;
+			--text-selection: rgba(119,68,255,0.99);
+			--box-selection-fill: #044b94;
+			--loop-accent: #74f;
+			--link-accent: #98f;
+			--ui-widget-background: #444;
+			--ui-widget-focus: #555;
+			--pitch-background: #393e4f;
+			--tonic: #725491;
+			--fifth-note: #54547a;
+			--white-piano-key: #eee;
+			--black-piano-key: #666;
+			--white-piano-key-text: #131200;
+			--black-piano-key-text: #fff;
+			--use-color-formula: false;
+			--track-editor-bg-pitch: linear-gradient(#4b5164, #3e3f48);
+			--track-editor-bg-pitch-dim: linear-gradient(#3e3f48, #212530);
+			--track-editor-bg-noise: linear-gradient(#3d3535,#161313);
+			--track-editor-bg-noise-dim: linear-gradient(#161313,#0e0c0c);
+			--track-editor-bg-mod: linear-gradient(#283560,#0a101f);
+			--track-editor-bg-mod-dim: linear-gradient(#05080f,#0a101f);
+			--multiplicative-mod-slider: #606c9f;
+			--overwriting-mod-slider: #6850b5;
+			--indicator-primary: #9c64f7;
+			--indicator-secondary: #393e4f;
+			--select2-opt-group: #333;
+			--input-box-outline: #222;
+			--mute-button-normal: #dda85d;
+			--mute-button-mod: #886eae;
+			--mod-label-primary: #282840;
+			--mod-label-secondary-text: rgb(87, 86, 120);
+			--mod-label-primary-text: white;
+
+			--pitch1-secondary-channel: #bb1111;
+			--pitch1-primary-channel:   #ff5959;
+			--pitch1-secondary-note:    #7c0404;
+			--pitch1-primary-note:      #ffb6b6;
+		
+			--pitch2-secondary-channel: #bb5b11;
+			--pitch2-primary-channel:   #ffa159;
+			--pitch2-secondary-note:    #7c3804;
+			--pitch2-primary-note:      #ffd5b6;
+		
+			--pitch3-secondary-channel: #bba411;
+			--pitch3-primary-channel:   #ffe959;
+			--pitch3-secondary-note:    #7c6c04;
+			--pitch3-primary-note:      #fff5b6;
+		
+			--pitch4-secondary-channel: #88bb11;
+			--pitch4-primary-channel:   #cdff59;
+			--pitch4-secondary-note:    #587c04;
+			--pitch4-primary-note:      #e9ffb6;
+		
+			--pitch5-secondary-channel: #3ebb11;
+			--pitch5-primary-channel:   #85ff59;
+			--pitch5-secondary-note:    #247c04;
+			--pitch5-primary-note:      #c9ffb6;
+		
+			--pitch6-secondary-channel: #11bb2e;
+			--pitch6-primary-channel:   #59ff75;
+			--pitch6-secondary-note:    #047c18;
+			--pitch6-primary-note:      #b6ffc2;
+		
+			--pitch7-secondary-channel: #11bb77;
+			--pitch7-primary-channel:   #59ffbd;
+			--pitch7-secondary-note:    #047c4c;
+			--pitch7-primary-note:      #b6ffe2;
+		
+			--pitch8-secondary-channel: #11b5bb;
+			--pitch8-primary-channel:   #59f9ff;
+			--pitch8-secondary-note:    #04777c;
+			--pitch8-primary-note:      #b6fcff;
+		
+			--pitch9-secondary-channel: #116bbb;
+			--pitch9-primary-channel:   #59b1ff;
+			--pitch9-secondary-note:    #04437c;
+			--pitch9-primary-note:      #b6dcff;
+		
+			--pitch10-secondary-channel:#1826aa;
+			--pitch10-primary-channel:  #5161f6;
+			--pitch10-secondary-note:   #091370;
+			--pitch10-primary-note:     #adb4fd;
+		
+			--pitch11-secondary-channel:#4918aa;
+			--pitch11-primary-channel:  #8951f6;
+			--pitch11-secondary-note:   #2c0970;
+			--pitch11-primary-note:     #c8adfd;
+		
+			--pitch12-secondary-channel:#8818aa;
+			--pitch12-primary-channel:  #d051f6;
+			--pitch12-secondary-note:   #580970;
+			--pitch12-primary-note:     #ebadfd;
+		
+			--pitch13-secondary-channel:#aa188c;
+			--pitch13-primary-channel:  #f651d4;
+			--pitch13-secondary-note:   #70095b;
+			--pitch13-primary-note:     #fdadec;
+		
+			--pitch14-secondary-channel:#aa184d;
+			--pitch14-primary-channel:  #f6518d;
+			--pitch14-secondary-note:   #70092e;
+			--pitch14-primary-note:     #fdadca; 
+		
+			--noise1-secondary-channel: #6F6F6F;
+			--noise1-primary-channel:   #AAAAAA;
+			--noise1-secondary-note:    #A7A7A7;
+			--noise1-primary-note:      #E0E0E0;
+			--noise2-secondary-channel: #996633;
+			--noise2-primary-channel:   #DDAA77;
+			--noise2-secondary-note:    #CC9966;
+			--noise2-primary-note:      #F0D0BB;
+			--noise3-secondary-channel: #4A6D8F;
+			--noise3-primary-channel:   #77AADD;
+			--noise3-secondary-note:    #6F9FCF;
+			--noise3-primary-note:      #BBD7FF;
+			--noise4-secondary-channel: #7A4F9A;
+			--noise4-primary-channel:   #AF82D2;
+			--noise4-secondary-note:    #9E71C1;
+			--noise4-primary-note:      #D4C1EA;
+			--noise5-secondary-channel: #607837;
+			--noise5-primary-channel:   #A2BB77;
+			--noise5-secondary-note:    #91AA66;
+			--noise5-primary-note:      #C5E2B2;
+		--mod1-secondary-channel:   #339955;
+				--mod1-primary-channel:     #77fc55;
+				--mod1-secondary-note:      #77ff8a;
+				--mod1-primary-note:        #cdffee;
+				--mod2-secondary-channel:   #993355;
+				--mod2-primary-channel:     #f04960;
+				--mod2-secondary-note:      #f057a0;
+				--mod2-primary-note:        #ffb8de;
+				--mod3-secondary-channel:   #553399;
+				--mod3-primary-channel:     #8855fc;
+				--mod3-secondary-note:      #aa64ff;
+				--mod3-primary-note:	    #f8ddff;
+				--mod4-secondary-channel:   #a86436;
+				--mod4-primary-channel:     #c8a825;
+				--mod4-secondary-note:      #e8ba46;
+				--mod4-primary-note:        #fff6d3;
+			--disabled-note-primary:    #91879f;
+			--disabled-note-secondary:  #6a677a;
+		}
+		 
+		.channelBox {
+			--pitch1-primary-channel:  linear-gradient(#ff7777, #ff5959);
+			--pitch2-primary-channel:  linear-gradient(#ffaf71, #ffa159);
+			--pitch3-primary-channel:  linear-gradient(#ffee7c, #ffe959);
+			--pitch4-primary-channel:  linear-gradient(#d3fa7a, #cdff59);
+			--pitch5-primary-channel:  linear-gradient(#a4ff83, #85ff59);
+			--pitch6-primary-channel:  linear-gradient(#8aff9e, #59ff75);
+			--pitch7-primary-channel:  linear-gradient(#81ffcc, #59ffbd);
+			--pitch8-primary-channel:  linear-gradient(#59f9ff, #59f9ff);
+			--pitch9-primary-channel:  linear-gradient(#87c7ff, #59b1ff);
+			--pitch10-primary-channel: linear-gradient(#7a87ff, #5161f6);
+			--pitch11-primary-channel: linear-gradient(#a476ff, #8951f6);
+			--pitch12-primary-channel: linear-gradient(#df75ff, #d051f6);
+			--pitch13-primary-channel: linear-gradient(#ff75e3, #f651d4);
+			--pitch14-primary-channel: linear-gradient(#ff71a5, #f6518d);
+		
+			border-radius: 5px;
+			box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2), 0px 0px 1px 1px rgba(0, 0, 0, 0.7), inset 0px -10px 20px 1px rgba(0, 0, 0, 0.1), inset 0px 1px 0px 0px rgba(255, 255, 255, 0.1);
+		}
+		
+		.channelBoxLabel {
+			--pitch1-primary-channel:   #ff5959;
+			--pitch2-primary-channel:   #ffa159;
+			--pitch3-primary-channel:   #ffe959;
+			--pitch4-primary-channel:   #cdff59;
+			--pitch5-primary-channel:   #85ff59;
+			--pitch6-primary-channel:   #59ff75;
+			--pitch7-primary-channel:   #59ffbd;
+			--pitch8-primary-channel:   #59f9ff;
+			--pitch9-primary-channel:   #59b1ff;
+			--pitch10-primary-channel:  #5161f6;
+			--pitch11-primary-channel:  #8951f6;
+			--pitch12-primary-channel:  #d051f6;
+			--pitch13-primary-channel:  #f651d4;
+			--pitch14-primary-channel:  #f6518d;
+		}
+		
+		body {
+			background-image: url('https://github.com/choptop84/choptop84s-image-repository/blob/main/skeuobg.png?raw=true') !important;
+			background-repeat: no-repeat !important;
+			background-size: contain;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		
+		#beepboxEditorContainer, .track-area, .beepboxEditor, #text-content, div.noSelection {
+			background-color: #fff0 !important;
+		} 
+		
+		#pitchEditorBackground {
+			opacity: 0.5 !important;
+			filter: brightness(150%);
+		}
+		
+		svg#firstImage {
+			background-image: url('https://github.com/choptop84/choptop84s-image-repository/blob/main/skeuobg2.png?raw=true') !important;
+		}
+		
+		#oscilascopeAll {
+			margin-left: auto;
+			margin-right: auto;
+			position: static;
+		}
+		 
+		.beepboxEditor,
+		.beepboxEditor select
+		{
+			text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
+		}
+		 
+		.beepboxEditor .piano-button {
+			text-shadow: none;
+		}
+		 
+		.beepboxEditor .prompt
+		{
+			background: radial-gradient(farthest-corner at 50% 0px, #2a2a2a, #1a1a1a) !important;
+		}
+		 
+		#beepboxEditorContainer {
+			background-color: rgba(0, 0, 0, 0) !important;
+		}
+		 
+		.beepboxEditor .trackAndMuteContainer {
+			text-shadow: none;
+		}
+		 
+		.beepboxEditor .loopEditor
+		{
+			--editor-background: rgba(0, 0, 0, 0.0) !important;
+		}
+		 
+		.beepboxEditor .muteEditor
+		{
+			--editor-background: #1e1e1e !important;
+		}
+		 
+		.beepboxEditor .pattern-area
+		{
+			--editor-background: rgba(0, 0, 0, 1) !important;
+		}
+		 
+		.beepboxEditor .trackContainer svg
+		{
+			--editor-background: #111 !important;
+		}
+		 
+		.beepboxEditor .muteEditor > :last-child {
+			--editor-background: rgba(0, 0, 0, 0) !important;
+		}
+		 
+		.beepboxEditor #octaveScrollBarContainer {
+			background-color: rgba(0, 0, 0, 0.3);
+		}
+		 
+		.beepboxEditor {
+			--track-editor-bg-pitch-dim: #1e1f28;
+		}
+		 
+		.beepboxEditor .muteButtonText {
+			transform: translate(0px, 1px) !important;
+			color: #777 !important;
+		}
+		 
+		.beepboxEditor .instrument-bar {
+			--text-color-lit: #eee;
+			--text-color-dim: #777;
+		}
+		 
+		.beepboxEditor .instrument-bar .selected-instrument {
+			color: rgba(255, 255, 255, 1) !important;
+			text-shadow: 0px 0px 4px var(--text-color-lit);
+		}
+		 
+		.beepboxEditor .instrument-bar .deactivated {
+			color: rgba(0, 0, 0, 1) !important;
+			text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2);
+		}
+		 
+		.beepboxEditor .instrument-bar > :not(.last-button) {
+			border-color: var(--background-color-lit) !important;
+		}
+		 
+		.beepboxEditor .instrument-bar .selected-instrument {
+			border-color: rgba(255, 255, 255, 1) !important;
+		}
+		 
+		.beepboxEditor select
+		{
+			background: #444 !important;
+			box-shadow:
+				0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px -10px 20px 1px rgba(0, 0, 0, 0.4),
+				inset 0px 1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor select:focus
+		{
+			background: #333 !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+				inset 0px 10px 20px 1px rgba(0, 0, 0, 0.4),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor .select2-selection__rendered,
+		.beepboxEditor button,
+		.beepboxEditor .instrument-bar button,
+		.beepboxEditor .eq-filter-type-bar button .deactivated,
+		.beepboxEditor .note-filter-type-bar button .deactivated
+		{
+			background: linear-gradient(#444, #333) !important;
+			box-shadow:
+				0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor .select2-container--open .select2-selection__rendered,
+		.beepboxEditor button:focus,
+		.beepboxEditor .instrument-bar .selected-instrument,
+		.beepboxEditor .eq-filter-type-bar button:not(.deactivated),
+		.beepboxEditor .note-filter-type-bar button:not(.deactivated)
+		{
+			background: linear-gradient(#333, #444) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor .filterEditor svg,
+		.beepboxEditor .fadeInOut svg,
+		.beepboxEditor .harmonics svg,
+		.beepboxEditor .spectrum svg
+		{
+			background: rgba(0, 0, 0, 0.3) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-webkit-slider-thumb
+		{
+			box-shadow:
+				0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+				inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+		{
+			background: rgba(0, 0, 0, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+			border-radius: 4px;
+		}
+		 
+		.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+		{
+			background: rgba(255, 255, 255, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-ms-thumb
+		{
+			box-shadow:
+				0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+				inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-ms-track
+		{
+			background: rgba(0, 0, 0, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+			border-radius: 4px;
+		}
+		 
+		.beepboxEditor input[type="range"]:focus::-ms-track
+		{
+			background: rgba(255, 255, 255, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-moz-range-thumb
+		{
+			box-shadow:
+				0px 2px 2px 1px rgba(0, 0, 0, 0.4),
+				0px 0px 1px 1px rgba(0, 0, 0, 0.7),
+				inset 0px 1px 0px 0px rgba(255, 255, 255, 1),
+				inset 0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -8px 3px rgba(0, 0, 0, 0.2)
+			;
+		}
+		 
+		.beepboxEditor input[type="range"]::-moz-range-track
+		{
+			background: rgba(0, 0, 0, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+			border-radius: 4px;
+		}
+		 
+		.beepboxEditor input[type="range"]:focus::-moz-range-track
+		{
+			background: rgba(255, 255, 255, 0.2) !important;
+			box-shadow:
+				0px 0px 1px 1px rgba(0, 0, 0, 0.2),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.2),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="text"],
+		.beepboxEditor input[type="number"]
+		{
+			border: none !important;
+			background: rgba(0, 0, 0, 0.2) !important;
+			box-shadow:
+				0px -1px 1px 0px rgba(0, 0, 0, 0.5),
+				inset 0px 1px 2px 0px rgba(0, 0, 0, 0.5),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="checkbox"]
+		{
+			appearance: none;
+			background: rgba(0, 0, 0, 0.3);
+			color: currentColor;
+			border-radius: 1px;
+			width: 1em !important;
+			height: 1em !important;
+			box-shadow:
+				inset 0px 2px 3px 0px rgba(0, 0, 0, 0.7),
+				inset 0px -1px 0px 0px rgba(255, 255, 255, 0.3)
+			;
+		}
+		 
+		.beepboxEditor input[type="checkbox"]:checked
+		{
+			display: flex;
+			justify-content: center;
+		}
+		 
+		.beepboxEditor input[type="checkbox"]:checked:after
+		{
+			width: 1em;
+			height: 1em;
+			text-align: center;
+			font-size: 0.8em;
+			content: "✓";
+			color: currentColor;
+			text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.5);
+		}
+		`,
         "Glyde": `
 	  :root { 
 		--page-margin: #000000; 
+		--song-player-margin: #000;
 		--editor-background: #472434a8; 
 		--hover-preview: white; 
 		--playhead: rgba(255, 255, 255, 0.9); 
@@ -3639,6 +4228,7 @@ var beepbox = (function (exports) {
 		--mod-label-primary: #2b080d; 
 		--mod-label-secondary-text: #421a20; 
 		--mod-label-primary-text: #ffc6cf; 
+		--progress-bar: #ffc9ff;
 		--pitch-secondary-channel-hue: 60; 
 		--pitch-secondary-channel-sat: 23; 
 		--pitch-secondary-channel-sat-scale: 0.1; 
@@ -3726,7 +4316,7 @@ var beepbox = (function (exports) {
 			body {
 			background-image: url("https://choptop84.github.io/choptop84s-image-repository/glydebg.png") !important;
 			background-position: top right;
-			background-repeat: no-repeat;
+			background-repeat: no-repeat !important;
 
 			image-rendering: -moz-crisp-edges !important;         /* Firefox */
 			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
@@ -3792,6 +4382,137 @@ var beepbox = (function (exports) {
 
 
 			`,
+        "starry studio": `
+			:root {     
+				--page-margin: black;     
+				--editor-background: rgba(0, 0, 0, 0.65);     
+				--hover-preview: #f8f8f8;     
+				--playhead: rgba(255, 255, 255, 0.8);     
+				--primary-text: #f8f8f8;     
+				--secondary-text: #b8b4e8;     
+				--inverted-text: #3b2655;     
+				--text-selection: rgba(124, 91, 173, 0.9);     
+				--box-selection-fill: #b8b4e8;     
+				--loop-accent: #a80a61;     
+				--link-accent: #a286d7;     
+				--ui-widget-background: #31253f;     
+				--ui-widget-focus: #7c5bad;     
+				--pitch-background: rgba(40, 40, 44, 0.5);     
+				--tonic: rgba(83, 81, 95, 0.5);     
+				--fifth-note: rgba(59, 38, 85, 0.5);     
+				--white-piano-key: rgb(155, 151, 166);     
+				--black-piano-key: #39363e;     
+				--white-piano-key-text: #39363e;     
+				--black-piano-key-text: #9b97a6;     
+				--use-color-formula: true;     
+				--track-editor-bg-pitch: #423174;     
+				--track-editor-bg-pitch-dim: #252335;     
+				--track-editor-bg-noise: #39363e;     
+				--track-editor-bg-noise-dim: #28282c;     
+				--track-editor-bg-mod: #3b2655;     
+				--track-editor-bg-mod-dim: #252335;     
+				--multiplicative-mod-slider: #168ee4;     
+				--overwriting-mod-slider: #2457c6;     
+				--indicator-primary: #f8f8f8;     
+				--indicator-secondary: #423174;     
+				--select2-opt-group: #423174;     
+				--input-box-outline: #3b2655;     
+				--mute-button-normal: #00b176;     
+				--mute-button-mod: #e6a418;     
+				--mod-label-primary: #3b2655;     
+				--mod-label-secondary-text: rgb(124 91 173);     
+				--mod-label-primary-text: #b8b4e8;     
+				--pitch-secondary-channel-hue: 0;     
+				--pitch-secondary-channel-hue-scale: 6.5;     
+				--pitch-secondary-channel-sat: 83.3;     
+				--pitch-secondary-channel-sat-scale: 0.1;     
+				--pitch-secondary-channel-lum: 40;     
+				--pitch-secondary-channel-lum-scale: 0.05;     
+				--pitch-primary-channel-hue: 0;     
+				--pitch-primary-channel-hue-scale: 6.5;     
+				--pitch-primary-channel-sat: 100;     
+				--pitch-primary-channel-sat-scale: 0.1;     
+				--pitch-primary-channel-lum: 67.5;     
+				--pitch-primary-channel-lum-scale: 0.05;     
+				--pitch-secondary-note-hue: 0;     
+				--pitch-secondary-note-hue-scale: 6.5;     
+				--pitch-secondary-note-sat: 93.9;     
+				--pitch-secondary-note-sat-scale: 0.1;     
+				--pitch-secondary-note-lum: 25;     
+				--pitch-secondary-note-lum-scale: 0.05;     
+				--pitch-primary-note-hue: 0;     
+				--pitch-primary-note-hue-scale: 6.5;     
+				--pitch-primary-note-sat: 100;     
+				--pitch-primary-note-sat-scale: 0.05;     
+				--pitch-primary-note-lum: 85.6;     
+				--pitch-primary-note-lum-scale: 0.025;     
+				--noise-secondary-channel-hue: 0;     
+				--noise-secondary-channel-hue-scale: 2;     
+				--noise-secondary-channel-sat: 25;     
+				--noise-secondary-channel-sat-scale: 0;     
+				--noise-secondary-channel-lum: 42;     
+				--noise-secondary-channel-lum-scale: 0;     
+				--noise-primary-channel-hue: 0;     
+				--noise-primary-channel-hue-scale: 2;     
+				--noise-primary-channel-sat: 33;     
+				--noise-primary-channel-sat-scale: 0;     
+				--noise-primary-channel-lum: 63.5;     
+				--noise-primary-channel-lum-scale: 0;     
+				--noise-secondary-note-hue: 0;     
+				--noise-secondary-note-hue-scale: 2;     
+				--noise-secondary-note-sat: 33.5;     
+				--noise-secondary-note-sat-scale: 0;     
+				--noise-secondary-note-lum: 55;     
+				--noise-secondary-note-lum-scale: 0;     
+				--noise-primary-note-hue: 0;     
+				--noise-primary-note-hue-scale: 2;     
+				--noise-primary-note-sat: 46.5;     
+				--noise-primary-note-sat-scale: 0;     
+				--noise-primary-note-lum: 74;     
+				--noise-primary-note-lum-scale: 0;     
+				--mod-secondary-channel-hue: 192;     
+				--mod-secondary-channel-hue-scale: 1.5;     
+				--mod-secondary-channel-sat: 88;     
+				--mod-secondary-channel-sat-scale: 0;     
+				--mod-secondary-channel-lum: 50;     
+				--mod-secondary-channel-lum-scale: 0;     
+				--mod-primary-channel-hue: 192;     
+				--mod-primary-channel-hue-scale: 1.5;     
+				--mod-primary-channel-sat: 96;     
+				--mod-primary-channel-sat-scale: 0;     
+				--mod-primary-channel-lum: 80;     
+				--mod-primary-channel-lum-scale: 0;     
+				--mod-secondary-note-hue: 192;     
+				--mod-secondary-note-hue-scale: 1.5;     
+				--mod-secondary-note-sat: 92;     
+				--mod-secondary-note-sat-scale: 0;     
+				--mod-secondary-note-lum: 45;     
+				--mod-secondary-note-lum-scale: 0;     
+				--mod-primary-note-hue: 192;     
+				--mod-primary-note-hue-scale: 1.5;     
+				--mod-primary-note-sat: 96;     
+				--mod-primary-note-sat-scale: 0;     
+				--mod-primary-note-lum: 85;     
+				--mod-primary-note-lum-scale: 0;     
+				--disabled-note-primary: #252a46;     
+				--disabled-note-secondary: #181c34; }
+
+				/* sets background image */
+			.beepboxEditor load {
+				background: #fff0;
+				}
+
+			body {
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/stars.gif") !important;
+			background-repeat: repeat !important;
+
+			image-rendering: -moz-crisp-edges !important;         /* Firefox */
+			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+			image-rendering: -o-crisp-edges !important;            /* Opera */
+			image-rendering: pixelated !important;                 /* Future browsers */
+			image-rendering: optimizeSpeed !important;             /* IE */
+				}
+			`,
         "AWeebyssBox": `
 			:root {		
 			--page-margin: #1e0915; 		
@@ -3830,7 +4551,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #541625; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--progress-bar: #bf2c5d;
+
 			--pitch-secondary-channel-hue: -80; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -3925,6 +4647,11 @@ var beepbox = (function (exports) {
 		   font-family: "AbyssType";
 		   src:
  		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+
+			button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+				--ui-widget-background: var(--editor-background) !important;
+				border-image-source: none !important;
 			}
 
 			#text-content {
@@ -4034,7 +4761,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #542f16; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--progress-bar: #ff6f00;
+
 			--pitch-secondary-channel-hue: 0; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -4136,9 +4864,9 @@ var beepbox = (function (exports) {
 		/* sets background image */
 		body {
 		background-image: url("https://choptop84.github.io/abyssbox-source/website/lambda.png") !important;
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
+		background-size: cover !important;
+		background-position: center !important;
+		background-repeat: no-repeat !important;
 			}
 			/* make editor background transparent */
 		#beepboxEditorContainer, .beepboxEditor, #text-content {
@@ -4200,7 +4928,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #542f16; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--progress-bar: #ff6f00;
+
 			--pitch-secondary-channel-hue: 0; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -4563,7 +5292,7 @@ var beepbox = (function (exports) {
 		  .beepboxEditor .instrument-bar .selected-instrument {
 			border-color: rgba(255, 255, 255, 1) !important;
 		  }
-		  .beepboxEditor button {
+		  .beepboxEditor button, button {
 			color: #fff;
 			background: #3c236f;
 		  }
@@ -4874,7 +5603,7 @@ var beepbox = (function (exports) {
 		   .beepboxEditor .instrument-bar .selected-instrument {
 			 border-color: #111111 !important;
 		   }
-		   .beepboxEditor button {
+		   .beepboxEditor button, button {
 			 color: #fff;
 			 background: #3c236f;
 		   }
@@ -5000,7 +5729,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #541616; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray; 
-		
+			--progress-bar: #ff0000;
+
 			--pitch-secondary-channel-hue: 0; 		
 			--pitch-secondary-channel-hue-scale 0; 		
 			--pitch-secondary-channel-sat: 43; 		
@@ -5161,7 +5891,8 @@ var beepbox = (function (exports) {
 				--mute-button-normal: #ffffff;
 				--mute-button-mod: #4f4f4f;
 				--mod-label-primary: #f00;
-			
+				--progress-bar: #00ff00;
+
 				--pitch1-secondary-channel: #590000;
 			  --pitch1-primary-channel: #f00;
 			  --pitch1-secondary-note: #590000;
@@ -5280,7 +6011,7 @@ var beepbox = (function (exports) {
 
 			/* sets background image */
 			body {
-			background-image: url("https://cdn.discordapp.com/attachments/804372822931668994/1165384144948305960/spr_battlebg_1.png") !important;
+			background-image: url("https://choptop84.github.io/choptop84s-image-repository/battlebg.png") !important;
 			background-position: center;
 			background-size: contain;
 			background-attachment: fixed;
@@ -5390,7 +6121,8 @@ var beepbox = (function (exports) {
 			--mod-label-primary: #541625; 		
 			--mod-label-secondary-text: rgb(120, 87, 86); 
 			--mod-label-primary-text: gray;
-		
+			--progress-bar: #00ff00;
+
 --pitch-secondary-channel-hue: 0;		
 --pitch-secondary-channel-hue-scale: 6.1;		
 --pitch-secondary-channel-sat: 43.3;		
@@ -5513,7 +6245,7 @@ var beepbox = (function (exports) {
 					border-radius: 15px;
 					border: 0px solid var(--ui-widget-background) !important;
 					padding-left: 20px !important;
-					box-shadow: 6px 6px 27px 4px rgba(0, 0, 0, 0.5) !important
+					box-shadow: 6px 6px 27px 4px rgba(0, 0, 0, 0.5) !important;
 					padding-top: 6px !important;
 					padding-right: 20px !important;
 					padding-bottom: 20px !important;
@@ -5536,12 +6268,6 @@ var beepbox = (function (exports) {
 				div.promptTitle {
 					text-align: left !important;
 					color: white !important;
-				}
-				.set-themeExt::after {
-					content: "setTheme.exe";
-				}
-				.set-themeTitle {
-					display: none;
 				}
 				.layoutExt::before {
 					content: "layout.exe";
@@ -5630,6 +6356,20 @@ var beepbox = (function (exports) {
 					content: "moveNotesSideways.exe";
 				}
 
+				.themeExt::after {
+					content: "setTheme.exe";
+				}
+				.themeTitle {
+					display: none;
+				}
+
+				.customThemeExt::after {
+					content: "customThemeEditor.exe";
+				}
+				.customThemeTitle {
+					display: none;
+				}
+
 				.nrsTitle {
 					display: none;
 				}
@@ -5660,6 +6400,13 @@ var beepbox = (function (exports) {
 		}
 
 		.beepboxEditor button,
+		button.mobilePatternButton,
+		button.mobileTrackButton,
+		button.mobileSettingsButton,
+		button.mobilePlayButton,
+		button.mobilePauseButton,
+		button.mobileNextBarButton,
+		button.mobilePrevBarButton,
 		button.playButton,
 		button.pauseButton, 
 		button.recordButton, 
@@ -5999,6 +6746,11 @@ var beepbox = (function (exports) {
 					image-rendering: optimizeSpeed !important;             /* IE */
 				}
 
+				button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+					--ui-widget-background: var(--editor-background) !important;
+					border-image-source: none !important;
+				}
+
 				.beepboxEditor input[type="range"]::-webkit-slider-thumb
 				{
 					cursor: url("https://choptop84.github.io/choptop84s-image-repository/xphandcursor.png"), pointer !important;
@@ -6110,6 +6862,7 @@ var beepbox = (function (exports) {
 			--input-box-outline: #00ff00; 
 			--mute-button-normal: #00ff44; 
 			--mute-button-mod: #44ff00; 
+			--progress-bar: #00ff00;
 			--pitch1-secondary-channel: #0099A1; 
 			--pitch1-primary-channel: #25F3FF; 
 			--pitch1-secondary-note: #00BDC7; 
@@ -6223,6 +6976,439 @@ var beepbox = (function (exports) {
 						.modTitle::before {
 							content: "> AbyssBox Terminal 2.0" !important;
 						}
+			`,
+        "Slushie": `
+			:root { 
+				--page-margin: #040814; 
+				--editor-background: #040814; 
+				--hover-preview: #c6f7ff; 
+				--playhead: white; 
+				--primary-text: #d3f3ff; 
+				--secondary-text: #6f72b5; 
+				--inverted-text: black; 
+				--text-selection: rgba(119,68,255,0.99); 
+				--box-selection-fill: rgb(43 70 171 / 62%); 
+				--loop-accent: #573ebb; 
+				--link-accent: #98f; 
+				--ui-widget-background: #2e2f44; 
+				--ui-widget-focus: #2b2c46; 
+				--pitch-background: #353654; 
+				--tonic: #716fe3; 
+				--fifth-note: #76469b; 
+				--white-piano-key: #abbce3; 
+				--black-piano-key: #2f235e; 
+				--use-color-formula: false; 
+				--track-editor-bg-pitch: #3a3b5c; 
+				--track-editor-bg-pitch-dim: #1f2036; 
+				--track-editor-bg-noise: #3c3554; 
+				--track-editor-bg-noise-dim: #1e1834; 
+				--track-editor-bg-mod: #30335e; 
+				--track-editor-bg-mod-dim: #161938; 
+				--multiplicative-mod-slider: #e29cff; 
+				--overwriting-mod-slider: #495789; 
+				--indicator-primary: #e1a6ff; 
+				--indicator-secondary: #415187; 
+				--select2-opt-group: #22223a; 
+				--input-box-outline: #2d2648; 
+				--mute-button-normal: #7aceff; 
+				--mute-button-mod: #9d6bff; 
+				--pitch1-secondary-channel: #5f3ea5; 
+				--pitch1-primary-channel: #c1a4ff; 
+				--pitch1-secondary-note: #794fd3; 
+				--pitch1-primary-note: #d8c6ff; 
+				--pitch2-secondary-channel: #4f44bf; 
+				--pitch2-primary-channel: #9287ff; 
+				--pitch2-secondary-note: #5e51d9; 
+				--pitch2-primary-note: #b6afff; 
+				--pitch3-secondary-channel: #374eb9; 
+				--pitch3-primary-channel: #8097ff; 
+				--pitch3-secondary-note: #445cc9; 
+				--pitch3-primary-note: #a0b2ff; 
+				--pitch4-secondary-channel: #2867cf; 
+				--pitch4-primary-channel: #6fa5ff; 
+				--pitch4-secondary-note: #2e6ed7; 
+				--pitch4-primary-note: #a6c7ff; 
+				--pitch5-secondary-channel: #3175a7; 
+				--pitch5-primary-channel: #7ec9ff; 
+				--pitch5-secondary-note: #367eb3; 
+				--pitch5-primary-note: #9fd7ff; 
+				--pitch6-secondary-channel: #3993a9; 
+				--pitch6-primary-channel: #8ce9ff; 
+				--pitch6-secondary-note: #386da3; 
+				--pitch6-primary-note: #9eecff; 
+				--pitch7-secondary-channel: #369d8a; 
+				--pitch7-primary-channel: #8bfce7; 
+				--pitch7-secondary-note: #1c93a7; 
+				--pitch7-primary-note: #abffef; 
+				--pitch8-secondary-channel: #00A170; 
+				--pitch8-primary-channel: #50FFC9; 
+				--pitch8-secondary-note: #00C78A; 
+				--pitch8-primary-note: #83FFD9; 
+				--pitch9-secondary-channel: #49b374; 
+				--pitch9-primary-channel: #8affa9; 
+				--pitch9-secondary-note: #26815f; 
+				--pitch9-primary-note: #c8ffde; 
+				--pitch10-secondary-channel: #58a747; 
+				--pitch10-primary-channel: #bbffaa; 
+				--pitch10-secondary-note: #1d7c48; 
+				--pitch10-primary-note: #c7ffbc; 
+				--noise1-secondary-channel: #42829b; 
+				--noise1-primary-channel: #97d3fc; 
+				--noise1-secondary-note: #3f53b3; 
+				--noise1-primary-note: #97d3fc; 
+				--noise2-secondary-channel: #6354bb; 
+				--noise2-primary-channel: #9a89ff; 
+				--noise2-secondary-note: #5f4dcd; 
+				--noise2-primary-note: #c6bcff; 
+				--noise3-secondary-channel: #704a95; 
+				--noise3-primary-channel: #c285ff; 
+				--noise3-secondary-note: #ad5aff; 
+				--noise3-primary-note: #d3a6ff; 
+				--noise4-secondary-channel: #a53c65; 
+				--noise4-primary-channel: #f794bb; 
+				--noise4-secondary-note: #cb5080; 
+				--noise4-primary-note: #f794bb; 
+				--noise5-secondary-channel: #9b2d2d; 
+				--noise5-primary-channel: #ff7676; 
+				--noise5-secondary-note: #cb4444; 
+				--noise5-primary-note: #ff9999; 
+				--mod1-secondary-channel: #b7613c; 
+				--mod1-primary-channel: #ff9f76; 
+				--mod1-secondary-note: #e77e52; 
+				--mod1-primary-note: #ffb99b; 
+				--mod2-secondary-channel: #916d34; 
+				--mod2-primary-channel: #fece80; 
+				--mod2-secondary-note: #c58b35; 
+				--mod2-primary-note: #ffdda5; 
+				--mod3-secondary-channel: #83761a; 
+				--mod3-primary-channel: #fdf68c; 
+				--mod3-secondary-note: #c18e00; 
+				--mod3-primary-note: #fdf68c; 
+				--mod4-secondary-channel: #a86436; 
+				--mod4-primary-channel: #c8a825; 
+				--mod4-secondary-note: #e8ba46; 
+				--mod4-primary-note: #c8a825; 
+				--mod-label-primary: #37325e; 
+				--mod-label-secondary-text: #6e8aa7; 
+				--mod-label-primary-text: #c1ffff; 
+				--disabled-note-primary: #999; 
+				--disabled-note-secondary: #666; 
+				--note-flash: #ffffff; 
+				--note-flash-secondary: #ffffff77; }
+			`,
+        "Slushie Pixel": `
+			:root { 
+				--page-margin: #040814; 
+				--editor-background: #040814; 
+				--hover-preview: #c6f7ff; 
+				--playhead: white; 
+				--primary-text: #d3f3ff; 
+				--secondary-text: #6f72b5; 
+				--inverted-text: black; 
+				--text-selection: rgba(119,68,255,0.99); 
+				--box-selection-fill: rgb(43 70 171 / 62%); 
+				--loop-accent: #573ebb; 
+				--link-accent: #98f; 
+				--ui-widget-background: #2e2f44; 
+				--ui-widget-focus: #2b2c46; 
+				--pitch-background: #353654; 
+				--tonic: #716fe3; 
+				--fifth-note: #76469b; 
+				--white-piano-key: #abbce3; 
+				--black-piano-key: #2f235e; 
+				--progress-bar: #716fe3;
+				--use-color-formula: false; 
+				--track-editor-bg-pitch: #3a3b5c; 
+				--track-editor-bg-pitch-dim: #1f2036; 
+				--track-editor-bg-noise: #3c3554; 
+				--track-editor-bg-noise-dim: #1e1834; 
+				--track-editor-bg-mod: #30335e; 
+				--track-editor-bg-mod-dim: #161938; 
+				--multiplicative-mod-slider: #e29cff; 
+				--overwriting-mod-slider: #495789; 
+				--indicator-primary: #e1a6ff; 
+				--indicator-secondary: #415187; 
+				--select2-opt-group: #22223a; 
+				--input-box-outline: #2d2648; 
+				--mute-button-normal: #7aceff; 
+				--mute-button-mod: #9d6bff; 
+				--pitch1-secondary-channel: #5f3ea5; 
+				--pitch1-primary-channel: #c1a4ff; 
+				--pitch1-secondary-note: #794fd3; 
+				--pitch1-primary-note: #d8c6ff; 
+				--pitch2-secondary-channel: #4f44bf; 
+				--pitch2-primary-channel: #9287ff; 
+				--pitch2-secondary-note: #5e51d9; 
+				--pitch2-primary-note: #b6afff; 
+				--pitch3-secondary-channel: #374eb9; 
+				--pitch3-primary-channel: #8097ff; 
+				--pitch3-secondary-note: #445cc9; 
+				--pitch3-primary-note: #a0b2ff; 
+				--pitch4-secondary-channel: #2867cf; 
+				--pitch4-primary-channel: #6fa5ff; 
+				--pitch4-secondary-note: #2e6ed7; 
+				--pitch4-primary-note: #a6c7ff; 
+				--pitch5-secondary-channel: #3175a7; 
+				--pitch5-primary-channel: #7ec9ff; 
+				--pitch5-secondary-note: #367eb3; 
+				--pitch5-primary-note: #9fd7ff; 
+				--pitch6-secondary-channel: #3993a9; 
+				--pitch6-primary-channel: #8ce9ff; 
+				--pitch6-secondary-note: #386da3; 
+				--pitch6-primary-note: #9eecff; 
+				--pitch7-secondary-channel: #369d8a; 
+				--pitch7-primary-channel: #8bfce7; 
+				--pitch7-secondary-note: #1c93a7; 
+				--pitch7-primary-note: #abffef; 
+				--pitch8-secondary-channel: #00A170; 
+				--pitch8-primary-channel: #50FFC9; 
+				--pitch8-secondary-note: #00C78A; 
+				--pitch8-primary-note: #83FFD9; 
+				--pitch9-secondary-channel: #49b374; 
+				--pitch9-primary-channel: #8affa9; 
+				--pitch9-secondary-note: #26815f; 
+				--pitch9-primary-note: #c8ffde; 
+				--pitch10-secondary-channel: #58a747; 
+				--pitch10-primary-channel: #bbffaa; 
+				--pitch10-secondary-note: #1d7c48; 
+				--pitch10-primary-note: #c7ffbc; 
+				--noise1-secondary-channel: #42829b; 
+				--noise1-primary-channel: #97d3fc; 
+				--noise1-secondary-note: #3f53b3; 
+				--noise1-primary-note: #97d3fc; 
+				--noise2-secondary-channel: #6354bb; 
+				--noise2-primary-channel: #9a89ff; 
+				--noise2-secondary-note: #5f4dcd; 
+				--noise2-primary-note: #c6bcff; 
+				--noise3-secondary-channel: #704a95; 
+				--noise3-primary-channel: #c285ff; 
+				--noise3-secondary-note: #ad5aff; 
+				--noise3-primary-note: #d3a6ff; 
+				--noise4-secondary-channel: #a53c65; 
+				--noise4-primary-channel: #f794bb; 
+				--noise4-secondary-note: #cb5080; 
+				--noise4-primary-note: #f794bb; 
+				--noise5-secondary-channel: #9b2d2d; 
+				--noise5-primary-channel: #ff7676; 
+				--noise5-secondary-note: #cb4444; 
+				--noise5-primary-note: #ff9999; 
+				--mod1-secondary-channel: #b7613c; 
+				--mod1-primary-channel: #ff9f76; 
+				--mod1-secondary-note: #e77e52; 
+				--mod1-primary-note: #ffb99b; 
+				--mod2-secondary-channel: #916d34; 
+				--mod2-primary-channel: #fece80; 
+				--mod2-secondary-note: #c58b35; 
+				--mod2-primary-note: #ffdda5; 
+				--mod3-secondary-channel: #83761a; 
+				--mod3-primary-channel: #fdf68c; 
+				--mod3-secondary-note: #c18e00; 
+				--mod3-primary-note: #fdf68c; 
+				--mod4-secondary-channel: #a86436; 
+				--mod4-primary-channel: #c8a825; 
+				--mod4-secondary-note: #e8ba46; 
+				--mod4-primary-note: #c8a825; 
+				--mod-label-primary: #37325e; 
+				--mod-label-secondary-text: #6e8aa7; 
+				--mod-label-primary-text: #c1ffff; 
+				--disabled-note-primary: #999; 
+				--disabled-note-secondary: #666; 
+				--note-flash: #ffffff; 
+				--note-flash-secondary: #ffffff77; }
+			
+				* {
+				cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_cursor.png"), auto !important;
+				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+				--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+				--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+				--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+				--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+				--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+				--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+				--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+				--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+				--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+				--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+				--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+				--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+				--export-instrument-symbol: var(--export-symbol);
+				--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
+				} 
+					@font-face {
+				   font-family: "AbyssType";
+				   src:
+					url("abysstype.otf") format("opentype") tech(color-COLRv1),
+					}
+			
+					@font-face {
+				   font-family: "AbyssType_small";
+				   src:
+					url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+					}
+			
+					body {
+						background-image: url("https://choptop84.github.io/choptop84s-image-repository/slushbg.gif") !important;
+						background-size: 32px;
+						background-position: center;
+						background-repeat: repeat;
+			
+						image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						image-rendering: -o-crisp-edges !important;            /* Opera */
+						image-rendering: pixelated !important;                 /* Future browsers */
+						image-rendering: optimizeSpeed !important;             /* IE */
+						}
+			
+					#text-content {
+						border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/slushiepixel_border.png");
+						border-image-slice: 4 fill; 
+					   border-image-width: 8px; 
+					border-image-repeat: repeat; 
+						padding-left: 12px; 
+						padding-right: 12px; 
+						padding-bottom: 12px; 
+						image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						image-rendering: -o-crisp-edges !important;            /* Opera */
+						image-rendering: pixelated !important;                 /* Future browsers */
+						image-rendering: optimizeSpeed !important;             /* IE */
+					}
+				#beepboxEditorContainer {
+						border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/slushiepixel_border.png");
+						border-image-slice: 4 fill; 
+					   border-image-width: 8px; 
+					border-image-repeat: repeat;
+						padding-left: 12px; 
+						padding-right: 12px; 
+						padding-bottom: 12px; 
+			
+						image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						image-rendering: -o-crisp-edges !important;            /* Opera */
+						image-rendering: pixelated !important;                 /* Future browsers */
+						image-rendering: optimizeSpeed !important;             /* IE */ 
+					}
+			
+					.beepboxEditor button,
+					button.mobilePatternButton,
+					button.mobileTrackButton,
+					button.mobileSettingsButton,
+					button.mobilePlayButton,
+					button.mobilePauseButton,
+					button.mobileNextBarButton,
+					button.mobilePrevBarButton,
+					button.playButton,
+					button.pauseButton, 
+					button.recordButton, 
+					button.stopButton,
+					button.nextBarButton, 
+					button.prevBarButton, 
+					button.copyButton, 
+					button.pasteButton, 
+					button.exportInstrumentButton, 
+					button.importInstrumentButton, 
+					.beepboxEditor select, 
+					.beepboxEditor .select2-selection__rendered {
+							border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/slushie buttonbg.png") !important;
+							border-image-slice: 4 fill !important; 
+						   border-image-width: 4px !important; 
+						border-image-repeat: stretch !important;
+							padding: 4px !important; 
+			
+							image-rendering: -moz-crisp-edges !important;         /* Firefox */
+							image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+							image-rendering: -o-crisp-edges !important;            /* Opera */
+							image-rendering: pixelated !important;                 /* Future browsers */
+							image-rendering: optimizeSpeed !important;             /* IE */
+			
+							cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+						}
+			
+						button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+							--ui-widget-background: var(--editor-background) !important;
+							border-image-source: none !important;
+						}
+
+					html {
+					font-family: 'AbyssType';
+					}
+					div.channelBoxLabel {
+						font-family: 'AbyssType_small' !important;
+					}
+			
+					.beepboxEditor input[type="range"]::-webkit-slider-thumb
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]::-ms-thumb
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]::-ms-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]:focus::-ms-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]::-moz-range-thumb
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]::-moz-range-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="range"]:focus::-moz-range-track
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="text"],
+					.beepboxEditor input[type="number"]
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="checkbox"]
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="checkbox"]:checked
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+					 
+					.beepboxEditor input[type="checkbox"]:checked:after
+					{
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
+			
+					div.selectRow span {
+						cursor: url("https://choptop84.github.io/choptop84s-image-repository/slush_pixel_hand.png"), pointer !important;
+					}
 			`,
         "2012 Video Tutorial": `
 			:root {
@@ -6493,6 +7679,340 @@ var beepbox = (function (exports) {
 					content: "AAAA I'M ON FIRE AAA" !important;
 				}
 
+			`,
+        "BeepBox Pixel": `
+			:root {
+				--page-margin: black;
+				--editor-background: black;
+				--hover-preview: white;
+				--playhead: white;
+				--primary-text: white;
+				--secondary-text: #999;
+				--inverted-text: black;
+				--text-selection: rgba(119,68,255,0.99);
+				--box-selection-fill: rgba(255,255,255,0.2);
+				--loop-accent: #74f;
+				--link-accent: #98f;
+				--ui-widget-background: #444;
+				--ui-widget-focus: #777;
+				--pitch-background: #444;
+				--tonic: #864;
+				--fifth-note: #468;
+				--white-piano-key: #bbb;
+				--black-piano-key: #444;
+				--white-piano-key-text: #131200;
+				--black-piano-key-text: #fff;
+					--use-color-formula: false;
+					--track-editor-bg-pitch: #444;
+					--track-editor-bg-pitch-dim: #333;
+					--track-editor-bg-noise: #444;
+					--track-editor-bg-noise-dim: #333;
+					--track-editor-bg-mod: #234;
+					--track-editor-bg-mod-dim: #123;
+					--multiplicative-mod-slider: #456;
+					--overwriting-mod-slider: #654;
+					--indicator-primary: #74f;
+					--indicator-secondary: #444;
+					--select2-opt-group: #585858;
+					--input-box-outline: #333;
+					--mute-button-normal: #ffa033;
+					--mute-button-mod: #9a6bff;
+				--pitch1-secondary-channel: #0099A1;
+				--pitch1-primary-channel:   #25F3FF;
+				--pitch1-secondary-note:    #00BDC7;
+				--pitch1-primary-note:      #92F9FF;
+				--pitch2-secondary-channel: #A1A100;
+				--pitch2-primary-channel:   #FFFF25;
+				--pitch2-secondary-note:    #C7C700;
+				--pitch2-primary-note:      #FFFF92;
+				--pitch3-secondary-channel: #C75000;
+				--pitch3-primary-channel:   #FF9752;
+				--pitch3-secondary-note:    #FF771C;
+				--pitch3-primary-note:      #FFCDAB;
+				--pitch4-secondary-channel: #00A100;
+				--pitch4-primary-channel:   #50FF50;
+				--pitch4-secondary-note:    #00C700;
+				--pitch4-primary-note:      #A0FFA0;
+				--pitch5-secondary-channel: #D020D0;
+				--pitch5-primary-channel:   #FF90FF;
+				--pitch5-secondary-note:    #E040E0;
+				--pitch5-primary-note:      #FFC0FF;
+				--pitch6-secondary-channel: #7777B0;
+				--pitch6-primary-channel:   #A0A0FF;
+				--pitch6-secondary-note:    #8888D0;
+				--pitch6-primary-note:      #D0D0FF;
+				--pitch7-secondary-channel: #8AA100;
+				--pitch7-primary-channel:   #DEFF25;
+				--pitch7-secondary-note:    #AAC700;
+				--pitch7-primary-note:      #E6FF92;
+				--pitch8-secondary-channel: #DF0019;
+				--pitch8-primary-channel:   #FF98A4;
+				--pitch8-secondary-note:    #FF4E63;
+				--pitch8-primary-note:      #FFB2BB;
+				--pitch9-secondary-channel: #00A170;
+				--pitch9-primary-channel:   #50FFC9;
+				--pitch9-secondary-note:    #00C78A;
+				--pitch9-primary-note:      #83FFD9;
+				--pitch10-secondary-channel:#A11FFF;
+				--pitch10-primary-channel:  #CE8BFF;
+				--pitch10-secondary-note:   #B757FF;
+				--pitch10-primary-note:     #DFACFF;
+				--noise1-secondary-channel: #6F6F6F;
+				--noise1-primary-channel:   #AAAAAA;
+				--noise1-secondary-note:    #A7A7A7;
+				--noise1-primary-note:      #E0E0E0;
+				--noise2-secondary-channel: #996633;
+				--noise2-primary-channel:   #DDAA77;
+				--noise2-secondary-note:    #CC9966;
+				--noise2-primary-note:      #F0D0BB;
+				--noise3-secondary-channel: #4A6D8F;
+				--noise3-primary-channel:   #77AADD;
+				--noise3-secondary-note:    #6F9FCF;
+				--noise3-primary-note:      #BBD7FF;
+				--noise4-secondary-channel: #7A4F9A;
+				--noise4-primary-channel:   #AF82D2;
+				--noise4-secondary-note:    #9E71C1;
+				--noise4-primary-note:      #D4C1EA;
+				--noise5-secondary-channel: #607837;
+				--noise5-primary-channel:   #A2BB77;
+				--noise5-secondary-note:    #91AA66;
+				--noise5-primary-note:      #C5E2B2;
+          --mod1-secondary-channel:   #339955;
+					--mod1-primary-channel:     #77fc55;
+					--mod1-secondary-note:      #77ff8a;
+					--mod1-primary-note:        #cdffee;
+					--mod2-secondary-channel:   #993355;
+					--mod2-primary-channel:     #f04960;
+					--mod2-secondary-note:      #f057a0;
+					--mod2-primary-note:        #ffb8de;
+					--mod3-secondary-channel:   #553399;
+					--mod3-primary-channel:     #8855fc;
+					--mod3-secondary-note:      #aa64ff;
+					--mod3-primary-note:	    #f8ddff;
+					--mod4-secondary-channel:   #a86436;
+					--mod4-primary-channel:     #c8a825;
+					--mod4-secondary-note:      #e8ba46;
+					--mod4-primary-note:        #fff6d3;
+					--mod-label-primary:        #999;
+					--mod-label-secondary-text: #333;
+					--mod-label-primary-text:   black;
+					--disabled-note-primary:    #999;
+					--disabled-note-secondary:  #666;
+				}		
+				
+				* {
+					cursor: url("abyssbox_cursor.png"), auto;
+					--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+					--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+					--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+					--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+					--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+					--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+					--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+					--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+					--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+					--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+					--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+					--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+					--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+					--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+					--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+					--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+					--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+					--export-instrument-symbol: var(--export-symbol);
+					--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
+					}
+					
+						@font-face {
+					   font-family: "AbyssType";
+					   src:
+						url("abysstype.otf") format("opentype") tech(color-COLRv1),
+						}
+
+						/* sets background image */
+						body {
+						background-image: url("https://choptop84.github.io/abyssbox-source/website/diamondsbg.gif") !important;
+						background-position: center;
+						background-repeat: repeat;
+			
+						image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						image-rendering: -o-crisp-edges !important;            /* Opera */
+						image-rendering: pixelated !important;                 /* Future browsers */
+						image-rendering: optimizeSpeed !important;             /* IE */
+							}
+			
+						#text-content {
+								border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png");
+								border-image-slice: 4 fill; 
+							   border-image-width: 8px; 
+							border-image-repeat: stretch; 
+								padding: 12px; 
+			
+								image-rendering: -moz-crisp-edges !important;         /* Firefox */
+								image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+								image-rendering: -o-crisp-edges !important;            /* Opera */
+								image-rendering: pixelated !important;                 /* Future browsers */
+								image-rendering: optimizeSpeed !important;             /* IE */
+							}
+						#beepboxEditorContainer {
+								border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png");
+								border-image-slice: 4 fill; 
+							   border-image-width: 8px; 
+							border-image-repeat: stretch;
+								padding: 12px;
+			
+								image-rendering: -moz-crisp-edges !important;         /* Firefox */
+								image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+								image-rendering: -o-crisp-edges !important;            /* Opera */
+								image-rendering: pixelated !important;                 /* Future browsers */
+								image-rendering: optimizeSpeed !important;             /* IE */ 
+							}
+						.beepboxEditor button,
+						button.mobilePatternButton,
+						button.mobileTrackButton,
+						button.mobileSettingsButton,
+						button.mobilePlayButton,
+						button.mobilePauseButton,
+						button.mobileNextBarButton,
+						button.mobilePrevBarButton,
+						button.playButton,
+						button.pauseButton, 
+						button.recordButton, 
+						button.stopButton,
+						button.nextBarButton, 
+						button.prevBarButton, 
+						button.copyButton, 
+						button.pasteButton, 
+						button.exportInstrumentButton, 
+						button.importInstrumentButton, 
+						.beepboxEditor select, 
+						.beepboxEditor .select2-selection__rendered {
+								border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png") !important;
+								border-image-slice: 4 fill !important; 
+							   border-image-width: 4px !important; 
+							border-image-repeat: stretch !important;
+								padding: 4px !important; 
+			
+								image-rendering: -moz-crisp-edges !important;         /* Firefox */
+								image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+								image-rendering: -o-crisp-edges !important;            /* Opera */
+								image-rendering: pixelated !important;                 /* Future browsers */
+								image-rendering: optimizeSpeed !important;             /* IE */
+			
+								cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							}
+			
+						.beepboxEditor .channelBox {
+							clip-path: polygon(
+								0px calc(100% - 2px),
+								2px calc(100% - 2px),
+								2px 100%,
+								calc(100% - 2px) 100%,
+								calc(100% - 2px) calc(100% - 2px),
+								100% calc(100% - 2px),
+								100% 2px,
+								calc(100% - 2px) 2px,
+								calc(100% - 2px) 0px,
+								2px 0px,
+								2px 2px,
+								0px 2px
+							  );
+							}
+							
+							button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+								--ui-widget-background: var(--editor-background) !important;
+								border-image-source: none !important;
+							}
+			
+							select.trackSelectBox {
+								border-image: none !important;
+							}
+							
+						@font-face {
+					   font-family: "AbyssType_small";
+					   src:
+						url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+						}
+			
+						html {
+							font-family: 'AbyssType';
+						}
+			
+						div.channelBoxLabel {
+							font-family: 'AbyssType_small' !important;
+						}
+			
+						.beepboxEditor input[type="range"]::-webkit-slider-thumb
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]::-ms-thumb
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]::-ms-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]:focus::-ms-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]::-moz-range-thumb
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]::-moz-range-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="range"]:focus::-moz-range-track
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="text"],
+						.beepboxEditor input[type="number"]
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="checkbox"]
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="checkbox"]:checked
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+						 
+						.beepboxEditor input[type="checkbox"]:checked:after
+						{
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+			
+						div.selectRow span {
+							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						}
+			
 			`,
         "dark classic": `
 			:root {
@@ -6863,7 +8383,7 @@ var beepbox = (function (exports) {
 				box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
 			}
 
-			.beepboxEditor button, .beepboxEditor select {
+			.beepboxEditor button, .beepboxEditor select, button {
 				box-shadow: inset 0 0 0 1px var(--secondary-text);
 			}
 
@@ -7129,7 +8649,9 @@ var beepbox = (function (exports) {
 					--tonic: #4dac5b; 
 					--fifth-note: #458343; 
 					--white-piano-key: #bee9bf; 
-					--black-piano-key: #395e3c; 
+					--black-piano-key: #395e3c;
+					--white-piano-key-text: #024a0c;		
+					--black-piano-key-text: #96d69f; 
 					--use-color-formula: true; 
 					--track-editor-bg-pitch: #43a631; 
 					--track-editor-bg-pitch-dim: #387e34; 
@@ -7226,6 +8748,56 @@ var beepbox = (function (exports) {
 
 
 					}
+
+					.note-primary {
+						clip-path: polygon(
+							0px calc(100% - 4px),
+							4px calc(100% - 4px),
+							4px 100%,
+							calc(100% - 4px) 100%,
+							calc(100% - 4px) calc(100% - 4px),
+							100% calc(100% - 4px),
+							100% 4px,
+							calc(100% - 4px) 4px,
+							calc(100% - 4px) 0px,
+							4px 0px,
+							4px 4px,
+							0px 4px
+						  );
+					}
+					.note-secondary {
+						clip-path: polygon(
+							0px calc(100% - 4px),
+							4px calc(100% - 4px),
+							4px 100%,
+							calc(100% - 4px) 100%,
+							calc(100% - 4px) calc(100% - 4px),
+							100% calc(100% - 4px),
+							100% 4px,
+							calc(100% - 4px) 4px,
+							calc(100% - 4px) 0px,
+							4px 0px,
+							4px 4px,
+							0px 4px
+						  );
+					}
+					.note-flash {
+						clip-path: polygon(
+							0px calc(100% - 4px),
+							4px calc(100% - 4px),
+							4px 100%,
+							calc(100% - 4px) 100%,
+							calc(100% - 4px) calc(100% - 4px),
+							100% calc(100% - 4px),
+							100% 4px,
+							calc(100% - 4px) 4px,
+							calc(100% - 4px) 0px,
+							4px 0px,
+							4px 4px,
+							0px 4px
+						  );
+					}
+
 					/* sets background image */
 					body {
 						background-image: url("https://choptop84.github.io/abyssbox-app/Forest2Trees.png") !important;
@@ -7270,7 +8842,7 @@ var beepbox = (function (exports) {
 							image-rendering: pixelated !important;                 /* Future browsers */
 							image-rendering: optimizeSpeed !important;             /* IE */ 
 						}
-					.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
+					.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered, button {
 							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border2.png") !important;
 							border-image-slice: 4 fill !important; 
 						   border-image-width: 4px !important; 
@@ -7294,6 +8866,25 @@ var beepbox = (function (exports) {
 					} */
 					* {
 						cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+						--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+						--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+						--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+						--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+						--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+						--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+						--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+						--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+						--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+						--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+						--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+						--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+						--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+						--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+						--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+						--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+						--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+						--export-instrument-symbol: var(--export-symbol);
+						--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
 						} 
 							@font-face {
 						   font-family: "AbyssType";
@@ -7301,6 +8892,11 @@ var beepbox = (function (exports) {
 							url("abysstype.otf") format("opentype") tech(color-COLRv1),
 							}
 				
+							button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+								--ui-widget-background: var(--editor-background) !important;
+								border-image-source: none !important;
+							}
+
 							@font-face {
 						   font-family: "AbyssType_small";
 						   src:
@@ -7433,6 +9029,257 @@ var beepbox = (function (exports) {
 					
 				}
 			`,
+        "canyon 2": `
+			:root {
+				--page-margin: #0a0000;
+				--song-player-margin: var(--page-margin);
+				--editor-background: #5a1616;
+				--hover-preview: white;
+				--playhead: rgba(247, 172, 196, 0.9);
+				--primary-text: #f5d6bf;
+				--secondary-text: #ff234d;
+				--inverted-text: #290505;
+				--text-selection: rgba(255, 208, 68, 0.99);
+				--box-selection-fill: #94044870;
+				--loop-accent: #ff1e1e;
+				--link-accent: #da7b76;
+				--ui-widget-background: #832d2d;
+				--ui-widget-focus: #832d2d;
+				--pitch-background: #832d2d;
+				--tonic: #bb5a5e;
+				--fifth-note: #5b3e6b;
+				--white-piano-key: #ff8383;
+				--black-piano-key: #2b0806;
+				--white-piano-key-text: #131200;
+				--black-piano-key-text: #ffffff;
+				--use-color-formula: true;
+				--track-editor-bg-pitch: #a80b2b;
+				--track-editor-bg-pitch-dim: #38030e;
+				--track-editor-bg-noise: #3a3551;
+				--track-editor-bg-noise-dim: #272732;
+				--track-editor-bg-mod: #552045;
+				--track-editor-bg-mod-dim: #3e1442;
+				--multiplicative-mod-slider: #9f6095;
+				--overwriting-mod-slider: #b55050;
+				--indicator-primary: #f2f764;
+				--indicator-secondary: #4f3939;
+				--select2-opt-group: #673030;
+				--input-box-outline: #443131;
+				--mute-button-normal: #d81833;
+				--mute-button-mod: #9e2691;
+				--mod-label-primary: #5f2b39;
+				--mod-label-secondary-text: rgb(158, 66, 122);
+				--mod-label-primary-text: #e6caed;
+				--pitch-secondary-channel-hue: 0;
+				--pitch-secondary-channel-hue-scale: 11.8;
+				--pitch-secondary-channel-sat: 73.3;
+				--pitch-secondary-channel-sat-scale: 0.1;
+				--pitch-secondary-channel-lum: 40;
+				--pitch-secondary-channel-lum-scale: 0.05;
+				--pitch-primary-channel-hue: 0;
+				--pitch-primary-channel-hue-scale: 11.8;
+				--pitch-primary-channel-sat: 90;
+				--pitch-primary-channel-sat-scale: 0.1;
+				--pitch-primary-channel-lum: 67.5;
+				--pitch-primary-channel-lum-scale: 0.05;
+				--pitch-secondary-note-hue: 0;
+				--pitch-secondary-note-hue-scale: 11.8;
+				--pitch-secondary-note-sat: 83.9;
+				--pitch-secondary-note-sat-scale: 0.1;
+				--pitch-secondary-note-lum: 35;
+				--pitch-secondary-note-lum-scale: 0.05;
+				--pitch-primary-note-hue: 0;
+				--pitch-primary-note-hue-scale: 11.8;
+				--pitch-primary-note-sat: 100;
+				--pitch-primary-note-sat-scale: 0.05;
+				--pitch-primary-note-lum: 85.6;
+				--pitch-primary-note-lum-scale: 0.025;
+				--noise-secondary-channel-hue: 60;
+				--noise-secondary-channel-hue-scale: 2;
+				--noise-secondary-channel-sat: 25;
+				--noise-secondary-channel-sat-scale: 0;
+				--noise-secondary-channel-lum: 42;
+				--noise-secondary-channel-lum-scale: 0;
+				--noise-primary-channel-hue: 60;
+				--noise-primary-channel-hue-scale: 2;
+				--noise-primary-channel-sat: 33;
+				--noise-primary-channel-sat-scale: 0;
+				--noise-primary-channel-lum: 63.5;
+				--noise-primary-channel-lum-scale: 0;
+				--noise-secondary-note-hue: 60;
+				--noise-secondary-note-hue-scale: 2;
+				--noise-secondary-note-sat: 33.5;
+				--noise-secondary-note-sat-scale: 0;
+				--noise-secondary-note-lum: 55;
+				--noise-secondary-note-lum-scale: 0;
+				--noise-primary-note-hue: 60;
+				--noise-primary-note-hue-scale: 2;
+				--noise-primary-note-sat: 46.5;
+				--noise-primary-note-sat-scale: 0;
+				--noise-primary-note-lum: 74;
+				--noise-primary-note-lum-scale: 0;
+				--mod-secondary-channel-hue: 222;
+				--mod-secondary-channel-hue-scale: 1.5;
+				--mod-secondary-channel-sat: 88;
+				--mod-secondary-channel-sat-scale: 0;
+				--mod-secondary-channel-lum: 50;
+				--mod-secondary-channel-lum-scale: 0;
+				--mod-primary-channel-hue: 222;
+				--mod-primary-channel-hue-scale: 1.5;
+				--mod-primary-channel-sat: 96;
+				--mod-primary-channel-sat-scale: 0;
+				--mod-primary-channel-lum: 80;
+				--mod-primary-channel-lum-scale: 0;
+				--mod-secondary-note-hue: 222;
+				--mod-secondary-note-hue-scale: 1.5;
+				--mod-secondary-note-sat: 92;
+				--mod-secondary-note-sat-scale: 0;
+				--mod-secondary-note-lum: 54;
+				--mod-secondary-note-lum-scale: 0;
+				--mod-primary-note-hue: 222;
+				--mod-primary-note-hue-scale: 1.5;
+				--mod-primary-note-sat: 96;
+				--mod-primary-note-sat-scale: 0;
+				--mod-primary-note-lum: 75;
+				--mod-primary-note-lum-scale: 0;
+				--disabled-note-primary:    #515164;
+				--disabled-note-secondary:  #2a2a3a;
+			}
+			
+			* {
+				cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+				--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+				--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+				--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+				--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+				--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+				--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+				--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+				--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+				--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+				--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+				--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+				--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+				--export-instrument-symbol: var(--export-symbol);
+				--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
+				} 
+			
+			@font-face {
+				font-family: "AbyssType";
+				src:
+				 url("abysstype.otf") format("opentype") tech(color-COLRv1),
+				 }
+			
+				 @font-face {
+				font-family: "AbyssType_small";
+				src:
+				 url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+				 }
+			
+				 #pattern-area {
+					border-style: solid;
+					border-color: #0a0000;
+					border-bottom: 0;
+					border-right: 0;
+					border-top: 0;
+				 }
+			
+				 body {
+					background-image: url("https://choptop84.github.io/choptop84s-image-repository/canyonbg.png") !important;
+					background-size: 200% !important;
+					background-position: center top; /* Adjusted to align with the top */
+					  background-repeat: no-repeat !important;
+			
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */ 
+					 }
+			
+				 #text-content {
+					border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/canyon2_border.png");
+					border-image-slice: 16 fill; 
+					border-image-width: 32px; 
+					border-image-repeat: repeat; 
+					padding-left: 36px; 
+					padding-right: 36px; 
+					padding-bottom: 6px; 
+				
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+					background: #fff0;
+				 }
+			 #beepboxEditorContainer {
+					border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/canyon2_border.png");
+					border-image-slice: 16 fill; 
+					border-image-width: 32px; 
+					border-image-repeat: repeat; 
+					padding-left: 36px; 
+					padding-right: 36px; 
+					padding-bottom: 6px; 
+					
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+					background: #fff0;
+				 }
+			
+				 .beepboxEditor button,
+				 button.mobilePatternButton,
+				 button.mobileTrackButton,
+				 button.mobileSettingsButton,
+				 button.mobilePlayButton,
+				 button.mobilePauseButton,
+				 button.mobileNextBarButton,
+				 button.mobilePrevBarButton,
+				 button.playButton,
+				 button.pauseButton, 
+				 button.recordButton, 
+				 button.stopButton,
+				 button.nextBarButton, 
+				 button.prevBarButton, 
+				 button.copyButton, 
+				 button.pasteButton, 
+				 button.exportInstrumentButton, 
+				 button.importInstrumentButton, 
+				 .beepboxEditor select, 
+				 .beepboxEditor .select2-selection__rendered {
+						 border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/canyon2_button.png") !important;
+						 border-image-slice: 4 fill !important; 
+						border-image-width: 4px !important; 
+					 border-image-repeat: stretch !important;
+						 padding: 4px !important; 
+			
+						 image-rendering: -moz-crisp-edges !important;         /* Firefox */
+						 image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+						 image-rendering: -o-crisp-edges !important;            /* Opera */
+						 image-rendering: pixelated !important;                 /* Future browsers */
+						 image-rendering: optimizeSpeed !important;             /* IE */
+					 }
+			
+				button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+						--ui-widget-background: var(--editor-background) !important;
+						border-image-source: none !important;
+					}
+
+				 html {
+				 font-family: 'AbyssType';
+				 }
+				 div.channelBoxLabel {
+					 font-family: 'AbyssType_small' !important;
+				 }
+		`,
         "midnight": `
 		:root {
 			--page-margin: #000;
@@ -7676,7 +9523,7 @@ var beepbox = (function (exports) {
 					box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
 				}
 
-				.beepboxEditor button, .beepboxEditor select {
+				.beepboxEditor button, .beepboxEditor select, button {
 					background-color: var(--secondary-text);
 				}
 
@@ -9382,11 +11229,65 @@ var beepbox = (function (exports) {
 				
 				
 			}
+
+			.note-primary {
+				clip-path: polygon(
+					0px calc(100% - 4px),
+					4px calc(100% - 4px),
+					4px 100%,
+					calc(100% - 4px) 100%,
+					calc(100% - 4px) calc(100% - 4px),
+					100% calc(100% - 4px),
+					100% 4px,
+					calc(100% - 4px) 4px,
+					calc(100% - 4px) 0px,
+					4px 0px,
+					4px 4px,
+					0px 4px
+				  );
+			}
+			.note-secondary {
+				clip-path: polygon(
+					0px calc(100% - 4px),
+					4px calc(100% - 4px),
+					4px 100%,
+					calc(100% - 4px) 100%,
+					calc(100% - 4px) calc(100% - 4px),
+					100% calc(100% - 4px),
+					100% 4px,
+					calc(100% - 4px) 4px,
+					calc(100% - 4px) 0px,
+					4px 0px,
+					4px 4px,
+					0px 4px
+				  );
+			}
+			.note-flash {
+				clip-path: polygon(
+					0px calc(100% - 4px),
+					4px calc(100% - 4px),
+					4px 100%,
+					calc(100% - 4px) 100%,
+					calc(100% - 4px) calc(100% - 4px),
+					100% calc(100% - 4px),
+					100% 4px,
+					calc(100% - 4px) 4px,
+					calc(100% - 4px) 0px,
+					4px 0px,
+					4px 4px,
+					0px 4px
+				  );
+			}
+
+			.prompt.noSelection {
+				background: #040410 !important;
+			}
+
 			body {
 				background-image: url("https://choptop84.github.io/abyssbox-app/stars.gif") !important;
-				background-size: contain;
-				background-position: center top;
-				  background-repeat: repeat;
+				background-size: contain !important;
+				background-position: center top !important;
+				  background-repeat: repeat !important;
 
 			image-rendering: -moz-crisp-edges !important;         /* Firefox */
 			image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
@@ -9425,7 +11326,7 @@ var beepbox = (function (exports) {
 					image-rendering: pixelated !important;                 /* Future browsers */
 					image-rendering: optimizeSpeed !important;             /* IE */ 
 				}
-			.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
+			.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered, button {
 					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border2.png") !important;
 					border-image-slice: 4 fill !important; 
 				   border-image-width: 4px !important; 
@@ -9446,6 +11347,25 @@ var beepbox = (function (exports) {
 			} */
 			* {
 				cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+				--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+				--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+				--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+				--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+				--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+				--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+				--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+				--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+				--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+				--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+				--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+				--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+				--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+				--export-instrument-symbol: var(--export-symbol);
+				--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
 				} 
 					@font-face {
 				   font-family: "AbyssType";
@@ -9704,7 +11624,7 @@ var beepbox = (function (exports) {
 			--mod-primary-note-lum: 55;
 			--mod-primary-note-lum-scale: 0;
 		}
-		.beepboxEditor button, .beepboxEditor select {
+		.beepboxEditor button, .beepboxEditor select, button {
 			box-shadow: inset 0 0 0 1px var(--secondary-text);
 		}
 		.select2-selection__rendered {
@@ -10186,6 +12106,378 @@ var beepbox = (function (exports) {
 			
 			
 	}`,
+        "Ghost House": `
+	:root { 
+		--page-margin: #120918; 
+		--editor-background: #120918; 
+		--hover-preview: #c6f7ff; 
+		--playhead: white; 
+		--primary-text: #bbb8db; 
+		--secondary-text: #6f72b5; 
+		--inverted-text: black; 
+		--text-selection: rgba(119,68,255,0.99); 
+		--box-selection-fill: rgb(43 70 171 / 62%); 
+		--loop-accent: #573ebb; 
+		--link-accent: #98f; 
+		--ui-widget-background: #1c1a2f; 
+		--ui-widget-focus: var(--ui-widget-background); 
+		--pitch-background: #3e3a5f; 
+		--tonic: #7874a1; 
+		--fifth-note: #423fff; 
+		--white-piano-key: #bbb8db; 
+		--black-piano-key: #1c1a2f; 
+		--white-piano-key-text: #1c1a2f; 
+		--black-piano-key-text: #bbb8db; 
+		--use-color-formula: false; 
+		--track-editor-bg-pitch: #3a3b5c; 
+		--track-editor-bg-pitch-dim: #1f2036; 
+		--track-editor-bg-noise: #3c3554; 
+		--track-editor-bg-noise-dim: #1e1834; 
+		--track-editor-bg-mod: #30335e; 
+		--track-editor-bg-mod-dim: #161938; 
+		--multiplicative-mod-slider: #573ebb; 
+		--overwriting-mod-slider: #495789; 
+		--indicator-primary: #573ebb; 
+		--indicator-secondary: #415187; 
+		--select2-opt-group: #22223a; 
+		--input-box-outline: #2d2648; 
+		--mute-button-normal: #7aceff; 
+		--mute-button-mod: #9d6bff; 
+		--pitch1-secondary-channel: #5f3ea5; 
+		--pitch1-primary-channel: #c1a4ff; 
+		--pitch1-secondary-note: #794fd3; 
+		--pitch1-primary-note: #d8c6ff; 
+		--pitch2-secondary-channel: #4f44bf; 
+		--pitch2-primary-channel: #9287ff; 
+		--pitch2-secondary-note: #5e51d9; 
+		--pitch2-primary-note: #b6afff; 
+		--pitch3-secondary-channel: #374eb9; 
+		--pitch3-primary-channel: #8097ff; 
+		--pitch3-secondary-note: #445cc9; 
+		--pitch3-primary-note: #a0b2ff; 
+		--pitch4-secondary-channel: #2867cf; 
+		--pitch4-primary-channel: #6fa5ff; 
+		--pitch4-secondary-note: #2e6ed7; 
+		--pitch4-primary-note: #a6c7ff; 
+		--pitch5-secondary-channel: #3175a7; 
+		--pitch5-primary-channel: #7ec9ff; 
+		--pitch5-secondary-note: #367eb3; 
+		--pitch5-primary-note: #9fd7ff; 
+		--pitch6-secondary-channel: #3993a9; 
+		--pitch6-primary-channel: #8ce9ff; 
+		--pitch6-secondary-note: #386da3; 
+		--pitch6-primary-note: #9eecff; 
+		--pitch7-secondary-channel: #369d8a; 
+		--pitch7-primary-channel: #8bfce7; 
+		--pitch7-secondary-note: #1c93a7; 
+		--pitch7-primary-note: #abffef; 
+		--pitch8-secondary-channel: #00A170; 
+		--pitch8-primary-channel: #50FFC9; 
+		--pitch8-secondary-note: #00C78A; 
+		--pitch8-primary-note: #83FFD9; 
+		--pitch9-secondary-channel: #49b374; 
+		--pitch9-primary-channel: #8affa9; 
+		--pitch9-secondary-note: #26815f; 
+		--pitch9-primary-note: #c8ffde; 
+		--pitch10-secondary-channel: #58a747; 
+		--pitch10-primary-channel: #bbffaa; 
+		--pitch10-secondary-note: #1d7c48; 
+		--pitch10-primary-note: #c7ffbc; 
+		--noise1-secondary-channel: #42829b; 
+		--noise1-primary-channel: #97d3fc; 
+		--noise1-secondary-note: #3f53b3; 
+		--noise1-primary-note: #97d3fc; 
+		--noise2-secondary-channel: #6354bb; 
+		--noise2-primary-channel: #9a89ff; 
+		--noise2-secondary-note: #5f4dcd; 
+		--noise2-primary-note: #c6bcff; 
+		--noise3-secondary-channel: #704a95; 
+		--noise3-primary-channel: #c285ff; 
+		--noise3-secondary-note: #ad5aff; 
+		--noise3-primary-note: #d3a6ff; 
+		--noise4-secondary-channel: #a53c65; 
+		--noise4-primary-channel: #f794bb; 
+		--noise4-secondary-note: #cb5080; 
+		--noise4-primary-note: #f794bb; 
+		--noise5-secondary-channel: #9b2d2d; 
+		--noise5-primary-channel: #ff7676; 
+		--noise5-secondary-note: #cb4444; 
+		--noise5-primary-note: #ff9999; 
+		--mod1-secondary-channel: #b7613c; 
+		--mod1-primary-channel: #ff9f76; 
+		--mod1-secondary-note: #e77e52; 
+		--mod1-primary-note: #ffb99b; 
+		--mod2-secondary-channel: #916d34; 
+		--mod2-primary-channel: #fece80; 
+		--mod2-secondary-note: #c58b35; 
+		--mod2-primary-note: #ffdda5; 
+		--mod3-secondary-channel: #83761a; 
+		--mod3-primary-channel: #fdf68c; 
+		--mod3-secondary-note: #c18e00; 
+		--mod3-primary-note: #fdf68c; 
+		--mod4-secondary-channel: #a86436; 
+		--mod4-primary-channel: #c8a825; 
+		--mod4-secondary-note: #e8ba46; 
+		--mod4-primary-note: #c8a825; 
+		--mod-label-primary: #37325e; 
+		--mod-label-secondary-text: #6e8aa7; 
+		--mod-label-primary-text: #c1ffff; 
+		--disabled-note-primary: #999; 
+		--disabled-note-secondary: #666; 
+		--note-flash: #ffffff; 
+		--note-flash-secondary: #ffffff77; }
+	`,
+        "Ghost House 2": `
+	:root { 
+		--page-margin: #120918; 
+		--editor-background: #1c1a2f; 
+		--hover-preview: #c6f7ff; 
+		--playhead: white; 
+		--primary-text: #bbb8db; 
+		--secondary-text: #6f72b5; 
+		--inverted-text: black; 
+		--text-selection: rgba(119,68,255,0.99); 
+		--box-selection-fill: rgb(43 70 171 / 62%); 
+		--loop-accent: #573ebb; 
+		--link-accent: #98f; 
+		--ui-widget-background: #3e3a5f; 
+		--ui-widget-focus: var(--ui-widget-background); 
+		--pitch-background: var(--ui-widget-background); 
+		--tonic: #7874a1; 
+		--fifth-note: #423fff; 
+		--white-piano-key: #bbb8db; 
+		--black-piano-key: #1c1a2f; 
+		--white-piano-key-text: #1c1a2f; 
+		--black-piano-key-text: #bbb8db; 
+		--use-color-formula: false; 
+		--track-editor-bg-pitch: #3a3b5c; 
+		--track-editor-bg-pitch-dim: #1f2036; 
+		--track-editor-bg-noise: #3c3554; 
+		--track-editor-bg-noise-dim: #1e1834; 
+		--track-editor-bg-mod: #30335e; 
+		--track-editor-bg-mod-dim: #161938; 
+		--multiplicative-mod-slider: #573ebb; 
+		--overwriting-mod-slider: #495789; 
+		--indicator-primary: #573ebb; 
+		--indicator-secondary: #415187; 
+		--select2-opt-group: #22223a; 
+		--input-box-outline: #2d2648; 
+		--mute-button-normal: #7aceff; 
+		--mute-button-mod: #9d6bff; 
+		--pitch1-secondary-channel: #5f3ea5; 
+		--pitch1-primary-channel: #c1a4ff; 
+		--pitch1-secondary-note: #794fd3; 
+		--pitch1-primary-note: #d8c6ff; 
+		--pitch2-secondary-channel: #4f44bf; 
+		--pitch2-primary-channel: #9287ff; 
+		--pitch2-secondary-note: #5e51d9; 
+		--pitch2-primary-note: #b6afff; 
+		--pitch3-secondary-channel: #374eb9; 
+		--pitch3-primary-channel: #8097ff; 
+		--pitch3-secondary-note: #445cc9; 
+		--pitch3-primary-note: #a0b2ff; 
+		--pitch4-secondary-channel: #2867cf; 
+		--pitch4-primary-channel: #6fa5ff; 
+		--pitch4-secondary-note: #2e6ed7; 
+		--pitch4-primary-note: #a6c7ff; 
+		--pitch5-secondary-channel: #3175a7; 
+		--pitch5-primary-channel: #7ec9ff; 
+		--pitch5-secondary-note: #367eb3; 
+		--pitch5-primary-note: #9fd7ff; 
+		--pitch6-secondary-channel: #3993a9; 
+		--pitch6-primary-channel: #8ce9ff; 
+		--pitch6-secondary-note: #386da3; 
+		--pitch6-primary-note: #9eecff; 
+		--pitch7-secondary-channel: #369d8a; 
+		--pitch7-primary-channel: #8bfce7; 
+		--pitch7-secondary-note: #1c93a7; 
+		--pitch7-primary-note: #abffef; 
+		--pitch8-secondary-channel: #00A170; 
+		--pitch8-primary-channel: #50FFC9; 
+		--pitch8-secondary-note: #00C78A; 
+		--pitch8-primary-note: #83FFD9; 
+		--pitch9-secondary-channel: #49b374; 
+		--pitch9-primary-channel: #8affa9; 
+		--pitch9-secondary-note: #26815f; 
+		--pitch9-primary-note: #c8ffde; 
+		--pitch10-secondary-channel: #58a747; 
+		--pitch10-primary-channel: #bbffaa; 
+		--pitch10-secondary-note: #1d7c48; 
+		--pitch10-primary-note: #c7ffbc; 
+		--noise1-secondary-channel: #42829b; 
+		--noise1-primary-channel: #97d3fc; 
+		--noise1-secondary-note: #3f53b3; 
+		--noise1-primary-note: #97d3fc; 
+		--noise2-secondary-channel: #6354bb; 
+		--noise2-primary-channel: #9a89ff; 
+		--noise2-secondary-note: #5f4dcd; 
+		--noise2-primary-note: #c6bcff; 
+		--noise3-secondary-channel: #704a95; 
+		--noise3-primary-channel: #c285ff; 
+		--noise3-secondary-note: #ad5aff; 
+		--noise3-primary-note: #d3a6ff; 
+		--noise4-secondary-channel: #a53c65; 
+		--noise4-primary-channel: #f794bb; 
+		--noise4-secondary-note: #cb5080; 
+		--noise4-primary-note: #f794bb; 
+		--noise5-secondary-channel: #9b2d2d; 
+		--noise5-primary-channel: #ff7676; 
+		--noise5-secondary-note: #cb4444; 
+		--noise5-primary-note: #ff9999; 
+		--mod1-secondary-channel: #b7613c; 
+		--mod1-primary-channel: #ff9f76; 
+		--mod1-secondary-note: #e77e52; 
+		--mod1-primary-note: #ffb99b; 
+		--mod2-secondary-channel: #916d34; 
+		--mod2-primary-channel: #fece80; 
+		--mod2-secondary-note: #c58b35; 
+		--mod2-primary-note: #ffdda5; 
+		--mod3-secondary-channel: #83761a; 
+		--mod3-primary-channel: #fdf68c; 
+		--mod3-secondary-note: #c18e00; 
+		--mod3-primary-note: #fdf68c; 
+		--mod4-secondary-channel: #a86436; 
+		--mod4-primary-channel: #c8a825; 
+		--mod4-secondary-note: #e8ba46; 
+		--mod4-primary-note: #c8a825; 
+		--mod-label-primary: #37325e; 
+		--mod-label-secondary-text: #6e8aa7; 
+		--mod-label-primary-text: #c1ffff; 
+		--disabled-note-primary: #999; 
+		--disabled-note-secondary: #666; 
+		--note-flash: #ffffff; 
+		--note-flash-secondary: #ffffff77; }
+	
+		* {
+		cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
+		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
+		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
+		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
+		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
+		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
+		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
+		--stop-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-stop.png");
+		--prev-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-prev.png");
+		--next-bar-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-next.png");
+		--muted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speakerMuted.png");
+		--unmuted-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--volume-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-speaker.png");
+		--zoom-in-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomIn.png");
+		--zoom-out-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-zoomOut.png");
+		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
+		--export-instrument-symbol: var(--export-symbol);
+		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
+		} 
+			@font-face {
+		   font-family: "AbyssType";
+		   src:
+			url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			}
+	
+			#beepboxEditorContainer, .track-area, .beepboxEditor, #text-content, div.noSelection, .beepboxEditor .loopEditor {
+				background-color: #fff0 !important;
+			} 
+	
+			@font-face {
+		   font-family: "AbyssType_small";
+		   src:
+			url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			}
+	
+			body {
+				background-image: url("https://choptop84.github.io/choptop84s-image-repository/ghosthousebg.png") !important;
+				background-size: 256px;
+				background-position: center;
+				background-repeat: repeat;
+	
+				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+				image-rendering: -o-crisp-edges !important;            /* Opera */
+				image-rendering: pixelated !important;                 /* Future browsers */
+				image-rendering: optimizeSpeed !important;             /* IE */
+				}
+	
+			#text-content {
+				border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/ghosthousebg2.png");
+				border-image-slice: 16 fill; 
+			   border-image-width: 32px; 
+			border-image-repeat: repeat; 
+				padding-left: 32px; 
+				padding-right: 32px; 
+				padding-bottom: 16px; 
+				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+				image-rendering: -o-crisp-edges !important;            /* Opera */
+				image-rendering: pixelated !important;                 /* Future browsers */
+				image-rendering: optimizeSpeed !important;             /* IE */
+			}
+		#beepboxEditorContainer {
+				border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/ghosthousebg2.png");
+				border-image-slice: 16 fill; 
+			   border-image-width: 32px; 
+			border-image-repeat: repeat;
+				padding-left: 32px; 
+				padding-right: 32px; 
+				padding-bottom: 16px; 
+	
+				image-rendering: -moz-crisp-edges !important;         /* Firefox */
+				image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+				image-rendering: -o-crisp-edges !important;            /* Opera */
+				image-rendering: pixelated !important;                 /* Future browsers */
+				image-rendering: optimizeSpeed !important;             /* IE */ 
+			}
+	
+			div.prompt.noSelection {
+				background-color: var(--editor-background) !important;
+			}
+			
+			.beepboxEditor button,
+			button.mobilePatternButton,
+			button.mobileTrackButton,
+			button.mobileSettingsButton,
+			button.mobilePlayButton,
+			button.mobilePauseButton,
+			button.mobileNextBarButton,
+			button.mobilePrevBarButton,
+			button.playButton,
+			button.pauseButton, 
+			button.recordButton, 
+			button.stopButton,
+			button.nextBarButton, 
+			button.prevBarButton, 
+			button.copyButton, 
+			button.pasteButton, 
+			button.exportInstrumentButton, 
+			button.importInstrumentButton, 
+			.beepboxEditor select, 
+			.beepboxEditor .select2-selection__rendered {
+					border-image-source: url("https://choptop84.github.io/choptop84s-image-repository/ghosthouse_button.png") !important;
+					border-image-slice: 5 fill !important; 
+				   border-image-width: 5px !important;  
+				border-image-repeat: repeat !important;
+					padding: 4px !important; 
+	
+					image-rendering: -moz-crisp-edges !important;         /* Firefox */
+					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
+					image-rendering: -o-crisp-edges !important;            /* Opera */
+					image-rendering: pixelated !important;                 /* Future browsers */
+					image-rendering: optimizeSpeed !important;             /* IE */
+				}
+	
+				button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
+					--ui-widget-background: var(--editor-background) !important;
+					border-image-source: none !important;
+				}
+	
+			html {
+			font-family: 'AbyssType';
+			}
+			div.channelBoxLabel {
+				font-family: 'AbyssType_small' !important;
+			}
+	`,
         "modbox classic": `
 			:root {
 				--page-margin: black;
@@ -12163,7 +14455,7 @@ var beepbox = (function (exports) {
 					
 					
 				}
-				.beepboxEditor button, .beepboxEditor select {
+				.beepboxEditor button, .beepboxEditor select, button {
 					box-shadow: inset 0 0 0 1px var(--secondary-text);
 				}
 			`,
@@ -13567,7 +15859,7 @@ var beepbox = (function (exports) {
 			--noise5-primary-note:      #9787b3;
 		}
 		
-		.beepboxEditor button, .beepboxEditor select {
+		.beepboxEditor button, .beepboxEditor select, button {
 			box-shadow: inset 0 0 0 1px var(--secondary-text);
 		}
 		
@@ -14233,6 +16525,8 @@ var beepbox = (function (exports) {
     ColorConfig.blackPianoKey = "var(--black-piano-key)";
     ColorConfig.whitePianoKeyText = "var(--white-piano-key-text)";
     ColorConfig.blackPianoKeyText = "var(--black-piano-key-text)";
+    ColorConfig.songPlayerMargin = "var(--song-player-margin)";
+    ColorConfig.progressBar = "var(--progress-bar)";
     ColorConfig.useColorFormula = "var(--use-color-formula)";
     ColorConfig.pitchSecondaryChannelHue = "var(--pitch-secondary-channel-hue)";
     ColorConfig.pitchSecondaryChannelHueScale = "var(--pitch-secondary-channel-hue-scale)";
@@ -14325,6 +16619,8 @@ var beepbox = (function (exports) {
     ColorConfig.modLabelPrimaryText = "var(--mod-label-primary-text)";
     ColorConfig.disabledNotePrimary = "var(--disabled-note-primary)";
     ColorConfig.disabledNoteSecondary = "var(--disabled-note-secondary)";
+    ColorConfig.scrollbarColor = "var(--scrollbar-color)";
+    ColorConfig.songPlayerKeyColor = "var(--playing-key-color)";
     ColorConfig.c_pitchSecondaryChannelHue = 0;
     ColorConfig.c_pitchSecondaryChannelHueScale = 0;
     ColorConfig.c_pitchSecondaryChannelSat = 0;
@@ -14534,7 +16830,7 @@ var beepbox = (function (exports) {
         static valueToPreset(presetValue) {
             const categoryIndex = presetValue >> 6;
             const presetIndex = presetValue & 0x3F;
-            return EditorConfig.presetCategories[categoryIndex].presets[presetIndex];
+            return EditorConfig === null || EditorConfig === void 0 ? void 0 : EditorConfig.presetCategories[categoryIndex].presets[presetIndex];
         }
         static midiProgramToPresetValue(program) {
             for (let categoryIndex = 0; categoryIndex < EditorConfig.presetCategories.length; categoryIndex++) {
@@ -14563,7 +16859,7 @@ var beepbox = (function (exports) {
             return (_a = EditorConfig.presetCategories[0].presets.dictionary) === null || _a === void 0 ? void 0 : _a[TypePresets === null || TypePresets === void 0 ? void 0 : TypePresets[instrument]];
         }
     }
-    EditorConfig.version = "1.2";
+    EditorConfig.version = "1.3";
     EditorConfig.versionDisplayName = "AbyssBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
@@ -14851,12 +17147,17 @@ var beepbox = (function (exports) {
                 { name: "fm supersaw", generalMidi: false, settings: { "type": "FM6op", "volume": 0, "eqFilter": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 1.4142 }, { "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 19027.31, "linearGain": 1.4142 }, { "type": "high-pass", "cutoffHz": 148.65, "linearGain": 0.7071 }], "effects": ["panning", "transition type", "pitch shift", "note filter", "chorus", "reverb"], "transition": "continue", "clicklessTransition": false, "pitchShiftSemitones": 0, "noteFilterType": false, "noteSimpleCut": 10, "noteSimplePeak": 0, "noteFilter": [], "noteSubFilters0": [], "noteSubFilters1": [{ "type": "low-pass", "cutoffHz": 4756.83, "linearGain": 1 }], "pan": 0, "panDelay": 10, "chorus": 71, "reverb": 0, "fadeInSeconds": 0, "fadeOutTicks": -1, "algorithm": "1 2 3 4 5 6", "feedbackType": "1⟲", "feedbackAmplitude": 0, "operators": [{ "frequency": "1×", "amplitude": 13, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "~1×", "amplitude": 15, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "2×", "amplitude": 10, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "3×", "amplitude": 7, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "4×", "amplitude": 9, "waveform": "sawtooth", "pulseWidth": 5 }, { "frequency": "8×", "amplitude": 6, "waveform": "sawtooth", "pulseWidth": 5 }], "envelopes": [] } },
                 { name: "obama why", generalMidi: false, settings: { "type": "harmonics", "volume": 0, "eqFilter": [], "effects": ["note filter", "panning", "reverb"], "noteFilter": [{ "type": "low-pass", "cutoffHz": 840.9, "linearGain": 11.3137 }], "pan": 0, "reverb": 0, "fadeInSeconds": 0.0263, "fadeOutTicks": -3, "harmonics": [100, 86, 29, 29, 14, 14, 0, 14, 14, 43, 71, 100, 100, 86, 71, 71, 57, 57, 43, 43, 43, 43, 43, 0, 0, 0, 0, 0], "unison": "octave", "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "note size" }] } },
             ]) },
-        { name: "AbyssBox presets", presets: toNameMap([
+        { name: "AbyssBox 1.2> Presets", presets: toNameMap([
                 { name: "Demonic Bell", generalMidi: false, settings: { "type": "Picked String", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 0.7071 }, { "type": "high-pass", "cutoffHz": 353.55, "linearGain": 0.7071 }, { "type": "peak", "cutoffHz": 1414.21, "linearGain": 0.0884 }], "effects": ["detune", "distortion", "bitcrusher", "echo", "reverb"], "detuneCents": -52, "distortion": 29, "aliases": false, "bitcrusherOctave": 4.5, "bitcrusherQuantization": 29, "panDelay": 10, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 68, "fadeInSeconds": 0, "fadeOutTicks": 96, "harmonics": [43, 71, 71, 100, 86, 100, 43, 86, 71, 57, 86, 29, 14, 71, 14, 14, 57, 14, 14, 43, 14, 14, 43, 14, 14, 43, 14, 14], "unison": "shimmer", "stringSustain": 64, "envelopes": [] } },
                 { name: "Spacey Triangle", generalMidi: false, settings: { "type": "chip", "eqFilter": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 6727.17, "linearGain": 11.3137 }, { "type": "high-pass", "cutoffHz": 176.78, "linearGain": 4 }], "effects": ["transition type", "vibrato", "distortion", "bitcrusher", "chorus", "echo", "reverb"], "transition": "normal", "clicklessTransition": false, "vibrato": "shaky", "vibratoDepth": 0.1, "vibratoDelay": 0, "vibratoSpeed": 10, "vibratoType": 1, "distortion": 29, "aliases": false, "bitcrusherOctave": 5.5, "bitcrusherQuantization": 14, "panDelay": 10, "chorus": 86, "echoSustain": 43, "echoDelayBeats": 1, "reverb": 26, "fadeInSeconds": 0, "fadeOutTicks": 96, "wave": "triangle", "unison": "dirty", "isUsingAdvancedLoopControls": false, "chipWaveLoopStart": 0, "chipWaveLoopEnd": 32, "chipWaveLoopMode": 0, "chipWavePlayBackwards": false, "chipWaveStartOffset": 0, "envelopes": [] } },
                 { name: "Harmonic Piano", generalMidi: false, settings: { "type": "harmonics", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.3536 }, { "type": "peak", "cutoffHz": 353.55, "linearGain": 0.125 }, { "type": "high-pass", "cutoffHz": 88.39, "linearGain": 1 }], "effects": ["transition type"], "transition": "interrupt", "clicklessTransition": false, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -1, "harmonics": [100, 57, 57, 57, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "unison": "none", "envelopes": [] } },
                 { name: "Organic Synth", generalMidi: false, settings: { "type": "FM", "eqFilter": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "eqSubFilters0": [{ "type": "low-pass", "cutoffHz": 5656.85, "linearGain": 0.1768 }], "effects": ["chord type", "reverb"], "chord": "simultaneous", "fastTwoNoteArp": false, "arpeggioSpeed": 12, "panDelay": 10, "reverb": 71, "fadeInSeconds": 0.0263, "fadeOutTicks": 96, "algorithm": "(1 2 3)←4", "feedbackType": "1⟲ 2⟲ 3⟲", "feedbackAmplitude": 2, "operators": [{ "frequency": "1×", "amplitude": 15, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "5×", "amplitude": 3, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "8×", "amplitude": 7, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }], "envelopes": [{ "target": "operatorAmplitude", "envelope": "twang 1", "index": 3 }, { "target": "noteVolume", "envelope": "twang 2" }] } },
                 { name: "Nokia Ringtone", generalMidi: false, settings: { "type": "FM", "eqFilter": [], "effects": ["transition type", "chord type"], "transition": "interrupt", "chord": "custom interval", "fadeInSeconds": 0, "fadeOutTicks": -1, "algorithm": "(1 2)←(3 4)", "feedbackType": "1→2", "feedbackAmplitude": 0, "operators": [{ "frequency": "1×", "amplitude": 2 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }, { "frequency": "1×", "amplitude": 15 }], "envelopes": [] } },
+            ]) },
+        { name: "AbyssBox 1.3 Presets", presets: toNameMap([
+                { name: "Ghost House", generalMidi: false, settings: { "type": "FM", "eqFilter": [], "eqFilterType": false, "eqSimpleCut": 10, "eqSimplePeak": 0, "envelopeSpeed": 12, "discreteEnvelope": false, "eqSubFilters0": [], "effects": ["transition type", "vibrato", "bitcrusher"], "transition": "normal", "clicklessTransition": false, "vibrato": "heavy", "vibratoDepth": 0.45, "vibratoDelay": 0, "vibratoSpeed": 10, "vibratoType": 0, "bitcrusherOctave": 3.5, "bitcrusherQuantization": 43, "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -3, "algorithm": "1←(2 3←4)", "feedbackType": "1⟲", "feedbackAmplitude": 0, "operators": [{ "frequency": "1×", "amplitude": 15, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 4, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 6, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 7, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }, { "frequency": "1×", "amplitude": 0, "waveform": "sine", "pulseWidth": 5 }], "envelopes": [{ "target": "noteVolume", "envelope": "punch" }] } },
+                { name: "Supersaw Pluck", generalMidi: false, settings: { "type": "supersaw", "eqFilter": [], "eqFilterType": false, "eqSimpleCut": 9, "eqSimplePeak": 0, "envelopeSpeed": 12, "discreteEnvelope": false, "eqSubFilters0": [], "eqSubFilters1": [], "effects": ["chord type", "note filter", "chorus", "echo", "reverb"], "chord": "simultaneous", "fastTwoNoteArp": true, "arpeggioSpeed": 12, "noteFilterType": true, "noteSimpleCut": 7, "noteSimplePeak": 1, "noteFilter": [{ "type": "low-pass", "cutoffHz": 3828.43, "linearGain": 0.5 }], "noteSubFilters1": [{ "type": "low-pass", "cutoffHz": 3828.43, "linearGain": 0.5 }], "panDelay": 10, "chorus": 14, "echoSustain": 29, "echoDelayBeats": 1, "reverb": 0, "fadeInSeconds": 0, "fadeOutTicks": 48, "pulseWidth": 40, "decimalOffset": 0, "dynamism": 67, "spread": 50, "shape": 0, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "twang 1" }] } },
+                { name: "Credits Bass", generalMidi: false, settings: { "type": "chip", "eqFilter": [], "eqFilterType": false, "eqSimpleCut": 8, "eqSimplePeak": 0, "envelopeSpeed": 12, "discreteEnvelope": false, "effects": ["transition type", "chord type", "note filter"], "transition": "interrupt", "clicklessTransition": false, "chord": "arpeggio", "fastTwoNoteArp": true, "arpeggioSpeed": 9, "noteFilterType": true, "noteSimpleCut": 8, "noteSimplePeak": 0, "noteFilter": [{ "type": "low-pass", "cutoffHz": 16000, "linearGain": 0.3536 }], "noteSubFilters1": [{ "type": "low-pass", "cutoffHz": 16000, "linearGain": 0.3536 }], "panDelay": 10, "fadeInSeconds": 0, "fadeOutTicks": -1, "wave": "alto sax", "unison": "none", "isUsingAdvancedLoopControls": false, "chipWaveLoopStart": 0, "chipWaveLoopEnd": 2, "chipWaveLoopMode": 0, "chipWavePlayBackwards": false, "chipWaveStartOffset": 0, "envelopes": [{ "target": "noteFilterAllFreqs", "envelope": "decay 1" }] } },
             ]) },
     ]);
 
@@ -23128,16 +25429,18 @@ var beepbox = (function (exports) {
         }
         getNextBar() {
             let nextBar = this.bar + 1;
-            if (this.isRecording) {
-                if (nextBar >= this.song.barCount) {
-                    nextBar = this.song.barCount - 1;
+            {
+                if (this.isRecording) {
+                    if (nextBar >= this.song.barCount) {
+                        nextBar = this.song.barCount - 1;
+                    }
                 }
-            }
-            else if (this.bar == this.loopBarEnd && !this.renderingSong) {
-                nextBar = this.loopBarStart;
-            }
-            else if (this.loopRepeatCount != 0 && nextBar == Math.max(this.loopBarEnd + 1, this.song.loopStart + this.song.loopLength)) {
-                nextBar = this.song.loopStart;
+                else if ((this.bar == this.loopBarEnd && !this.renderingSong)) {
+                    nextBar = this.loopBarStart;
+                }
+                else if (this.loopRepeatCount != 0 && nextBar == Math.max(this.loopBarEnd + 1, this.song.loopStart + this.song.loopLength)) {
+                    nextBar = this.song.loopStart;
+                }
             }
             return nextBar;
         }
@@ -26978,9 +29281,10 @@ var beepbox = (function (exports) {
 				<rect x="-1" y="-1" width="19" height="80" fill="url(%23shadow)"/> \
 			</svg>');
 	}
+
 	body {
 		color: ${ColorConfig.primaryText};
-		background: ${ColorConfig.editorBackground};
+		background: ${ColorConfig.songPlayerMargin};
 	}
 	.songPlayerContainer {
 		display:grid; 
@@ -26990,6 +29294,9 @@ var beepbox = (function (exports) {
 	}
 	.layout-option {
 		width: 25%;
+	}
+	.timeline-bar-progress {
+		background: var(--progress-bar, var(--text-selection, rgb(0, 255, 0)));
 	}
 	.layout-option input:checked ~ * {
 		color:var(--primary-text) !important;
@@ -27189,9 +29496,13 @@ var beepbox = (function (exports) {
             grid-template-rows: 92.6vh 7.4vh; 
             grid-template-columns: minmax(0px,0px);
         }
+        
         div.visualizer {
             transform: scale(1);
             }
+        .timelineContainer {
+            transform: translateX(0);
+        } 
         `,
         "top": `
         .songPlayerContainer {
@@ -27203,6 +29514,9 @@ var beepbox = (function (exports) {
         div.visualizer {
             transform: scale(1);
             }
+        .timelineContainer {
+            transform: translateX(0);
+        }    
         `,
         "shitbox4": `
         .songPlayerContainer {
@@ -27214,6 +29528,9 @@ var beepbox = (function (exports) {
         div.visualizer {
             transform: skew(30deg,20deg) scale(0.5);
             }
+        .timelineContainer {
+            transform: translateX(0);
+        }    
         `,
         "boxbeep": `
         .songPlayerContainer {
@@ -27225,6 +29542,51 @@ var beepbox = (function (exports) {
         div.visualizer {
             transform: scale(-1);
             }
+        .timelineContainer {
+            transform: translateX(0);
+        }
+        `,
+        "piano": `
+        .songPlayerContainer {
+            display:grid; 
+            grid-template-areas: 'visualizer visualizer' 'control-center control-center'; 
+            grid-template-rows: 92.6vh 7.4vh; 
+            grid-template-columns: minmax(0px,0px);
+        }
+        div.visualizer {
+            transform: scale(1);
+            }
+        .timelineContainer {
+            transform: translateX(0);
+        }
+        `,
+        "vertical": `
+        .songPlayerContainer {
+            display:grid; 
+            grid-template-areas: 'visualizer visualizer' 'piano piano' 'control-center control-center'; 
+            grid-template-rows: 82.6vh 10vh 7.4vh; 
+            grid-template-columns: minmax(0px,0px);
+        }
+        div.visualizer {
+            transform: scale(1);
+            }
+        .timelineContainer {
+            transform: translateX(0);
+        }
+        `,
+        "middle": `
+        .songPlayerContainer {
+            display:grid; 
+            grid-template-areas: 'visualizer visualizer' 'control-center control-center'; 
+            grid-template-rows: 92.6vh 7.4vh; 
+            grid-template-columns: minmax(0px,0px);
+        }
+        div.visualizer {
+            transform: scale(1);
+            }
+        .timelineContainer {
+            transform: translateX(50vw);
+        }
         `,
     };
     SongPlayerLayout._styleElement = document.head.appendChild(HTML.style({ type: "text/css" }));
@@ -27310,14 +29672,69 @@ var beepbox = (function (exports) {
 
 					<rect x="2" y="15" width="22" height="3" fill="currentColor"/>
 				</svg>
-				`), div("BoxBeep")));
+				`), div("BoxBeep")), label({ class: "layout-option", style: "width:90px; color: var(--secondary-text)" }, input({ type: "radio", name: "spLayout", value: "piano", style: "display:none;" }), SVG(`\
+				<svg viewBox="-1 -1 28 22">
+					<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+					<rect x="4" y="3" width="20" height="1" fill="currentColor"/>
+					<rect x="2" y="3" width="1" height="9" fill="currentColor"/>
+					<rect x="23" y="4" width="1" height="7" fill="currentColor"/>
+					<rect x="4" y="11" width="20" height="1" fill="currentColor"/>
+
+					<rect x="4" y="5" width="20" height="1" fill="currentColor"/>
+					<rect x="4" y="7" width="20" height="1" fill="currentColor"/>
+					<rect x="4" y="9" width="20" height="1" fill="currentColor"/>
+
+					<rect x="2" y="15" width="22" height="3" fill="currentColor"/>
+					</svg>
+				`), div("Music Box")), label({ class: "layout-option", style: "width:90px; color: var(--secondary-text)" }, input({ type: "radio", name: "spLayout", value: "vertical", style: "display:none;" }), SVG(`\
+				<svg viewBox="-1 -1 28 22">
+					<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+					<rect x="2" y="3" width="22" height="1" fill="currentColor"/>
+					<rect x="2" y="4" width="1" height="7" fill="currentColor"/>
+					<rect x="23" y="4" width="1" height="7" fill="currentColor"/>
+					<rect x="2" y="11" width="22" height="1" fill="currentColor"/>
+
+					<rect x="5" y="4" width="1" height="7" fill="currentColor"/>
+					<rect x="8" y="4" width="1" height="7" fill="currentColor"/>
+					<rect x="12" y="4" width="1" height="7" fill="currentColor"/>
+					<rect x="16" y="4" width="1" height="7" fill="currentColor"/>
+					<rect x="20" y="4" width="1" height="7" fill="currentColor"/>
+
+					<rect x="2" y="15" width="22" height="3" fill="currentColor"/>
+					</svg>
+				`), div("Vertical")), label({ class: "layout-option", style: "width:90px; color: var(--secondary-text)" }, input({ type: "radio", name: "spLayout", value: "middle", style: "display:none;" }), SVG(`\
+				<svg viewBox="-1 -1 28 22">
+				<rect x="0" y="0" width="26" height="20" fill="none" stroke="currentColor" stroke-width="1"/>
+				<rect x="4" y="3" width="8" height="1" fill="currentColor"/>
+
+				<rect x="2" y="3" width="1" height="9" fill="currentColor"/>
+
+				<rect x="13" y="3" width="1" height="9" fill="currentColor"/>
+
+				<rect x="23" y="3" width="1" height="9" fill="currentColor"/>
+
+				<rect x="4" y="11" width="8" height="1" fill="currentColor"/>
+				<rect x="4" y="5" width="8" height="1" fill="currentColor"/>
+				<rect x="4" y="7" width="8" height="1" fill="currentColor"/>
+				<rect x="4" y="9" width="8" height="1" fill="currentColor"/>
+
+				<rect x="15" y="3" width="7" height="1" fill="currentColor"/>
+				<rect x="15" y="11" width="7" height="1" fill="currentColor"/>
+				<rect x="15" y="5" width="7" height="1" fill="currentColor"/>
+				<rect x="15" y="7" width="7" height="1" fill="currentColor"/>
+				<rect x="15" y="9" width="7" height="1" fill="currentColor"/>
+
+				<rect x="2" y="15" width="22" height="3" fill="currentColor"/>
+					</svg>
+				`), div("Middle")));
     const layoutContainer = div({ class: "prompt noSelection", style: "width: 300px; margin: auto;text-align: center;background: var(--editor-background);border-radius: 15px;border: 4px solid var(--ui-widget-background);color: var(--primary-text);padding: 20px;display: flex;flex-direction: column;position: relative;box-shadow: 5px 5px 20px 10px rgba(0,0,0,0.5);" }, div({ class: "promptTitle" }, h2({ class: "layoutExt", style: "text-align: inherit;" }, ""), h2({ class: "layoutTitle" }, "Layout")), _form, div({ style: "margin-top: 1em;" }, _okayButton), closePrompt);
     let titleText = h1({ style: "flex-grow: 1; margin: 0 1px; margin-left: 10px; overflow: hidden;" }, "");
-    let layoutStuffs = button({ style: "margin: 0 4px; height: 42px; width: 90px;" }, "Layouts");
+    let layoutStuffs = button({ class: "songPlayerLayoutsButton", style: "margin: 0 4px; height: 42px; width: 90px;" }, "Layouts");
     let editLink = a({ target: "_top", style: "margin: 0 4px;" }, "✎ Edit");
     let copyLink = a({ href: "javascript:void(0)", style: "margin: 0 4px;" }, "⎘ Copy URL");
     let shareLink = a({ href: "javascript:void(0)", style: "margin: 0 4px;" }, "⤳ Share");
     let fullscreenLink = a({ target: "_top", style: "margin: 0 4px;" }, "⇱ Fullscreen");
+    let shortenSongLink = a({ href: "javascript:void(0)", target: "_top", style: "margin: 0 4px;" }, "… Shorten URL");
     let draggingPlayhead = false;
     const playButton = button({ style: "width: 100%; height: 100%; max-height: 50px;" });
     const playButtonContainer = div({ class: "playButtonContainer", style: "flex-shrink: 0; display: flex; padding: 2px; width: 80px; height: 100%; box-sizing: border-box; align-items: center;" }, playButton);
@@ -27326,9 +29743,12 @@ var beepbox = (function (exports) {
     const volumeIcon = svg({ style: "flex: 0 0 12px; margin: 0 1px; width: 12px; height: 12px;", viewBox: "0 0 12 12" }, path({ fill: ColorConfig.uiWidgetBackground, d: "M 1 9 L 1 3 L 4 3 L 7 0 L 7 12 L 4 9 L 1 9 M 9 3 Q 12 6 9 9 L 8 8 Q 10.5 6 8 4 L 9 3 z" }));
     const volumeSlider = input({ title: "volume", type: "range", value: 75, min: 0, max: 75, step: 1, style: "width: 12vw; max-width: 100px; margin: 0 1px;" });
     const zoomIcon = svg({ width: 12, height: 12, viewBox: "0 0 12 12" }, circle({ cx: "5", cy: "5", r: "4.5", "stroke-width": "1", stroke: "currentColor", fill: "none" }), path({ stroke: "currentColor", "stroke-width": "2", d: "M 8 8 L 11 11 M 5 2 L 5 8 M 2 5 L 8 5", fill: "none" }));
-    const zoomButton = button({ title: "zoom", style: "background: none; flex: 0 0 12px; margin: 0 3px; width: 12px; height: 12px; display: flex;" }, zoomIcon);
+    const zoomButton2 = button({ title: "zoom", style: "background: #581b3e; width: 100%; height: 100%; display: none;" }, "Zoom");
+    const zoomButton = button({ title: "zoom", style: "background: none; flex: 0 0 12px; margin: 0 3px; width: 12px; height: 12px; display: flex;" }, zoomIcon, zoomButton2);
     const timeline = svg({ class: "timeline", style: "min-width: 0; min-height: 0; touch-action: pan-y pinch-zoom;" });
     const playhead = div({ class: "playhead", style: `position: absolute; left: 0; top: 0; width: 2px; height: 100%; background: ${ColorConfig.playhead}; pointer-events: none;` });
+    const piano = svg({ style: "pointer-events: none; display: block; margin: 0 auto;" });
+    const pianoContainer = div({ class: "piano", style: "grid-area: piano;" }, piano);
     const timelineContainer = div({ class: "timelineContainer", style: "display: flex; flex-grow: 1; flex-shrink: 1; position: relative;" }, timeline, playhead);
     const visualizationContainer = div({ class: "visualizer", style: "display: flex; flex-grow: 1; flex-shrink: 1; position: relative; align-items: center; overflow: hidden; grid-area: visualizer;" }, timelineContainer);
     let noteFlashElementsPerBar;
@@ -27344,14 +29764,42 @@ var beepbox = (function (exports) {
     const gradient = SVG.linearGradient({ id: "volumeGrad2", gradientUnits: "userSpaceOnUse" }, stop1, stop2, stop3);
     const defs = SVG.defs({}, gradient);
     const volumeBarContainer = SVG.svg({ style: `touch-action: none; overflow: hidden; margin: auto;`, width: "160px", height: "10px", preserveAspectRatio: "none" }, defs, outVolumeBarBg, outVolumeBar, outVolumeCap);
+    const timelineBarProgress = div({ class: `timeline-bar-progress`, style: `pointer-events: none; overflow: hidden; width: 5%; height: 100%; z-index: 5;` });
+    const timelineBar = div({ style: `pointer-events: none; overflow: hidden; margin: auto; width: 90%; height: 50%; background: var(--ui-widget-background);` }, timelineBarProgress);
+    const timelineBarContainer = div({ style: `pointer-events: none; overflow: hidden; margin: auto; width: 160px; height: 10px; ` }, timelineBar);
+    const volumeBarContainerDiv = div({ style: "display:flex; flex-direction:column;" }, volumeBarContainer, timelineBarContainer);
     const promptContainer = div({ class: "promptContainer", style: "display:none; backdrop-filter: saturate(1.5) blur(4px); width: 100%; height: 100%; position: fixed; z-index: 999; display: flex; justify-content: center; align-items: center;" });
     promptContainer.style.display = "none";
     const songPlayerContainer = div({ class: "songPlayerContainer" });
     songPlayerContainer.appendChild(visualizationContainer);
-    songPlayerContainer.appendChild(div({ class: "control-center", style: `flex-shrink: 0; height: 20vh; min-height: 22px; max-height: 70px; display: flex; align-items: center; grid-area: control-center;` }, playButtonContainer, loopButton, volumeIcon, volumeSlider, zoomButton, volumeBarContainer, oscilascope.canvas, titleText, layoutStuffs, editLink, copyLink, shareLink, fullscreenLink));
+    songPlayerContainer.appendChild(pianoContainer);
+    songPlayerContainer.appendChild(div({ class: "control-center", id: "control-center", style: `flex-shrink: 0; height: 20vh; min-height: 22px; max-height: 70px; display: flex; align-items: center; grid-area: control-center;` }, div({ class: "control-center row", id: "row1", style: `display: flex; align-items: center;` }, playButtonContainer, loopButton, volumeIcon, volumeSlider, zoomButton, volumeBarContainerDiv, oscilascope.canvas), div({ class: "control-center row", id: "row2", style: `display: flex; align-items: center;` }, titleText, layoutStuffs, editLink, copyLink, shareLink, shortenSongLink), div({ class: "control-center row", id: "row3", style: `display: flex; align-items: center;` })));
     document.body.appendChild(songPlayerContainer);
     songPlayerContainer.appendChild(promptContainer);
     promptContainer.appendChild(layoutContainer);
+    if (isMobile) {
+        const controlCenterId = document.getElementById('control-center');
+        const controlCenterRow3 = document.getElementById('row3');
+        oscilascope.canvas.style.display = 'none';
+        copyLink.style.display = "none";
+        controlCenterId.style.flexDirection = "column";
+        layoutStuffs.style.height = "24px";
+        zoomButton2.style.display = "unset";
+        zoomIcon.style.display = "none";
+        zoomButton.style.width = "48px";
+        zoomButton.style.height = "19px";
+        zoomButton.style.flex = "unset";
+        controlCenterRow3 === null || controlCenterRow3 === void 0 ? void 0 : controlCenterRow3.appendChild(titleText);
+    }
+    else {
+        const controlCenterId = document.getElementById('control-center');
+        const controlCenterRow1 = document.getElementById('row1');
+        const controlCenterRow3 = document.getElementById('row3');
+        controlCenterId.style.alignItems = "unset";
+        controlCenterId.style.justifyContent = "space-between";
+        controlCenterRow1 === null || controlCenterRow1 === void 0 ? void 0 : controlCenterRow1.appendChild(titleText);
+        controlCenterRow3.style.display = "none";
+    }
     function setLocalStorage(key, value) {
         try {
             localStorage.setItem(key, value);
@@ -27419,7 +29867,12 @@ var beepbox = (function (exports) {
         renderTimeline();
     }
     function onWindowResize() {
+        piano.style.width = "0";
         renderTimeline();
+    }
+    function shortenSongPlayerUrl() {
+        let shortenerStrategy = "https://tinyurl.com/api-create.php?url=";
+        window.open(shortenerStrategy + encodeURIComponent(new URL("#song=" + synth.song.toBase64String(), location.href).href));
     }
     let pauseIfAnotherPlayerStartsHandle = null;
     function pauseIfAnotherPlayerStarts() {
@@ -27497,6 +29950,7 @@ var beepbox = (function (exports) {
         SongPlayerLayout.setLayout(_form.elements["spLayout"].value);
         promptContainer.style.display = "none";
         window.localStorage.setItem("spLayout", _form.elements["spLayout"].value);
+        renderTimeline();
     }
     function onToggleLoop() {
         if (synth.loopRepeatCount == -1) {
@@ -27524,19 +29978,41 @@ var beepbox = (function (exports) {
         if (!draggingPlayhead)
             return;
         event.preventDefault();
-        onTimelineCursorMove(event.clientX || event.pageX);
+        const useVertical = (_form.elements["spLayout"].value == "vertical") || (window.localStorage.getItem("spLayout") == "vertical");
+        if (useVertical) {
+            onTimelineCursorMove(event.clientY || event.pageY);
+        }
+        else {
+            onTimelineCursorMove(event.clientX || event.pageX);
+        }
     }
     function onTimelineTouchDown(event) {
         draggingPlayhead = true;
         onTimelineTouchMove(event);
     }
     function onTimelineTouchMove(event) {
-        onTimelineCursorMove(event.touches[0].clientX);
+        const useVertical = (_form.elements["spLayout"].value == "vertical") || (window.localStorage.getItem("spLayout") == "vertical");
+        if (useVertical) {
+            onTimelineCursorMove(event.touches[0].clientY);
+        }
+        else {
+            onTimelineCursorMove(event.touches[0].clientX);
+        }
     }
     function onTimelineCursorMove(mouseX) {
         if (draggingPlayhead && synth.song != null) {
             const boundingRect = visualizationContainer.getBoundingClientRect();
-            synth.playhead = synth.song.barCount * (mouseX - boundingRect.left) / (boundingRect.right - boundingRect.left);
+            const useVertical = (_form.elements["spLayout"].value == "vertical") || (window.localStorage.getItem("spLayout") == "vertical");
+            const useBoxBeep = (_form.elements["spLayout"].value == "boxbeep") || (window.localStorage.getItem("spLayout") == "boxbeep");
+            if (!useVertical && !useBoxBeep) {
+                synth.playhead = synth.song.barCount * (mouseX - boundingRect.left) / (boundingRect.right - boundingRect.left);
+            }
+            else if (useVertical) {
+                synth.playhead = synth.song.barCount * (mouseX - boundingRect.bottom) / (boundingRect.top - boundingRect.bottom);
+            }
+            else if (useBoxBeep) {
+                synth.playhead = synth.song.barCount * (mouseX - boundingRect.right) / (boundingRect.left - boundingRect.right);
+            }
             synth.computeLatestModValues();
             renderPlayhead();
         }
@@ -27549,11 +30025,40 @@ var beepbox = (function (exports) {
         synth.volume = Math.min(1.0, Math.pow(volume / 50.0, 0.5)) * Math.pow(2.0, (volume - 75.0) / 25.0);
     }
     function renderPlayhead() {
+        const maxPer = 144;
         if (synth.song != null) {
             let pos = synth.playhead / synth.song.barCount;
-            playhead.style.left = (timelineWidth * pos) + "px";
-            const boundingRect = visualizationContainer.getBoundingClientRect();
-            visualizationContainer.scrollLeft = pos * (timelineWidth - boundingRect.width);
+            timelineBarProgress.style.width = Math.round((maxPer * pos / maxPer) * 100) + "%";
+            const usePiano = (_form.elements["spLayout"].value == "piano") || (window.localStorage.getItem("spLayout") == "piano");
+            const useMiddle = (_form.elements["spLayout"].value == "middle") || (window.localStorage.getItem("spLayout") == "middle");
+            const useVertical = (_form.elements["spLayout"].value == "vertical") || (window.localStorage.getItem("spLayout") == "vertical");
+            if (usePiano) {
+                playhead.style.left = (timelineWidth * pos) + "px";
+                timelineContainer.style.left = "-" + (timelineWidth * pos) + "px";
+                timelineContainer.style.bottom = "0";
+                timelineContainer.style.top = "0";
+            }
+            else if (useMiddle) {
+                playhead.style.left = (timelineWidth * pos) + "px";
+                timelineContainer.style.left = "-" + (timelineWidth * pos) + "px";
+                timelineContainer.style.bottom = "0";
+                timelineContainer.style.top = "0";
+            }
+            else if (useVertical) {
+                const boundingRect = visualizationContainer.getBoundingClientRect();
+                const o = boundingRect.height / 2;
+                playhead.style.left = (timelineWidth * pos) + "px";
+                timelineContainer.style.bottom = "-" + (timelineWidth * pos) + "px";
+                timelineContainer.style.top = (timelineWidth * pos + o) + "px";
+            }
+            else {
+                playhead.style.left = (timelineWidth * pos) + "px";
+                timelineContainer.style.left = "0";
+                timelineContainer.style.bottom = "0";
+                timelineContainer.style.top = "0";
+                const boundingRect = visualizationContainer.getBoundingClientRect();
+                visualizationContainer.scrollLeft = pos * (timelineWidth - boundingRect.width);
+            }
             if (notesFlashWhenPlayed) {
                 const playheadBar = Math.floor(synth.playhead);
                 const modPlayhead = synth.playhead - playheadBar;
@@ -27573,15 +30078,29 @@ var beepbox = (function (exports) {
                         currentNoteFlashElements.push(element);
                     }
                 }
+                const kc = piano.children.length;
+                for (let i = 0; i < kc; i++) {
+                    const k = piano.children[i];
+                    const kf = k.getAttribute("original-fill");
+                    k.setAttribute("fill", kf);
+                }
                 if (currentNoteFlashElements != null) {
                     for (var i = 0; i < currentNoteFlashElements.length; i++) {
                         var element = currentNoteFlashElements[i];
                         const noteStart = Number(element.getAttribute("note-start")) / partsPerBar;
                         const noteEnd = Number(element.getAttribute("note-end")) / partsPerBar;
                         const noteBar = Number(element.getAttribute("note-bar"));
+                        const p = Number(element.getAttribute("note-pitch"));
+                        const isNoise = element.getAttribute("note-noise") === "true";
+                        const k = piano.children[p];
+                        const kf2 = element.getAttribute("note-color");
                         if ((modPlayhead >= noteStart) && (noteBar == playheadBar)) {
                             const dist = noteEnd - noteStart;
-                            element.style.opacity = String((1 - (((modPlayhead - noteStart) - (dist / 2)) / (dist / 2))));
+                            const opacity = (1 - (((modPlayhead - noteStart) - (dist / 2)) / (dist / 2)));
+                            element.style.opacity = String(opacity);
+                            if (!isNoise)
+                                if (opacity > 0.05)
+                                    k === null || k === void 0 ? void 0 : k.setAttribute("fill", kf2);
                         }
                         else {
                             element.style.opacity = "0";
@@ -27600,20 +30119,50 @@ var beepbox = (function (exports) {
         let timelineHeight;
         let windowOctaves;
         let windowPitchCount;
+        const useVertical = (_form.elements["spLayout"].value == "vertical") || (window.localStorage.getItem("spLayout") == "vertical");
         if (zoomEnabled) {
-            timelineHeight = boundingRect.height;
+            timelineHeight = useVertical ? boundingRect.width : boundingRect.height;
             windowOctaves = Math.max(1, Math.min(Config.pitchOctaves, Math.round(timelineHeight / (12 * 2))));
             windowPitchCount = windowOctaves * 12 + 1;
             const semitoneHeight = (timelineHeight - 1) / windowPitchCount;
             const targetBeatWidth = Math.max(8, semitoneHeight * 4);
             timelineWidth = Math.max(boundingRect.width, targetBeatWidth * synth.song.barCount * synth.song.beatsPerBar);
+            if (useVertical) {
+                timelineContainer.style.transform = `translateX(-${timelineWidth / 2}px) rotate(-90deg) translateX(${timelineWidth / 2}px) translateY(${timelineHeight / 2}px) scaleY(-1)`;
+                pianoContainer.style.display = "unset";
+                if (!isMobile) {
+                    songPlayerContainer.style.gridTemplateRows = "";
+                }
+                else {
+                    songPlayerContainer.style.gridTemplateRows = "78vh 0vh 7.4vh";
+                }
+            }
+            else {
+                timelineContainer.style.transform = '';
+                pianoContainer.style.display = "none";
+                songPlayerContainer.style.gridTemplateRows = "";
+            }
         }
         else {
+            pianoContainer.style.display = "none";
             timelineWidth = boundingRect.width;
             const targetSemitoneHeight = Math.max(1, timelineWidth / (synth.song.barCount * synth.song.beatsPerBar) / 6.0);
             timelineHeight = Math.min(boundingRect.height, targetSemitoneHeight * (Config.maxPitch + 1) + 1);
             windowOctaves = Math.max(3, Math.min(Config.pitchOctaves, Math.round(timelineHeight / (12 * targetSemitoneHeight))));
             windowPitchCount = windowOctaves * 12 + 1;
+            if (useVertical) {
+                timelineContainer.style.transform = `translateX(-${timelineWidth / 2}px) rotate(-90deg) translateX(${timelineWidth / 2}px) translateY(${timelineWidth / 2}px) scaleY(-1)`;
+                if (isMobile) {
+                    songPlayerContainer.style.gridTemplateRows = "78vh 0vh 7.4vh";
+                }
+                else {
+                    songPlayerContainer.style.gridTemplateRows = "92.6vh 0vh 7.4vh";
+                }
+            }
+            else {
+                timelineContainer.style.transform = '';
+                songPlayerContainer.style.gridTemplateRows = "";
+            }
         }
         timelineContainer.style.width = timelineWidth + "px";
         timelineContainer.style.height = timelineHeight + "px";
@@ -27668,7 +30217,10 @@ var beepbox = (function (exports) {
                             noteFlashElement.style.opacity = "0";
                             noteFlashElement.setAttribute('note-start', String(note.start));
                             noteFlashElement.setAttribute('note-end', String(note.end));
+                            noteFlashElement.setAttribute('note-pitch', String(pitch));
+                            noteFlashElement.setAttribute('note-noise', String(isNoise));
                             noteFlashElement.setAttribute('note-bar', String(bar));
+                            noteFlashElement.setAttribute('note-color', String(noteElement.getAttribute("fill")));
                             timeline.appendChild(noteFlashElement);
                             const noteFlashElementsForThisBar = noteFlashElementsPerBar[bar];
                             noteFlashElementsForThisBar.push(noteFlashElement);
@@ -27676,8 +30228,28 @@ var beepbox = (function (exports) {
                     }
                 }
             }
+            const useClassic = (_form.elements["spLayout"].value == "classic") || (window.localStorage.getItem("spLayout") == "classic");
+            const useTop = (_form.elements["spLayout"].value == "top") || (window.localStorage.getItem("spLayout") == "top");
+            const useShitbox4 = (_form.elements["spLayout"].value == "shitbox4") || (window.localStorage.getItem("spLayout") == "shitbox4");
+            const useBoxBeep = (_form.elements["spLayout"].value == "boxbeep") || (window.localStorage.getItem("spLayout") == "boxbeep");
+            const useMusicbox = (_form.elements["spLayout"].value == "piano") || (window.localStorage.getItem("spLayout") == "piano");
+            const useVertical = (_form.elements["spLayout"].value == "vertical") || (window.localStorage.getItem("spLayout") == "vertical");
+            const useMiddle = (_form.elements["spLayout"].value == "middle") || (window.localStorage.getItem("spLayout") == "middle");
+            if (isMobile) {
+                if (useClassic || useBoxBeep || useShitbox4 || useMusicbox || useMiddle) {
+                    songPlayerContainer.style.gridTemplateRows = "78vh 7.4vh";
+                }
+                else if (useTop) {
+                    songPlayerContainer.style.gridTemplateRows = "7.4vh 78vh";
+                }
+                else if (!useClassic && !useBoxBeep && !useShitbox4 && !useMusicbox && !useMiddle && !useVertical) {
+                    songPlayerContainer.style.gridTemplateRows = "78vh 7.4vh";
+                }
+            }
         }
         renderPlayhead();
+        const pianoContainerBoundingRect = pianoContainer.getBoundingClientRect();
+        renderPiano(piano, timelineHeight, pianoContainerBoundingRect.height, windowOctaves, synth.song);
     }
     function drawNote(pitch, start, pins, radius, offsetX, offsetY, partWidth, pitchHeight) {
         let d = `M ${offsetX + partWidth * (start + pins[0].time)} ${offsetY - pitch * pitchHeight + radius * (pins[0].size / Config.noteSizeMax)} `;
@@ -27696,6 +30268,31 @@ var beepbox = (function (exports) {
             d += `L ${x} ${y + radius * expression} `;
         }
         return d;
+    }
+    function renderPiano(element, width, height, octaves, song) {
+        if (song == null)
+            return;
+        element.innerHTML = "";
+        element.style.width = width + "px";
+        element.style.height = height + "px";
+        const kc = octaves * 12 + 1;
+        const kw = width / kc;
+        const kh = height;
+        for (let i = 0; i < kc; i++) {
+            const pitchNameIndex = (i + Config.keys[song.key].basePitch) % Config.pitchesPerOctave;
+            const isWhiteKey = Config.keys[pitchNameIndex].isWhiteKey;
+            const color = isWhiteKey ? "white" : "black";
+            element.appendChild(rect({
+                x: i / kc * width,
+                y: 0,
+                width: kw,
+                height: kh,
+                stroke: "rgba(0, 0, 0, 0.5)",
+                "stroke-width": 2,
+                "original-fill": color,
+                fill: color,
+            }));
+        }
     }
     function renderPlayButton() {
         if (synth.playing) {
@@ -27797,6 +30394,7 @@ var beepbox = (function (exports) {
     copyLink.addEventListener("click", onCopyClicked);
     shareLink.addEventListener("click", onShareClicked);
     window.addEventListener("hashchange", hashUpdatedExternally);
+    shortenSongLink.addEventListener("click", shortenSongPlayerUrl);
     hashUpdatedExternally();
     renderLoopIcon();
     renderZoomIcon();

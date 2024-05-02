@@ -14,7 +14,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AbyssBox</title>
-    <meta name="application-name" content="AbyssBox" />
+    <meta name="application-name" roperty="AbyssBox" />
     <meta name="apple-mobile-web-app-title" content="AbyssBox">
     <meta name="description" content="Abyssbox is an online tool for sketching and sharing instrumental music." />
     <meta name="keywords" content="chiptune, instrumental, music, song, melody, composition, tool, free, online, square wave, NES, NSF, abyssbox, ultrabox, beepbox, jummbox, pandorasbox, modbox, sandbox, goldbox, wackybox, todbox" />
@@ -25,7 +25,7 @@
     <meta name="msapplication-TileColor" content="#dba600" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     <meta name="format-detection" content="telephone=no" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/icon_32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icon_32.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="icon_32.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link href="https://fonts.googleapis.com/css?family=B612" rel="stylesheet" media="none" onload="if (this.media != 'all') this.media='all';" /> <!-- this is a trick to load CSS asynchronously. -->
@@ -43,6 +43,10 @@
         .modTitle::before {
             content: "AbyssBox";
             color: var(--mod-title, var(--link-accent, #9c64f7));
+        }
+
+        div.instrument-settings-area.load {
+            scrollbar-width: none;
         }
 
         body {
@@ -63,7 +67,7 @@
             padding-left: 30px;
             padding-right: 30px;
         }
-        
+
         #text-content {
             overflow: auto;
             background: var(--editor-background, black);
@@ -184,6 +188,7 @@
 </head>
 	 <!--WIP, DO NOT USE-->
 	 <!--<center>THIS URL IS MEANT FOR TESTING THE CHANGES MADE IN ULTRABOX 2.0. THIS URL WILL BE DELETED WHEN ULTRABOX 2.0 RELEASES, AND ANY SONGS YOU MAKE HERE MAY BE UNRECOVERABLE. YOU'VE BEEN WARNED.</center>-->
+
 <body id="secondImage">
 
     <div id="overlay" class="overlay">
@@ -192,11 +197,12 @@
     <script>
         const image = localStorage.getItem('customTheme2');
         const el  = document.getElementById('secondImage');
+        
         // console.log(image, el);
         if (image != null && image !== "null" && image !== "undefined") {
             el.style.backgroundImage="url(" + image + ")";
             el.style.backgroundRepeat= "repeat";
-        }
+        } 
     </script>
     <div id="beepboxEditorContainer">
         <noscript>
@@ -211,8 +217,14 @@
             </h1>
             
             <p id="introduction">
-                AbyssBox is a Modification of Ultrabox by choptop84, Ultrabox is made by Neptendo and Main, with assistence from community members!.<br>
+                AbyssBox is a Modification of Ultrabox by choptop84, Ultrabox is made by Neptendo and Main, with assistence from community members!<br>
                 Ultrabox takes elements from most of the beepbox mods available (see <a href="./credits.html">credits</a>) and puts them in one convenient package.
+                <br>
+                <br>
+                AbyssBox adds many improvements to the UI for both PC and Mobile. Over 20 themes, and 5 layouts! Plus many more other miscellaneous changes that improve the user experience. 
+                Though that isn't all AbyssBox adds. There are many more changes and improvements all over the app.
+                <br>
+                <br>
             </p>
             <p>
                  <!--(Everything below is, more or less, the usual beepbox description)-->
@@ -285,7 +297,7 @@
                     }
                 }
 				</script>
-		
+
                     </p>
                     <p>
                         Notes go into patterns, and you can edit one pattern at a time.
@@ -387,6 +399,27 @@
                 <!-- </div> -->
             <!-- </aside> -->
         </div>
+    </div>
+
+    <div>
+        <img id="egg" src="./egg/egg.png" style="display: none; cursor:pointer; width: 10px; height: 13px; left:0; bottom: 0; position: fixed;" onclick="toEgg()"/>
+        <script>
+
+            function getRandomInt(max) {
+                return Math.floor(Math.random() * max);
+                }
+
+            var egg = document.getElementById('egg');
+            var doesEggDisplay = getRandomInt(100);
+
+            if (doesEggDisplay == 1) {
+                egg.style.display = "";
+            }
+
+            function toEgg() {
+                location.href = 'http://choptop84.github.io/abyssbox-source/website/egg';
+            }
+        </script>
     </div>
 
     <!--

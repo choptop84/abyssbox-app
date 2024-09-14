@@ -17,15 +17,16 @@
     <title>AbyssBox</title>
     <meta name="application-name" roperty="AbyssBox" />
     <meta name="apple-mobile-web-app-title" content="AbyssBox">
-    <meta name="description" content="Abyssbox is an online tool for sketching and sharing instrumental music." />
+    <meta name="description" content="AbyssBox is an online tool for sketching and sharing instrumental music." />
     <meta name="keywords" content="chiptune, instrumental, music, song, melody, composition, tool, free, online, square wave, NES, NSF, abyssbox, ultrabox, beepbox, jummbox, pandorasbox, modbox, sandbox, goldbox, wackybox, todbox" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="theme-color" content="#444" />
+    <meta name="theme-color" content="#bf2c5d" />
     <meta name="msapplication-TileColor" content="#dba600" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     <meta name="format-detection" content="telephone=no" />
+    <meta property="og:image" content="https://choptop84.github.io/abyssbox-app/icon_maskable_192.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="icon_32.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="icon_32.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -208,11 +209,21 @@
 </head>
 	 <!--WIP, DO NOT USE-->
 	 <!--<center>THIS URL IS MEANT FOR TESTING THE CHANGES MADE IN ULTRABOX 2.0. THIS URL WILL BE DELETED WHEN ULTRABOX 2.0 RELEASES, AND ANY SONGS YOU MAKE HERE MAY BE UNRECOVERABLE. YOU'VE BEEN WARNED.</center>-->
-
+     <img id="icon" src="icon_32.png" width="32" height="32" style="opacity:0; position: absolute; pointer-events: none;"/>
 <body id="secondImage">
 
     <div id="overlay" class="overlay">
     </div>
+
+    <script> 
+
+        if (location.pathname.startsWith("/abyssbox-source/website/")) {
+            location.pathname = "/abyssbox-testing/" + location.pathname.slice("/abyssbox-source/website/".length);
+        } else if (location.pathname.startsWith("/abyssbox-source/website/index.html")) {
+            console.log("Welcome to AbyssBox Source (The HTML File)");
+        }
+
+    </script>
 
     <script>
         const image = localStorage.getItem('customTheme2');

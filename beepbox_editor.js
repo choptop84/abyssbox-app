@@ -1714,7 +1714,7 @@ var beepbox = (function (exports) {
             return (_a = EditorConfig.presetCategories[0].presets.dictionary) === null || _a === void 0 ? void 0 : _a[TypePresets === null || TypePresets === void 0 ? void 0 : TypePresets[instrument]];
         }
     }
-    EditorConfig.version = "1.5";
+    EditorConfig.version = "1.5.1";
     EditorConfig.versionDisplayName = "AbyssBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
@@ -2586,6 +2586,7 @@ var beepbox = (function (exports) {
             if (theme == undefined)
                 theme = this.themes["AbyssBox Classic"];
             this._styleElement.textContent = theme;
+            this.currentSetTheme = name;
             const themeColor = document.querySelector("meta[name='theme-color']");
             if (themeColor != null) {
                 themeColor.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue('--ui-widget-background'));
@@ -2682,6 +2683,7 @@ var beepbox = (function (exports) {
     ColorConfig.colorLookup = new Map();
     ColorConfig.usesColorFormula = false;
     ColorConfig.usesPianoScheme = false;
+    ColorConfig.currentSetTheme = "AbyssBox Classic";
     ColorConfig.themes = {
         "AbyssBox Classic": `
 			:root {		
@@ -2825,8 +2827,8 @@ var beepbox = (function (exports) {
 		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+		--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -2841,32 +2843,32 @@ var beepbox = (function (exports) {
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 		--export-instrument-symbol: var(--export-symbol);
 		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-		--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-		--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-		--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-		--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-		--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-		--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-		--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-		--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-		--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-		--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-		--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-	--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+		--undo-symbol: url("./image_assets/icon-undo.png");
+		--redo-symbol: url("./image_assets/icon-redo.png");
+		--copy-symbol: url("./image_assets/icon-copy.png");
+		--paste-symbol: url("./image_assets/icon-paste.png");
+		--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+		--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+		--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+		--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+		--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+		--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+		--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+		--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+	--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+	--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+	--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 		}
 		
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			/* sets background image */
 			body {
-			background-image: url("https://choptop84.github.io/abyssbox-source/website/stripesbg.gif") !important;
+			background-image: url("./image_assets/stripesbg.gif") !important;
 			background-position: center;
 			background-repeat: repeat;
 
@@ -2882,7 +2884,7 @@ var beepbox = (function (exports) {
 			} */
 
 			#text-content {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png");
+    				border-image-source: url("./image_assets/abyssbox_border.png");
     				border-image-slice: 4 fill; 
    				border-image-width: 8px; 
 				border-image-repeat: stretch; 
@@ -2895,7 +2897,7 @@ var beepbox = (function (exports) {
     				image-rendering: optimizeSpeed !important;             /* IE */
 				}
 			#beepboxEditorContainer {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png");
+    				border-image-source: url("./image_assets/abyssbox_border.png");
     				border-image-slice: 4 fill; 
    				border-image-width: 8px; 
 				border-image-repeat: stretch;
@@ -2927,7 +2929,7 @@ var beepbox = (function (exports) {
 			button.importInstrumentButton, 
 			.beepboxEditor select, 
 			.beepboxEditor .select2-selection__rendered {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png") !important;
+    				border-image-source: url("./image_assets/abyssbox_border.png") !important;
     				border-image-slice: 4 fill !important; 
    				border-image-width: 4px !important; 
 				border-image-repeat: stretch !important;
@@ -2939,7 +2941,7 @@ var beepbox = (function (exports) {
     				image-rendering: pixelated !important;                 /* Future browsers */
     				image-rendering: optimizeSpeed !important;             /* IE */
 
-					cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+					cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 				}
 
 			div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
@@ -2959,7 +2961,7 @@ var beepbox = (function (exports) {
 			@font-face {
 		   font-family: "AbyssType_small";
 		   src:
- 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			html {
@@ -2972,72 +2974,72 @@ var beepbox = (function (exports) {
 
 			.beepboxEditor input[type="range"]::-webkit-slider-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-ms-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-ms-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-ms-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-moz-range-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-moz-range-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-moz-range-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="text"],
 			.beepboxEditor input[type="number"]
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]:checked
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]:checked:after
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 
 			div.selectRow span {
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 
 			`,
@@ -3184,8 +3186,8 @@ var beepbox = (function (exports) {
 		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+		--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -3200,39 +3202,39 @@ var beepbox = (function (exports) {
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 		--export-instrument-symbol: var(--export-symbol);
 		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-		--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-		--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-		--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-		--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-		--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-		--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-		--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-		--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-		--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-		--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-		--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-		--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+		--undo-symbol: url("./image_assets/icon-undo.png");
+		--redo-symbol: url("./image_assets/icon-redo.png");
+		--copy-symbol: url("./image_assets/icon-copy.png");
+		--paste-symbol: url("./image_assets/icon-paste.png");
+		--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+		--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+		--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+		--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+		--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+		--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+		--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+		--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+		--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+	--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+	--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 		}
 		
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			@font-face {
 		   font-family: "AbyssType_small";
 		   src:
- 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			.beepboxEditor button,
@@ -3309,72 +3311,72 @@ var beepbox = (function (exports) {
 
 			.beepboxEditor input[type="range"]::-webkit-slider-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-ms-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-ms-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-ms-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-moz-range-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-moz-range-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-moz-range-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="text"],
 			.beepboxEditor input[type="number"]
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]:checked
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]:checked:after
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 
 			div.selectRow span {
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 
 			`,
@@ -3521,7 +3523,7 @@ var beepbox = (function (exports) {
 
 				/* sets background image */
 				body {
-				background-image: url("https://choptop84.github.io/abyssbox-source/website/stripesbg_light.gif") !important;
+				background-image: url("./image_assets/stripesbg_light.gif") !important;
 				background-position: center;
 				background-repeat: repeat;
 	
@@ -3532,7 +3534,7 @@ var beepbox = (function (exports) {
 				image-rendering: optimizeSpeed !important;             /* IE */
 					}		
 			#text-content {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-source/website/abyssbox_border_light.png");
+    				border-image-source: url("./image_assets/abyssbox_border_light.png");
     				border-image-slice: 4 fill; 
    				border-image-width: 8px; 
 				border-image-repeat: stretch; 
@@ -3545,7 +3547,7 @@ var beepbox = (function (exports) {
     				image-rendering: optimizeSpeed !important;             /* IE */
 				}
 			#beepboxEditorContainer {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-source/website/abyssbox_border_light.png");
+    				border-image-source: url("./image_assets/abyssbox_border_light.png");
     				border-image-slice: 4 fill; 
    				border-image-width: 8px; 
 				border-image-repeat: stretch;
@@ -3577,7 +3579,7 @@ var beepbox = (function (exports) {
 				button.importInstrumentButton, 
 				.beepboxEditor select, 
 				.beepboxEditor .select2-selection__rendered {
-						border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border_light.png") !important;
+						border-image-source: url("./image_assets/abyssbox_border_light.png") !important;
 						border-image-slice: 4 fill !important; 
 					   border-image-width: 4px !important; 
 					border-image-repeat: stretch !important;
@@ -3589,7 +3591,7 @@ var beepbox = (function (exports) {
 						image-rendering: pixelated !important;                 /* Future browsers */
 						image-rendering: optimizeSpeed !important;             /* IE */
 	
-						cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+						cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 					}
 	
 				div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
@@ -3607,8 +3609,8 @@ var beepbox = (function (exports) {
 		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+		--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -3623,39 +3625,39 @@ var beepbox = (function (exports) {
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 		--export-instrument-symbol: var(--export-symbol);
 		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-		--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-		--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-		--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-		--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-		--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-		--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-		--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-		--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-		--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-		--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-		--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-		--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+		--undo-symbol: url("./image_assets/icon-undo.png");
+		--redo-symbol: url("./image_assets/icon-redo.png");
+		--copy-symbol: url("./image_assets/icon-copy.png");
+		--paste-symbol: url("./image_assets/icon-paste.png");
+		--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+		--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+		--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+		--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+		--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+		--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+		--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+		--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+		--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+	--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+	--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 		}
 		
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			@font-face {
 		   font-family: "AbyssType_small";
 		   src:
- 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
@@ -3672,72 +3674,72 @@ var beepbox = (function (exports) {
 
 			.beepboxEditor input[type="range"]::-webkit-slider-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-ms-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-ms-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-ms-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-moz-range-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-moz-range-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-moz-range-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="text"],
 			.beepboxEditor input[type="number"]
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]:checked
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]:checked:after
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 
 			div.selectRow span {
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 
 			`,
@@ -4023,8 +4025,8 @@ var beepbox = (function (exports) {
 		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+		--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -4039,27 +4041,27 @@ var beepbox = (function (exports) {
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 		--export-instrument-symbol: var(--export-symbol);
 		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-		--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-		--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-		--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-		--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-		--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-		--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-		--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-		--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-		--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-		--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-		--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-		--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+		--undo-symbol: url("./image_assets/icon-undo.png");
+		--redo-symbol: url("./image_assets/icon-redo.png");
+		--copy-symbol: url("./image_assets/icon-copy.png");
+		--paste-symbol: url("./image_assets/icon-paste.png");
+		--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+		--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+		--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+		--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+		--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+		--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+		--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+		--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+		--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+	--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+	--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 		}
 		
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			/* sets background image */
@@ -4137,7 +4139,7 @@ var beepbox = (function (exports) {
     				image-rendering: pixelated !important;                 /* Future browsers */
     				image-rendering: optimizeSpeed !important;             /* IE */
 
-					cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+					cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 				}
 
 			div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
@@ -4157,7 +4159,7 @@ var beepbox = (function (exports) {
 			@font-face {
 		   font-family: "AbyssType_small";
 		   src:
- 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			html {
@@ -4170,72 +4172,72 @@ var beepbox = (function (exports) {
 
 			.beepboxEditor input[type="range"]::-webkit-slider-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-ms-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-ms-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-ms-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-moz-range-thumb
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]::-moz-range-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="range"]:focus::-moz-range-track
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="text"],
 			.beepboxEditor input[type="number"]
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]:checked
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			 
 			.beepboxEditor input[type="checkbox"]:checked:after
 			{
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 
 			div.selectRow span {
-				cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+				cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 			}
 			`,
         "Frutiger Aero": `
@@ -4506,19 +4508,6 @@ var beepbox = (function (exports) {
 				  box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
 			}
 
-				.beepboxEditor select
-				{
-					box-shadow: 0px 1px 3px 0px rgb(0, 0, 0), inset 0px -12px 14px 0px rgba(0, 0, 0, 0.3), inset 0px -15px 0px 0px rgba(0, 0, 0, 0.2);
-
-					--ui-widget-background: linear-gradient(#84aef0, #4f6db3) !important;
-					border-image-source:url("https://choptop84.github.io/choptop84s-image-repository/buttonshading.png") !important;
-					border-image-slice: 40 fill !important; 
-   					border-image-width: 4px !important; 
-					border-image-repeat: stretch; 
-				
-
-				}
-
 				div.playback-bar-controls button.playButton, 
 				div.playback-bar-controls button.pauseButton, 
 				div.playback-bar-controls button.recordButton, 
@@ -4530,20 +4519,19 @@ var beepbox = (function (exports) {
 				div.editor-controls button.exportInstrumentButton, 
 				div.editor-controls button.importInstrumentButton,
 				div.editor-controls div button.add-envelope,
-				div.editor-controls div button.delete-envelope  { 
-					box-shadow: 0px 1px 3px 0px rgb(0, 0, 0), inset 0px -12px 14px 0px rgba(0, 0, 0, 0.3), inset 0px -15px 0px 0px rgba(0, 0, 0, 0.2);
-
-					--ui-widget-background: linear-gradient(#84aef0, #4f6db3) !important;
-					border-image-source:url("https://choptop84.github.io/choptop84s-image-repository/buttonshading.png") !important;
-					border-image-slice: 40 fill !important; 
-   					border-image-width: 4px !important; 
-					border-image-repeat: stretch; 
+				div.editor-controls div button.delete-envelope, 
+				.beepboxEditor .select2-selection__rendered,
+				.beepboxEditor .instrument-bar button,
+				.beepboxEditor .eq-filter-type-bar button .deactivated,
+				.beepboxEditor .note-filter-type-bar button .deactivated,
+				.beepboxEditor select  { 
+					box-shadow: 0px 1px 3px 0px rgb(0, 0, 0), inset 0px -12px 14px 0px rgba(0, 0, 0, 0.3), inset 0px -7px 4px 0px rgba(79, 99, 204, 0.71), inset 0px -15px 0px 0px rgba(0, 0, 0, 0.2), inset 0px 1px 2px 1px #ffffff54;
+					--ui-widget-background: linear-gradient(#b6cfffcc, #628ef2cc) !important;
 				}
 
 				.beepboxEditor select:focus
 				{
 					border-image-source: none;
-					
 					--ui-widget-background: linear-gradient(#2a3d6a, #2a3d6a) !important;
 					box-shadow:
 						0px 0px 1px 1px rgba(0, 0, 0, 0.7),
@@ -4553,19 +4541,6 @@ var beepbox = (function (exports) {
 					;
 				}
 
-				.beepboxEditor .select2-selection__rendered,
-				.beepboxEditor .instrument-bar button,
-				.beepboxEditor .eq-filter-type-bar button .deactivated,
-				.beepboxEditor .note-filter-type-bar button .deactivated
-				{
-					box-shadow: 0px 1px 3px 0px rgb(0, 0, 0), inset 0px -12px 14px 0px rgba(0, 0, 0, 0.3), inset 0px -15px 0px 0px rgba(0, 0, 0, 0.2);
-					--ui-widget-background: linear-gradient(#84aef0, #4f6db3) !important;
-
-					border-image-source:url("https://choptop84.github.io/choptop84s-image-repository/buttonshading.png") !important;
-					border-image-slice: 40 fill !important; 
-   					border-image-width: 4px !important; 
-					border-image-repeat: stretch; 
-				}
 				.beepboxEditor button, button
 				{
 					--ui-widget-background: linear-gradient(#84aef0, #2a3d6a) !important;
@@ -5420,7 +5395,7 @@ var beepbox = (function (exports) {
 			@font-face {
 		   font-family: "Varela";
 		   src:
- 		   url("https://choptop84.github.io/abyssbox-app/Varela.ttf") format("truetype") tech(color-COLRv1),
+ 		   url("./image_assets/Varela.ttf") format("truetype") tech(color-COLRv1),
 			}
 
 			/* sets background image */
@@ -5760,7 +5735,7 @@ var beepbox = (function (exports) {
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
@@ -5769,7 +5744,7 @@ var beepbox = (function (exports) {
 			}
 
 			#text-content {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png");
+    				border-image-source: url("./image_assets/abyssbox_border.png");
     				border-image-slice: 4 fill; 
    				border-image-width: 8px; 
 				border-image-repeat: stretch; 
@@ -5782,7 +5757,7 @@ var beepbox = (function (exports) {
     				image-rendering: optimizeSpeed !important;             /* IE */
 				}
 			#beepboxEditorContainer {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png");
+    				border-image-source: url("./image_assets/abyssbox_border.png");
     				border-image-slice: 4 fill; 
    				border-image-width: 8px; 
 				border-image-repeat: stretch;
@@ -5796,7 +5771,7 @@ var beepbox = (function (exports) {
 
 				}
 			 .beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png") !important;
+    				border-image-source: url("./image_assets/abyssbox_border.png") !important;
     				border-image-slice: 4 fill !important; 
    				border-image-width: 4px !important; 
 				border-image-repeat: stretch !important;
@@ -5814,7 +5789,7 @@ var beepbox = (function (exports) {
 				}
 
 				#firstImage {
-					background-image: url("https://choptop84.github.io/abyssbox-source/website/viviandbelle.png") !important;
+					background-image: url("./image_assets/viviandbelle.png") !important;
 					background-repeat: no-repeat !important;
 					background-size: 100% 100% !important;
 				}
@@ -5823,7 +5798,7 @@ var beepbox = (function (exports) {
 			@font-face {
 		   font-family: "AbyssType_small";
 		   src:
- 		   url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			html {
@@ -5970,7 +5945,7 @@ var beepbox = (function (exports) {
 		}
 		.instructions-column > section:first-of-type > p:first-of-type:after {
 		display: block;
-		content: url("wide-gordon.png");
+		content: url("./image_assets/wide-gordon.png");
 		width: inherit;
 		height: contain;
 		text-align: center;
@@ -5978,7 +5953,7 @@ var beepbox = (function (exports) {
 		}
 		/* sets background image */
 		body {
-		background-image: url("https://choptop84.github.io/abyssbox-source/website/lambda.png") !important;
+		background-image: url("./image_assets/lambda.png") !important;
 		background-size: cover !important;
 		background-position: center !important;
 		background-repeat: no-repeat !important;
@@ -5990,7 +5965,7 @@ var beepbox = (function (exports) {
 			@font-face {
 		   font-family: "trebuc";
 		   src:
- 		   url("trebuc.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/trebuc.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			html {
@@ -6138,7 +6113,7 @@ var beepbox = (function (exports) {
 		}
 		.instructions-column > section:first-of-type > p:first-of-type:after {
 		display: block;
-		content: url("wide-gordon.png");
+		content: url("./image_assets/wide-gordon.png");
 		width: inherit;
 		height: contain;
 		text-align: center;
@@ -6146,7 +6121,7 @@ var beepbox = (function (exports) {
 		}
 		/* sets background image */
 		body {
-		background-image: url("https://choptop84.github.io/abyssbox-source/website/lambda.png") !important;
+		background-image: url("./image_assets/lambda.png") !important;
 		background-position: center;
 		background-repeat: repeat;
 			}
@@ -6951,12 +6926,12 @@ var beepbox = (function (exports) {
 		}
 		#text-content > section > h1 {
 		margin: auto;
-		content: url("AbyssBox_DOOM.png");
+		content: url("./image_assets/AbyssBox_DOOM.png");
 		}
 				
 				/* sets background image */
 		body {
-		background-image: url("doomsky.png") !important;
+		background-image: url("./image_assets/doomsky.png") !important;
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
@@ -6969,7 +6944,7 @@ var beepbox = (function (exports) {
 			@font-face {
 		   font-family: "doomfont";
 		   src:
- 		   url("doomfont.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/doomfont.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			html {
@@ -7359,8 +7334,8 @@ var beepbox = (function (exports) {
 		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+		--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -7375,23 +7350,27 @@ var beepbox = (function (exports) {
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 		--export-instrument-symbol: var(--export-symbol);
 		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-		--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-		--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-		--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-		--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-		--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-		--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-		--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-		--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-		--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-		--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-		--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-		--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+		--undo-symbol: url("./image_assets/icon-undo.png");
+		--redo-symbol: url("./image_assets/icon-redo.png");
+		--copy-symbol: url("./image_assets/icon-copy.png");
+		--paste-symbol: url("./image_assets/icon-paste.png");
+		--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+		--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+		--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+		--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+		--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+		--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+		--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+		--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+		--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+		--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+		--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 		}
 		
+		.spIcon {
+		--ui-widget-background: #93090f;
+		}
+
 		.beepboxEditor input[type="range"]::-moz-range-track
 		{
 			background: #4a0008 !important;
@@ -7401,7 +7380,7 @@ var beepbox = (function (exports) {
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
- 		   url("abysstype.otf") format("opentype") tech(color-COLRv1),
+ 		   url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 			}
 
 			/*#Hotdog {
@@ -7450,7 +7429,12 @@ var beepbox = (function (exports) {
 				}
 
 				.beepboxEditor select:focus,
-				.beepboxEditor .selectContainer:focus-within
+				.beepboxEditor select:hover,
+				.beepboxEditor .selectContainer:focus-within,
+				.beepboxEditor button:hover,
+				.beepboxEditor button:focus,
+				#select2-pitchPresetSelect-container:hover,
+				#select2-pitchPresetSelect-container:focus
 				{
 					--ui-widget-background: black !important;
 					
@@ -7651,7 +7635,7 @@ var beepbox = (function (exports) {
 				@font-face {
 					font-family: "tahoma";
 					src:
-					 url("https://choptop84.github.io/abyssbox-app/tahoma.otf") format("opentype") tech(color-COLRv1),
+					 url("./image_assets/tahoma.otf") format("opentype") tech(color-COLRv1),
 					 image-rendering: -moz-crisp-edges !important;         /* Firefox */
 					 image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
 					 image-rendering: -o-crisp-edges !important;            /* Opera */
@@ -7819,21 +7803,21 @@ var beepbox = (function (exports) {
 				}
 
 		* {
-		cursor: url("https://choptop84.github.io/abyssbox-app/xpcursor.png"), auto !important;
-		--play-symbol:url("https://choptop84.github.io/abyssbox-app/xpPlay.png");
-		--pause-symbol:url("https://choptop84.github.io/abyssbox-app/xpPause.png");
-		--record-symbol:url("https://choptop84.github.io/abyssbox-app/xpRecord.png");
-		--stop-symbol:url("https://choptop84.github.io/abyssbox-app/xpStop.png");
-		--prev-bar-symbol:url("https://choptop84.github.io/abyssbox-app/xpBackward.png");
-		--next-bar-symbol:url("https://choptop84.github.io/abyssbox-app/xpForward.png");
-		--file-page-symbol: url("https://choptop84.github.io/abyssbox-app/xpFile.png");
-		--edit-pencil-symbol: url("https://choptop84.github.io/abyssbox-app/xpEdit.png");
-		--preferences-gear-symbol: url("https://choptop84.github.io/abyssbox-app/xpPreferences.png");
-		--muted-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeakerMute.png");
-		--unmuted-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
-		--volume-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
-		--zoom-in-symbol: url("https://choptop84.github.io/abyssbox-app/xpZoomIn.png");
-		--zoom-out-symbol: url("https://choptop84.github.io/abyssbox-app/xpZoomOut.png");
+		cursor: url("./image_assets/xpcursor.png"), auto !important;
+		--play-symbol:url("./image_assets/xpPlay.png");
+		--pause-symbol:url("./image_assets/xpPause.png");
+		--record-symbol:url("./image_assets/xpRecord.png");
+		--stop-symbol:url("./image_assets/xpStop.png");
+		--prev-bar-symbol:url("./image_assets/xpBackward.png");
+		--next-bar-symbol:url("./image_assets/xpForward.png");
+		--file-page-symbol: url("./image_assets/xpFile.png");
+		--edit-pencil-symbol: url("./image_assets/xpEdit.png");
+		--preferences-gear-symbol: url("./image_assets/xpPreferences.png");
+		--muted-symbol: url("./image_assets/xpSpeakerMute.png");
+		--unmuted-symbol: url("./image_assets/xpSpeaker.png");
+		--volume-symbol: url("./image_assets/xpSpeaker.png");
+		--zoom-in-symbol: url("./image_assets/xpZoomIn.png");
+		--zoom-out-symbol: url("./image_assets/xpZoomOut.png");
 		}
 
 		.beepboxEditor button,
@@ -7860,7 +7844,7 @@ var beepbox = (function (exports) {
 			}
 
 		div.mute-button::before {
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png") !important;
+			background-image: url("./image_assets/xpSpeaker.png") !important;
 			background-size: 120% !important;
 			background-position-x: center !important;
 			background-position-y: center !important;
@@ -7874,7 +7858,7 @@ var beepbox = (function (exports) {
 		}
 
 		div.mute-button.muted::before {
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeakerMute.png") !important;
+			background-image: url("./image_assets/xpSpeakerMute.png") !important;
 			background-size: 120% !important;
 			background-position-x: center !important;
 			background-position-y: center !important;
@@ -7888,7 +7872,7 @@ var beepbox = (function (exports) {
 		}
 
 		button.recordButton::Before {
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpRecord.png") !important;
+			background-image: url("./image_assets/xpRecord.png") !important;
 			background-size: 64% !important;
 			background-position: center !important;
 			background-repeat: no-repeat !important;
@@ -7902,7 +7886,7 @@ var beepbox = (function (exports) {
 		}
 
 		button.stopButton::Before {
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpStop.png") !important;
+			background-image: url("./image_assets/xpStop.png") !important;
 			background-size: 64% !important;
 			background-position: center !important;
 			background-repeat: no-repeat !important;
@@ -7916,7 +7900,7 @@ var beepbox = (function (exports) {
 		}
 
 		button.pauseButton::Before {
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpPause.png") !important;
+			background-image: url("./image_assets/xpPause.png") !important;
 			background-size: 64% !important;
 			background-position: center !important;
 			background-repeat: no-repeat !important;
@@ -7930,7 +7914,7 @@ var beepbox = (function (exports) {
 		}
 
 		.beepboxEditor span.volume-speaker {
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
+			background-image: url("./image_assets/xpSpeaker.png");
 			background-position: center !important;
 			background-repeat: no-repeat !important;
 
@@ -7943,7 +7927,7 @@ var beepbox = (function (exports) {
 
 		div.selectContainer.menu.file::before {
 
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpFile.png");
+			background-image: url("./image_assets/xpFile.png");
 			background-size: 64%;
 			background-position-x: center;
 			background-position-y: center;
@@ -7957,7 +7941,7 @@ var beepbox = (function (exports) {
 
 		div.selectContainer.menu.edit::before {
 
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpEdit.png");
+			background-image: url("./image_assets/xpEdit.png");
 			background-size: 64%;
 			background-position-x: center;
 			background-position-y: center;
@@ -7970,7 +7954,7 @@ var beepbox = (function (exports) {
 		}
 		div.selectContainer.menu.preferences::before {
 
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpPreferences.png");
+			background-image: url("./image_assets/xpPreferences.png");
 			background-size: 64%;
 			background-position-x: center;
 			background-position-y: center;
@@ -7983,7 +7967,7 @@ var beepbox = (function (exports) {
 		}
 		button.playButton::before {
 
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpPlay.png") !important;
+			background-image: url("./image_assets/xpPlay.png") !important;
 			background-size: 64% !important;
 			background-position: center !important;
 
@@ -7996,7 +7980,7 @@ var beepbox = (function (exports) {
 		}
 
 		.beepboxEditor button.prevBarButton::before {
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpBackward.png") !important;
+			background-image: url("./image_assets/xpBackward.png") !important;
 			background-size: 64% !important;
 			background-position: center !important;
 
@@ -8010,7 +7994,7 @@ var beepbox = (function (exports) {
 		}
 
 		.beepboxEditor button.nextBarButton::before {
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpForward.png") !important;
+			background-image: url("./image_assets/xpForward.png") !important;
 			background-size: 64% !important;
 			background-position: center !important;
 
@@ -8024,7 +8008,7 @@ var beepbox = (function (exports) {
 		}
 
 		.beepboxEditor .zoomInButton::before {
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpZoomIn.png") !important;
+			background-image: url("./image_assets/xpZoomIn.png") !important;
 			background-position: center !important;
 
 
@@ -8037,7 +8021,7 @@ var beepbox = (function (exports) {
 		}
 
 		.beepboxEditor .zoomOutButton::before {
-			background-image: url("https://choptop84.github.io/abyssbox-app/xpZoomOut.png") !important;
+			background-image: url("./image_assets/xpZoomOut.png") !important;
 			background-position: center !important;
 
 
@@ -8050,7 +8034,7 @@ var beepbox = (function (exports) {
 		}
 
 		.beepboxEditor input[type="range"]::-moz-range-thumb {
-			background-image: url("https://choptop84.github.io/abyssbox-app/scrollbar.png") !important;
+			background-image: url("./image_assets/scrollbar.png") !important;
 			background-position: center !important;
 			background-size: inherit !important;
 
@@ -8072,19 +8056,19 @@ var beepbox = (function (exports) {
 		}
 		#text-content > section > h1 {
 		margin: auto;
-		content: url("https://choptop84.github.io/abyssbox-app/AbyssBox_XP.png");
+		content: url("./image_assets/AbyssBox_XP.png");
 		}
 
 				/* sets background image */
 		body {
-		background-image: url("https://choptop84.github.io/abyssbox-app/xphills.png") !important;
+		background-image: url("./image_assets/xphills.png") !important;
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
 			}
 
 			#text-content {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/xptextbg.png");
+    				border-image-source: url("./image_assets/xptextbg.png");
     				border-image-slice: 11 fill; 
    				border-image-width: 11px; 
 				border-image-repeat: stretch;
@@ -8092,7 +8076,7 @@ var beepbox = (function (exports) {
     				padding: 14px; 
 				}
 			#beepboxEditorContainer {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/xptextbg.png");
+    				border-image-source: url("./image_assets/xptextbg.png");
     				border-image-slice: 11 fill; 
    				border-image-width: 11px; 
 				border-image-repeat: stretch;
@@ -8101,7 +8085,7 @@ var beepbox = (function (exports) {
 				}
 
 			#firstImage {
-				background-image: url("https://choptop84.github.io/abyssbox-app/xpsongeditorbg.png") !important;
+				background-image: url("./image_assets/xpsongeditorbg.png") !important;
 				background-repeat: no-repeat !important;
 				background-size: 100% 100% !important;
 			}
@@ -8133,7 +8117,7 @@ var beepbox = (function (exports) {
 			}
 			
 			.beepboxEditor select:focus {
-					border-image-source: url("https://choptop84.github.io/abyssbox-app/xpbuttonpressedbg.png");
+					border-image-source: url("./image_assets/xpbuttonpressedbg.png");
 					border-image-slice: 4 fill; 
 					border-image-width: 4px; 
 					border-image-repeat: repeat;
@@ -8150,7 +8134,7 @@ var beepbox = (function (exports) {
 					border-radius: 0px;
 					width: 13px !important;
 					height: 13px !important;
-					background-image:url("https://choptop84.github.io/abyssbox-app/xpCheckmarkBlank.png");
+					background-image:url("./image_assets/xpCheckmarkBlank.png");
 					background-repeat:no-repeat;
 
 					image-rendering: -moz-crisp-edges !important;         /* Firefox */
@@ -8175,7 +8159,7 @@ var beepbox = (function (exports) {
 					text-align: center;
 					content: "";
 					background-repeat:no-repeat;
-					background-image:url("https://choptop84.github.io/abyssbox-app/xpCheckmark.png");
+					background-image:url("./image_assets/xpCheckmark.png");
 					image-rendering: -moz-crisp-edges !important;         /* Firefox */
 					image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
 					image-rendering: -o-crisp-edges !important;            /* Opera */
@@ -8678,7 +8662,7 @@ var beepbox = (function (exports) {
 						@font-face {
 					   font-family: "Workbench";
 					   src:
-						url("https://choptop84.github.io/abyssbox-app/Workbench.ttf") format("truetype") tech(color-COLRv1),
+						url("./image_assets/Workbench.ttf") format("truetype") tech(color-COLRv1),
 						}
 			
 						html {
@@ -8948,8 +8932,8 @@ var beepbox = (function (exports) {
 				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-				--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-				--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+				--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+				--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 				--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 				--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 				--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -8964,32 +8948,32 @@ var beepbox = (function (exports) {
 				--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 				--export-instrument-symbol: var(--export-symbol);
 				--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-				--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-				--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-				--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-				--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-				--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-				--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-				--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-				--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-				--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-				--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-				--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-				--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-				--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+				--undo-symbol: url("./image_assets/icon-undo.png");
+				--redo-symbol: url("./image_assets/icon-redo.png");
+				--copy-symbol: url("./image_assets/icon-copy.png");
+				--paste-symbol: url("./image_assets/icon-paste.png");
+				--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+				--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+				--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+				--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+				--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+				--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+				--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+				--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+				--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+	--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+	--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 				} 
 					@font-face {
 				   font-family: "AbyssType";
 				   src:
-					url("abysstype.otf") format("opentype") tech(color-COLRv1),
+					url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 					}
 			
 					@font-face {
 				   font-family: "AbyssType_small";
 				   src:
-					url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+					url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 					}
 			
 					body {
@@ -9553,8 +9537,8 @@ var beepbox = (function (exports) {
 					--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 					--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 					--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-					--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-					--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+					--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+					--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 					--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 					--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 					--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -9569,32 +9553,32 @@ var beepbox = (function (exports) {
 					--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 					--export-instrument-symbol: var(--export-symbol);
 					--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-					--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-					--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-					--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-					--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-					--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-					--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-					--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-					--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-					--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-					--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-					--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-					--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-					--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+					--undo-symbol: url("./image_assets/icon-undo.png");
+					--redo-symbol: url("./image_assets/icon-redo.png");
+					--copy-symbol: url("./image_assets/icon-copy.png");
+					--paste-symbol: url("./image_assets/icon-paste.png");
+					--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+					--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+					--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+					--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+					--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+					--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+					--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+					--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+					--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+	--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+	--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 					}
 					
 						@font-face {
 					   font-family: "AbyssType";
 					   src:
-						url("abysstype.otf") format("opentype") tech(color-COLRv1),
+						url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 						}
 
 						/* sets background image */
 						body {
-						background-image: url("https://choptop84.github.io/abyssbox-source/website/diamondsbg.gif") !important;
+						background-image: url("./image_assets/diamondsbg.gif") !important;
 						background-position: center;
 						background-repeat: repeat;
 			
@@ -9606,7 +9590,7 @@ var beepbox = (function (exports) {
 							}
 			
 						#text-content {
-								border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png");
+								border-image-source: url("./image_assets/beepbox_pixel_border.png");
 								border-image-slice: 4 fill; 
 							   border-image-width: 8px; 
 							border-image-repeat: stretch; 
@@ -9619,7 +9603,7 @@ var beepbox = (function (exports) {
 								image-rendering: optimizeSpeed !important;             /* IE */
 							}
 						#beepboxEditorContainer {
-								border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png");
+								border-image-source: url("./image_assets/beepbox_pixel_border.png");
 								border-image-slice: 4 fill; 
 							   border-image-width: 8px; 
 							border-image-repeat: stretch;
@@ -9651,7 +9635,7 @@ var beepbox = (function (exports) {
 						button.importInstrumentButton, 
 						.beepboxEditor select, 
 						.beepboxEditor .select2-selection__rendered {
-								border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png") !important;
+								border-image-source: url("./image_assets/beepbox_pixel_border.png") !important;
 								border-image-slice: 4 fill !important; 
 							   border-image-width: 4px !important; 
 							border-image-repeat: stretch !important;
@@ -9663,7 +9647,7 @@ var beepbox = (function (exports) {
 								image-rendering: pixelated !important;                 /* Future browsers */
 								image-rendering: optimizeSpeed !important;             /* IE */
 			
-								cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+								cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 							}
 			
 						.beepboxEditor .channelBox {
@@ -9712,7 +9696,7 @@ var beepbox = (function (exports) {
 						@font-face {
 					   font-family: "AbyssType_small";
 					   src:
-						url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+						url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 						}
 			
 						html {
@@ -9725,72 +9709,72 @@ var beepbox = (function (exports) {
 			
 						.beepboxEditor input[type="range"]::-webkit-slider-thumb
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="range"]::-webkit-slider-runnable-track
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="range"]:focus::-webkit-slider-runnable-track
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="range"]::-ms-thumb
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="range"]::-ms-track
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="range"]:focus::-ms-track
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="range"]::-moz-range-thumb
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="range"]::-moz-range-track
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="range"]:focus::-moz-range-track
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="text"],
 						.beepboxEditor input[type="number"]
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="checkbox"]
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="checkbox"]:checked
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 						 
 						.beepboxEditor input[type="checkbox"]:checked:after
 						{
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 			
 						div.selectRow span {
-							cursor: url("https://choptop84.github.io/abyssbox-app/abyssbox_cursor_hand.png"), pointer !important;
+							cursor: url("./image_assets/abyssbox_cursor_hand.png"), pointer !important;
 						}
 			
 			`,
@@ -10589,7 +10573,7 @@ var beepbox = (function (exports) {
 
 					/* sets background image */
 					body {
-						background-image: url("https://choptop84.github.io/abyssbox-app/Forest2Trees.png") !important;
+						background-image: url("./image_assets/Forest2Trees.png") !important;
 						background-size: cover;
 						background-position: center top; /* Adjusted to align with the top */
   						background-repeat: no-repeat;
@@ -10602,7 +10586,7 @@ var beepbox = (function (exports) {
 						}
 						#text-content {
 						--editor-background: (255, 255, 255, 0);
-							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border.png");
+							border-image-source: url("./image_assets/forest2_border.png");
 							border-image-slice: 16 fill; 
 						   	border-image-width: 32px; 
 							border-image-repeat: repeat; 
@@ -10616,7 +10600,7 @@ var beepbox = (function (exports) {
 						}
 					#beepboxEditorContainer {
 						--editor-background: (255, 255, 255, 0);
-							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border.png");
+							border-image-source: url("./image_assets/forest2_border.png");
 							border-image-slice: 16 fill; 
 						   	border-image-width: 32px; 
 							border-image-repeat: repeat; 
@@ -10632,7 +10616,7 @@ var beepbox = (function (exports) {
 							image-rendering: optimizeSpeed !important;             /* IE */ 
 						}
 					.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered, button {
-							border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border2.png") !important;
+							border-image-source: url("./image_assets/forest2_border2.png") !important;
 							border-image-slice: 4 fill !important; 
 						   border-image-width: 4px !important; 
 						border-image-repeat: stretch !important;
@@ -10654,12 +10638,12 @@ var beepbox = (function (exports) {
 					border-radius: 5px;
 					} */
 					* {
-						cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+						cursor: url("./image_assets/pixel_cursor.png"), auto !important;
 						--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 						--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 						--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-						--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-						--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+						--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+						--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 						--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 						--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 						--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -10674,26 +10658,26 @@ var beepbox = (function (exports) {
 						--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 						--export-instrument-symbol: var(--export-symbol);
 						--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-						--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-						--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-						--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-						--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-						--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-						--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-						--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-						--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-						--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-						--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-						--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-						--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-						--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+						--undo-symbol: url("./image_assets/icon-undo.png");
+						--redo-symbol: url("./image_assets/icon-redo.png");
+						--copy-symbol: url("./image_assets/icon-copy.png");
+						--paste-symbol: url("./image_assets/icon-paste.png");
+						--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+						--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+						--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+						--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+						--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+						--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+						--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+						--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+						--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+	--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+	--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 						} 
 							@font-face {
 						   font-family: "AbyssType";
 						   src:
-							url("abysstype.otf") format("opentype") tech(color-COLRv1),
+							url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 							}
 				
 							button.envelopeDropdown, div.selectRow button:not(.copyButton,.pasteButton,.exportInstrumentButton,.importInstrumentButton) {
@@ -10704,7 +10688,7 @@ var beepbox = (function (exports) {
 							@font-face {
 						   font-family: "AbyssType_small";
 						   src:
-							url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+							url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 							}
 				
 							html {
@@ -10953,12 +10937,12 @@ var beepbox = (function (exports) {
 			}
 			
 			* {
-				cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+				cursor: url("./image_assets/pixel_cursor.png"), auto !important;
 				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-				--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-				--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+				--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+				--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 				--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 				--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 				--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -10973,33 +10957,33 @@ var beepbox = (function (exports) {
 				--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 				--export-instrument-symbol: var(--export-symbol);
 				--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-				--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-				--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-				--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-				--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-				--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-				--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-				--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-				--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-				--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-				--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-				--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-				--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-				--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+				--undo-symbol: url("./image_assets/icon-undo.png");
+				--redo-symbol: url("./image_assets/icon-redo.png");
+				--copy-symbol: url("./image_assets/icon-copy.png");
+				--paste-symbol: url("./image_assets/icon-paste.png");
+				--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+				--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+				--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+				--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+				--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+				--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+				--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+				--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+				--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+	--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+	--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 				} 
 			
 			@font-face {
 				font-family: "AbyssType";
 				src:
-				 url("abysstype.otf") format("opentype") tech(color-COLRv1),
+				 url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 				 }
 			
 				 @font-face {
 				font-family: "AbyssType_small";
 				src:
-				 url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+				 url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 				 }
 			
 				 #pattern-area {
@@ -13131,7 +13115,7 @@ var beepbox = (function (exports) {
 			}
 
 			body {
-				background-image: url("https://choptop84.github.io/abyssbox-app/stars.gif") !important;
+				background-image: url("./image_assets/stars.gif") !important;
 				background-size: contain !important;
 				background-position: center top !important;
 				  background-repeat: repeat !important;
@@ -13144,7 +13128,7 @@ var beepbox = (function (exports) {
 				}
 			#text-content {
 				--editor-background: rgba(255, 255, 255, 0);
-					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border.png");
+					border-image-source: url("./image_assets/nebula2_border.png");
 					border-image-slice: 16 fill; 
 					   border-image-width: 32px; 
 					border-image-repeat: repeat; 
@@ -13158,7 +13142,7 @@ var beepbox = (function (exports) {
 				}
 			#beepboxEditorContainer {
 				--editor-background: rgba(255, 255, 255, 0);
-					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border.png");
+					border-image-source: url("./image_assets/nebula2_border.png");
 					border-image-slice: 16 fill; 
 					   border-image-width: 32px; 
 					border-image-repeat: repeat; 
@@ -13174,7 +13158,7 @@ var beepbox = (function (exports) {
 					image-rendering: optimizeSpeed !important;             /* IE */ 
 				}
 			.beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered, button {
-					border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border2.png") !important;
+					border-image-source: url("./image_assets/nebula2_border2.png") !important;
 					border-image-slice: 4 fill !important; 
 				   border-image-width: 4px !important; 
 				border-image-repeat: stretch !important;
@@ -13193,12 +13177,12 @@ var beepbox = (function (exports) {
 			border-radius: 5px;
 			} */
 			* {
-				cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+				cursor: url("./image_assets/pixel_cursor.png"), auto !important;
 				--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 				--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 				--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-				--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-				--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+				--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+				--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 				--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 				--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 				--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -13213,32 +13197,32 @@ var beepbox = (function (exports) {
 				--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 				--export-instrument-symbol: var(--export-symbol);
 				--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-				--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-				--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-				--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-				--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-				--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-				--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-				--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-				--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-				--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-				--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-				--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-				--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-				--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+				--undo-symbol: url("./image_assets/icon-undo.png");
+				--redo-symbol: url("./image_assets/icon-redo.png");
+				--copy-symbol: url("./image_assets/icon-copy.png");
+				--paste-symbol: url("./image_assets/icon-paste.png");
+				--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+				--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+				--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+				--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+				--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+				--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+				--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+				--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+				--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+	--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+	--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 				} 
 					@font-face {
 				   font-family: "AbyssType";
 				   src:
-					url("abysstype.otf") format("opentype") tech(color-COLRv1),
+					url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 					}
 		
 					@font-face {
 				   font-family: "AbyssType_small";
 				   src:
-					url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+					url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 					}
 		
 					html {
@@ -14225,12 +14209,12 @@ var beepbox = (function (exports) {
 		--note-flash-secondary: #ffffff77; }
 	
 		* {
-		cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+		cursor: url("./image_assets/pixel_cursor.png"), auto !important;
 		--file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
 		--edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
 		--preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-		--instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+		--instrument-copy-symbol: url("./image_assets/icon-copy.png");
+		--instrument-paste-symbol: url("./image_assets/icon-paste.png");
 		--play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
 		--pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
 		--record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -14245,26 +14229,26 @@ var beepbox = (function (exports) {
 		--export-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-export.png");
 		--export-instrument-symbol: var(--export-symbol);
 		--import-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-import.png");
-		--undo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-undo.png");
-		--redo-symbol: url("https://choptop84.github.io/abyssbox-app/icon-redo.png");
-		--copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-		--paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
-		--insert-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-insertChannel.png");
-		--delete-channel-symbol: url("https://choptop84.github.io/abyssbox-app/icon-deleteChannel.png");
-		--select-all-symbol: url("https://choptop84.github.io/abyssbox-app/icon-SelectAll.png");
-		--duplicate-symbol: url("https://choptop84.github.io/abyssbox-app/icon-duplicate.png");
-		--notes-up-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesUp.png");
-		--notes-down-symbol: url("https://choptop84.github.io/abyssbox-app/moveNotesDown.png");
-		--loop-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-singleBarLoop.png");
-		--fullscreen-symbol: url("https://choptop84.github.io/abyssbox-app/icon-fullscreen.png");
-		--loop-within-bar-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-bar.png");
-	--loop-full-song-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-song.png");
-	--dont-loop-symbol: url("https://choptop84.github.io/abyssbox-app/icon-loop-once.png");
+		--undo-symbol: url("./image_assets/icon-undo.png");
+		--redo-symbol: url("./image_assets/icon-redo.png");
+		--copy-symbol: url("./image_assets/icon-copy.png");
+		--paste-symbol: url("./image_assets/icon-paste.png");
+		--insert-channel-symbol: url("./image_assets/icon-insertChannel.png");
+		--delete-channel-symbol: url("./image_assets/icon-deleteChannel.png");
+		--select-all-symbol: url("./image_assets/icon-SelectAll.png");
+		--duplicate-symbol: url("./image_assets/icon-duplicate.png");
+		--notes-up-symbol: url("./image_assets/moveNotesUp.png");
+		--notes-down-symbol: url("./image_assets/moveNotesDown.png");
+		--loop-bar-symbol: url("./image_assets/icon-singleBarLoop.png");
+		--fullscreen-symbol: url("./image_assets/icon-fullscreen.png");
+		--loop-within-bar-symbol: url("./image_assets/icon-loop-bar.png");
+	--loop-full-song-symbol: url("./image_assets/icon-loop-song.png");
+	--dont-loop-symbol: url("./image_assets/icon-loop-once.png");
 		} 
 			@font-face {
 		   font-family: "AbyssType";
 		   src:
-			url("abysstype.otf") format("opentype") tech(color-COLRv1),
+			url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
 			}
 	
 			#beepboxEditorContainer, .track-area, .beepboxEditor, #text-content, div.noSelection, .beepboxEditor .loopEditor {
@@ -14274,7 +14258,7 @@ var beepbox = (function (exports) {
 			@font-face {
 		   font-family: "AbyssType_small";
 		   src:
-			url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+			url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
 			}
 	
 			body {
@@ -20866,48 +20850,48 @@ var beepbox = (function (exports) {
 				}
 
 			* {
-				cursor: url('wackybox_cursor.png'), auto;
+				cursor: url('./image_assets/wackybox_cursor.png'), auto;
 			}
 
 
 .beepboxEditor {
-	cursor: url('wackybox_cursor.png'), auto !important;;
+	cursor: url('./image_assets/wackybox_cursor.png'), auto !important;;
 }
 		
 .beepboxEditor .tip {
-	cursor: url('wackybox_cursor.png'), auto !important;;
+	cursor: url('./image_assets/wackybox_cursor.png'), auto !important;;
 }
 
 .beepboxEditor .prompt label {
-	cursor: url('wackybox_cursor.png'), auto !important;;
+	cursor: url('./image_assets/wackybox_cursor.png'), auto !important;;
 }
 
 .beepboxEditor .layout-option {
-	cursor: url('wackybox_cursor.png'), auto !important;;
+	cursor: url('./image_assets/wackybox_cursor.png'), auto !important;;
 }
 
 .beepboxEditor select {
-	cursor: url('wackybox_cursor.png'), auto !important;;
+	cursor: url('./image_assets/wackybox_cursor.png'), auto !important;;
 }
 
 .select2-selection__rendered {
-	cursor: url('wackybox_cursor.png'), auto !important;;
+	cursor: url('./image_assets/wackybox_cursor.png'), auto !important;;
 }
 
 .select2-container--default .select2-results__group {
-    cursor: url('wackybox_cursor.png'), auto !important;;
+    cursor: url('./image_assets/wackybox_cursor.png'), auto !important;;
 }
 
 .beepboxEditor button {
-	 cursor: url('wackybox_cursor.png'), auto !important;;
+	 cursor: url('./image_assets/wackybox_cursor.png'), auto !important;;
 }
 
 .beepboxEditor canvas {
-	cursor: url('wackybox_cursor.png'), auto !important;;
+	cursor: url('./image_assets/wackybox_cursor.png'), auto !important;;
 }
 
 .beepboxEditor input {
-	cursor: url('wackybox_cursor.png'), auto !important;;
+	cursor: url('./image_assets/wackybox_cursor.png'), auto !important;;
 }
 
 			`,
@@ -21691,18 +21675,18 @@ var beepbox = (function (exports) {
 		}
 		.instructions-column > section:first-of-type > p:first-of-type:after {
 		display: block;
-		content: url("UltraboxAzurLaneThemeStarterSquad.png");
+		content: url("./image_assets/UltraboxAzurLaneThemeStarterSquad.png");
 		width: 100%;
 		text-align: center;
 		margin-top: 25px;
 		}
 		/* sets cursor */
 		* {
-		cursor: url("UltraBoxAzurLaneThemeMouse.png"), auto !important;
+		cursor: url("./image_assets/UltraBoxAzurLaneThemeMouse.png"), auto !important;
 		}
 		/* sets background image */
 		body {
-		background-image: url("UltraBoxAzurLaneThemeMemoryTaskBackground.png") !important;
+		background-image: url("./image_assets/UltraBoxAzurLaneThemeMemoryTaskBackground.png") !important;
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
@@ -21716,7 +21700,7 @@ var beepbox = (function (exports) {
 		}
 		#text-content > section > h1 {
 		margin: auto;
-		content: url("UltraBoxALThemeLogo.png");
+		content: url("./image_assets/UltraBoxALThemeLogo.png");
 		}
 	}`,
         "WeebBox": `
@@ -28302,7 +28286,7 @@ li.select2-results__option[role=group] > strong:hover {
             if (andResetChannels) {
                 this.pitchChannelCount = 3;
                 this.noiseChannelCount = 1;
-                this.modChannelCount = 0;
+                this.modChannelCount = 1;
                 for (let channelIndex = 0; channelIndex < this.getChannelCount(); channelIndex++) {
                     const isNoiseChannel = channelIndex >= this.pitchChannelCount && channelIndex < this.pitchChannelCount + this.noiseChannelCount;
                     const isModChannel = channelIndex >= this.pitchChannelCount + this.noiseChannelCount;
@@ -43972,7 +43956,7 @@ li.select2-results__option[role=group] > strong:hover {
         @font-face {
             font-family: "CustomThemeFont";
             src:
-             url("abysstype.otf") format("opentype") tech(color-COLRv1),
+             url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
             }
 
             html {
@@ -43988,7 +43972,7 @@ li.select2-results__option[role=group] > strong:hover {
         @font-face {
             font-family: "CustomThemeFont";
             src:
-             url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+             url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
             }
 
             html {
@@ -44004,13 +43988,13 @@ li.select2-results__option[role=group] > strong:hover {
         @font-face {
             font-family: "CustomThemeFont";
             src:
-             url("abysstype.otf") format("opentype") tech(color-COLRv1),
+             url("./image_assets/abysstype.otf") format("opentype") tech(color-COLRv1),
             }
 
             @font-face {
             font-family: "AbyssTypeSmall";
             src:
-             url("abysstype_small.otf") format("opentype") tech(color-COLRv1),
+             url("./image_assets/abysstype_small.otf") format("opentype") tech(color-COLRv1),
             }    
 
             html {
@@ -44026,7 +44010,7 @@ li.select2-results__option[role=group] > strong:hover {
         @font-face {
             font-family: "CustomThemeFont";
             src:
-             url("doomfont.otf") format("opentype") tech(color-COLRv1),
+             url("./image_assets/doomfont.otf") format("opentype") tech(color-COLRv1),
             }
 
             html {
@@ -44041,7 +44025,7 @@ li.select2-results__option[role=group] > strong:hover {
         @font-face {
             font-family: "CustomThemeFont";
             src:
-             url("tahoma.otf") format("opentype") tech(color-COLRv1),
+             url("./image_assets/tahoma.otf") format("opentype") tech(color-COLRv1),
             }
 
             html {
@@ -44056,7 +44040,7 @@ li.select2-results__option[role=group] > strong:hover {
         @font-face {
             font-family: "CustomThemeFont";
             src:
-             url("trebuc.otf") format("opentype") tech(color-COLRv1),
+             url("./image_assets/trebuc.otf") format("opentype") tech(color-COLRv1),
             }
 
             html {
@@ -44096,7 +44080,7 @@ li.select2-results__option[role=group] > strong:hover {
         @font-face {
             font-family: "CustomThemeFont";
             src:
-            url("https://choptop84.github.io/abyssbox-app/Workbench.ttf") format("truetype") tech(color-COLRv1),
+            url("./image_assets/Workbench.ttf") format("truetype") tech(color-COLRv1),
             }
 
             html {
@@ -44111,7 +44095,7 @@ li.select2-results__option[role=group] > strong:hover {
         @font-face {
             font-family: "CustomThemeFont";
             src:
-            url("https://choptop84.github.io/abyssbox-app/Varela.ttf") format("truetype") tech(color-COLRv1),
+            url("./image_assets/Varela.ttf") format("truetype") tech(color-COLRv1),
             }
 
             html {
@@ -44168,7 +44152,7 @@ li.select2-results__option[role=group] > strong:hover {
         `,
         "AbyssBox Classic": `
 			#text-content {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png");
+    				border-image-source: url("./image_assets/abyssbox_border.png");
     				border-image-slice: 4 fill; 
    				border-image-width: 8px; 
 				border-image-repeat: stretch; 
@@ -44181,7 +44165,7 @@ li.select2-results__option[role=group] > strong:hover {
     				image-rendering: optimizeSpeed !important;             /* IE */
 				}
 			#beepboxEditorContainer {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png");
+    				border-image-source: url("./image_assets/abyssbox_border.png");
     				border-image-slice: 4 fill; 
    				border-image-width: 8px; 
 				border-image-repeat: stretch;
@@ -44213,7 +44197,7 @@ li.select2-results__option[role=group] > strong:hover {
 			button.importInstrumentButton, 
 			.beepboxEditor select, 
 			.beepboxEditor .select2-selection__rendered {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border.png") !important;
+    				border-image-source: url("./image_assets/abyssbox_border.png") !important;
     				border-image-slice: 4 fill !important; 
    				border-image-width: 4px !important; 
 				border-image-repeat: stretch !important;
@@ -44315,7 +44299,7 @@ li.select2-results__option[role=group] > strong:hover {
 
         /* sets background image */
         body {
-        background-image: url("https://choptop84.github.io/abyssbox-source/website/stripesbg_light.gif") !important;
+        background-image: url("./image_assets//stripesbg_light.gif") !important;
         background-position: center;
         background-repeat: repeat;
 
@@ -44326,7 +44310,7 @@ li.select2-results__option[role=group] > strong:hover {
         image-rendering: optimizeSpeed !important;             /* IE */
             }		
     #text-content {
-            border-image-source: url("https://choptop84.github.io/abyssbox-source/website/abyssbox_border_light.png");
+            border-image-source: url("./image_assets//abyssbox_border_light.png");
             border-image-slice: 4 fill; 
            border-image-width: 8px; 
         border-image-repeat: stretch; 
@@ -44339,7 +44323,7 @@ li.select2-results__option[role=group] > strong:hover {
             image-rendering: optimizeSpeed !important;             /* IE */
         }
     #beepboxEditorContainer {
-            border-image-source: url("https://choptop84.github.io/abyssbox-source/website/abyssbox_border_light.png");
+            border-image-source: url("./image_assets//abyssbox_border_light.png");
             border-image-slice: 4 fill; 
            border-image-width: 8px; 
         border-image-repeat: stretch;
@@ -44371,7 +44355,7 @@ li.select2-results__option[role=group] > strong:hover {
         button.importInstrumentButton, 
         .beepboxEditor select, 
         .beepboxEditor .select2-selection__rendered {
-                border-image-source: url("https://choptop84.github.io/abyssbox-app/abyssbox_border_light.png") !important;
+                border-image-source: url("./image_assets/abyssbox_border_light.png") !important;
                 border-image-slice: 4 fill !important; 
                border-image-width: 4px !important; 
             border-image-repeat: stretch !important;
@@ -44789,7 +44773,7 @@ li.select2-results__option[role=group] > strong:hover {
         "Windows Xp": `
 
 			#text-content {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/xptextbg.png");
+    				border-image-source: url("./image_assets/xptextbg.png");
     				border-image-slice: 11 fill; 
    				border-image-width: 11px; 
 				border-image-repeat: stretch;
@@ -44797,7 +44781,7 @@ li.select2-results__option[role=group] > strong:hover {
     				padding: 14px; 
 				}
 			#beepboxEditorContainer {
-    				border-image-source: url("https://choptop84.github.io/abyssbox-app/xptextbg.png");
+    				border-image-source: url("./image_assets/xptextbg.png");
     				border-image-slice: 11 fill; 
    				border-image-width: 11px; 
 				border-image-repeat: stretch;
@@ -44806,7 +44790,7 @@ li.select2-results__option[role=group] > strong:hover {
 				}
 
 			#firstImage {
-				background-image: url("https://choptop84.github.io/abyssbox-app/xpsongeditorbg.png") !important;
+				background-image: url("./image_assets/xpsongeditorbg.png") !important;
 				background-repeat: no-repeat !important;
 				background-size: 100% 100% !important;
 			}
@@ -44838,7 +44822,7 @@ li.select2-results__option[role=group] > strong:hover {
 			}
 			
 			.beepboxEditor select:focus {
-					border-image-source: url("https://choptop84.github.io/abyssbox-app/xpbuttonpressedbg.png");
+					border-image-source: url("./image_assets/xpbuttonpressedbg.png");
 					border-image-slice: 4 fill; 
 					border-image-width: 4px; 
 					border-image-repeat: repeat;
@@ -45631,7 +45615,7 @@ li.select2-results__option[role=group] > strong:hover {
         "BeepBox Pixel": `
         /* sets background image */
         #text-content {
-            border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png");
+            border-image-source: url("./image_assets//beepbox_pixel_border.png");
             border-image-slice: 4 fill; 
            border-image-width: 8px; 
         border-image-repeat: stretch; 
@@ -45644,7 +45628,7 @@ li.select2-results__option[role=group] > strong:hover {
             image-rendering: optimizeSpeed !important;             /* IE */
         }
     #beepboxEditorContainer {
-            border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png");
+            border-image-source: url("./image_assets//beepbox_pixel_border.png");
             border-image-slice: 4 fill; 
            border-image-width: 8px; 
         border-image-repeat: stretch;
@@ -45676,7 +45660,7 @@ li.select2-results__option[role=group] > strong:hover {
         button.importInstrumentButton, 
         .beepboxEditor select, 
         .beepboxEditor .select2-selection__rendered {
-            border-image-source: url("https://choptop84.github.io/abyssbox-source/website/beepbox_pixel_border.png") !important;
+            border-image-source: url("./image_assets//beepbox_pixel_border.png") !important;
             border-image-slice: 4 fill !important; 
            border-image-width: 4px !important; 
         border-image-repeat: stretch !important;
@@ -45693,7 +45677,7 @@ li.select2-results__option[role=group] > strong:hover {
         /* sets background image */
         #text-content {
             --editor-background: (255, 255, 255, 0);
-                border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border.png");
+                border-image-source: url("./image_assets/forest2_border.png");
                 border-image-slice: 16 fill; 
                    border-image-width: 32px; 
                 border-image-repeat: repeat; 
@@ -45707,7 +45691,7 @@ li.select2-results__option[role=group] > strong:hover {
             }
         #beepboxEditorContainer {
             --editor-background: (255, 255, 255, 0);
-                border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border.png");
+                border-image-source: url("./image_assets/forest2_border.png");
                 border-image-slice: 16 fill; 
                    border-image-width: 32px; 
                 border-image-repeat: repeat; 
@@ -45723,7 +45707,7 @@ li.select2-results__option[role=group] > strong:hover {
                 image-rendering: optimizeSpeed !important;             /* IE */ 
             }
         .beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered, button {
-                border-image-source: url("https://choptop84.github.io/abyssbox-app/forest2_border2.png") !important;
+                border-image-source: url("./image_assets/forest2_border2.png") !important;
                 border-image-slice: 4 fill !important; 
                border-image-width: 4px !important; 
             border-image-repeat: stretch !important;
@@ -45828,7 +45812,7 @@ li.select2-results__option[role=group] > strong:hover {
         "Nebula 2": `
         #text-content {
             --editor-background: rgba(255, 255, 255, 0);
-                border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border.png");
+                border-image-source: url("./image_assets/nebula2_border.png");
                 border-image-slice: 16 fill; 
                    border-image-width: 32px; 
                 border-image-repeat: repeat; 
@@ -45842,7 +45826,7 @@ li.select2-results__option[role=group] > strong:hover {
             }
         #beepboxEditorContainer {
             --editor-background: rgba(255, 255, 255, 0);
-                border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border.png");
+                border-image-source: url("./image_assets/nebula2_border.png");
                 border-image-slice: 16 fill; 
                    border-image-width: 32px; 
                 border-image-repeat: repeat; 
@@ -45858,7 +45842,7 @@ li.select2-results__option[role=group] > strong:hover {
                 image-rendering: optimizeSpeed !important;             /* IE */ 
             }
         .beepboxEditor button, .beepboxEditor select, .beepboxEditor .select2-selection__rendered, button {
-                border-image-source: url("https://choptop84.github.io/abyssbox-app/nebula2_border2.png") !important;
+                border-image-source: url("./image_assets/nebula2_border2.png") !important;
                 border-image-slice: 4 fill !important; 
                border-image-width: 4px !important; 
             border-image-repeat: stretch !important;
@@ -45955,7 +45939,7 @@ li.select2-results__option[role=group] > strong:hover {
         "AbyssBox Classic": `
         /* sets background image */
 		body {
-			background-image: url("https://choptop84.github.io/abyssbox-source/website/stripesbg.gif") !important;
+			background-image: url("./image_assets//stripesbg.gif") !important;
 			background-position: center;
 			background-repeat: repeat;
 
@@ -45969,7 +45953,7 @@ li.select2-results__option[role=group] > strong:hover {
         "AbyssBox Light": `
         /* sets background image */
         body {
-            background-image: url("https://choptop84.github.io/abyssbox-source/website/stripesbg_light.gif") !important;
+            background-image: url("./image_assets//stripesbg_light.gif") !important;
             background-position: center;
             background-repeat: repeat;
 
@@ -45983,7 +45967,7 @@ li.select2-results__option[role=group] > strong:hover {
         "Half-Life": `
         /* sets background image */
             body {
-            background-image: url("https://choptop84.github.io/abyssbox-source/website/lambda.png") !important;
+            background-image: url("./image_assets//lambda.png") !important;
             background-position: top;
             background-attachment: fixed;
             background-repeat: no-repeat;
@@ -46012,7 +45996,7 @@ li.select2-results__option[role=group] > strong:hover {
         "Windows Xp": `
         /* sets background image */
 		body {
-            background-image: url("https://choptop84.github.io/abyssbox-app/xphills.png") !important;
+            background-image: url("./image_assets/xphills.png") !important;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -46089,7 +46073,7 @@ li.select2-results__option[role=group] > strong:hover {
         "BeepBox Pixel": `
         /* sets background image */
         body {
-            background-image: url("https://choptop84.github.io/abyssbox-source/website/diamondsbg.gif") !important;
+            background-image: url("./image_assets//diamondsbg.gif") !important;
             background-position: center;
             background-repeat: repeat;
 
@@ -46103,7 +46087,7 @@ li.select2-results__option[role=group] > strong:hover {
         "Forest 2": `
         /* sets background image */
         body {
-            background-image: url("https://choptop84.github.io/abyssbox-app/Forest2Trees.png") !important;
+            background-image: url("./image_assets/Forest2Trees.png") !important;
             background-size: cover;
             background-position: center top; /* Adjusted to align with the top */
               background-repeat: no-repeat;
@@ -46131,7 +46115,7 @@ li.select2-results__option[role=group] > strong:hover {
         `,
         "Nebula 2": `
         body {
-            background-image: url("https://choptop84.github.io/abyssbox-app/stars.gif") !important;
+            background-image: url("./image_assets/stars.gif") !important;
             background-size: contain !important;
             background-position: center top !important;
             background-repeat: repeat !important;
@@ -46175,8 +46159,8 @@ li.select2-results__option[role=group] > strong:hover {
             --file-page-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-file.png");
             --edit-pencil-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-edit.png");
             --preferences-gear-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-preferences.png");
-            --instrument-copy-symbol: url("https://choptop84.github.io/abyssbox-app/icon-copy.png");
-            --instrument-paste-symbol: url("https://choptop84.github.io/abyssbox-app/icon-paste.png");
+            --instrument-copy-symbol: url("./image_assets/icon-copy.png");
+            --instrument-paste-symbol: url("./image_assets/icon-paste.png");
             --play-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-play.png");
             --pause-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-pause.png");
             --record-symbol: url("https://choptop84.github.io/choptop84s-image-repository/icon-record.png");
@@ -46237,25 +46221,25 @@ li.select2-results__option[role=group] > strong:hover {
         `,
         "Windows Xp": `
 * {
-cursor: url("https://choptop84.github.io/abyssbox-app/xpcursor.png"), auto !important;
---play-symbol:url("https://choptop84.github.io/abyssbox-app/xpPlay.png");
---pause-symbol:url("https://choptop84.github.io/abyssbox-app/xpPause.png");
---record-symbol:url("https://choptop84.github.io/abyssbox-app/xpRecord.png");
---stop-symbol:url("https://choptop84.github.io/abyssbox-app/xpStop.png");
---prev-bar-symbol:url("https://choptop84.github.io/abyssbox-app/xpBackward.png");
---next-bar-symbol:url("https://choptop84.github.io/abyssbox-app/xpForward.png");
---file-page-symbol: url("https://choptop84.github.io/abyssbox-app/xpFile.png");
---edit-pencil-symbol: url("https://choptop84.github.io/abyssbox-app/xpEdit.png");
---preferences-gear-symbol: url("https://choptop84.github.io/abyssbox-app/xpPreferences.png");
---muted-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeakerMute.png");
---unmuted-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
---volume-symbol: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
---zoom-in-symbol: url("https://choptop84.github.io/abyssbox-app/xpZoomIn.png");
---zoom-out-symbol: url("https://choptop84.github.io/abyssbox-app/xpZoomOut.png");
+cursor: url("./image_assets/xpcursor.png"), auto !important;
+--play-symbol:url("./image_assets/xpPlay.png");
+--pause-symbol:url("./image_assets/xpPause.png");
+--record-symbol:url("./image_assets/xpRecord.png");
+--stop-symbol:url("./image_assets/xpStop.png");
+--prev-bar-symbol:url("./image_assets/xpBackward.png");
+--next-bar-symbol:url("./image_assets/xpForward.png");
+--file-page-symbol: url("./image_assets/xpFile.png");
+--edit-pencil-symbol: url("./image_assets/xpEdit.png");
+--preferences-gear-symbol: url("./image_assets/xpPreferences.png");
+--muted-symbol: url("./image_assets/xpSpeakerMute.png");
+--unmuted-symbol: url("./image_assets/xpSpeaker.png");
+--volume-symbol: url("./image_assets/xpSpeaker.png");
+--zoom-in-symbol: url("./image_assets/xpZoomIn.png");
+--zoom-out-symbol: url("./image_assets/xpZoomOut.png");
 }
 
 div.mute-button::before {
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png") !important;
+    background-image: url("./image_assets/xpSpeaker.png") !important;
     background-size: 120% !important;
     background-position-x: center !important;
     background-position-y: center !important;
@@ -46269,7 +46253,7 @@ div.mute-button::before {
 }
 
 div.mute-button.muted::before {
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeakerMute.png") !important;
+    background-image: url("./image_assets/xpSpeakerMute.png") !important;
     background-size: 120% !important;
     background-position-x: center !important;
     background-position-y: center !important;
@@ -46283,7 +46267,7 @@ div.mute-button.muted::before {
 }
 
 button.recordButton::Before {
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpRecord.png") !important;
+    background-image: url("./image_assets/xpRecord.png") !important;
     background-size: 64% !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -46297,7 +46281,7 @@ button.recordButton::Before {
 }
 
 button.stopButton::Before {
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpStop.png") !important;
+    background-image: url("./image_assets/xpStop.png") !important;
     background-size: 64% !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -46311,7 +46295,7 @@ button.stopButton::Before {
 }
 
 button.pauseButton::Before {
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpPause.png") !important;
+    background-image: url("./image_assets/xpPause.png") !important;
     background-size: 64% !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -46325,7 +46309,7 @@ button.pauseButton::Before {
 }
 
 .beepboxEditor span.volume-speaker {
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpSpeaker.png");
+    background-image: url("./image_assets/xpSpeaker.png");
     background-position: center !important;
     background-repeat: no-repeat !important;
 
@@ -46338,7 +46322,7 @@ button.pauseButton::Before {
 
 div.selectContainer.menu.file::before {
 
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpFile.png");
+    background-image: url("./image_assets/xpFile.png");
     background-size: 64%;
     background-position-x: center;
     background-position-y: center;
@@ -46352,7 +46336,7 @@ div.selectContainer.menu.file::before {
 
 div.selectContainer.menu.edit::before {
 
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpEdit.png");
+    background-image: url("./image_assets/xpEdit.png");
     background-size: 64%;
     background-position-x: center;
     background-position-y: center;
@@ -46365,7 +46349,7 @@ div.selectContainer.menu.edit::before {
 }
 div.selectContainer.menu.preferences::before {
 
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpPreferences.png");
+    background-image: url("./image_assets/xpPreferences.png");
     background-size: 64%;
     background-position-x: center;
     background-position-y: center;
@@ -46378,7 +46362,7 @@ div.selectContainer.menu.preferences::before {
 }
 button.playButton::before {
 
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpPlay.png") !important;
+    background-image: url("./image_assets/xpPlay.png") !important;
     background-size: 64% !important;
     background-position: center !important;
 
@@ -46391,7 +46375,7 @@ button.playButton::before {
 }
 
 .beepboxEditor button.prevBarButton::before {
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpBackward.png") !important;
+    background-image: url("./image_assets/xpBackward.png") !important;
     background-size: 64% !important;
     background-position: center !important;
 
@@ -46405,7 +46389,7 @@ button.playButton::before {
 }
 
 .beepboxEditor button.nextBarButton::before {
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpForward.png") !important;
+    background-image: url("./image_assets/xpForward.png") !important;
     background-size: 64% !important;
     background-position: center !important;
 
@@ -46419,7 +46403,7 @@ button.playButton::before {
 }
 
 .beepboxEditor .zoomInButton::before {
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpZoomIn.png") !important;
+    background-image: url("./image_assets/xpZoomIn.png") !important;
     background-position: center !important;
 
 
@@ -46432,7 +46416,7 @@ button.playButton::before {
 }
 
 .beepboxEditor .zoomOutButton::before {
-    background-image: url("https://choptop84.github.io/abyssbox-app/xpZoomOut.png") !important;
+    background-image: url("./image_assets/xpZoomOut.png") !important;
     background-position: center !important;
 
 
@@ -46445,7 +46429,7 @@ button.playButton::before {
 }
 
 .beepboxEditor input[type="range"]::-moz-range-thumb {
-    background-image: url("https://choptop84.github.io/abyssbox-app/scrollbar.png") !important;
+    background-image: url("./image_assets/scrollbar.png") !important;
     background-position: center !important;
     background-size: inherit !important;
 
@@ -46468,7 +46452,7 @@ button.playButton::before {
             border-radius: 0px;
             width: 13px !important;
             height: 13px !important;
-            background-image:url("https://choptop84.github.io/abyssbox-app/xpCheckmarkBlank.png");
+            background-image:url("./image_assets/xpCheckmarkBlank.png");
             background-repeat:no-repeat;
 
             image-rendering: -moz-crisp-edges !important;         /* Firefox */
@@ -46493,7 +46477,7 @@ button.playButton::before {
             text-align: center;
             content: "";
             background-repeat:no-repeat;
-            background-image:url("https://choptop84.github.io/abyssbox-app/xpCheckmark.png");
+            background-image:url("./image_assets/xpCheckmark.png");
             image-rendering: -moz-crisp-edges !important;         /* Firefox */
             image-rendering: -webkit-optimize-contrast !important; /* Webkit (Chrome/Safari) */
             image-rendering: -o-crisp-edges !important;            /* Opera */
@@ -46512,7 +46496,7 @@ button.playButton::before {
         `,
         "Retro": `
         * {
-        cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+        cursor: url("./image_assets/pixel_cursor.png"), auto !important;
         }
         `,
         "Slushie 2": `
@@ -46522,12 +46506,12 @@ button.playButton::before {
         `,
         "Ghost House 2": `
         * {
-		cursor: url("https://choptop84.github.io/abyssbox-app/pixel_cursor.png"), auto !important;
+		cursor: url("./image_assets/pixel_cursor.png"), auto !important;
         }
         `,
         "Windows Xp": `
         * {
-		cursor: url("https://choptop84.github.io/abyssbox-app/xpcursor.png"), auto !important;
+		cursor: url("./image_assets/xpcursor.png"), auto !important;
         }
         `,
         "WackyBox": `
@@ -57319,22 +57303,22 @@ You should be redirected to the song at:<br /><br />
                     break;
                 case "phaserMix":
                     {
-                        message = div$7(h2$6("Phaser Mix"), p$2(``));
+                        message = div$7(h2$6("Phaser Mix"), p$2(`This setting adds holes (aka notches) or peaks in the frequency spectrum to the waveform its given. The placement of these peaks and notches in the waveform can be changed by using envelopes and/or modulators.`));
                     }
                     break;
                 case "phaserFreq":
                     {
-                        message = div$7(h2$6("Phaser Frequency"), p$2(``));
+                        message = div$7(h2$6("Phaser Frequency"), p$2(`This setting controls the frequency of the the peaks and notches of the phaser.`));
                     }
                     break;
                 case "phaserFeedback":
                     {
-                        message = div$7(h2$6("Phaser Feedback"), p$2(``));
+                        message = div$7(h2$6("Phaser Feedback"), p$2(`This setting effects how pronounced the Feedback of the Phaser is, this is done by adding the Feedback of the Phaser back into itself.`));
                     }
                     break;
                 case "phaserStages":
                     {
-                        message = div$7(h2$6("Phaser Stages"), p$2(`This slider changes how many all-passes there are in the phaser.`));
+                        message = div$7(h2$6("Phaser Stages"), p$2(`This slider changes how many all-passes there are in the phaser. An all-pass is created by splitting an audio signal into paths, every path after the first one that is created is called an all-pass.`), p$2(`The minimum value of this slider is 1, the reason being that 1 all-pass is the exact same as having no phaser at all, if there were 0 all-passes then the audio would cease to exist.`));
                     }
                     break;
                 default:
@@ -59319,11 +59303,12 @@ You should be redirected to the song at:<br /><br />
         constructor(_doc) {
             this._doc = _doc;
             this.okayButton = button$1({ class: "okayButton", style: "width:45%;" }, "Okay");
-            this.startingContainer = div$1({ id: "tutorialPrompt" }, div$1({ class: "promptTitle" }, h2({ class: "tutorialExt", style: "text-align: inherit;" }, ""), h2({ class: "tutorialTitle", style: "margin-bottom: 0.5em;" }, "AbyssBox 1.5 is OUT NOW!")), p({ style: "margin-bottom: 0.5em; text-align: center; font-size: 15px;" }, "AbyssBox 1.5 is here! Here's a few of the many changes in this update!"), p({ style: "margin-bottom: 0.5em; text-align: left; font-size: 15px;" }, "- Two new effects! Phaser and Ring Modulation!"), p({ style: "margin-bottom: 0.5em; text-align: left; font-size: 15px;" }, "- New songwide modulation options!"), p({ style: "margin-bottom: 0.5em; text-align: left; font-size: 15px;" }, "- You can export as .ogg and .opus!"), p({ style: "margin-bottom: 0.5em; text-align: center; font-size: 15px;" }, "And much more!"), p({ style: "margin-bottom: 0.5em; text-align: center; font-size: 15px;" }, "For the full update list, I suggest", a({ href: "./patch-notes", target: "_blank", }, " Checking out the Patch Notes!")));
+            this.linkThing = a({ href: "./patch-notes", target: "_blank", }, " Checking out the Patch Notes!");
+            this.startingContainer = div$1({ id: "tutorialPrompt" }, div$1({ class: "promptTitle" }, h2({ class: "tutorialExt", style: "text-align: inherit;" }, ""), h2({ class: "tutorialTitle", style: "margin-bottom: 0.5em;" }, "AbyssBox 1.5.1 is OUT NOW!")), p({ style: "margin-bottom: 0.5em; text-align: center; font-size: 15px;" }, "AbyssBox 1.5.1 is here! A rather small but meaningful update this time around!"), p({ style: "margin-bottom: 0.5em; text-align: left; font-size: 15px;" }, "- Added an offset for Ring Modulation's Hz value, allowing for more specific hertz."), p({ style: "margin-bottom: 0.5em; text-align: left; font-size: 15px;" }, "- Updated the Frutiger Aero theme to be a little less laggy."), p({ style: "margin-bottom: 0.5em; text-align: left; font-size: 15px;" }, "- Added tips to the new effects, as they were missing before."));
             this.container = div$1({ class: "prompt noSelection", id: "updateContainerPrompt", style: "width: 350px;" }, this.startingContainer, div$1({ style: "display:flex; flex-direction:row-reverse;" }, this.okayButton));
             this._close = () => {
                 window.localStorage.setItem("updateSeen", "true");
-                window.localStorage.setItem("curVer", "1.5");
+                window.localStorage.setItem("curVer", "1.5.1");
                 this._doc.prompt = null;
                 this._doc.undo();
             };
@@ -60146,7 +60131,7 @@ You should be redirected to the song at:<br /><br />
             this._feedbackAmplitudeSlider = new Slider(input({ type: "range", min: "0", max: Config.operatorAmplitudeMax, value: "0", step: "1", title: "Feedback Amplitude" }), this._doc, (oldValue, newValue) => new ChangeFeedbackAmplitude(this._doc, oldValue, newValue), false);
             this._feedbackRow2 = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("feedbackVolume") }, "Fdback Vol:"), this._feedbackAmplitudeSlider.container);
             this._addEnvelopeButton = button({ type: "button", class: "add-envelope" });
-            this._customInstrumentSettingsGroup = div({ class: "editor-controls" }, div({ id: "InstrumentDiv" }, this._panSliderRow, this._panDropdownGroup, this._chipWaveSelectRow, this._chipNoiseSelectRow, this._useChipWaveAdvancedLoopControlsRow, this._chipWaveLoopModeSelectRow, this._chipWaveLoopStartRow, this._chipWaveLoopEndRow, this._chipWaveStartOffsetRow, this._chipWavePlayBackwardsRow, this._customWaveDraw, this._eqFilterTypeRow, this._eqFilterRow, this._eqFilterSimpleCutRow, this._eqFilterSimplePeakRow, this._fadeInOutRow, this._algorithmSelectRow, this._algorithm6OpSelectRow, this._phaseModGroup, this._feedbackRow1, this._feedback6OpRow1, this._feedbackRow2, this._spectrumRow, this._harmonicsRow, this._drumsetGroup, this._supersawDynamismRow, this._supersawSpreadRow, this._supersawShapeRow, this._pulseWidthRow, this._pulseWidthDropdownGroup, this._stringSustainRow, div({ style: "margin-top:1em;margin-bottom:0.5em;" }, this._unisonSelectRow), this._unisonDropdownGroup), div({ id: "effectsDiv" }, div({ class: "effectsNameDiv", style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("effects") }, "Effects")), div({ class: "effects-menu" }, this._effectsSelect)), div({ class: "effectsOpDiv" }, this._transitionRow, this._transitionDropdownGroup, this._chordSelectRow, this._chordDropdownGroup, this._pitchShiftRow, this._detuneSliderRow, this._vibratoSelectRow, this._vibratoDropdownGroup, this._noteFilterTypeRow, this._noteFilterRow, this._noteFilterSimpleCutRow, this._noteFilterSimplePeakRow, this._distortionRow, this._aliasingRow, this._bitcrusherQuantizationRow, this._bitcrusherFreqRow, this._chorusRow, this._echoSustainRow, this._echoDelayRow, this._reverbRow, this._ringModContainerRow, this._phaserMixRow, this._phaserFreqRow, this._phaserFeedbackRow, this._phaserStagesRow)), div({ id: "envelopesDiv" }, div({ class: "envelopesNameDiv", style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("envelopes") }, "Envelopes")), this._envelopeDropdown, this._addEnvelopeButton), div({ class: "envelopesOpDiv" }, this._envelopeDropdownGroup, this._envelopeEditor.container)));
+            this._customInstrumentSettingsGroup = div({ class: "editor-controls" }, div({ id: "InstrumentDiv" }, this._panSliderRow, this._panDropdownGroup, this._chipWaveSelectRow, this._chipNoiseSelectRow, this._useChipWaveAdvancedLoopControlsRow, this._chipWaveLoopModeSelectRow, this._chipWaveLoopStartRow, this._chipWaveLoopEndRow, this._chipWaveStartOffsetRow, this._chipWavePlayBackwardsRow, this._customWaveDraw, this._eqFilterTypeRow, this._eqFilterRow, this._eqFilterSimpleCutRow, this._eqFilterSimplePeakRow, this._fadeInOutRow, this._algorithmSelectRow, this._algorithm6OpSelectRow, this._phaseModGroup, this._feedbackRow1, this._feedback6OpRow1, this._feedbackRow2, this._spectrumRow, this._harmonicsRow, this._drumsetGroup, this._supersawDynamismRow, this._supersawSpreadRow, this._supersawShapeRow, this._pulseWidthRow, this._pulseWidthDropdownGroup, this._stringSustainRow, div({ style: "" }, this._unisonSelectRow), this._unisonDropdownGroup), div({ id: "effectsDiv" }, div({ class: "effectsNameDiv", style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("effects") }, "Effects")), div({ class: "effects-menu" }, this._effectsSelect)), div({ class: "effectsOpDiv" }, this._transitionRow, this._transitionDropdownGroup, this._chordSelectRow, this._chordDropdownGroup, this._pitchShiftRow, this._detuneSliderRow, this._vibratoSelectRow, this._vibratoDropdownGroup, this._noteFilterTypeRow, this._noteFilterRow, this._noteFilterSimpleCutRow, this._noteFilterSimplePeakRow, this._distortionRow, this._aliasingRow, this._bitcrusherQuantizationRow, this._bitcrusherFreqRow, this._chorusRow, this._echoSustainRow, this._echoDelayRow, this._reverbRow, this._ringModContainerRow, this._phaserMixRow, this._phaserFreqRow, this._phaserFeedbackRow, this._phaserStagesRow)), div({ id: "envelopesDiv" }, div({ class: "envelopesNameDiv", style: `padding: 2px 0; margin-left: 2em; display: flex; align-items: center;` }, span({ style: `flex-grow: 1; text-align: center;` }, span({ class: "tip", onclick: () => this._openPrompt("envelopes") }, "Envelopes")), this._envelopeDropdown, this._addEnvelopeButton), div({ class: "envelopesOpDiv" }, this._envelopeDropdownGroup, this._envelopeEditor.container)));
             this._instrumentCopyGroup = div({ class: "editor-controls" }, div({ class: "selectRow" }, this._instrumentCopyButton, this._instrumentPasteButton));
             this._instrumentExportGroup = div({ class: "editor-controls" }, div({ class: "selectRow" }, this._instrumentExportButton, this._instrumentImportButton));
             this._instrumentSettingsTextRow = div({ id: "instrumentSettingsText", style: `padding: 3px 0; max-width: 15em; text-align: center; color: ${ColorConfig.secondaryText};` }, "Instrument Settings");
@@ -60386,7 +60371,7 @@ You should be redirected to the song at:<br /><br />
                 if (!isMobile) {
                     this._playPauseAreaMobile.style.display = "none";
                     if (window.localStorage.getItem("tutorialComplete") != "true") ;
-                    if (window.localStorage.getItem("curVer") != "1.5") {
+                    if (window.localStorage.getItem("curVer") != "1.5.1") {
                         window.localStorage.setItem("updateSeen", "false");
                     }
                     if (window.localStorage.getItem("updateSeen") != "true") {
@@ -66174,20 +66159,22 @@ You should be redirected to the song at:<br /><br />
                 if (document.visibilityState === 'visible') {
                     if (this.song.setSongTheme == "none") {
                         if (window.localStorage.getItem("colorTheme") != null) {
-                            ColorConfig.setTheme(String(window.localStorage.getItem("colorTheme")));
-                            if (window.localStorage.getItem("colorTheme") == "custom") {
-                                CustomThemeBases.setFont(String(window.localStorage.getItem("customFontName")));
-                                CustomThemeBases.setBackground(String(window.localStorage.getItem("customBackground")));
-                                CustomThemeBases.setIcons(String(window.localStorage.getItem("customIconsName")));
-                                CustomThemeBases.setBorder(String(window.localStorage.getItem("customBorderName")));
-                                CustomThemeBases.setCursor(String(window.localStorage.getItem("customCursorName")));
-                            }
-                            else {
-                                CustomThemeBases.setFont("none");
-                                CustomThemeBases.setBackground("none");
-                                CustomThemeBases.setIcons("none");
-                                CustomThemeBases.setBorder("none");
-                                CustomThemeBases.setCursor("none");
+                            if (window.localStorage.getItem("colorTheme") != ColorConfig.currentSetTheme) {
+                                ColorConfig.setTheme(String(window.localStorage.getItem("colorTheme")));
+                                if (window.localStorage.getItem("colorTheme") == "custom") {
+                                    CustomThemeBases.setFont(String(window.localStorage.getItem("customFontName")));
+                                    CustomThemeBases.setBackground(String(window.localStorage.getItem("customBackground")));
+                                    CustomThemeBases.setIcons(String(window.localStorage.getItem("customIconsName")));
+                                    CustomThemeBases.setBorder(String(window.localStorage.getItem("customBorderName")));
+                                    CustomThemeBases.setCursor(String(window.localStorage.getItem("customCursorName")));
+                                }
+                                else {
+                                    CustomThemeBases.setFont("none");
+                                    CustomThemeBases.setBackground("none");
+                                    CustomThemeBases.setIcons("none");
+                                    CustomThemeBases.setBorder("none");
+                                    CustomThemeBases.setCursor("none");
+                                }
                             }
                         }
                     }

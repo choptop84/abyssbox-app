@@ -2397,7 +2397,7 @@ var beepbox = (function (exports) {
     ColorConfig.colorLookup = new Map();
     ColorConfig.usesColorFormula = false;
     ColorConfig.usesPianoScheme = false;
-    ColorConfig.currentSetTheme = "AbyssBox Classic";
+    ColorConfig.currentSetTheme = "slarmoosbox";
     ColorConfig.themes = {
         "AbyssBox Classic": `
 			:root {		
@@ -24075,7 +24075,7 @@ var beepbox = (function (exports) {
         }
     }
     EditorConfig.version = "1.7";
-    EditorConfig.versionDisplayName = "AbyssBox " + EditorConfig.version;
+    EditorConfig.versionDisplayName = "Slarmoo's Box " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
     EditorConfig.ctrlSymbol = EditorConfig.isOnMac ? "⌘" : "Ctrl+";

@@ -1863,7 +1863,7 @@ var beepbox = (function (exports) {
         }
     }
     EditorConfig.version = "1.7";
-    EditorConfig.versionDisplayName = "Slarmoo's Box " + EditorConfig.version;
+    EditorConfig.versionDisplayName = "AbyssBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
     EditorConfig.ctrlSymbol = EditorConfig.isOnMac ? "⌘" : "Ctrl+";
@@ -2839,7 +2839,7 @@ var beepbox = (function (exports) {
     ColorConfig.colorLookup = new Map();
     ColorConfig.usesColorFormula = false;
     ColorConfig.usesPianoScheme = false;
-    ColorConfig.currentSetTheme = "slarmoosbox";
+    ColorConfig.currentSetTheme = "AbyssBox Classic";
     ColorConfig.themes = {
         "AbyssBox Classic": `
 			:root {		
@@ -68889,7 +68889,7 @@ You should be redirected to the song at:<br /><br />
             this.keyboardLayout = window.localStorage.getItem("keyboardLayout") || "wickiHayden";
             this.bassOffset = (+window.localStorage.getItem("bassOffset")) || 0;
             this.layout = window.localStorage.getItem("layout") || "small";
-            this.colorTheme = window.localStorage.getItem("colorTheme") || "slarmoosbox";
+            this.colorTheme = window.localStorage.getItem("colorTheme") || "AbyssBox Classic";
             this.customTheme = window.localStorage.getItem("customTheme");
             this.customTheme2 = window.localStorage.getItem("customTheme2");
             this.visibleOctaves = (window.localStorage.getItem("visibleOctaves") >>> 0) || Preferences.defaultVisibleOctaves;
